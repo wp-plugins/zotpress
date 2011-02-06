@@ -25,7 +25,7 @@ Features:
 * Add both user and group Zotero accounts
 * And more!
 
-Tested in Firefox 3 (Mac/Win) and IE8.
+Tested in Firefox 3 (Mac/Win), IE7 and IE8.
 
 == Installation ==
 
