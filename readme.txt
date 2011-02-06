@@ -13,7 +13,7 @@ Zotpress displays your Zotero citations on Wordpress.
 
 == Description ==
 
-Zotpress displays your Zotero citations on Wordpress. It also extends the basic meta functionality offered by Zotero by allowing you to add a thumbnail image to your citations.
+Zotpress displays your Zotero citations on Wordpress. It also extends the basic meta functionality offered by Zotero by allowing you to add thumbnail images to your citations.
 
 Zotero is a community-based cross-platform citation manager that integrates with your browser and word processor.
 

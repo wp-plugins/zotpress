@@ -46,7 +46,7 @@
             
             <p>
                 Zotpress couldn't find any Zotero accounts. Would you like to add a Zotero account?
-            </p> <?php echo $zp_accounts_total; ?>
+            </p>
             
             <a class="zp-AddAccount" href="admin.php?page=Zotpress&amp;accounts=true">Yes, let's do it!</a>
             
