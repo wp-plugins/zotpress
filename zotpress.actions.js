@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
     */
 
 
-    jQuery('#account_type option').click( function()
+    jQuery('#account_type').change( function()
     {
         // GROUPS
         if (jQuery(this).val() == "groups") {
@@ -33,7 +33,7 @@ jQuery(document).ready(function() {
     */
 
 
-    jQuery('span.zp-Help[title]').qtip({
+    jQuery('label.zp-Help[title]').qtip({
         style: {
             name: 'dark',
             tip: true,
@@ -68,22 +68,29 @@ jQuery(document).ready(function() {
     {
         
         var xmlUri = jQuery('input#ZOTPRESS_PLUGIN_URL').val()+'zotpress.actions.php?display=true';
-        //alert(xmlUri);
         
         jQuery('div#zp-AccountsList').empty();
         jQuery('div#zp-AccountsList').addClass("zp-Loading");
         
         jQuery.get(xmlUri, {}, function(xml)
         {
+            var active_accounts = "";
+            
             jQuery(xml).find('account').each(function() {
-                jQuery('div#zp-AccountsList').append(jQuery(this).find('code').text());
+                active_accounts += jQuery(this).find('code').text();
             });
+            
+            if (active_accounts.length > 0)
+                jQuery('div#zp-AccountsList').append(active_accounts);
+            else
+                jQuery('div#zp-AccountsList').append("<p>No accounts found.</p>\n");
             
             jQuery('div#zp-AccountsList').removeClass('zp-Loading');
         });
     }
     
-    DisplayAccounts();
+    if (jQuery('input#ZOTPRESS_PLUGIN_URL').length != 0)
+        DisplayAccounts();
     
     
     
@@ -115,7 +122,6 @@ jQuery(document).ready(function() {
             
             if (jQuery('input[name=update]').val() !== undefined)
                 xmlUri += "&update=" + jQuery('input[name=update]').val();
-                //alert(xmlUri);
             
             // AJAX
             jQuery.get(xmlUri, {}, function(xml)
@@ -135,7 +141,6 @@ jQuery(document).ready(function() {
                         jQuery('form#zp-Add')[0].reset();
                         jQuery('input[name!=update], textarea, select').removeAttr('disabled');
                         
-                        //DisplayAccounts(jQuery('result', xml).attr('api_user_id'), jQuery('result', xml).attr('public_key'));
                         DisplayAccounts();
                     });
                 }

@@ -1,3 +1,5 @@
+    <?php if ($zp_accounts_total > 0) { ?>
+        
         <div id="zp-Zotpress" class="wrap">
             
             <?php include('zotpress.tabs.php'); ?>
@@ -14,7 +16,7 @@
                         <span id="zp-FilterByAccount-Loading">loading</span>
                     </div>
                     
-                    <div class="section">
+                    <div id="zp-FilterByCollection-Section" class="section">
                         <label for="zp-FilterByCollection">Sort by Collection:</label>
                         
                         <select id="zp-FilterByCollection">
@@ -35,3 +37,19 @@
             <div id="zp-List" class="zp-Loading">loading</div>
             
         </div>
+        
+    <?php } else { ?>
+        
+        <div id="zp-Zotpress" class="wrap">
+            
+            <?php include('zotpress.tabs.php'); ?>
+            
+            <p>
+                Zotpress couldn't find any Zotero accounts. Would you like to add a Zotero account?
+            </p> <?php echo $zp_accounts_total; ?>
+            
+            <a class="zp-AddAccount" href="admin.php?page=Zotpress&amp;accounts=true">Yes, let's do it!</a>
+            
+        </div>
+        
+    <?php } ?>

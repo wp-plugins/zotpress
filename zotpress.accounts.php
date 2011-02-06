@@ -18,17 +18,17 @@
                     </div>
                 
                     <div>
-                        <label for="api_user_id"><span id="zp-ID-Label">API User</span> ID <span class="zp-Help" title="Your API User ID is listed on the Zotero 'Feeds/API' page under 'Settings', right under the 'Feeds/API Settings' heading. Group IDs are found in the group's URL, after &quot;groups&quot;. Both should be a series of five digits.">help</span></label>
+                        <label for="api_user_id" class="zp-Help" title="Your API User ID is listed on the Zotero 'Feeds/API' page under 'Settings', right under the 'Feeds/API Settings' heading. Group IDs are found in the group's URL, after &quot;groups&quot;. Both should be a series of five digits."><span id="zp-ID-Label">API User</span> ID</label>
                         <input id="api_user_id" name="api_user_id" type="text" />
                     </div>
                 
                     <div class="zp-public_key">
-                        <label for="public_key">Public Key <span class="zp-Help" title="Create a key on the Zotero 'Feeds/API' page under 'Settings'. Make sure that 'Allow third party access' is checked.">help</span></label>
+                        <label for="public_key" class="zp-Help" title="Create a key on the Zotero 'Feeds/API' page under 'Settings'. Make sure that 'Allow third party access' is checked.">Public Key</label>
                         <input id="public_key" name="public_key" type="text" />
                     </div>
                 
                     <div>
-                        <label for="nickname">Nickname <span class="zp-Help" title="Your API User/Group ID can be hard to recognize. Make it easier for yourself by giving your account a nickname.">help</span></label>
+                        <label for="nickname" class="zp-Help" title="Your API User/Group ID can be hard to recognize. Make it easier for yourself by giving your account a nickname.">Nickname</label>
                         <input id="nickname" name="nickname" type="text" />
                     </div>
                 

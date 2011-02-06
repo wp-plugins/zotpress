@@ -42,6 +42,45 @@
     jQuery(document).ready(function()
     {
         
+        // DETERMINE BROWSER
+        
+        var browser_is_IE = false;
+        
+        jQuery.each(jQuery.browser, function() {
+            if (jQuery.browser.msie)
+                browser_is_IE = true;
+        });
+        
+        
+        // MAKE XML WORK IN IE
+        // Thanks to Bigabdoul at Stackoverflow.com
+        
+        function createXmlDOMObject(xmlString)
+        {
+            var xmlDoc = null;
+            
+            if( ! window.DOMParser )
+            {
+                // the xml string cannot be directly manipulated by browsers 
+                // such as Internet Explorer because they rely on an external 
+                // DOM parsing framework...
+                // create and load an XML document object through the DOM 
+                // ActiveXObject that it can deal with
+                xmlDoc = new ActiveXObject( "Microsoft.XMLDOM" );
+                xmlDoc.async = false;
+                xmlDoc.loadXML( xmlString );
+            }
+            else
+            {
+                // the current browser is capable of creating its own DOM parser
+                parser = new DOMParser();
+                xmlDoc = parser.parseFromString( xmlString, "text/xml" ) ;
+            }
+            
+            return xmlDoc;
+        }
+        
+        
         /*
             DISPLAY CITATIONS
         */
@@ -65,8 +104,13 @@
             // Grab Zotero request
             jQuery.get(xmlUriCitations, {}, function(xml)
             {
+                if (browser_is_IE)
+                {
+                    xml = createXmlDOMObject (xml);
+                }
+                
                 // AUTHOR
-                <?php if ($author !== false) { ?>
+                <?php if ($author != false) { ?>
                 
                     var authors = "";
                     
@@ -98,11 +142,21 @@
                             // Grab Zotero request
                             jQuery.get(xmlUriAuthorCitations, {}, function(xmlAuthorCitations)
                             {
+                                if (browser_is_IE)
+                                {
+                                    xmlAuthorCitations = createXmlDOMObject (xmlAuthorCitations);
+                                }
+                                
+                                var zpcontent = (browser_is_IE) ? jQuery(xmlAuthorCitations).context.xml.substr(jQuery(xmlAuthorCitations).context.xml.indexOf("div")-1).substr(0, jQuery(xmlAuthorCitations).context.xml.substr(jQuery(xmlAuthorCitations).context.xml.indexOf("div")-1).indexOf("/content")-1) : jQuery(xmlAuthorCitations).find("content").html();
+                                //var zpcontent = (browser_is_IE) ? jQuery(jQuery(xmlAuthorCitations).context.xml).find("content").html() : jQuery(xmlAuthorCitations).find("content").html();
+                                //alert(zpcontent);
+                                
                                 citation = "<div class='zp-Entry' rel='"+jQuery(xmlAuthorCitations).find("zapi\\:key").text()+"'>\n"
-                                        + jQuery(xmlAuthorCitations).find("content").html()
+                                        + zpcontent
                                         +"</div>\n\n";
                                 jQuery('div#zp-Zotpress').append(citation);
-                            });
+                                
+                            }, "XML");
                         }
                         
                     });
@@ -118,8 +172,11 @@
                     
                     // SINGLE CITATION
                     <?php if ($item_key !== false && trim($item_key) != "") { ?>
+                    var zpcontent = (browser_is_IE) ? jQuery(xml).context.xml.substr(jQuery(xml).context.xml.indexOf("div")-1).substr(0, jQuery(xml).context.xml.substr(jQuery(xml).context.xml.indexOf("div")-1).indexOf("/content")-1) : jQuery(xml).find("content").html();
+                    //var zpcontent = (browser_is_IE) ? jQuery(jQuery(xml).context.xml).find("content").html() : jQuery(xml).find("content").html();
+                    
                     citation = "<div class='zp-Entry' rel='"+jQuery(xml).find("zapi\\:key").text()+"'>\n"
-                            + jQuery(xml).find("content").html()
+                            + zpcontent
                             +"</div>\n\n";
                     jQuery('div#zp-Zotpress').append(citation);
                     
@@ -127,49 +184,89 @@
                     <?php } else { ?>
                     jQuery(xml).find("entry").each(function()
                     {
+                        var zpcontent = (browser_is_IE) ? jQuery(this).context.xml.substr(jQuery(this).context.xml.indexOf("div")-1).substr(0, jQuery(this).context.xml.substr(jQuery(this).context.xml.indexOf("div")-1).indexOf("/content")-1) : jQuery(this).find("content").html();
+                        //var zpcontent = (browser_is_IE) ? jQuery(jQuery(this).context.xml).find("content").html() : jQuery(this).find("content").html();
+                        
                         citation = "<div class='zp-Entry' rel='"+jQuery(this).find("zapi\\:key").text()+"'>\n"
-                                + jQuery(this).find("content").html()
+                                + zpcontent
                                 +"</div>\n\n";
                         jQuery('div#zp-Zotpress').append(citation);
                     });
                     <?php } ?>
                     
                     // Citation Images
-                    <?php if ($image != "no") { ?>
-                    jQuery(xml).find("zpimage").each(function()
+                    <?php if ($image == "yes") { ?>
+                    var xmlUriCitationImages = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'
+                                                + 'account_type='+account_type+'&api_user_id='+api_user_id+'&public_key='+public_key
+                                                +'&displayImages=true';
+                                                //alert(xmlUriCitationImages);
+                    
+                    // Grab Images
+                    jQuery.get(xmlUriCitationImages, {}, function(xmlImages)
                     {
-                        jQuery('div.zp-Entry[rel='+jQuery(this).attr('citation_id')+']').addClass("zp-Image").prepend("<div class='zp-Entry-Image' ><div class='zp-Entry-Image-Crop'><img src='"+jQuery(this).attr('image_url')+"' alt='image' /></div></div>\n");
-                    });
+                        if (browser_is_IE)
+                        {
+                            xmlImages = createXmlDOMObject (xmlImages);
+                        }
+                        
+                        jQuery(xmlImages).find("zpimage").each(function()
+                        {
+                            var zpimage = jQuery(this);
+                            
+                            jQuery('div.zp-Entry[rel='+jQuery(this).attr('citation_id')+']').addClass("zp-Image").prepend("<div class='zp-Entry-Image' ><div class='zp-Entry-Image-Crop'><img src='"+jQuery(this).attr('image_url')+"' alt='image' /></div></div>\n");
+                            
+                            //jQuery('div#zp-Citation-'+zpimage.attr('citation_id')).livequery(function() {
+                            //    jQuery(this).append("<img src='"+zpimage.attr('image_url')+"' alt='image' />\n");
+                            //});
+                            //jQuery('div.zp-Entry-Image[rel='+jQuery(this).attr('citation_id')+'] a').livequery(function() {
+                            //    jQuery(this).attr("href", jQuery('div.zp-Entry-Image[rel='+zpimage.attr('citation_id')+'] a').attr("href")+"&update=true&image_url="+zpimage.attr('image_url'));
+                            //});
+                        });
+                        
+                    }, "XML");
+                    
+                    //jQuery(xml).find("zpimage").each(function()
+                    //{
+                    //    jQuery('div.zp-Entry[rel='+jQuery(this).attr('citation_id')+']').addClass("zp-Image").prepend("<div class='zp-Entry-Image' ><div class='zp-Entry-Image-Crop'><img src='"+jQuery(this).attr('image_url')+"' alt='image' /></div></div>\n");
+                    //});
                     <?php } ?>
                     
                     <?php } else if ($data_type == "tags") { ?>
                     
                     // TAGS
+                    
+                    var tags = ""
+                    
                     jQuery(xml).find("entry").each(function()
                     {
-                        tags = "<div class='zp-Entry'>\n"
+                        tags += "<li class='zp-Entry'>\n"
                                 + jQuery(this).find("title").text()
-                                +"</div>\n\n";
-                        jQuery('div#zp-Zotpress').append(tags);
+                                +"</li>\n\n";
                     });
+                    
+                    jQuery('div#zp-Zotpress').append("<ul class='zp-Entries'>\n"+tags+"</ul>\n\n");
                     
                     <?php } else { ?>
                     
                     // COLLECTIONS
+                    
+                    var collections = "";
                     jQuery(xml).find("entry").each(function()
                     {
-                        collections = "<div class='zp-Entry'>\n"
+                        collections += "<li class='zp-Entry'>\n"
                                 + jQuery(this).find("title").text()
-                                +"</div>\n\n";
-                        jQuery('div#zp-Zotpress').append(collections);
+                                +"</li>\n\n";
                     });
+                    
+                    jQuery('div#zp-Zotpress').append("<ul class='zp-Entries'>\n"+collections+"</ul>\n\n");
                     
                     <?php } ?>
                     
                 <?php } ?>
                 
                 jQuery('div#zp-Zotpress span.zp-Loading').remove();
-            });
+                
+            }, "XML");
         }
         
         <?php

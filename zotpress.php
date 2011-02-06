@@ -49,7 +49,7 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 // ADMIN -----------------------------------------------------------------------------------------
     
-    function Zotpress_admin_head()
+    function Zotpress_admin_footer()
     {
         // Connect to database
         global $wpdb;
@@ -59,7 +59,22 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
         $zp_accounts_total = $wpdb->num_rows;
         
         if ($zp_accounts_total > 0)
+        {
+            ?>
+<script type="text/javascript">
+    
+    jQuery(document).ready(function()
+    {
+        <?php
+            include('zotpress.display.essentials.php');
             include('zotpress.display.php');
+        ?>
+    });
+    
+</script>
+<?php
+
+        }
     }
     
     function Zotpress_admin_scripts() {
@@ -71,6 +86,8 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
         wp_enqueue_script('jquery.dotimeout.min.js');
         wp_register_script('jquery.qtip-1.0.0-rc3.js', ZOTPRESS_PLUGIN_URL . 'jquery.qtip-1.0.0-rc3.js', array('jquery'));
         wp_enqueue_script('jquery.qtip-1.0.0-rc3.js');
+        wp_register_script('jquery.livequery.js', ZOTPRESS_PLUGIN_URL . 'jquery.livequery.js', array('jquery'));
+        wp_enqueue_script('jquery.livequery.js');
     }
     
     function Zotpress_admin_styles() {
@@ -123,6 +140,11 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
         
         else
         {
+            global $wpdb;
+            
+                    $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
+            
+        $zp_accounts_total = $wpdb->num_rows;
             include('zotpress.default.php');
         }
         
@@ -204,7 +226,7 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
     if (isset($_GET['page']) && $_GET['page'] == 'Zotpress') {
         add_action('admin_print_scripts', 'Zotpress_admin_scripts');
         add_action('admin_print_styles', 'Zotpress_admin_styles');
-        add_action('admin_head', 'Zotpress_admin_head');
+        add_action('admin_footer', 'Zotpress_admin_footer');
     }
     
     add_action('admin_menu', 'Zotpress_admin_menu');

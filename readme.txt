@@ -1,13 +1,13 @@
 === Plugin Name ===
 Contributors: kseaborn
 Plugin Name: Zotpress
+Plugin URI: http://katieseaborn.com/plugins/
 Tags: zotero, zotpress, citation manager, citations, citation, bibliography, bibliographies, reference, references,reference list, academic, academia, scholar, scholarly
 Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.0.4
-Stable tag: 1.0
-Version: 1.0
+Stable tag: 1.1
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -25,23 +25,15 @@ Features:
 * Add both user and group Zotero accounts
 * And more!
 
+Tested in Firefox 3 (Mac/Win) and IE8.
+
 == Installation ==
 
 1. Upload the folder `zotpress` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Place the `[zotpress]` shortcode in your blog entry
 
-== Screenshots ==
-
-1. Display and filter your Zotero citations
-2. Manage your Zotero accounts
-
-== Changelog ==
-
-= 1.0 =
-* Zotpress makes its debut.
-
-== Shortcode ==
+**Shortcode**
 
 You can display your Zotero citations in a number of ways. To display a complete list of citations for all accounts in the default bibliography style (APA), simply use this shortcode:
 
@@ -65,10 +57,23 @@ Here's a list of parameters you can use to display projects in different ways:
 * limit: limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]
 * image: whether or not to display the citation's image, if there is one. Options: yes, no [default]
 
-== An Example ==
+**An Example**
 
 An example of the shortcode using parameters is:
 
 [zotpress collection="ZKDTKM3X" limit="5"]
 
 This shortcode will display a list of five citations from the collection with the key "ZKDTKM3X". 
+
+== Screenshots ==
+
+1. Display and filter your Zotero citations
+2. Manage your Zotero accounts
+
+== Changelog ==
+
+= 1.0 =
+* Zotpress makes its debut.
+
+= 1.1 =
+* Fixed up the readme.txt. Added a friendly redirect for new users. Made IE8-compliant. Moved some JS calls to footer. Now selectively loads some JS. Made tags and collections into lists for easier formatting.

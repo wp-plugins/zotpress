@@ -23,6 +23,7 @@
         
         #adminmenu .current .wp-menu-image img {
             opacity: 1.0;
+            filter: alpha(opacity = 100);
         }
         
         
@@ -127,6 +128,7 @@
         }
         div#zp-Zotpress div.zp-Entry-Image.hover img {
             opacity: 0.25;
+            filter: alpha(opacity = 25);
         }
         
         div#zp-Zotpress div.zp-Entry-Image div.bg {
@@ -221,6 +223,7 @@
         /* START FILTER */
         
         div#zp-Zotpress div#zp-Filter {
+            background: #eee;
             background: -moz-linear-gradient(center bottom , #DDDDDD, #f1f1f1) repeat scroll 0 0 transparent;
             border-radius: 5px;
             -moz-border-radius: 5px;
@@ -292,6 +295,7 @@
         }
 
         div#zp-Zotpress div#zp-AccountsHeader {
+            background: #eee;
             background: -moz-linear-gradient(center bottom , #DDDDDD, #f1f1f1) repeat scroll 0 0 transparent;
             border-radius: 3px;
             -moz-border-radius: 3px;
@@ -320,6 +324,10 @@
             float: none;
             margin: 3px 0 0 0;
             min-height: 28px;
+        }
+
+        div#zp-Zotpress div#zp-AccountsList p {
+            padding: 1px 0 0 10px;
         }
         
         div#zp-Zotpress div#zp-AccountsList div.zp-Account {
@@ -414,6 +422,7 @@
         }
         
         div#zp-Zotpress form#zp-Add select[name="account_type"] {
+            clear: both;
             width: 70px;
         }
         div#zp-Zotpress form#zp-Add input[name="api_user_id"] {
@@ -440,17 +449,10 @@
             font-size: 11px;
             font-style: italic;
         }
-        div#zp-Zotpress form#zp-Add label span.zp-Help {
-            background: transparent url('help.png') no-repeat top left;
+        div#zp-Zotpress form#zp-Add label.zp-Help {
+            background: transparent url('help.png') no-repeat right 3px;
             cursor: help;
-            display: block;
-            float: right;
-            letter-spacing: -1000px;
-            margin: 3px -17px 0 0;
-            overflow: hidden;
-            text-indent: -5000px;
-            width: 13px;
-            height: 13px;
+            padding-right: 20px;
         }
         div#zp-Zotpress form#zp-Add label span#zp-ID-Label {
             color: #333;
@@ -519,3 +521,30 @@
         div#zp-Zotpress div.zp-Success {
             background: url(success_bg.gif) no-repeat top left;
         }
+
+	/* START OF DOWNLOAD CSS */
+	a.zp-AddAccount,
+	a:link.zp-AddAccount,
+	a:visited.zp-AddAccount,
+	a:active.zp-AddAccount,
+	a:hover:link.zp-AddAccount
+	{
+            border-radius: 5px;
+            -moz-border-radius: 5px;
+            background: #ff6600;
+            color: #fff;
+            display: block;
+            font-weight: bold;
+            float: left;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            text-transform: uppercase;
+	}
+	a:hover.zp-AddAccount {
+		background: #fac200;
+	}
+	a:active.zp-AddAccount {
+		background: #666;
+	}
+	/* END OF DOWNLOAD CSS */
