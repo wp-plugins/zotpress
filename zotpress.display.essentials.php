@@ -11,12 +11,12 @@
         // GET ACCOUNTS
         var accounts = new Array();
         
-        <?php
-        
-        foreach ($zp_accounts as $zp_account)
-            echo "accounts[accounts.length] = {'id': '".$zp_account->id."', 'account_type': '".$zp_account->account_type."', 'api_user_id': '".$zp_account->api_user_id."', 'public_key': '".$zp_account->public_key."', 'nickname': '".addslashes($zp_account->nickname)."'};\n";
-            
-        ?>
+<?php
+
+foreach ($zp_accounts as $zp_account)
+    echo "        accounts[accounts.length] = {'id': '".$zp_account->id."', 'account_type': '".$zp_account->account_type."', 'api_user_id': '".$zp_account->api_user_id."', 'public_key': '".$zp_account->public_key."', 'nickname': '".addslashes($zp_account->nickname)."'};\n";
+    
+?>
         
         
         // DISPLAY ACCOUNTS

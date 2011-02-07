@@ -77,7 +77,7 @@
             
             <h4>Why do citations take so long to load?</h4>
             
-            <p>I've found the Zotero server to be a little slow. Not much any of us can do about it.</p>
+            <p>I've found the Zotero server to be a wee bit slow. Not much any of us can do about it.</p>
             
             <h4>Why are only 99 citations listed? I know I have more.</h4>
             
@@ -92,7 +92,7 @@
             <p>
                 There are two ways, depending on the age of the group.
                 Older Zotero groups will have their group ID listed in the URL: a five-digit number after "groups". New Zotero groups may hide their group ID behind a moniker.
-                If you're not the group owner, you can login to <a href="http://www.zotero.org/">Zotero</a>, click "Groups", and then hover over or click on "Manage Group" under the group's title.
+                If you're the group owner, you can login to <a href="http://www.zotero.org/">Zotero</a>, click on "Groups", and then hover over or click on "Manage Group" under the group's title.
                 Everyone else can view the RSS Feed of the group and note the group id in the URL.
             </p>
             

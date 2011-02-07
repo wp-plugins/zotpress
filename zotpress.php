@@ -6,12 +6,15 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero collection on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 1.0
+    Version: 1.2
     Author URI: http://katieseaborn.com
     
 */
 
 define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
+
+$shortcode_displayed = false;
+global $shortcode_displayed;
 
 
 // INSTALL -----------------------------------------------------------------------------------------
@@ -60,14 +63,16 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
         
         if ($zp_accounts_total > 0)
         {
-            ?>
+?>
 <script type="text/javascript">
     
     jQuery(document).ready(function()
     {
         <?php
             include('zotpress.display.essentials.php');
-            include('zotpress.display.php');
+            
+            if (!isset($_GET['accounts']) || !isset($_GET['help']))
+                include('zotpress.display.php');
         ?>
     });
     
@@ -142,10 +147,10 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
         {
             global $wpdb;
             
-                    $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
+            $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
             
-        $zp_accounts_total = $wpdb->num_rows;
-            include('zotpress.default.php');
+            $zp_accounts_total = $wpdb->num_rows;
+                include('zotpress.default.php');
         }
         
         
@@ -210,15 +215,253 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
                 $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
                 
             $zp_accounts_total = $wpdb->num_rows;
+            $zp_instance_id = "zotpress-".rand(100,999);
             
             if ($zp_accounts_total > 0)
             {
                 include('zotpress.shortcode.php');
-                return "<div id='zp-Zotpress'><span class='zp-Loading'><span>loading</span></span></div>\n";
+                return "<div id='".$zp_instance_id."' class='zp-Zotpress'><span class='zp-Loading'><span>loading</span></span></div>\n";
             }
+            
+            $shortcode_displayed = true;
     }
     
 // SHORTCODE -----------------------------------------------------------------------------------------
+
+
+
+// WIDGET ----------------------------------------------------------------------------------------------
+    
+    class ZotpressWidget extends WP_Widget {
+        
+        function ZotpressWidget()
+        {
+            $widget_ops = array('description' => __('Display your citations on your sidebar', 'zp-ZotpressWidget'));
+	    parent::WP_Widget(false, __('Zotpress Widget'), $widget_ops);
+            //parent::WP_Widget( false, $name = 'Zotpress Widget' );
+        }
+    
+        function widget( $args, $instance )
+        {
+            extract( $args );
+            
+            // ARGUMENTS
+            $title = apply_filters('widget_title', $instance['title'] );
+            
+            $api_user_id = $instance['api_user_id'];
+            $nickname = isset( $instance['nickname'] ) ? $instance['nickname'] : false;
+            $author = isset( $instance['author'] ) ? $instance['author'] : false;
+            
+            $data_type = isset( $instance['data_type'] ) ? $instance['data_type'] : "items";
+            $collection_id = isset( $instance['collection_id'] ) ? $instance['collection_id'] : false;
+            $item_key = isset( $instance['item_key'] ) ? $instance['item_key'] : false;
+            $tag_name = isset( $instance['tag_name'] ) ? $instance['tag_name'] : false;
+            
+            $content = isset( $instance['content'] ) ? $instance['content'] : "bib";
+            $style = isset( $instance['style'] ) ? $instance['style'] : "apa";
+            $order = isset( $instance['order'] ) ? $instance['order'] : false;
+            $sort = isset( $instance['sort'] ) ? $instance['sort'] : false;
+            $limit = isset( $instance['limit'] ) ? $instance['limit'] : "5";
+            
+            $image = isset( $instance['image'] ) ? $instance['image'] : "no";
+            
+            // Required for theme
+            echo $before_widget;
+            
+            if ($title)
+                echo $before_title . $title . $after_title;
+            
+            // DISPLAY
+            
+            if (!$shortcode_displayed)
+            {
+                // Connect to database
+                global $wpdb;
+                
+                if ($api_user_id != false)
+                    $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
+                else if ($nickname != false)
+                    $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
+                else
+                    $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
+            }
+            
+            $zp_accounts_total = $wpdb->num_rows;
+            $zp_instance_id = "zotpress-".rand(100,999);
+            
+            if ($zp_accounts_total > 0)
+            {
+                include('zotpress.shortcode.php');
+                echo "<div id='".$zp_instance_id."' class='zp-Zotpress zp-ZotpressWidget'><span class='zp-Loading'><span>loading</span></span></div>\n";
+            }
+            else
+            {
+                echo "<div id='".$zp_instance_id."' class='zp-Zotpress zp-ZotpressWidget'>Sorry, no citations found.</div>\n";
+            }
+            
+            // Required for theme
+            echo $after_widget;
+        }
+        
+        function update( $new_instance, $old_instance )
+        {
+            $instance = $old_instance;
+            
+            $instance['title'] = strip_tags( $new_instance['title'] );
+            
+            $instance['api_user_id'] = strip_tags( $new_instance['api_user_id'] );
+            $instance['nickname'] = strip_tags($new_instance['nickname']);
+            $instance['author'] = str_replace(" ", "+", strip_tags($new_instance['author']));
+            
+            $instance['data_type'] = strip_tags( $new_instance['data_type'] );
+            $instance['collection_id'] = strip_tags($new_instance['collection_id']);
+            $instance['item_key'] = strip_tags($new_instance['item_key']);
+            $instance['tag_name'] = str_replace(" ", "+", strip_tags($new_instance['tag_name']));
+            
+            $instance['content'] = strip_tags( $new_instance['content'] );
+            $instance['style'] = strip_tags($new_instance['style']);
+            $instance['order'] = strip_tags($new_instance['order']);
+            $instance['sort'] = strip_tags($new_instance['sort']);
+            $instance['limit'] = strip_tags($new_instance['limit']);
+            if (intval($instance['limit']) > 99)
+                $instance['limit'] = "99";
+            if (trim($instance['limit']) == "")
+                $instance['limit'] = "5";
+            
+            $instance['image'] = strip_tags($new_instance['image']);
+            
+            return $instance;
+        }
+        
+        function form( $instance )
+        {
+            $title = esc_attr( $instance['title'] );
+            ?>
+            
+                <style type="text/css">
+                <!--
+                    span.req {
+                        color: #CC0066;
+                        font-weight: bold;
+                        font-size: 1.4em;
+                        vertical-align: -20%;
+                    }
+                    
+                    div.zp-ZotpressWidget-Required {
+                        border-radius: 10px;
+                        -moz-border-radius: 10px;
+                        background-color: #fafafa;
+                        margin: 0 0 10px 0;
+                        padding: 10px 10px 1px 10px;
+                    }
+                    
+                    div.zp-ZotpressWidget-Required .widefat {
+                        width: 98%;
+                    }
+                -->
+                </style>
+            
+		<p>
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>">Widget Title:</label>
+			<input id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" class="widefat" />
+		</p>
+                
+                <div class="zp-ZotpressWidget-Required">
+                    
+                    <p>
+                        Fill in <strong>one</strong> of the below. Req'd.
+                    </p>
+                    
+                    <p>
+                            <label for="<?php echo $this->get_field_id( 'api_user_id' ); ?>">API User/Group ID: <span class="req">*</span></label>
+                            <input id="<?php echo $this->get_field_id( 'api_user_id' ); ?>" name="<?php echo $this->get_field_name( 'api_user_id' ); ?>" value="<?php echo $instance['api_user_id']; ?>" class="widefat" />
+                    </p>
+                    
+                    <p>
+                            <label for="<?php echo $this->get_field_id( 'nickname' ); ?>">Nickname: <span class="req">*</span></label>
+                            <input id="<?php echo $this->get_field_id( 'nickname' ); ?>" name="<?php echo $this->get_field_name( 'nickname' ); ?>" value="<?php echo $instance['nickname']; ?>" class="widefat" />
+                    </p>
+                    
+                </div>
+                
+                <p>
+			<label for="<?php echo $this->get_field_id( 'data_type' ); ?>">Data Type:</label>
+			<select id="<?php echo $this->get_field_id( 'data_type' ); ?>" name="<?php echo $this->get_field_name( 'data_type' ); ?>" class="widefat">
+				<option <?php if ( 'items' == $instance['data_type'] ) echo 'selected="selected"'; ?>>items</option>
+				<option <?php if ( 'tags' == $instance['data_type'] ) echo 'selected="selected"'; ?>>tags</option>
+				<option <?php if ( 'collections' == $instance['data_type'] ) echo 'selected="selected"'; ?>>collections</option>
+			</select>
+		</p>
+                
+		<p>
+			<label for="<?php echo $this->get_field_id( 'author' ); ?>">Enter Author to List by Author:</label>
+			<input id="<?php echo $this->get_field_id( 'author' ); ?>" name="<?php echo $this->get_field_name( 'author' ); ?>" value="<?php echo $instance['author']; ?>" class="widefat" />
+		</p>
+                
+		<p>
+			<label for="<?php echo $this->get_field_id( 'collection_id' ); ?>">Enter Collection ID to List by Collection:</label>
+			<input id="<?php echo $this->get_field_id( 'collection_id' ); ?>" name="<?php echo $this->get_field_name( 'collection_id' ); ?>" value="<?php echo $instance['collection_id']; ?>" class="widefat" />
+		</p>
+                
+		<p>
+			<label for="<?php echo $this->get_field_id( 'item_key' ); ?>">Enter Item Key to List by Citation:</label>
+			<input id="<?php echo $this->get_field_id( 'item_key' ); ?>" name="<?php echo $this->get_field_name( 'item_key' ); ?>" value="<?php echo $instance['item_key']; ?>" class="widefat" />
+		</p>
+                
+		<p>
+			<label for="<?php echo $this->get_field_id( 'tag_name' ); ?>">Enter Tag Name to List by Tag:</label>
+			<input id="<?php echo $this->get_field_id( 'tag_name' ); ?>" name="<?php echo $this->get_field_name( 'tag_name' ); ?>" value="<?php echo $instance['tag_name']; ?>" class="widefat" />
+		</p>
+                
+                <p>
+			<label for="<?php echo $this->get_field_id( 'content' ); ?>">Content:</label>
+			<select id="<?php echo $this->get_field_id( 'content' ); ?>" name="<?php echo $this->get_field_name( 'content' ); ?>" class="widefat">
+				<option <?php if ( 'bib' == $instance['content'] ) echo 'selected="selected"'; ?>>bib</option>
+				<option <?php if ( 'html' == $instance['content'] ) echo 'selected="selected"'; ?>>html</option>
+			</select>
+		</p>
+                
+		<p>
+			<label for="<?php echo $this->get_field_id( 'style' ); ?>">Style:</label>
+			<input id="<?php echo $this->get_field_id( 'style' ); ?>" name="<?php echo $this->get_field_name( 'style' ); ?>" value="<?php echo $instance['style']; ?>" class="widefat" />
+		</p>
+                
+		<p>
+			<label for="<?php echo $this->get_field_id( 'order' ); ?>">Order By:</label>
+			<input id="<?php echo $this->get_field_id( 'order' ); ?>" name="<?php echo $this->get_field_name( 'order' ); ?>" value="<?php echo $instance['order']; ?>" class="widefat" />
+		</p>
+                
+                <p>
+			<label for="<?php echo $this->get_field_id( 'sort' ); ?>">Sort Order:</label>
+			<select id="<?php echo $this->get_field_id( 'sort' ); ?>" name="<?php echo $this->get_field_name( 'sort' ); ?>" class="widefat">
+				<option <?php if ( 'desc' == $instance['sort'] ) echo 'selected="selected"'; ?>>desc</option>
+				<option <?php if ( 'asc' == $instance['sort'] ) echo 'selected="selected"'; ?>>asc</option>
+			</select>
+		</p>
+                
+		<p>
+			<label for="<?php echo $this->get_field_id( 'limit' ); ?>">Limit:</label>
+			<input id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" value="<?php echo $instance['limit']; ?>" class="widefat" />
+		</p>
+                
+                <p>
+			<label for="<?php echo $this->get_field_id( 'image' ); ?>">Show Image?:</label>
+			<select id="<?php echo $this->get_field_id( 'image' ); ?>" name="<?php echo $this->get_field_name( 'image' ); ?>" class="widefat">
+				<option <?php if ( 'no' == $instance['image'] ) echo 'selected="selected"'; ?>>no</option>
+				<option <?php if ( 'yes' == $instance['image'] ) echo 'selected="selected"'; ?>>yes</option>
+			</select>
+		</p>
+                
+            <?php
+        }
+    }
+    
+    function ZotpressWidgetInit() {
+        register_widget( 'ZotpressWidget' );
+    }
+
+// WIDGET ----------------------------------------------------------------------------------------------
+
 
 
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
@@ -232,6 +475,7 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
     add_action('admin_menu', 'Zotpress_admin_menu');
 
     add_shortcode('zotpress', 'Zotpress_func');
+    add_action( 'widgets_init', 'ZotpressWidgetInit' );
     
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
 

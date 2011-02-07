@@ -34,7 +34,7 @@
                 </div>
             </div>
             
-            <div id="zp-List" class="zp-Loading">loading</div>
+            <div id="zp-List">loading</div>
             
         </div>
         

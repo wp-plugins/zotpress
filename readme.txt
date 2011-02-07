@@ -77,3 +77,11 @@ This shortcode will display a list of five citations from the collection with th
 
 = 1.1 =
 * Fixed up the readme.txt. Added a friendly redirect for new users. Made IE8-compliant. Moved some JS calls to footer. Now selectively loads some JS. Made tags and collections into lists for easier formatting.
+
+= 1.2 =
+* Optimized JavaScript functions. Fixed some grammatical errors on the Help page. More selective loading of JavaScript. And most importantly ... added a Zotpress widget option. This also means you can have more than one Zotpress call on a single page.
+
+== Upgrade Notice ==
+
+= 1.2 =
+Lots of little issues fixed. Plus, you can now use a Zotpress widget instead of shortcode.

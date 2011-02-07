@@ -171,7 +171,7 @@
             -moz-border-radius: 10px;
             background-color: #f3f3f3;
             margin: 0.75em 0 30px 0;
-            width: 750px;
+            width: 780px;
         }
         
         div#zp-Zotpress form#zp-Image fieldset {
@@ -195,7 +195,7 @@
         }
         
         div#zp-Zotpress div.zp-Citation {
-            width: 750px;
+            width: 780px;
         }
         
         div#zp-Zotpress div.zp-Citation div.csl-bib-body {
@@ -229,7 +229,7 @@
             -moz-border-radius: 5px;
             margin: 0 0 20px 0;
             width: 100%;
-            min-width: 750px;
+            min-width: 780px;
             min-height: 45px;
         }
         div#zp-Zotpress div#zp-FilterInner {
@@ -291,7 +291,7 @@
             -moz-border-radius: 5px;
             margin: 1em 0;
             padding: 3px;
-            width: 745px;
+            width: 775px;
         }
 
         div#zp-Zotpress div#zp-AccountsHeader {
@@ -367,7 +367,7 @@
         }
         div#zp-Zotpress div#zp-AccountsHeader span.nickname,
         div#zp-Zotpress div#zp-AccountsList div.zp-Account span.nickname {
-            width: 210px;
+            width: 240px;
         }
         div#zp-Zotpress div#zp-AccountsHeader span.delete,
         div#zp-Zotpress div#zp-AccountsList div.zp-Account span.delete {
@@ -396,7 +396,7 @@
             background-color: #f3f3f3;
             float: left;
             margin: 0.75em 0 30px 0;
-            width: 750px;
+            width: 780px;
         }
         div#zp-Zotpress form#zp-Add fieldset {
             background: transparent;

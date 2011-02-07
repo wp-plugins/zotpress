@@ -1,26 +1,26 @@
 <style type="text/css">
 <!--
-    div#zp-Zotpress {
+    div.zp-Zotpress {
         margin: 1em 0;
     }
-    div#zp-Zotpress div.zp-Entry {
+    div.zp-Zotpress div.zp-Entry {
         clear: both;
     }
-    div#zp-Zotpress div.zp-Entry-Image {
+    div.zp-Zotpress div.zp-Entry-Image {
         float: left;
     }
-    div#zp-Zotpress div.zp-Entry-Image-Crop {
+    div.zp-Zotpress div.zp-Entry-Image-Crop {
         overflow: hidden;
         width: 150px;
         height: 150px;
     }
-    div#zp-Zotpress div.zp-Entry.zp-Image div.csl-bib-body {
+    div.zp-Zotpress div.zp-Entry.zp-Image div.csl-bib-body {
         margin: 0 0 15px 170px;
     }
-    div#zp-Zotpress div.csl-bib-body {
+    div.zp-Zotpress div.csl-bib-body {
         margin: 0 0 15px 0;
     }
-    div#zp-Zotpress span.zp-Loading {
+    div.zp-Zotpress span.zp-Loading {
         border: 1px solid #ddd;
         border-radius: 5px;
         -moz-border-radius: 5px;
@@ -31,7 +31,7 @@
         width: 33px;
         height: 32px;
     }
-    div#zp-Zotpress span.zp-Loading span {
+    div.zp-Zotpress span.zp-Loading span {
         visibility: hidden;
     }
 -->
@@ -99,7 +99,6 @@
                                         + '&order=<?php echo $order; ?>'
                                         + '&sort=<?php echo $sort; ?>'
                                         + '&author=<?php echo $author; ?>';
-                                        //alert(xmlUriCitations);
             
             // Grab Zotero request
             jQuery.get(xmlUriCitations, {}, function(xml)
@@ -154,7 +153,7 @@
                                 citation = "<div class='zp-Entry' rel='"+jQuery(xmlAuthorCitations).find("zapi\\:key").text()+"'>\n"
                                         + zpcontent
                                         +"</div>\n\n";
-                                jQuery('div#zp-Zotpress').append(citation);
+                                jQuery('div#<?php echo $zp_instance_id; ?>').append(citation);
                                 
                             }, "XML");
                         }
@@ -168,7 +167,7 @@
                     <?php if ($data_type == "items") { ?>
                     
                     // Collection Title
-                    <?php if ($collection_id !== false && trim($collection_id) != "") { ?>jQuery('div#zp-Zotpress').append("<h3>Citations from the \"<?php echo $collection_id; ?>\" Collection</h3>");<?php } ?>
+                    <?php if ($collection_id !== false && trim($collection_id) != "") { ?>jQuery('div#<?php echo $zp_instance_id; ?>').append("<h3>Citations from the \"<?php echo $collection_id; ?>\" Collection</h3>");<?php } ?>
                     
                     // SINGLE CITATION
                     <?php if ($item_key !== false && trim($item_key) != "") { ?>
@@ -178,7 +177,7 @@
                     citation = "<div class='zp-Entry' rel='"+jQuery(xml).find("zapi\\:key").text()+"'>\n"
                             + zpcontent
                             +"</div>\n\n";
-                    jQuery('div#zp-Zotpress').append(citation);
+                    jQuery('div#<?php echo $zp_instance_id; ?>').append(citation);
                     
                     // MULTIPLE CITATIONS
                     <?php } else { ?>
@@ -190,7 +189,7 @@
                         citation = "<div class='zp-Entry' rel='"+jQuery(this).find("zapi\\:key").text()+"'>\n"
                                 + zpcontent
                                 +"</div>\n\n";
-                        jQuery('div#zp-Zotpress').append(citation);
+                        jQuery('div#<?php echo $zp_instance_id; ?>').append(citation);
                     });
                     <?php } ?>
                     
@@ -244,7 +243,7 @@
                                 +"</li>\n\n";
                     });
                     
-                    jQuery('div#zp-Zotpress').append("<ul class='zp-Entries'>\n"+tags+"</ul>\n\n");
+                    jQuery('div#<?php echo $zp_instance_id; ?>').append("<ul class='zp-Entries'>\n"+tags+"</ul>\n\n");
                     
                     <?php } else { ?>
                     
@@ -258,13 +257,13 @@
                                 +"</li>\n\n";
                     });
                     
-                    jQuery('div#zp-Zotpress').append("<ul class='zp-Entries'>\n"+collections+"</ul>\n\n");
+                    jQuery('div#<?php echo $zp_instance_id; ?>').append("<ul class='zp-Entries'>\n"+collections+"</ul>\n\n");
                     
                     <?php } ?>
                     
                 <?php } ?>
                 
-                jQuery('div#zp-Zotpress span.zp-Loading').remove();
+                jQuery('div#<?php echo $zp_instance_id; ?> span.zp-Loading').remove();
                 
             }, "XML");
         }
