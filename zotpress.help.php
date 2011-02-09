@@ -51,11 +51,9 @@
                 <li><code>image</code> whether or not to display the citation's image, if there is one. Options: yes, no [default]</li>
             </ul>
             
-            <?php /* ?>
             <ul>
-                <li><code>curl</code> try Curl if you're server is strict. Option: true</li>
+                <li><code>curl</code> force cURL. If this doesn't work, your server doesn't support cURL. Option: true</li>
             </ul>
-            <?php */ ?>
             
             <h3>An Example</h3>
             

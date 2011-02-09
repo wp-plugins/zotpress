@@ -7,7 +7,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.0.4
-Stable tag: 1.2
+Stable tag: 1.3
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -81,7 +81,13 @@ This shortcode will display a list of five citations from the collection with th
 = 1.2 =
 * Optimized JavaScript functions. Fixed some grammatical errors on the Help page. More selective loading of JavaScript. And most importantly ... added a Zotpress widget option. This also means you can have more than one Zotpress call on a single page.
 
+= 1.3 =
+* Added cURL, which is (maybe?) quicker, (definitely?) safer, and (more likely to be?) supported. Requests default to cURL first now.
+
 == Upgrade Notice ==
 
 = 1.2 =
 Lots of little issues fixed. Plus, you can now use a Zotpress widget instead of shortcode.
+
+= 1.3 =
+Implemented cURL, which should help those having read/write issues on their server.

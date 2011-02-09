@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero collection on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 1.2
+    Version: 1.3
     Author URI: http://katieseaborn.com
     
 */

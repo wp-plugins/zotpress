@@ -118,21 +118,39 @@
 				else
 					$url = "https://api.zotero.org/".$urlAccountType.$_GET['api_user_id']."/".$urlDataType."?".str_replace("&","?",$content).$style.$order.$sort.$limit;
 			}
-				
-			//echo $url;
 			
 			
 			// DISPLAY
 			
-			if (isset($_GET['curl']) && $_GET['curl'] == "true")
-			{
-				// Eek! Perhaps later.
+			function GetXMLWithcUrl($url, $referer, $timeout, $header){
+				// Thanks to http://www.php2k.com/blog/php/advanced-php/alternative-to-file_get_contents-using-curl/
+				if(!isset($timeout))
+					$timeout=30;
+					$curl = curl_init();
+					if(strstr($referer,"://")){
+					curl_setopt ($curl, CURLOPT_REFERER, $referer);
+				}
+				curl_setopt ($curl, CURLOPT_URL, $url);
+				curl_setopt ($curl, CURLOPT_TIMEOUT, $timeout);
+				curl_setopt ($curl, CURLOPT_USERAGENT, sprintf("Mozilla/%d.0",rand(4,5)));
+				curl_setopt ($curl, CURLOPT_HEADER, (int)$header);
+				curl_setopt ($curl, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt ($curl, CURLOPT_SSL_VERIFYPEER, 0);
+				$html = curl_exec ($curl);
+				curl_close ($curl);
+				return $html;
 			}
-			else // Use the regular way
-			{
-				$xml =  file_get_contents($url);
-				
-			}
+					
+			if (isset($_GET['curl']) && trim($_GET['curl'] != ""))
+				if  (in_array ('curl', get_loaded_extensions()))
+					$xml = GetXMLWithcUrl($url, 'http://google.com', '30');
+				else // Use the regular away anyways
+					$xml =  file_get_contents($url);
+			else
+				if  (in_array ('curl', get_loaded_extensions()))
+					$xml = GetXMLWithcUrl($url, 'http://google.com', '30');
+				else // Use the regular away
+					$xml =  file_get_contents($url);
 		}
 		
 		
