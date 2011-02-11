@@ -28,37 +28,50 @@
                                         + '&api_user_id='+account.api_user_id
                                         + '&public_key='+account.public_key
                                         + '&collection_id='+collection_id
+                                        + '&curl=false'
                                         + '&limit='+limit;
             
             // Grab Citations
-            jQuery.get(xmlUriCitations, {}, function(xml)
-            {
-                if (browser_is_IE)
-                {
-                    xml = createXmlDOMObject (xml);
+            jQuery.ajax({
+                url: xmlUriCitations,
+                dataType: "XML",
+                cache: true,
+                ifModified: true,
+                success: function(xml, textStatus, jqXHR) {
+                    
+                    if (browser_is_IE)
+                    {
+                        xml = createXmlDOMObject (xml);
+                    }
+                    
+                    jQuery(xml).find("entry").each(function()
+                    {
+                        var zpcontent = (browser_is_IE) ? jQuery(jQuery(this).context.xml).find("content").html() : jQuery(this).find("content").html();
+                        
+                        var code = "<div class='zp-Entry'>\n"
+                                + "<div id='zp-Citation-"+jQuery(this).find("zapi\\:key").text()+"' class='zp-Entry-Image' rel='"+jQuery(this).find("zapi\\:key").text()+"'>\n"
+                                + "<a href='admin.php?page=Zotpress&amp;image=true&amp;account_type="+account.account_type+"&amp;api_user_id="+account.api_user_id+"&amp;citation_id="+jQuery(this).find("zapi\\:key").text()+"&amp;citation="+escape(zpcontent)+"'>"
+                                + "<span>Upload Image</span>"
+                                + "</a>\n"
+                                + "<div class='bg'></div>"
+                                + "</div>\n"
+                                + zpcontent
+                                + "<span class='zp-Entry-ID'><span>Item Key (Citation ID):</span> "+jQuery(this).find("zapi\\:key").text()+"</span>\n"
+                                +"</div>\n\n";
+                        
+                        jQuery('div#zp-List').append(code);
+                    });
+                    
+                    jQuery('div#zp-List').removeClass("zp-Loading");
+                    
+                },
+                statusCode: {304: function() {
+                    alert('The page has been updated');
+                }},
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("Error: "+errorThrown);
                 }
-                
-                jQuery(xml).find("entry").each(function()
-                {
-                    var zpcontent = (browser_is_IE) ? jQuery(jQuery(this).context.xml).find("content").html() : jQuery(this).find("content").html();
-                    
-                    var code = "<div class='zp-Entry'>\n"
-                            + "<div id='zp-Citation-"+jQuery(this).find("zapi\\:key").text()+"' class='zp-Entry-Image' rel='"+jQuery(this).find("zapi\\:key").text()+"'>\n"
-                            + "<a href='admin.php?page=Zotpress&amp;image=true&amp;account_type="+account.account_type+"&amp;api_user_id="+account.api_user_id+"&amp;citation_id="+jQuery(this).find("zapi\\:key").text()+"&amp;citation="+escape(zpcontent)+"'>"
-                            + "<span>Upload Image</span>"
-                            + "</a>\n"
-                            + "<div class='bg'></div>"
-                            + "</div>\n"
-                            + zpcontent
-                            + "<span class='zp-Entry-ID'><span>Item Key (Citation ID):</span> "+jQuery(this).find("zapi\\:key").text()+"</span>\n"
-                            +"</div>\n\n";
-                    
-                    jQuery('div#zp-List').append(code);
-                });
-                
-                jQuery('div#zp-List').removeClass("zp-Loading");
-                
-            }, "XML");
+            });
             
             
             // GET IMAGES
@@ -68,7 +81,6 @@
                                         +'&api_user_id='+account.api_user_id
                                         +'&public_key='+account.public_key
                                         +'&displayImages=true';
-                                        //alert(xmlUriCitationImages);
             
             // Grab Images
             jQuery.get(xmlUriCitationImages, {}, function(xml)

@@ -4,9 +4,9 @@
  
     Plugin Name: Zotpress
     Plugin URI: http://katieseaborn.com/plugins
-    Description: Display your Zotero collection on your Wordpress blog.
+    Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 1.3
+    Version: 1.4
     Author URI: http://katieseaborn.com
     
 */

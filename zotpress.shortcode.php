@@ -136,7 +136,6 @@
                                     + '&style=<?php echo $style; ?>'
                                     + '&order=<?php echo $order; ?>'
                                     + '&sort=<?php echo $sort; ?>';
-                                    //alert(xmlUriAuthorCitations);
                             
                             // Grab Zotero request
                             jQuery.get(xmlUriAuthorCitations, {}, function(xmlAuthorCitations)
@@ -162,73 +161,62 @@
                     
                 
                 // ALL OTHER CITATIONS
-                <? } else { ?>
+                <?php } else { ?>
                 
                     <?php if ($data_type == "items") { ?>
-                    
-                    // Collection Title
-                    <?php if ($collection_id !== false && trim($collection_id) != "") { ?>jQuery('div#<?php echo $zp_instance_id; ?>').append("<h3>Citations from the \"<?php echo $collection_id; ?>\" Collection</h3>");<?php } ?>
-                    
-                    // SINGLE CITATION
-                    <?php if ($item_key !== false && trim($item_key) != "") { ?>
-                    var zpcontent = (browser_is_IE) ? jQuery(xml).context.xml.substr(jQuery(xml).context.xml.indexOf("div")-1).substr(0, jQuery(xml).context.xml.substr(jQuery(xml).context.xml.indexOf("div")-1).indexOf("/content")-1) : jQuery(xml).find("content").html();
-                    //var zpcontent = (browser_is_IE) ? jQuery(jQuery(xml).context.xml).find("content").html() : jQuery(xml).find("content").html();
-                    
-                    citation = "<div class='zp-Entry' rel='"+jQuery(xml).find("zapi\\:key").text()+"'>\n"
-                            + zpcontent
-                            +"</div>\n\n";
-                    jQuery('div#<?php echo $zp_instance_id; ?>').append(citation);
-                    
-                    // MULTIPLE CITATIONS
-                    <?php } else { ?>
-                    jQuery(xml).find("entry").each(function()
-                    {
-                        var zpcontent = (browser_is_IE) ? jQuery(this).context.xml.substr(jQuery(this).context.xml.indexOf("div")-1).substr(0, jQuery(this).context.xml.substr(jQuery(this).context.xml.indexOf("div")-1).indexOf("/content")-1) : jQuery(this).find("content").html();
-                        //var zpcontent = (browser_is_IE) ? jQuery(jQuery(this).context.xml).find("content").html() : jQuery(this).find("content").html();
                         
-                        citation = "<div class='zp-Entry' rel='"+jQuery(this).find("zapi\\:key").text()+"'>\n"
-                                + zpcontent
-                                +"</div>\n\n";
-                        jQuery('div#<?php echo $zp_instance_id; ?>').append(citation);
-                    });
-                    <?php } ?>
-                    
-                    // Citation Images
-                    <?php if ($image == "yes") { ?>
-                    var xmlUriCitationImages = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'
-                                                + 'account_type='+account_type+'&api_user_id='+api_user_id+'&public_key='+public_key
-                                                +'&displayImages=true';
-                                                //alert(xmlUriCitationImages);
-                    
-                    // Grab Images
-                    jQuery.get(xmlUriCitationImages, {}, function(xmlImages)
-                    {
-                        if (browser_is_IE)
-                        {
-                            xmlImages = createXmlDOMObject (xmlImages);
-                        }
+                        // Collection Title
+                        <?php if ($collection_id !== false && trim($collection_id) != "") { ?>jQuery('div#<?php echo $zp_instance_id; ?>').append("<h3>Citations from the \"<?php echo $collection_id; ?>\" Collection</h3>");<?php } ?>
                         
-                        jQuery(xmlImages).find("zpimage").each(function()
-                        {
-                            var zpimage = jQuery(this);
+                            // SINGLE CITATION
+                            <?php if ($item_key !== false && trim($item_key) != "") { ?>
+                            var zpcontent = (browser_is_IE) ? jQuery(xml).context.xml.substr(jQuery(xml).context.xml.indexOf("div")-1).substr(0, jQuery(xml).context.xml.substr(jQuery(xml).context.xml.indexOf("div")-1).indexOf("/content")-1) : jQuery(xml).find("content").html();
+                            //var zpcontent = (browser_is_IE) ? jQuery(jQuery(xml).context.xml).find("content").html() : jQuery(xml).find("content").html();
                             
-                            jQuery('div.zp-Entry[rel='+jQuery(this).attr('citation_id')+']').addClass("zp-Image").prepend("<div class='zp-Entry-Image' ><div class='zp-Entry-Image-Crop'><img src='"+jQuery(this).attr('image_url')+"' alt='image' /></div></div>\n");
+                            citation = "<div class='zp-Entry' rel='"+jQuery(xml).find("zapi\\:key").text()+"'>\n"
+                                    + zpcontent
+                                    +"</div>\n\n";
+                            jQuery('div#<?php echo $zp_instance_id; ?>').append(citation);
                             
-                            //jQuery('div#zp-Citation-'+zpimage.attr('citation_id')).livequery(function() {
-                            //    jQuery(this).append("<img src='"+zpimage.attr('image_url')+"' alt='image' />\n");
-                            //});
-                            //jQuery('div.zp-Entry-Image[rel='+jQuery(this).attr('citation_id')+'] a').livequery(function() {
-                            //    jQuery(this).attr("href", jQuery('div.zp-Entry-Image[rel='+zpimage.attr('citation_id')+'] a').attr("href")+"&update=true&image_url="+zpimage.attr('image_url'));
-                            //});
-                        });
+                            // MULTIPLE CITATIONS
+                            <?php } else { ?>
+                            jQuery(xml).find("entry").each(function()
+                            {
+                                var zpcontent = (browser_is_IE) ? jQuery(this).context.xml.substr(jQuery(this).context.xml.indexOf("div")-1).substr(0, jQuery(this).context.xml.substr(jQuery(this).context.xml.indexOf("div")-1).indexOf("/content")-1) : jQuery(this).find("content").html();
+                                //var zpcontent = (browser_is_IE) ? jQuery(jQuery(this).context.xml).find("content").html() : jQuery(this).find("content").html();
+                                
+                                citation = "<div class='zp-Entry' rel='"+jQuery(this).find("zapi\\:key").text()+"'>\n"
+                                        + zpcontent
+                                        +"</div>\n\n";
+                                jQuery('div#<?php echo $zp_instance_id; ?>').append(citation);
+                            });
+                        <?php } ?>
                         
-                    }, "XML");
-                    
-                    //jQuery(xml).find("zpimage").each(function()
-                    //{
-                    //    jQuery('div.zp-Entry[rel='+jQuery(this).attr('citation_id')+']').addClass("zp-Image").prepend("<div class='zp-Entry-Image' ><div class='zp-Entry-Image-Crop'><img src='"+jQuery(this).attr('image_url')+"' alt='image' /></div></div>\n");
-                    //});
-                    <?php } ?>
+                        // Citation Images
+                        <?php if ($image == "yes") { ?>
+                        var xmlUriCitationImages = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'
+                                                                + 'account_type='+account_type+'&api_user_id='+api_user_id+'&public_key='+public_key
+                                                                +'&displayImages=true';
+                        
+                        // Grab Images
+                        jQuery.get(xmlUriCitationImages, {}, function(xmlImages)
+                        {
+                            if (browser_is_IE)
+                            {
+                                xmlImages = createXmlDOMObject (xmlImages);
+                            }
+                            
+                            jQuery(xmlImages).find("zpimage").each(function()
+                            {
+                                var zpimage = jQuery(this);
+                                
+                                jQuery('div.zp-Entry[rel='+jQuery(this).attr('citation_id')+']').addClass("zp-Image").prepend("<div class='zp-Entry-Image' ><div class='zp-Entry-Image-Crop'><img src='"+jQuery(this).attr('image_url')+"' alt='image' /></div></div>\n");
+                                
+                            });
+                            
+                        }, "XML");
+                        
+                        <?php } ?>
                     
                     <?php } else if ($data_type == "tags") { ?>
                     

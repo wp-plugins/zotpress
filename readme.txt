@@ -2,18 +2,18 @@
 Contributors: kseaborn
 Plugin Name: Zotpress
 Plugin URI: http://katieseaborn.com/plugins/
-Tags: zotero, zotpress, citation manager, citations, citation, bibliography, bibliographies, reference, references,reference list, academic, academia, scholar, scholarly
+Tags: zotero, zotpress, citation manager, citations, citation, bibliography, bibliographies, reference, references, reference list, reference manager, academic, academia, scholar, scholarly, cv, curriculum vitae, resume
 Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
-Tested up to: 3.0.4
-Stable tag: 1.3
+Tested up to: 3.0.5
+Stable tag: 1.4
 
 Zotpress displays your Zotero citations on Wordpress.
 
 == Description ==
 
-Zotpress displays your Zotero citations on Wordpress. It also extends the basic meta functionality offered by Zotero by allowing you to add thumbnail images to your citations.
+Zotpress displays your [Zotero](http://zotero.org/ "Zotero") citations on Wordpress. It also extends Zotero's meta functionality by allowing you to add thumbnail images to your citations.
 
 Zotero is a community-based cross-platform citation manager that integrates with your browser and word processor.
 
@@ -27,6 +27,8 @@ Features:
 
 Tested in Firefox 3 (Mac/Win), IE7 and IE8.
 
+Requirements: cUrl [preferably] or file_get_contents enabled on your server.
+
 == Installation ==
 
 1. Upload the folder `zotpress` to the `/wp-content/plugins/` directory
@@ -34,13 +36,11 @@ Tested in Firefox 3 (Mac/Win), IE7 and IE8.
 1. Place the `[zotpress]` shortcode in your blog entry
 
 **Shortcode**
-
 You can display your Zotero citations in a number of ways. To display a complete list of citations for all accounts in the default bibliography style (APA), simply use this shortcode:
 
 [zotpress]
 
-Shortcode Parameters:
-
+**Shortcode Parameters:**
 Here's a list of parameters you can use to display projects in different ways:
 
 * api_user_id: display a list of citations from a particular user or group.
@@ -58,7 +58,6 @@ Here's a list of parameters you can use to display projects in different ways:
 * image: whether or not to display the citation's image, if there is one. Options: yes, no [default]
 
 **An Example**
-
 An example of the shortcode using parameters is:
 
 [zotpress collection="ZKDTKM3X" limit="5"]
@@ -84,6 +83,9 @@ This shortcode will display a list of five citations from the collection with th
 = 1.3 =
 * Added cURL, which is (maybe?) quicker, (definitely?) safer, and (more likely to be?) supported. Requests default to cURL first now.
 
+= 1.4 =
+* Caching enabled, which should speed things up a bit.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -91,3 +93,6 @@ Lots of little issues fixed. Plus, you can now use a Zotpress widget instead of 
 
 = 1.3 =
 Implemented cURL, which should help those having read/write issues on their server.
+
+= 1.4 =
+Speed increase with newly added caching feature.
