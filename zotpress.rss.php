@@ -4,7 +4,8 @@
 	require('../../../wp-load.php');
 	define('WP_USE_THEMES', false);
 
-	
+	// Include Special cURL
+	require('curl.php');
 	
 	$xml = "";
 

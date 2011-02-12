@@ -28,7 +28,6 @@
                                         + '&api_user_id='+account.api_user_id
                                         + '&public_key='+account.public_key
                                         + '&collection_id='+collection_id
-                                        + '&curl=false'
                                         + '&limit='+limit;
             
             // Grab Citations

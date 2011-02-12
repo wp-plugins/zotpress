@@ -7,7 +7,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.0.5
-Stable tag: 1.5
+Stable tag: 1.6
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -18,7 +18,6 @@ Zotpress displays your [Zotero](http://zotero.org/ "Zotero") citations on Wordpr
 Zotero is a community-based cross-platform citation manager that integrates with your browser and word processor.
 
 Features:
-
 * Display your Zotero citations on your blog
 * Display citations, collections, or tags
 * Sort by a variety of options, including: author, collection, tag, and more.
@@ -86,8 +85,11 @@ This shortcode will display a list of five citations from the collection with th
 = 1.4 =
 * Caching enabled, which should speed things up a bit.
 
-= 15 =
+= 1.5 =
 * Groups citation style issue fixed.
+
+= 1.6 =
+* Critical request method issue fixed.
 
 == Upgrade Notice ==
 
@@ -102,3 +104,6 @@ Speed increase with newly added caching feature.
 
 = 1.5 =
 Important: Groups citation style issue fixed.
+
+= 1.6 =
+Critical request method issue fixed.
