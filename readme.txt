@@ -86,6 +86,9 @@ This shortcode will display a list of five citations from the collection with th
 = 1.4 =
 * Caching enabled, which should speed things up a bit.
 
+= 15 =
+* Groups citation style issue fixed.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -96,3 +99,6 @@ Implemented cURL, which should help those having read/write issues on their serv
 
 = 1.4 =
 Speed increase with newly added caching feature.
+
+= 1.5 =
+Important: Groups citation style issue fixed.

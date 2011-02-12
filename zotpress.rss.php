@@ -4,9 +4,7 @@
 	require('../../../wp-load.php');
 	define('WP_USE_THEMES', false);
 
-	// Include the lovely cURL
-	require('curl.php');
-
+	
 	
 	$xml = "";
 
@@ -44,15 +42,15 @@
 			// ACOUNT TYPE
 			
 			if (isset($_GET['account_type']) && $_GET['account_type'] == "groups")
-				$urlAccountType = "groups/";
+				$urlAccountType = "groups";
 			else
-				$urlAccountType = "users/";
+				$urlAccountType = "users";
 			
 			
 			// DATA TYPE
 			
 			if (isset($_GET['data_type']))
-				$urlDataType = $_GET['data_type'];
+				$urlDataType = trim($_GET['data_type']);
 			else
 				$urlDataType = "items";
 			
@@ -60,13 +58,13 @@
 			// LIST
 			
 			if (isset($_GET['collection_id']) && trim($_GET['collection_id']) != '')
-				$urlDataType = "collections/".$_GET['collection_id']."/items";
+				$urlDataType = "collections/".trim($_GET['collection_id'])."/items";
 			
 			if (isset($_GET['item_key']) && trim($_GET['item_key']) != '')
-				$urlDataType = "items/".$_GET['item_key'];
+				$urlDataType = "items/".trim($_GET['item_key']);
 			
 			if (isset($_GET['tag_name']) && trim($_GET['tag_name']) != '')
-				$urlDataType = "tags/".urlencode($_GET['tag_name'])."/items";
+				$urlDataType = "tags/".urlencode(trim($_GET['tag_name']))."/items";
 			
 			
 			// PARAMETERS
@@ -106,18 +104,18 @@
 			if (isset($author) && strlen($author) > 0)
 			{
 				if (isset($_GET['public_key']) && $_GET['public_key'] != "")
-					$url = "https://api.zotero.org/".$urlAccountType.$_GET['api_user_id']."/".$urlDataType."?key=".$_GET['public_key']."&content=html".$style.$order.$sort;
+					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType."?key=".$_GET['public_key']."&content=html".$style.$order.$sort;
 				else
-					$url = "https://api.zotero.org/".$urlAccountType.$_GET['api_user_id']."/".$urlDataType."?".str_replace("&","?","&content=html").$style.$order.$sort;
+					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType.str_replace("&","?","&content=html").$style.$order.$sort;
 			}
 			
 			// NO AUTHOR
 			else
 			{
 				if (isset($_GET['public_key']) && $_GET['public_key'] != "")
-					$url = "https://api.zotero.org/".$urlAccountType.$_GET['api_user_id']."/".$urlDataType."?key=".$_GET['public_key'].$content.$style.$order.$sort.$limit;
-				else
-					$url = "https://api.zotero.org/".$urlAccountType.$_GET['api_user_id']."/".$urlDataType."?".str_replace("&","?",$content).$style.$order.$sort.$limit;
+					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType."?key=".$_GET['public_key'].$content.$style.$order.$sort.$limit;
+				else // GROUP
+					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType.str_replace("&","?",$content).$style.$order.$sort.$limit;
 			}
 			
 			
