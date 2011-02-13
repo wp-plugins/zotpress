@@ -28,14 +28,14 @@
                     <div class="section">
                         <label for="upload_image" class="image">
                             <input id="upload_image" type="text" size="36" name="upload_image" value="<?php if (isset($_GET['update'])) { echo $_GET['image_url']; } ?>" />
-                            <input id="upload_image_button" type="button" value="Upload Image" /><br />
+                            <input id="upload_image_button" class="button-secondary" type="button" value="Upload Image" /><br />
                             <span class="help">Enter an URL or upload an image (150 &times; 150 pixels).</span>
                         </label>
                     </div>
                     
                     <div class="section">
-                        <input id="zp-Cancel" name="zp-Cancel" type="button" value="Cancel" />
                         <input id="zp-Submit" name="zp-Submit" class="button-primary" type="submit" value="Submit" />
+                        <input id="zp-Cancel" name="zp-Cancel" class="button-secondary" type="button" value="Cancel" />
                     </div>
                     
                     <div class="section">

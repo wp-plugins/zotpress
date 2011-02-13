@@ -8,9 +8,9 @@
         div#zp-Zotpress div#zp-List {
             margin-bottom: 20px;
         }
-        div#zp-Zotpress div#zp-List.zp-Loading {
-            background: transparent url('loading_list.gif') no-repeat top left;
-            display: block;
+        div#zp-Zotpress div#zp-List h3 {
+            font: italic 17px/24px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+            margin-bottom: 20px;
         }
         
         div#zp-Zotpress div.zp-Col-1 {
@@ -97,7 +97,7 @@
         div#zp-Zotpress div.zp-Entry-Image a:active,
         div#zp-Zotpress div.zp-Entry-Image a:hover
         {
-            z-index: 3;
+            z-index: 4;
             top: 0;
             left: 0;
             background: none;
@@ -110,10 +110,13 @@
         }
         
       div#zp-Zotpress div.zp-Entry-Image span {
+            position: absolute;
+            z-index: 3;
+            top: 60px;
+            left: 20px;
             color: #fff;
             display: block;
             font-weight: bold;
-            margin-top: 60px;
             visibility: hidden;
         }
         div#zp-Zotpress div.zp-Entry-Image.hover span {
@@ -255,29 +258,17 @@
             vertical-align: baseline;
             text-shadow: 0 1px 0 #fafafa;
         }
-        div#zp-Zotpress div#zp-Filter select {
-            width: 200px;
-        }
-        div#zp-Zotpress span#zp-FilterByAccount-Loading,
-        div#zp-Zotpress span#zp-FilterByCollection-Loading {
-            position: absolute;
-            top: 4px;
-            left: 210px;
-            background: transparent url(loading_select.gif) no-repeat top left;
-            display: block;
-            overflow: hidden;
-            text-indent: -5000px;
-            width: 16px;
-            height: 16px;
-        }
-        div#zp-Zotpress span#zp-FilterByAccount-Loading {
-            left: 160px;
-        }
         div#zp-Zotpress div#zp-Filter select#zp-FilterByAccount {
-            width: 130px;
+            width: 110px;
+        }
+        div#zp-Zotpress div#zp-Filter select#zp-FilterByCollection {
+            width: 140px;
+        }
+        div#zp-Zotpress div#zp-Filter select#zp-FilterByTag {
+            width: 110px;
         }
         div#zp-Zotpress input#zp-FilterByLimit {
-            width: 40px;
+            width: 30px;
         }
         
         /* END FILTER */

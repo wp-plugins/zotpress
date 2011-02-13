@@ -5,7 +5,7 @@
 	define('WP_USE_THEMES', false);
 
 	// Include Special cURL
-	require('curl.php');
+	require('zotpress.curl.php');
 	
 	$xml = "";
 
@@ -97,24 +97,28 @@
 			// Author
 			if (isset($_GET['author']) && trim($_GET['author'] != ''))
 				$author = trim($_GET['author']);
-			
+				
+				
+			// PUBLIC KEY
+			$zpaccount = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".trim($_GET['api_user_id'])."'");
+			$public_key = $zpaccount[0]->public_key;
 			
 			// ASSUMED: &format=bib
 			
 			// AUTHOR
 			if (isset($author) && strlen($author) > 0)
 			{
-				if (isset($_GET['public_key']) && $_GET['public_key'] != "")
-					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType."?key=".$_GET['public_key']."&content=html".$style.$order.$sort;
-				else
+				if (isset($public_key))
+					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType."?key=".$public_key."&content=html".$style.$order.$sort;
+				else // GROUP
 					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType.str_replace("&","?","&content=html").$style.$order.$sort;
 			}
 			
 			// NO AUTHOR
 			else
 			{
-				if (isset($_GET['public_key']) && $_GET['public_key'] != "")
-					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType."?key=".$_GET['public_key'].$content.$style.$order.$sort.$limit;
+				if (isset($public_key))
+					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType."?key=".$public_key.$content.$style.$order.$sort.$limit;
 				else // GROUP
 					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType.str_replace("&","?",$content).$style.$order.$sort.$limit;
 			}
@@ -126,14 +130,12 @@
 			{
 				if  (in_array ('curl', get_loaded_extensions()))
 				{
-					//$xml = GetXMLWithcUrl($url, 'http://google.com', '30');
 					$curl = new CURL();
 					$curl->enableCache();
 					$xml = $curl->get($url);
 				}
 				else // Use the regular away anyways
 				{
-					//$xml =  file_get_contents($url);
 					$curl = new CURL();
 					$curl->enableCache();
 					$xml =  $curl->get_file_get_contents($url);
@@ -143,14 +145,12 @@
 			{
 				if  (in_array ('curl', get_loaded_extensions()))
 				{
-					//$xml = GetXMLWithcUrl($url, 'http://google.com', '30');
 					$curl = new CURL();
 					$curl->enableCache();
 					$xml = $curl->get($url);
 				}
 				else // Use the regular away
 				{
-					//$xml =  file_get_contents($url);
 					$curl = new CURL();
 					$curl->enableCache();
 					$xml =  $curl->get_file_get_contents($url);

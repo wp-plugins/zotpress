@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 1.6
+    Version: 2.0
     Author URI: http://katieseaborn.com
     
 */
@@ -22,26 +22,56 @@ global $shortcode_displayed;
     function Zotpress_activate()
     {
         global $wpdb;
-
-        $structure = "CREATE TABLE " . $wpdb->prefix . "zotpress (
-            id INT(9) NOT NULL AUTO_INCREMENT,
-            account_type VARCHAR(10) NOT NULL,
-            api_user_id VARCHAR(10) NOT NULL,
-            public_key VARCHAR(28) default NULL,
-            nickname VARCHAR(200) default NULL,
-            UNIQUE KEY id (id)
-        );";
-        $wpdb->query($structure);
-
-        $structure = "CREATE TABLE " . $wpdb->prefix . "zotpress_images (
-            id INT(9) NOT NULL AUTO_INCREMENT,
-            citation_id VARCHAR(10) NOT NULL,
-            image VARCHAR(300) NOT NULL,
-            account_type VARCHAR(10) NOT NULL,
-            api_user_id VARCHAR(10) NOT NULL,
-            UNIQUE KEY id (id)
-        );";
-        $wpdb->query($structure);
+        
+        $table_name = $wpdb->prefix . "zotpress";
+        if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+        {
+            $structure = "CREATE TABLE " . $wpdb->prefix . "zotpress (
+                id INT(9) NOT NULL AUTO_INCREMENT,
+                account_type VARCHAR(10) NOT NULL,
+                api_user_id VARCHAR(10) NOT NULL,
+                public_key VARCHAR(28) default NULL,
+                nickname VARCHAR(200) default NULL,
+                UNIQUE KEY id (id)
+            );";
+            
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($structure);
+        }
+        //$wpdb->query($structure);
+        
+        $table_name = $wpdb->prefix . "zotpress_images";
+        if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+        {
+            $structure = "CREATE TABLE " . $wpdb->prefix . "zotpress_images (
+                id INT(9) NOT NULL AUTO_INCREMENT,
+                citation_id VARCHAR(10) NOT NULL,
+                image VARCHAR(300) NOT NULL,
+                account_type VARCHAR(10) NOT NULL,
+                api_user_id VARCHAR(10) NOT NULL,
+                UNIQUE KEY id (id)
+            );";
+            
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($structure);
+        }
+        //$wpdb->query($structure);
+        
+        $table_name = $wpdb->prefix . "zotpress_cache";
+        if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+        {
+            $structure = "CREATE TABLE " . $wpdb->prefix . "zotpress_cache (
+                id INT(9) NOT NULL AUTO_INCREMENT,
+                cache_key VARCHAR(100) NOT NULL,
+                xml_data LONGTEXT NOT NULL,
+                cache_time VARCHAR(100),
+                UNIQUE KEY id (id)
+            );";
+            
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($structure);
+        }
+        //$wpdb->query($structure);
     }
 
     register_activation_hook(__FILE__, 'Zotpress_activate');
@@ -61,42 +91,66 @@ global $shortcode_displayed;
             
         $zp_accounts_total = $wpdb->num_rows;
         
+        // INCLUDE FILTER SCRIPT
+        
         if ($zp_accounts_total > 0)
         {
+            if (!isset($_GET['accounts']) || !isset($_GET['help'])) {
 ?>
 <script type="text/javascript">
     
     jQuery(document).ready(function()
     {
-        <?php
-            include('zotpress.display.essentials.php');
+        <?php include('zotpress.display.filter.php'); ?>
+        
+        /*
             
-            if (!isset($_GET['accounts']) || !isset($_GET['help']))
-                include('zotpress.display.php');
-        ?>
+            CITATION IMAGE HOVER
+            
+        */
+        
+        jQuery('div#zp-List').delegate("div.zp-Entry-Image", "hover", function () {
+            jQuery(this).toggleClass("hover");
+        });
+        
     });
     
 </script>
 <?php
-
+            }
         }
     }
     
-    function Zotpress_admin_scripts() {
+    function Zotpress_admin_scripts()
+    {
+        wp_enqueue_script( 'jquery' ); // For Wordpress 3.1 - TEST!
         wp_enqueue_script('media-upload');
         wp_enqueue_script('thickbox');
-        wp_register_script('zotpress.actions.js', ZOTPRESS_PLUGIN_URL . 'zotpress.actions.js', array('jquery','media-upload','thickbox'));
-        wp_enqueue_script('zotpress.actions.js');
+        
+        if (isset($_GET['image'])) {
+            wp_register_script('zotpress.image.js', ZOTPRESS_PLUGIN_URL . 'zotpress.image.js', array('jquery','media-upload','thickbox'));
+            wp_enqueue_script('zotpress.image.js');
+        }
+        
+        if (isset($_GET['accounts'])) {
+            wp_register_script('zotpress.accounts.js', ZOTPRESS_PLUGIN_URL . 'zotpress.accounts.js', array('jquery','media-upload','thickbox'));
+            wp_enqueue_script('zotpress.accounts.js');
+        }
+        
         wp_register_script('jquery.dotimeout.min.js', ZOTPRESS_PLUGIN_URL . 'jquery.dotimeout.min.js', array('jquery'));
         wp_enqueue_script('jquery.dotimeout.min.js');
+        
         wp_register_script('jquery.qtip-1.0.0-rc3.js', ZOTPRESS_PLUGIN_URL . 'jquery.qtip-1.0.0-rc3.js', array('jquery'));
         wp_enqueue_script('jquery.qtip-1.0.0-rc3.js');
+        
         wp_register_script('jquery.livequery.js', ZOTPRESS_PLUGIN_URL . 'jquery.livequery.js', array('jquery'));
         wp_enqueue_script('jquery.livequery.js');
     }
     
-    function Zotpress_admin_styles() {
+    function Zotpress_admin_styles()
+    {
         wp_enqueue_style('thickbox');
+        
         wp_register_style('zotpress.css', ZOTPRESS_PLUGIN_URL . 'zotpress.css');
         wp_enqueue_style('zotpress.css');
     }
@@ -127,6 +181,10 @@ global $shortcode_displayed;
         
         else if (isset($_GET['image']))
         {
+            global $wpdb;
+            
+            $zp_image = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_images WHERE citation_id='".trim($_GET['citation_id'])."'");
+            
             include('zotpress.image.php');
         }
             
@@ -141,7 +199,7 @@ global $shortcode_displayed;
             
             
             
-        // VIEW CITATIONS
+        // ADMIN VIEW CITATIONS
         
         else
         {
@@ -150,7 +208,62 @@ global $shortcode_displayed;
             $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
             
             $zp_accounts_total = $wpdb->num_rows;
-                include('zotpress.default.php');
+            
+            
+            // FILTER PARAMETERS
+            
+            // Account ID
+            
+            global $account_id;
+            
+            if (isset($_GET['account_id']))
+                if (trim($_GET['account_id']) != "")
+                    $account_id = trim($_GET['account_id']);
+                else
+                    $account_id = false;
+            else
+                $account_id = false;
+            
+            // Collection ID
+            
+            global $collection_id;
+            
+            if (isset($_GET['collection_id']))
+                if (trim($_GET['collection_id']) != "")
+                    $collection_id = trim($_GET['collection_id']);
+                else
+                    $collection_id = false;
+            else
+                $collection_id = false;
+            
+            // Tag Name
+            
+            global $tag_name;
+            
+            if (isset($_GET['tag_name']))
+                if (trim($_GET['tag_name']) != "")
+                    $tag_name = trim($_GET['tag_name']);
+                else
+                    $tag_name = false;
+            else
+                $tag_name = false;
+            
+            // Limit
+            
+            global $limit;
+            
+            if (isset($_GET['limit']))
+                if (trim($_GET['limit']) != "")
+                    $limit = trim($_GET['limit']);
+                else
+                    $limit = "5";
+            else
+                $limit = "5";
+            
+            
+            // DISPLAY ADMIN CITATIONS
+            
+            include('zotpress.default.php');
         }
         
         
@@ -220,7 +333,7 @@ global $shortcode_displayed;
             if ($zp_accounts_total > 0)
             {
                 include('zotpress.shortcode.php');
-                return "<div id='".$zp_instance_id."' class='zp-Zotpress'><span class='zp-Loading'><span>loading</span></span></div>\n";
+                return "<div id='".$zp_instance_id."' class='zp-Zotpress'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
             }
             
             $shortcode_displayed = true;
@@ -238,7 +351,6 @@ global $shortcode_displayed;
         {
             $widget_ops = array('description' => __('Display your citations on your sidebar', 'zp-ZotpressWidget'));
 	    parent::WP_Widget(false, __('Zotpress Widget'), $widget_ops);
-            //parent::WP_Widget( false, $name = 'Zotpress Widget' );
         }
     
         function widget( $args, $instance )
@@ -292,7 +404,7 @@ global $shortcode_displayed;
             if ($zp_accounts_total > 0)
             {
                 include('zotpress.shortcode.php');
-                echo "<div id='".$zp_instance_id."' class='zp-Zotpress zp-ZotpressWidget'><span class='zp-Loading'><span>loading</span></span></div>\n";
+                echo "<div id='".$zp_instance_id."' class='zp-Zotpress zp-ZotpressWidget'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
             }
             else
             {

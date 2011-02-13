@@ -75,7 +75,7 @@
             
             <h4>Why do citations take a bit of time to load?</h4>
             
-            <p>If you're using cURL, things should be quite a bit quicker since the first few versions of Zotpress. Yes, there's still an initial delay and subsequent short delays: the diligent folks at Zotero are working on their server speed.</p>
+            <p>You may encounter a delay when Zotpress populates the cache or checks to see if there's an update. If you're using cURL, things should be quite a bit quicker since the first version of Zotpress. Also, the diligent folks at Zotero are working on their server speed as you read this.</p>
             
             <h4>Why are only 99 citations listed? I know I have more.</h4>
             
