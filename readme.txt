@@ -71,27 +71,6 @@ This shortcode will display a list of five citations from the collection with th
 
 == Changelog ==
 
-= 1.0 =
-* Zotpress makes its debut.
-
-= 1.1 =
-* Fixed up the readme.txt. Added a friendly redirect for new users. Made IE8-compliant. Moved some JS calls to footer. Now selectively loads some JS. Made tags and collections into lists for easier formatting.
-
-= 1.2 =
-* Optimized JavaScript functions. Fixed some grammatical errors on the Help page. More selective loading of JavaScript. And most importantly ... added a Zotpress widget option. This also means you can have more than one Zotpress call on a single page.
-
-= 1.3 =
-* Added cURL, which is (maybe?) quicker, (definitely?) safer, and (more likely to be?) supported. Requests default to cURL first now.
-
-= 1.4 =
-* Caching enabled, which should speed things up a bit.
-
-= 1.5 =
-* Groups citation style issue fixed.
-
-= 1.6 =
-* Critical request method issue fixed.
-
 = 2.0 =
 * Zotpress completely restructured.
 * Most requests now made through PHP. Shortcode requests made through PHP/jQuery combo for user-friendliness on the front-end.
@@ -103,21 +82,6 @@ This shortcode will display a list of five citations from the collection with th
 * Now cURL-friendly again.
 
 == Upgrade Notice ==
-
-= 1.2 =
-Lots of little issues fixed. Plus, you can now use a Zotpress widget instead of shortcode.
-
-= 1.3 =
-Implemented cURL, which should help those having read/write issues on their server.
-
-= 1.4 =
-Speed increase with newly added caching feature.
-
-= 1.5 =
-Important: Groups citation style issue fixed.
-
-= 1.6 =
-Critical request method issue fixed.
 
 = 2.0 =
 Zotpress overhaul. Security and performance increases.
