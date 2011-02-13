@@ -7,7 +7,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.0.5
-Stable tag: 2.1
+Stable tag: 2.2
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -81,6 +81,9 @@ This shortcode will display a list of five citations from the collection with th
 = 2.1 =
 * Now cURL-friendly again.
 
+= 2.2 =
+* Fixed CURLOPT_FOLLOWLOCATION error.
+
 == Upgrade Notice ==
 
 = 2.0 =
@@ -88,3 +91,6 @@ Zotpress overhaul. Security and performance increases.
 
 = 2.1 =
 Now cURL-friendly again.
+
+= 2.2 =
+Fixed CURLOPT_FOLLOWLOCATION error.

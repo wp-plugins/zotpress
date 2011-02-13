@@ -97,7 +97,7 @@ class CURL
                     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
                     curl_setopt ($ch, CURLOPT_HEADER, 0);
                     curl_setopt ($ch, CURLOPT_USERAGENT, sprintf("Mozilla/%d.0",rand(4,5)));
-                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+                    //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                     curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
                     curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
