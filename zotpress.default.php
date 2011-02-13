@@ -65,7 +65,15 @@
                             // READ ZOTERO XML FOR COLLECTIONS
                             
                             $doc_collections = new DOMDocument();
-                            $doc_collections->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&data_type=collections");
+                            
+                            // TO CURL, OR NOT TO CURL
+                            if  (in_array ('curl', get_loaded_extensions())) {
+                                $doc_collections_xml = Zotpress_curl(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&data_type=collections");
+                                $doc_collections->loadXML($doc_collections_xml);
+                            }
+                            else {
+                                $doc_tags->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&data_type=collections");
+                            }
                             
                             $entries = $doc_collections->getElementsByTagName("entry");
                             foreach ($entries as $entry)
@@ -100,7 +108,15 @@
                             // READ ZOTERO XML FOR TAGS
                             
                             $doc_tags = new DOMDocument();
-                            $doc_tags->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&data_type=tags");
+                            
+                            // TO CURL, OR NOT TO CURL
+                            if  (in_array ('curl', get_loaded_extensions())) {
+                                $doc_tags_xml = Zotpress_curl(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&data_type=tags");
+                                $doc_tags->loadXML($doc_tags_xml);
+                            }
+                            else {
+                                $doc_tags->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&data_type=tags");
+                            }
                             
                             $entries = $doc_tags->getElementsByTagName("entry");
                             foreach ($entries as $entry)
@@ -146,14 +162,30 @@
                 // READ ZOTERO XML FOR CITATIONS
                 
                 $doc_citations = new DOMDocument();
-                $doc_citations->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&collection_id=".$collection_id."&tag_name=".$tag_name."&limit=".$limit);
+                
+                // TO CURL, OR NOT TO CURL
+                if  (in_array ('curl', get_loaded_extensions())) {
+                    $doc_citations_xml = Zotpress_curl(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&collection_id=".$collection_id."&tag_name=".$tag_name."&limit=".$limit);
+                    $doc_citations->loadXML($doc_citations_xml);
+                }
+                else {
+                    $doc_citations->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&collection_id=".$collection_id."&tag_name=".$tag_name."&limit=".$limit);
+                }
                 
                 $entries = $doc_citations->getElementsByTagName("entry");
                 
                 // READ IMAGES XML
                 
                 $doc_images = new DOMDocument();
-                $doc_images->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&displayImages=true");
+                
+                // TO CURL, OR NOT TO CURL
+                if  (in_array ('curl', get_loaded_extensions())) {
+                    $doc_images_xml = Zotpress_curl(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&displayImages=true");
+                    $doc_images->loadXML($doc_images_xml);
+                }
+                else {
+                    $doc_images->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&displayImages=true");
+                }
                 
                 $zpimages = $doc_images->getElementsByTagName('zpimage');
                 
