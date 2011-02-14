@@ -108,7 +108,7 @@
 			// AUTHOR
 			if (isset($author) && strlen($author) > 0)
 			{
-				if (isset($public_key))
+				if (isset($public_key) && $public_key != "")
 					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType."?key=".$public_key."&content=html".$style.$order.$sort;
 				else // GROUP
 					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType.str_replace("&","?","&content=html").$style.$order.$sort;
@@ -117,7 +117,7 @@
 			// NO AUTHOR
 			else
 			{
-				if (isset($public_key))
+				if (isset($public_key) && $public_key != "")
 					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType."?key=".$public_key.$content.$style.$order.$sort.$limit;
 				else // GROUP
 					$url = "https://api.zotero.org/".$urlAccountType."/".trim($_GET['api_user_id'])."/".$urlDataType.str_replace("&","?",$content).$style.$order.$sort.$limit;

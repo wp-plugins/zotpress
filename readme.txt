@@ -7,18 +7,17 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.0.5
-Stable tag: 2.2
+Stable tag: 2.3
 
 Zotpress displays your Zotero citations on Wordpress.
 
 == Description ==
 
-Zotpress displays your [Zotero](http://zotero.org/ "Zotero") citations on Wordpress. It also extends Zotero's meta functionality by allowing you to add thumbnail images to your citations.
+[Zotpress](http://katieseaborn.com/plugins/ "Zotpress for WordPress") displays your [Zotero](http://zotero.org/ "Zotero") citations on Wordpress. It also extends Zotero's meta functionality by allowing you to add thumbnail images to your citations.
 
 Zotero is a community-based cross-platform citation manager that integrates with your browser and word processor.
 
-Features:
-
+= Features: =
 * Display your Zotero citations on your blog
 * Display citations, collections, or tags
 * Sort by a variety of options, including: author, collection, tag, and more.
@@ -35,12 +34,12 @@ Requirements: cUrl [preferably] or file_get_contents enabled on your server.
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Place the `[zotpress]` shortcode in your blog entry
 
-**Shortcode**
+= Shortcode =
 You can display your Zotero citations in a number of ways. To display a complete list of citations for all accounts in the default bibliography style (APA), simply use this shortcode:
 
 [zotpress]
 
-**Shortcode Parameters:**
+= Shortcode Parameters: =
 Here's a list of parameters you can use to display projects in different ways:
 
 * api_user_id: display a list of citations from a particular user or group.
@@ -57,7 +56,7 @@ Here's a list of parameters you can use to display projects in different ways:
 * limit: limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]
 * image: whether or not to display the citation's image, if there is one. Options: yes, no [default]
 
-**An Example**
+= An Example =
 An example of the shortcode using parameters is:
 
 [zotpress collection="ZKDTKM3X" limit="5"]
@@ -70,6 +69,27 @@ This shortcode will display a list of five citations from the collection with th
 2. Manage your Zotero accounts
 
 == Changelog ==
+
+= 1.0 =
+* Zotpress makes its debut.
+
+= 1.1 =
+* Fixed up the readme.txt. Added a friendly redirect for new users. Made IE8-compliant. Moved some JS calls to footer. Now selectively loads some JS. Made tags and collections into lists for easier formatting.
+
+= 1.2 =
+* Optimized JavaScript functions. Fixed some grammatical errors on the Help page. More selective loading of JavaScript. And most importantly ... added a Zotpress widget option. This also means you can have more than one Zotpress call on a single page.
+
+= 1.3 =
+* Added cURL, which is (maybe?) quicker, (definitely?) safer, and (more likely to be?) supported. Requests default to cURL first now.
+
+= 1.4 =
+* Caching enabled, which should speed things up a bit.
+
+= 1.5 =
+* Groups citation style issue fixed.
+
+= 1.6 =
+* Critical request method issue fixed.
 
 = 2.0 =
 * Zotpress completely restructured.
@@ -84,7 +104,25 @@ This shortcode will display a list of five citations from the collection with th
 = 2.2 =
 * Fixed CURLOPT_FOLLOWLOCATION error.
 
+= 2.3 =
+* Fixed Group "invalid key" error.
+
 == Upgrade Notice ==
+
+= 1.2 =
+Lots of little issues fixed. Plus, you can now use a Zotpress widget instead of shortcode.
+
+= 1.3 =
+Implemented cURL, which should help those having read/write issues on their server.
+
+= 1.4 =
+Speed increase with newly added caching feature.
+
+= 1.5 =
+Important: Groups citation style issue fixed.
+
+= 1.6 =
+Critical request method issue fixed.
 
 = 2.0 =
 Zotpress overhaul. Security and performance increases.
@@ -94,3 +132,6 @@ Now cURL-friendly again.
 
 = 2.2 =
 Fixed CURLOPT_FOLLOWLOCATION error.
+
+= 2.3 =
+* Fixed Group "invalid key" error.
