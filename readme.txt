@@ -7,7 +7,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.0.5
-Stable tag: 2.3
+Stable tag: 2.4
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -17,16 +17,18 @@ Zotpress displays your Zotero citations on Wordpress.
 
 Zotero is a community-based cross-platform citation manager that integrates with your browser and word processor.
 
-= Features: =
+= Features =
 * Display your Zotero citations on your blog
 * Display citations, collections, or tags
-* Sort by a variety of options, including: author, collection, tag, and more.
+* Sort by a variety of options, including: author, year, collection, tag, and more.
 * Add both user and group Zotero accounts
+* Add thumbnail images to your citations
 * And more!
 
 Tested in Firefox 3 (Mac/Win), IE7 and IE8.
 
-Requirements: cUrl [preferably] or file_get_contents enabled on your server.
+= Requirements =
+cUrl [preferably] or file_get_contents enabled on your server.
 
 == Installation ==
 
@@ -42,19 +44,22 @@ You can display your Zotero citations in a number of ways. To display a complete
 = Shortcode Parameters: =
 Here's a list of parameters you can use to display projects in different ways:
 
-* api_user_id: display a list of citations from a particular user or group.
-* nickname: display a list of citations by a particular nickname.
-* author: display a list of citations from a particular author. Format as follows: "Firstname+Lastname", e.g. "Carl+Sagan". Note: "C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Carl Sagan".
-* data_type: display a list of a particular data type. Options: items [default], tags, collections
-* collection_id: id of the collection to draw citations from.
-* item_key: item key for a single item.
-* tag_name: name of the tag to draw citations from. Note: make sure you replace all spaces with a + sign, e.g. the tag "electric fish" becomes "electric+fish".
-* content: format of citation display. Options: html, bib [default]
-* style: citation style. Options: chicago-note-bibliography, harvard1, mhra, mla, nature, vancouver, apsa, asa, apa [default]. Note: Support for more styles coming; see Zotero Style Repository for details.
-* order: order by a certain field. Options: itemType, language, conferenceName, volume, issue, place, publisher, date, series, seriesTitle, dateModified, dateAdded [default]. Potentially many more; see Zotero Data Model.
-* sort: sort direction of the order field. Options: asc, desc [default]
-* limit: limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]
-* image: whether or not to display the citation's image, if there is one. Options: yes, no [default]
+* `api_user_id` display a list of citations from a particular user or group.
+* `nickname` display a list of citations by a particular nickname.
+* `author` display a list of citations from a particular author. Format as follows: "Firstname+Lastname", e.g. "Carl+Sagan". Note: "C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Carl Sagan".
+* `year` display a list of citations from a particular year. Format as follows: "2009". Note: You can display by Author and Year together!
+* `data_type` display a list of a particular data type. Options: items [default], tags, collections
+* `collection_id` id of the collection to draw citations from.
+* `item_key` item key for a single item.
+* `tag_name` name of the tag to draw citations from. Note: make sure you replace all spaces with a + sign, e.g. the tag "electric fish" becomes "electric+fish".
+* `content` format of citation display. Options: html, bib [default]
+* `style` citation style. Options: chicago-note-bibliography, harvard1, mhra, mla, nature, vancouver, apsa, asa, apa [default]. Note: Support for more styles coming; see Zotero Style Repository for details.
+* `order` order by a certain field. Options: itemType, language, conferenceName, volume, issue, place, publisher, date, series, seriesTitle, dateModified, dateAdded [default]. Potentially many more; see Zotero Data Model.
+* `sort` sort direction of the order field. Options: asc, desc [default]
+* `limit` limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]
+* `image` whether or not to display the citation's image, if there is one. Options: yes, no [default]
+* `download` whether or not to display the citation's download URL, if there is one. Options: yes, no [default]
+* `curl` force cURL Options: yes [default], no
 
 = An Example =
 An example of the shortcode using parameters is:
@@ -107,6 +112,9 @@ This shortcode will display a list of five citations from the collection with th
 = 2.3 =
 * Fixed Group "invalid key" error.
 
+= 2.4 =
+* Can now display by year. Also, option to display download links, should they be available.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -134,4 +142,7 @@ Now cURL-friendly again.
 Fixed CURLOPT_FOLLOWLOCATION error.
 
 = 2.3 =
-* Fixed Group "invalid key" error.
+Fixed Group "invalid key" error.
+
+= 2.4 =
+Can now display by year. Option to display download links.

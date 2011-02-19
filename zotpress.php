@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 2.3
+    Version: 2.4
     Author URI: http://katieseaborn.com
     
 */
@@ -300,6 +300,7 @@ global $shortcode_displayed;
                     'api_user_id' => false,
                     'nickname' => false,
                     'author' => false,
+                    'year' => false,
                     
                     'data_type' => "items",
                     
@@ -313,7 +314,8 @@ global $shortcode_displayed;
                     'sort' => false,
                     'limit' => "50",
                     
-                    'image' => "no"
+                    'image' => "no",
+                    'download' => "no"
                     
             ), $atts));
             
@@ -321,6 +323,7 @@ global $shortcode_displayed;
             $api_user_id = str_replace('"','',html_entity_decode($api_user_id));
             $nickname = str_replace('"','',html_entity_decode($nickname));
             $author = str_replace('"','',html_entity_decode($author));
+            $year = str_replace('"','',html_entity_decode($year));
             
             $data_type = str_replace('"','',html_entity_decode($data_type));
             
@@ -335,6 +338,7 @@ global $shortcode_displayed;
             $limit = str_replace('"','',html_entity_decode($limit));
             
             $image = str_replace('"','',html_entity_decode($image));
+            $download = str_replace('"','',html_entity_decode($download));
             
             // Connect to database
             global $wpdb;

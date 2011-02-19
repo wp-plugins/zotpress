@@ -29,7 +29,11 @@
             <ul>
                 <li><code>api_user_id</code> display a list of citations from a particular user or group.</li>
                 <li><code>nickname</code> display a list of citations by a particular nickname.</li>
+            </ul>
+            
+            <ul>
                 <li><code>author</code> display a list of citations from a particular author. Format as follows: "Firstname+Lastname", e.g. "Carl+Sagan". <strong>Note:</strong> "C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Carl Sagan".</li>
+                <li><code>year</code> display a list of citations from a particular year. Format as follows: "2009". Note: You can display by Author and Year together!</li>
             </ul>
             
             <ul>
@@ -49,6 +53,7 @@
             
             <ul>
                 <li><code>image</code> whether or not to display the citation's image, if there is one. Options: yes, no [default]</li>
+                <li><code>download</code> whether or not to display the citation's download URL, if there is one. Options: yes, no [default]</li>
             </ul>
             
             <ul>
