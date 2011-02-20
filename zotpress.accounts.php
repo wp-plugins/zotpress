@@ -18,7 +18,7 @@
                     </div>
                 
                     <div>
-                        <label for="api_user_id" class="zp-Help" title="Your API User ID is listed on the Zotero 'Feeds/API' page under 'Settings', right under the 'Feeds/API Settings' heading. Group IDs are found in the group's URL, after &quot;groups&quot;. Both should be a series of five digits."><span id="zp-ID-Label">API User</span> ID</label>
+                        <label for="api_user_id" class="zp-Help" title="Your API User ID is listed on the Zotero 'Feeds/API' page under 'Settings', right under the 'Feeds/API Settings' heading. Group IDs are found in the group's URL, after &quot;groups&quot;. Both should be a number 1-6+ digits in length."><span id="zp-ID-Label">API User</span> ID</label>
                         <input id="api_user_id" name="api_user_id" type="text" />
                     </div>
                 

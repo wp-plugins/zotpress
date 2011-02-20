@@ -6,27 +6,52 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 2.4
+    Version: 2.5
     Author URI: http://katieseaborn.com
     
 */
 
 define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
-$shortcode_displayed = false;
-global $shortcode_displayed;
+// GLOBAL VARS ----------------------------------------------------------------------------------
+    
+    $shortcode_displayed = false;
+    global $shortcode_displayed;
+    
+    global $Zotpress_main_db_version;
+    $Zotpress_main_db_version = "1.0";
+    if (!get_option("Zotpress_main_db_version"))
+        add_option("Zotpress_main_db_version", $Zotpress_main_db_version);
+    
+    global $Zotpress_images_db_version;
+    $Zotpress_images_db_version = "1.0";
+    if (!get_option("Zotpress_images_db_version"))
+        add_option("Zotpress_images_db_version", $Zotpress_images_db_version);
+    
+    global $Zotpress_cache_db_version;
+    $Zotpress_cache_db_version = "1.2";
+    if (!get_option("Zotpress_cache_db_version"))
+        add_option("Zotpress_cache_db_version", "1.0");
 
+// GLOBAL VARS ----------------------------------------------------------------------------------
+    
 
 // INSTALL -----------------------------------------------------------------------------------------
     
-    function Zotpress_activate()
+    function Zotpress_install()
     {
         global $wpdb;
+        global $Zotpress_main_db_version;
+        global $Zotpress_images_db_version;
+        global $Zotpress_cache_db_version;
         
-        $table_name = $wpdb->prefix . "zotpress";
-        if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+        
+        // MAIN TABLE
+        
+        if (($wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress'") != $wpdb->prefix."zotpress")
+                || (get_option("Zotpress_main_db_version") != $Zotpress_main_db_version))
         {
-            $structure = "CREATE TABLE " . $wpdb->prefix . "zotpress (
+            $structure = "CREATE TABLE ".$wpdb->prefix."zotpress (
                 id INT(9) NOT NULL AUTO_INCREMENT,
                 account_type VARCHAR(10) NOT NULL,
                 api_user_id VARCHAR(10) NOT NULL,
@@ -37,13 +62,20 @@ global $shortcode_displayed;
             
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($structure);
+            
+            if (get_option("Zotpress_main_db_version") != $Zotpress_main_db_version)
+                update_option("Zotpress_main_db_version", $Zotpress_main_db_version);
+            else
+                add_option("Zotpress_main_db_version", $Zotpress_main_db_version);
         }
-        //$wpdb->query($structure);
         
-        $table_name = $wpdb->prefix . "zotpress_images";
-        if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+        
+        // IMAGE TABLE
+        
+        if (($wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_images'") != $wpdb->prefix."zotpress_images")
+                || (get_option("Zotpress_images_db_version") != $Zotpress_images_db_version))
         {
-            $structure = "CREATE TABLE " . $wpdb->prefix . "zotpress_images (
+            $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_images (
                 id INT(9) NOT NULL AUTO_INCREMENT,
                 citation_id VARCHAR(10) NOT NULL,
                 image VARCHAR(300) NOT NULL,
@@ -54,13 +86,17 @@ global $shortcode_displayed;
             
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($structure);
+            
+            if (get_option("Zotpress_images_db_version") != $Zotpress_images_db_version)
+                update_option("Zotpress_images_db_version", $Zotpress_images_db_version);
+            else
+                add_option("Zotpress_images_db_version", $Zotpress_images_db_version);
         }
-        //$wpdb->query($structure);
         
-        $table_name = $wpdb->prefix . "zotpress_cache";
-        if($wpdb->get_var("show tables like '$table_name'") != $table_name)
+        if (($wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_cache'") != $wpdb->prefix."zotpress_cache")
+                || (get_option("Zotpress_cache_db_version") != $Zotpress_cache_db_version))
         {
-            $structure = "CREATE TABLE " . $wpdb->prefix . "zotpress_cache (
+            $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_cache (
                 id INT(9) NOT NULL AUTO_INCREMENT,
                 cache_key VARCHAR(100) NOT NULL,
                 xml_data LONGTEXT NOT NULL,
@@ -70,11 +106,15 @@ global $shortcode_displayed;
             
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($structure);
+            
+            if (get_option("Zotpress_cache_db_version") != $Zotpress_cache_db_version)
+                update_option("Zotpress_cache_db_version", $Zotpress_cache_db_version);
+            else
+                add_option("Zotpress_cache_db_version", $Zotpress_cache_db_version);
         }
-        //$wpdb->query($structure);
     }
 
-    register_activation_hook(__FILE__, 'Zotpress_activate');
+    register_activation_hook(__FILE__, 'Zotpress_install');
 
 // INSTALL -----------------------------------------------------------------------------------------
 
@@ -166,25 +206,7 @@ global $shortcode_displayed;
         if (!current_user_can('manage_options'))  {
                 wp_die( __('You do not have sufficient permissions to access this page.') );
         }
-        
-        // cURL FUNCTION
-        
-        function Zotpress_curl($url)
-        {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-            curl_setopt ($ch, CURLOPT_HEADER, 0);
-            curl_setopt ($ch, CURLOPT_USERAGENT, sprintf("Mozilla/%d.0",rand(4,5)));
-            //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
-            
-            $data = curl_exec($ch);
-            curl_close($ch);
-            
-            return $data;
-        }
+
         
         
         // ADD ZOTERO ACCOUNT
@@ -318,6 +340,9 @@ global $shortcode_displayed;
                     'download' => "no"
                     
             ), $atts));
+            
+            //ini_set('display_errors', 1);
+            //error_reporting(E_ALL);
             
             // Format attritbutes
             $api_user_id = str_replace('"','',html_entity_decode($api_user_id));

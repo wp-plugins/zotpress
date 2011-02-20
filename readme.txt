@@ -7,7 +7,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.0.5
-Stable tag: 2.4
+Stable tag: 2.5
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -113,7 +113,13 @@ This shortcode will display a list of five citations from the collection with th
 * Fixed Group "invalid key" error.
 
 = 2.4 =
-* Can now display by year. Also, option to display download links, should they be available.
+* Can now display by year.
+* New option to display download links, should they be available.
+
+= 2.5 =
+* Re-wrote display code.
+* Tidied up JavaScript.
+* Fixed update table code.
 
 == Upgrade Notice ==
 
@@ -146,3 +152,6 @@ Fixed Group "invalid key" error.
 
 = 2.4 =
 Can now display by year. Option to display download links.
+
+= 2.5 =
+Re-wrote display code and tidied up JavaScript. Fixed update table code.

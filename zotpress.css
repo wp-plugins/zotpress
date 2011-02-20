@@ -236,14 +236,15 @@
             min-height: 45px;
         }
         div#zp-Zotpress div#zp-FilterInner {
-            padding: 10px 15px;
+            /*padding: 10px 15px;*/
+            padding: 0 15px;
         }
         div#zp-Zotpress div#zp-Filter div.section {
             position: relative;
-            border-right: 1px solid #ccc;
-            border-left: 1px solid #fafafa;
+            /*border-right: 1px solid #ccc;*/
+            /*border-left: 1px solid #fafafa;*/
             float: left;
-            padding: 0 10px;
+            padding: 10px 0;
         }
         div#zp-Zotpress div#zp-Filter div.section.first {
             border-left: none;
@@ -251,12 +252,22 @@
         div#zp-Zotpress div#zp-Filter div.section.last {
             border-right: none;
         }
+        div#zp-Zotpress div#zp-Filter div.section span.divider {
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #fafafa;
+            font-size: 20px;
+            margin: 0 10px;
+            vertical-align: middle;
+        }
         div#zp-Zotpress div#zp-Filter label {
             /*font-size: 10px;*/
             /*font-weight: bold;*/
             font-size: 11px;
             vertical-align: baseline;
             text-shadow: 0 1px 0 #fafafa;
+        }
+        *:first-child+html div#zp-Zotpress div#zp-Filter label { /* IE7 hack */
+            vertical-align: 35%;
         }
         div#zp-Zotpress div#zp-Filter select#zp-FilterByAccount {
             width: 110px;
@@ -388,6 +399,9 @@
             float: left;
             margin: 0.75em 0 30px 0;
             width: 780px;
+        }
+        *:first-child+html div#zp-Zotpress form#zp-Add { /* IE7 hack */
+            width: 850px;
         }
         div#zp-Zotpress form#zp-Add fieldset {
             background: transparent;

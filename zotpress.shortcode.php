@@ -37,6 +37,9 @@
     div.zp-Zotpress span.zp-Loading span {
         visibility: hidden;
     }
+    div.zp-Zotpress p.zp-NoCitations {
+        margin: 0;
+    }
 -->
 </style>
 
@@ -116,7 +119,7 @@
                 dataType: "XML",
                 cache: true,
                 ifModified: true,
-                success: function(xmlDownloads)
+                success: function(xmlDownloads, textStatus, jqXHR)
                 {
                     if (browser_is_IE)
                     {
@@ -204,59 +207,68 @@
                                 citation_match = true;
                             <?php } ?>
                             
-                            // Add to array if match ZXDK6QUD 5KWRUASC
-                            if (citation_match) {
-                                citations_array[citations_array.length] = this_citation_id;
+                            // Add to array if match
+                            if (citations_array.length < <?php echo $limit; ?>) {
+                                if (citation_match) {
+                                    citations_array[citations_array.length] = this_citation_id;
+                                }
                             }
                             
                         });
                         
-                        jQuery.each(citations_array, function(index, value)
+                        if (citations_array.length > 0)
                         {
-                            if (value.length > 0)
+                            jQuery.each(citations_array, function(index, value)
                             {
-                                var xmlUriAuthorCitations = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'
-                                        + 'account_type='+account_type+'&api_user_id='+api_user_id
-                                        + '&limit=<?php echo $limit; ?>'
-                                        + '&data_type=<?php echo $data_type; ?>'
-                                        + '&collection_id=<?php echo $collection_id; ?>'
-                                        + '&item_key='+value
-                                        + '&tag_name=<?php echo $tag_name; ?>'
-                                        + '&content=<?php echo $content; ?>'
-                                        + '&style=<?php echo $style; ?>'
-                                        + '&order=<?php echo $order; ?>'
-                                        + '&sort=<?php echo $sort; ?>';
-                                        
-                                
-                                // Grab Zotero request
-                                jQuery.get(xmlUriAuthorCitations, {}, function(xmlAuthorCitations)
+                                if (value.length > 0)
                                 {
-                                    if (browser_is_IE)
+                                    var xmlUriAuthorCitations = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'
+                                            + 'account_type='+account_type+'&api_user_id='+api_user_id
+                                            + '&limit=<?php echo $limit; ?>'
+                                            + '&data_type=<?php echo $data_type; ?>'
+                                            + '&collection_id=<?php echo $collection_id; ?>'
+                                            + '&item_key='+value
+                                            + '&tag_name=<?php echo $tag_name; ?>'
+                                            + '&content=<?php echo $content; ?>'
+                                            + '&style=<?php echo $style; ?>'
+                                            + '&order=<?php echo $order; ?>'
+                                            + '&sort=<?php echo $sort; ?>';
+                                            
+                                    
+                                    // Grab Zotero request
+                                    jQuery.get(xmlUriAuthorCitations, {}, function(xmlAuthorCitations)
                                     {
-                                        xmlAuthorCitations = createXmlDOMObject (xmlAuthorCitations);
-                                    }
-                                    
-                                    // CONTENT
-                                    var zpcontent = (browser_is_IE) ? jQuery(xmlAuthorCitations).context.xml.substr(jQuery(xmlAuthorCitations).context.xml.indexOf("div")-1).substr(0, jQuery(xmlAuthorCitations).context.xml.substr(jQuery(xmlAuthorCitations).context.xml.indexOf("div")-1).indexOf("/content")-1) : jQuery(xmlAuthorCitations).find("content").html();
-                                    
-                                    var this_citation_id = (jQuery(xmlAuthorCitations).find("zapi\\:key").text());
-                                    
-                                    var citation_html = "<div class='zp-Entry' rel='"+this_citation_id+"'>\n" + zpcontent;
-                                    
-                                    <?php if ($download == "yes") { ?>
-                                    if (citation_downloads[this_citation_id] !== undefined) {
-                                        citation_html += "<a href='"+citation_downloads[this_citation_id].attachment_url+"'>Download URL</a>\n";
-                                    }
-                                    <?php } ?>
-                                    
-                                    citation_html += "</div>\n\n";
-                                    
-                                    jQuery('div#<?php echo $zp_instance_id; ?> div.zp-ZotpressInner').append(citation_html);
-                                    
-                                }, "XML");
-                            }
-                            
-                        });
+                                        if (browser_is_IE)
+                                        {
+                                            xmlAuthorCitations = createXmlDOMObject (xmlAuthorCitations);
+                                        }
+                                        
+                                        // CONTENT
+                                        var zpcontent = (browser_is_IE) ? jQuery(xmlAuthorCitations).context.xml.substr(jQuery(xmlAuthorCitations).context.xml.indexOf("div")-1).substr(0, jQuery(xmlAuthorCitations).context.xml.substr(jQuery(xmlAuthorCitations).context.xml.indexOf("div")-1).indexOf("/content")-1) : jQuery(xmlAuthorCitations).find("content").html();
+                                        
+                                        var this_citation_id = (jQuery(xmlAuthorCitations).find("zapi\\:key").text());
+                                        
+                                        var citation_html = "<div class='zp-Entry' rel='"+this_citation_id+"'>\n" + zpcontent;
+                                        
+                                        <?php if ($download == "yes") { ?>
+                                        if (citation_downloads[this_citation_id] !== undefined) {
+                                            citation_html += "<a href='"+citation_downloads[this_citation_id].attachment_url+"'>Download URL</a>\n";
+                                        }
+                                        <?php } ?>
+                                        
+                                        citation_html += "</div>\n\n";
+                                        
+                                        jQuery('div#<?php echo $zp_instance_id; ?> div.zp-ZotpressInner').append(citation_html);
+                                        
+                                    }, "XML");
+                                }
+                            });
+                        }
+                        
+                        else // No citations
+                        {
+                            jQuery('div#<?php echo $zp_instance_id; ?> div.zp-ZotpressInner').append("<p class='zp-NoCitations'>No citations found.</p>\n");
+                        }
                     
                     
                     
@@ -385,7 +397,7 @@
                 },
                 
                 complete: function() {
-                    jQuery('div#<?php echo $zp_instance_id; ?> span.zp-Loading').remove();
+                    jQuery('div#<?php echo $zp_instance_id; ?> span.zp-Loading').fadeOut("fast");
                     jQuery('div#<?php echo $zp_instance_id; ?> div.zp-ZotpressInner').slideDown("slow");
                 }
                 

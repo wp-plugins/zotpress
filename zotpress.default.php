@@ -50,8 +50,13 @@
                                 }
                             }
                             
+                            // INCLUDE REQUEST FUNCTION
+                            $include = true;
+                            include("zotpress.rss.php");
+                            
                             ?>
                         </select>
+                        <span class="divider"></span>
                     </div>
                     
                     <div id="zp-FilterByCollection-Section" class="section">
@@ -62,20 +67,18 @@
                             <option value=''>-------------------</option>
                             <?php
                             
+                            //ini_set('display_errors', 1);
+                            //error_reporting(E_ALL);
+                            
                             // READ ZOTERO XML FOR COLLECTIONS
                             
-                            $doc_collections = new DOMDocument();
+                            $zp_xml = MakeZotpressRequest($account_type, $api_user_id, "collections", false, false, false, -1, false, true);
                             
-                            // TO CURL, OR NOT TO CURL
-                            if  (in_array ('curl', get_loaded_extensions())) {
-                                $doc_collections_xml = Zotpress_curl(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&data_type=collections");
-                                $doc_collections->loadXML($doc_collections_xml);
-                            }
-                            else {
-                                $doc_tags->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&data_type=collections");
-                            }
+                            $doc_collections = new DOMDocument();
+                            $doc_collections->loadXML($zp_xml);
                             
                             $entries = $doc_collections->getElementsByTagName("entry");
+                            
                             foreach ($entries as $entry)
                             {
                                 $title = $entry->getElementsByTagName("title")->item(0)->nodeValue;
@@ -92,9 +95,11 @@
                             
                             unset($entries);
                             unset($doc_collections);
+                            unset ($zp_xml);
                             
                             ?>
                         </select>
+                        <span class="divider"></span>
                     </div>
                     
                     <div id="zp-FilterByTag-Section" class="section">
@@ -107,18 +112,13 @@
                             
                             // READ ZOTERO XML FOR TAGS
                             
-                            $doc_tags = new DOMDocument();
+                            $zp_xml = MakeZotpressRequest($account_type, $api_user_id, "tags", false, false, false, -1, false, true);
                             
-                            // TO CURL, OR NOT TO CURL
-                            if  (in_array ('curl', get_loaded_extensions())) {
-                                $doc_tags_xml = Zotpress_curl(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&data_type=tags");
-                                $doc_tags->loadXML($doc_tags_xml);
-                            }
-                            else {
-                                $doc_tags->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&data_type=tags");
-                            }
+                            $doc_tags = new DOMDocument();
+                            $doc_tags->loadXML($zp_xml);
                             
                             $entries = $doc_tags->getElementsByTagName("entry");
+                            
                             foreach ($entries as $entry)
                             {
                                 $title = $entry->getElementsByTagName("title")->item(0)->nodeValue;
@@ -133,9 +133,11 @@
                             
                             unset($entries);
                             unset($doc_tags);
+                            unset($zp_xml);
                             
                             ?>
                         </select>
+                        <span class="divider"></span>
                     </div>
                     
                     <div class="section last">
@@ -144,6 +146,7 @@
                     </div>
                     
                 </div>
+                <div class="clear"></div>
             </div>
             
             <div id="zp-List">
@@ -157,37 +160,29 @@
                     echo "<h3>Viewing Collection \"".$collection_name."\" [".$collection_id."]</h3>\n\n";
                 
                 if ($tag_name)
-                    echo "<h3>Viewing Citations with Tag \"".$tag_name."\"</h3>\n\n";
+                    echo "<h3>Viewing Citations Tagged \"".$tag_name."\"</h3>\n\n";
                 
                 // READ ZOTERO XML FOR CITATIONS
                 
-                $doc_citations = new DOMDocument();
+                $zp_xml = MakeZotpressRequest($account_type, $api_user_id, false, $collection_id, false, $tag_name, $limit, false, true);
                 
-                // TO CURL, OR NOT TO CURL
-                if  (in_array ('curl', get_loaded_extensions())) {
-                    $doc_citations_xml = Zotpress_curl(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&collection_id=".$collection_id."&tag_name=".$tag_name."&limit=".$limit);
-                    $doc_citations->loadXML($doc_citations_xml);
-                }
-                else {
-                    $doc_citations->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&collection_id=".$collection_id."&tag_name=".$tag_name."&limit=".$limit);
-                }
+                $doc_citations = new DOMDocument();
+                $doc_citations->loadXML($zp_xml);
                 
                 $entries = $doc_citations->getElementsByTagName("entry");
                 
+                unset($zp_xml);
+                
                 // READ IMAGES XML
                 
-                $doc_images = new DOMDocument();
+                $zp_xml = MakeZotpressRequest($account_type, $api_user_id, false, false, false, false, -1, true, true);
                 
-                // TO CURL, OR NOT TO CURL
-                if  (in_array ('curl', get_loaded_extensions())) {
-                    $doc_images_xml = Zotpress_curl(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&displayImages=true");
-                    $doc_images->loadXML($doc_images_xml);
-                }
-                else {
-                    $doc_images->load(ZOTPRESS_PLUGIN_URL."zotpress.rss.php?account_type=".$account_type."&api_user_id=".$api_user_id."&public_key=".$public_key."&displayImages=true");
-                }
+                $doc_images = new DOMDocument();
+                $doc_images->loadXML($zp_xml);
                 
                 $zpimages = $doc_images->getElementsByTagName('zpimage');
+                
+                unset($zp_xml);
                 
                 // DISPLAY EACH ENTRY
                 
@@ -240,6 +235,7 @@
                 unset($doc_images);
                 
                 ?>
+            
             </div>
             
             
