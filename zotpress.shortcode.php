@@ -285,20 +285,22 @@
                                 // SINGLE CITATION
                                 <?php if ($item_key !== false && trim($item_key) != "") { ?>
                                 var zpcontent = (browser_is_IE) ? jQuery(xml).context.xml.substr(jQuery(xml).context.xml.indexOf("div")-1).substr(0, jQuery(xml).context.xml.substr(jQuery(xml).context.xml.indexOf("div")-1).indexOf("/content")-1) : jQuery(xml).find("content").html();
-                                
                                 var this_citation_id = jQuery(xml).find("zapi\\:key").text();
-                                    
-                                var citation_html = "<div class='zp-Entry' rel='"+this_citation_id+"'>\n" + zpcontent;
                                 
-                                <?php if ($download == "yes") { ?>
-                                if (citation_downloads[this_citation_id] !== undefined) { // 5KWRUASC
-                                    citation_html += "<a href='"+citation_downloads[this_citation_id].attachment_url+"'>Download URL</a>\n";
+                                if (this_citation_id != "")
+                                {
+                                    var citation_html = "<div class='zp-Entry' rel='"+this_citation_id+"'>\n" + zpcontent;
+                                    
+                                    <?php if ($download == "yes") { ?>
+                                    if (citation_downloads[this_citation_id] !== undefined) { // 5KWRUASC
+                                        citation_html += "<a href='"+citation_downloads[this_citation_id].attachment_url+"'>Download URL</a>\n";
+                                    }
+                                    <?php } ?>
+                                        
+                                    citation_html += "</div>\n\n";
+                                    
+                                    jQuery('div#<?php echo $zp_instance_id; ?> div.zp-ZotpressInner').append(citation_html);
                                 }
-                                <?php } ?>
-                                    
-                                citation_html += "</div>\n\n";
-                                
-                                jQuery('div#<?php echo $zp_instance_id; ?> div.zp-ZotpressInner').append(citation);
                                 
                                 
                                 
