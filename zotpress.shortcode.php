@@ -263,6 +263,34 @@
                                     }, "XML");
                                 }
                             });
+                            
+                            
+                            // IMAGES
+                            <?php if ($image == "yes") { ?>
+                            var xmlUriCitationImages = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'
+                                                                    + 'account_type='+account_type+'&api_user_id='+api_user_id
+                                                                    +'&displayImages=true';
+                            
+                            // Grab Images
+                            jQuery.get(xmlUriCitationImages, {}, function(xmlImages)
+                            {
+                                if (browser_is_IE)
+                                {
+                                    xmlImages = createXmlDOMObject (xmlImages);
+                                }
+                                
+                                jQuery(xmlImages).find("zpimage").each(function()
+                                {
+                                    var zpimage = jQuery(this);
+                                    
+                                    if (jQuery('div.zp-Entry[rel='+jQuery(this).attr('citation_id')+']').hasClass("zp-Image") === false)
+                                        jQuery('div.zp-Entry[rel='+jQuery(this).attr('citation_id')+']').addClass("zp-Image").prepend("<div class='zp-Entry-Image' ><div class='zp-Entry-Image-Crop'><img src='"+jQuery(this).attr('image_url')+"' alt='image' /></div></div>\n");
+                                    
+                                });
+                                
+                            }, "XML");
+                            
+                            <?php } ?>
                         }
                         
                         else // No citations
