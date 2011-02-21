@@ -7,7 +7,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.0.5
-Stable tag: 2.5.2
+Stable tag: 2.6
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -127,6 +127,11 @@ This shortcode will display a list of five citations from the collection with th
 = 2.5.2 =
 * Fixed image display for author/year citations.
 
+= 2.6 =
+* Important: Reduced multiple instantiations of JavaScript.
+* Download option added to Widget.
+* Proper download links for PDFs implemented.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -164,3 +169,6 @@ Re-wrote display code and tidied up JavaScript. Fixed update table code.
 
 = 2.5.1 =
 Fixed single citation display bug.
+
+= 2.6 =
+Important: JavaScript reductions; download option added to Widget; proper PDF download links.

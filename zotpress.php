@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 2.5.2
+    Version: 2.6
     Author URI: http://katieseaborn.com
     
 */
@@ -15,8 +15,7 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
-    $shortcode_displayed = false;
-    global $shortcode_displayed;
+    $GLOBALS['is_shortcode_displayed'] = false;
     
     global $Zotpress_main_db_version;
     $Zotpress_main_db_version = "1.0";
@@ -206,7 +205,6 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
         if (!current_user_can('manage_options'))  {
                 wp_die( __('You do not have sufficient permissions to access this page.') );
         }
-
         
         
         // ADD ZOTERO ACCOUNT
@@ -215,9 +213,9 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
         {
             include('zotpress.accounts.php');
         }
-            
-            
-            
+        
+        
+        
         // ADD ZOTERO ACCOUNT
         
         else if (isset($_GET['image']))
@@ -228,18 +226,18 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
             
             include('zotpress.image.php');
         }
-            
-            
-            
+        
+        
+        
         // HELP PAGE
         
         else if (isset($_GET['help']))
         {
             include('zotpress.help.php');
         }
-            
-            
-            
+        
+        
+        
         // ADMIN VIEW CITATIONS
         
         else
@@ -317,74 +315,84 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 // SHORTCODE -----------------------------------------------------------------------------------------
 
     function Zotpress_func($atts) {
-            extract(shortcode_atts(array(
+        extract(shortcode_atts(array(
+            
+            'api_user_id' => false,
+            'nickname' => false,
+            'author' => false,
+            'year' => false,
+            
+            'data_type' => "items",
+            
+            'collection_id' => false,
+            'item_key' => false,
+            'tag_name' => false,
+            
+            'content' => "bib",
+            'style' => "apa",
+            'order' => false,
+            'sort' => false,
+            'limit' => "50",
+            
+            'image' => "no",
+            'download' => "no"
                 
-                    'api_user_id' => false,
-                    'nickname' => false,
-                    'author' => false,
-                    'year' => false,
-                    
-                    'data_type' => "items",
-                    
-                    'collection_id' => false,
-                    'item_key' => false,
-                    'tag_name' => false,
-                    
-                    'content' => "bib",
-                    'style' => "apa",
-                    'order' => false,
-                    'sort' => false,
-                    'limit' => "50",
-                    
-                    'image' => "no",
-                    'download' => "no"
-                    
-            ), $atts));
+        ), $atts));
+        
+        //ini_set('display_errors', 1);
+        //error_reporting(E_ALL);
+        
+        // Format attritbutes
+        $api_user_id = str_replace('"','',html_entity_decode($api_user_id));
+        $nickname = str_replace('"','',html_entity_decode($nickname));
+        $author = str_replace('"','',html_entity_decode($author));
+        $year = str_replace('"','',html_entity_decode($year));
+        
+        $data_type = str_replace('"','',html_entity_decode($data_type));
+        
+        $collection_id = str_replace('"','',html_entity_decode($collection_id));
+        $item_key = str_replace('"','',html_entity_decode($item_key));
+        $tag_name = str_replace('"','',html_entity_decode($tag_name));
+        
+        $content = str_replace('"','',html_entity_decode($content));
+        $style = str_replace('"','',html_entity_decode($style));
+        $order = str_replace('"','',html_entity_decode($order));
+        $sort = str_replace('"','',html_entity_decode($sort));
+        $limit = str_replace('"','',html_entity_decode($limit));
+        
+        $image = str_replace('"','',html_entity_decode($image));
+        $download = str_replace('"','',html_entity_decode($download));
+        
+        // Connect to database
+        global $wpdb;
+        
+        if ($api_user_id != false)
+            $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
+        else if ($nickname != false)
+            $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
+        else
+            $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
             
-            //ini_set('display_errors', 1);
-            //error_reporting(E_ALL);
-            
-            // Format attritbutes
-            $api_user_id = str_replace('"','',html_entity_decode($api_user_id));
-            $nickname = str_replace('"','',html_entity_decode($nickname));
-            $author = str_replace('"','',html_entity_decode($author));
-            $year = str_replace('"','',html_entity_decode($year));
-            
-            $data_type = str_replace('"','',html_entity_decode($data_type));
-            
-            $collection_id = str_replace('"','',html_entity_decode($collection_id));
-            $item_key = str_replace('"','',html_entity_decode($item_key));
-            $tag_name = str_replace('"','',html_entity_decode($tag_name));
-            
-            $content = str_replace('"','',html_entity_decode($content));
-            $style = str_replace('"','',html_entity_decode($style));
-            $order = str_replace('"','',html_entity_decode($order));
-            $sort = str_replace('"','',html_entity_decode($sort));
-            $limit = str_replace('"','',html_entity_decode($limit));
-            
-            $image = str_replace('"','',html_entity_decode($image));
-            $download = str_replace('"','',html_entity_decode($download));
-            
-            // Connect to database
-            global $wpdb;
-            
-            if ($api_user_id != false)
-                $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
-            else if ($nickname != false)
-                $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
-            else
-                $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
-                
-            $zp_accounts_total = $wpdb->num_rows;
-            $zp_instance_id = "zotpress-".rand(100,999);
-            
-            if ($zp_accounts_total > 0)
-            {
+        $zp_accounts_total = $wpdb->num_rows;
+        $zp_instance_id = "zotpress-".rand(100,999);
+        
+        if ($zp_accounts_total > 0)
+        {
+            if ($GLOBALS['is_shortcode_displayed'] == false) {
                 include('zotpress.shortcode.php');
-                return "<div id='".$zp_instance_id."' class='zp-Zotpress'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
             }
+            include('zotpress.shortcode.display.php');
             
-            $shortcode_displayed = true;
+            $zp_content = "\n<div id='".$zp_instance_id."' class='zp-Zotpress'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
+            
+            $GLOBALS['is_shortcode_displayed'] = true;
+            
+            return $zp_content;
+        }
+        else
+        {
+            echo "\n<div id='".$zp_instance_id."' class='zp-Zotpress'>Sorry, no citations found.</div>\n";
+        }
     }
     
 // SHORTCODE -----------------------------------------------------------------------------------------
@@ -424,6 +432,7 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
             $limit = isset( $instance['limit'] ) ? $instance['limit'] : "5";
             
             $image = isset( $instance['image'] ) ? $instance['image'] : "no";
+            $download = isset( $instance['download'] ) ? $instance['download'] : "no";
             
             // Required for theme
             echo $before_widget;
@@ -431,33 +440,42 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
             if ($title)
                 echo $before_title . $title . $after_title;
             
+            
+            
             // DISPLAY
             
-            if (!$shortcode_displayed)
-            {
-                // Connect to database
-                global $wpdb;
-                
-                if ($api_user_id != false)
-                    $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
-                else if ($nickname != false)
-                    $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
-                else
-                    $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
-            }
+            // Connect to database
+            global $wpdb;
+            
+            if ($api_user_id != false)
+                $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
+            else if ($nickname != false)
+                $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
+            else
+                $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
             
             $zp_accounts_total = $wpdb->num_rows;
             $zp_instance_id = "zotpress-".rand(100,999);
             
             if ($zp_accounts_total > 0)
             {
-                include('zotpress.shortcode.php');
-                echo "<div id='".$zp_instance_id."' class='zp-Zotpress zp-ZotpressWidget'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
+                if ($GLOBALS['is_shortcode_displayed'] == false) {
+                    include('zotpress.shortcode.php');
+                }
+                include('zotpress.shortcode.display.php');
+                
+                $zp_content = "\n<div id='".$zp_instance_id."' class='zp-Zotpress zp-ZotpressWidget'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
+                
+                $GLOBALS['is_shortcode_displayed'] = true;
+                
+                echo $zp_content;
             }
             else
             {
-                echo "<div id='".$zp_instance_id."' class='zp-Zotpress zp-ZotpressWidget'>Sorry, no citations found.</div>\n";
+                echo "\n<div id='".$zp_instance_id."' class='zp-Zotpress zp-ZotpressWidget'>Sorry, no citations found.</div>\n";
             }
+            
+            
             
             // Required for theme
             echo $after_widget;
@@ -489,6 +507,7 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
                 $instance['limit'] = "5";
             
             $instance['image'] = strip_tags($new_instance['image']);
+            $instance['download'] = strip_tags($new_instance['download']);
             
             return $instance;
         }
@@ -609,6 +628,14 @@ define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 			<select id="<?php echo $this->get_field_id( 'image' ); ?>" name="<?php echo $this->get_field_name( 'image' ); ?>" class="widefat">
 				<option <?php if ( 'no' == $instance['image'] ) echo 'selected="selected"'; ?>>no</option>
 				<option <?php if ( 'yes' == $instance['image'] ) echo 'selected="selected"'; ?>>yes</option>
+			</select>
+		</p>
+                
+                <p>
+			<label for="<?php echo $this->get_field_id( 'download' ); ?>">Show Download URL?:</label>
+			<select id="<?php echo $this->get_field_id( 'download' ); ?>" name="<?php echo $this->get_field_name( 'download' ); ?>" class="widefat">
+				<option <?php if ( 'no' == $instance['download'] ) echo 'selected="selected"'; ?>>no</option>
+				<option <?php if ( 'yes' == $instance['download'] ) echo 'selected="selected"'; ?>>yes</option>
 			</select>
 		</p>
                 
