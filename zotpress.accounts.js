@@ -10,16 +10,16 @@ jQuery(document).ready(function() {
     jQuery('#account_type').change( function()
     {
         // GROUPS
-        if (jQuery(this).val() == "groups") {
-            jQuery('span#zp-ID-Label').text("Group");
-            jQuery("div.zp-public_key").hide();
-        }
-        
-        // USERS
-        else {
-            jQuery('span#zp-ID-Label').text("API User");
-            jQuery("div.zp-public_key").show();
-        }
+        //if (jQuery(this).val() == "groups") {
+        //    jQuery('span#zp-ID-Label').text("Group");
+        //    jQuery("div.zp-public_key").hide();
+        //}
+        //
+        //// USERS
+        //else {
+        //    jQuery('span#zp-ID-Label').text("API User");
+        //    jQuery("div.zp-public_key").show();
+        //}
     });
    
     

@@ -252,7 +252,7 @@
                                         
                                         if (download === true) {
                                             if (citation_downloads[this_citation_id] !== undefined) {
-                                                citation_html += "<a href='"+citation_downloads[this_citation_id].attachment_url+"'>Download URL</a>\n";
+                                                citation_html += "<a href='"+ZOTPRESS_PLUGIN_URL+"zotpress.file.php?download_url="+escape(citation_downloads[this_citation_id].attachment_url)+"&amp;account_type="+account_type+"&amp;api_user_id="+api_user_id+"'>Download URL</a>\n";
                                             }
                                         }
                                         
@@ -326,7 +326,7 @@
                                     
                                     if (download === true) {
                                         if (citation_downloads[this_citation_id] !== undefined) {
-                                            citation_html += "<a href='"+citation_downloads[this_citation_id].attachment_url+"'>Download URL</a>\n";
+                                            citation_html += "<a href='"+ZOTPRESS_PLUGIN_URL+"zotpress.file.php?download_url="+escape(citation_downloads[this_citation_id].attachment_url)+"&amp;account_type="+account_type+"&amp;api_user_id="+api_user_id+"'>Download URL</a>\n";
                                         }
                                     }
                                         
@@ -352,7 +352,7 @@
                                     
                                     if (download === true) {
                                         if (citation_downloads[this_citation_id] !== undefined) {
-                                            citation_html += "<a href='"+citation_downloads[this_citation_id].attachment_url+"'>Download URL</a>\n";
+                                            citation_html += "<a href='"+ZOTPRESS_PLUGIN_URL+"zotpress.file.php?download_url="+escape(citation_downloads[this_citation_id].attachment_url)+"&amp;account_type="+account_type+"&amp;api_user_id="+api_user_id+"'>Download URL</a>\n";
                                         }
                                     }
                                     

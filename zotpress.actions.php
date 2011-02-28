@@ -51,13 +51,14 @@
             $errors['api_user_id_blank'][0] = 1;
         
         // PUBLIC KEY
-        if ($account_type == "users")
-            if ($_GET['public_key'] != "")
-                if (preg_match("/^[0-9a-zA-Z]+$/", $_GET['public_key']) == 1)
-                    $public_key = htmlentities($_GET['public_key']);
-                else
-                    $errors['public_key_format'][0] = 1;
+        if ($_GET['public_key'] != "")
+            if (preg_match("/^[0-9a-zA-Z]+$/", $_GET['public_key']) == 1)
+                $public_key = htmlentities($_GET['public_key']);
             else
+                if ($account_type == "users")
+                    $errors['public_key_format'][0] = 1;
+        else
+            if ($account_type == "users")
                 $errors['public_key_blank'][0] = 1;
         
         // NICKNAME 

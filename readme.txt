@@ -7,7 +7,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.0.5
-Stable tag: 2.6
+Stable tag: 2.6.1
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -23,12 +23,13 @@ Zotero is a community-based cross-platform citation manager that integrates with
 * Sort by a variety of options, including: author, year, collection, tag, and more.
 * Add both user and group Zotero accounts
 * Add thumbnail images to your citations
+* Let visitors download your publications
 * And more!
 
 Tested in Firefox 3 (Mac/Win), IE7 and IE8.
 
 = Requirements =
-cUrl [preferably] or file_get_contents enabled on your server.
+jQuery, cUrl [preferably] or file_get_contents enabled on your server.
 
 == Installation ==
 
@@ -132,6 +133,10 @@ This shortcode will display a list of five citations from the collection with th
 * Download option added to Widget.
 * Proper download links for PDFs implemented.
 
+= 2.6.1 =
+* Can now give group accounts a public key.
+* Downloads can now be accessed by anyone (assuming you've enabled downloading).
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -172,3 +177,6 @@ Fixed single citation display bug.
 
 = 2.6 =
 Important: JavaScript reductions; download option added to Widget; proper PDF download links.
+
+= 2.6.1 =
+Downloads can now be accessed by anyone.
