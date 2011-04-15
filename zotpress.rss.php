@@ -1,22 +1,24 @@
 <?php
 
 	// Include WordPress
-	if ($include == false)
+	if (!isset( $include ) || $include == false)
 		require('../../../wp-load.php');
 
 	if (!defined('WP_USE_THEMES'))
 		define('WP_USE_THEMES', false);
 
 
-	function MakeZotpressRequest($mzr_account_type=false,
-							$mzr_api_user_id=false,
-							$mzr_data_type=false,
-							$mzr_collection_id=false,
-							$mzr_item_key=false,
-							$mzr_tag_name=false,
-							$mzr_limit=false,
-							$mzr_displayImages=false,
-							$mzr_include=false)
+	function MakeZotpressRequest(
+			$mzr_account_type=false,
+			$mzr_api_user_id=false,
+			$mzr_data_type=false,
+			$mzr_collection_id=false,
+			$mzr_item_key=false,
+			$mzr_tag_name=false,
+			$mzr_limit=false,
+			$mzr_displayImages=false,
+			$mzr_include=false,
+			$mzr_force_recache=false)
 	{
 		// Access Wordpress db
 		global $wpdb;
@@ -101,7 +103,6 @@
 				if ($mzr_collection_id == false) {
 					if (isset($_GET['collection_id']) && $mzr_include == false && trim($_GET['collection_id']) != '') {
 						$urlDataType = "collections/".trim($_GET['collection_id'])."/items";
-						echo "WTRF";
 					}
 				}
 				else {
@@ -186,50 +187,60 @@
 				$zp_account = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$mzr_api_user_id."'");
 				$public_key = $zp_account[0]->public_key;
 				
+				
+				
 				// ASSUMED: &format=bib
 				
 				// Users
-				if (isset($public_key) && $public_key != "") {
-					$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."?key=".$public_key.$content.$style.$order.$sort.$mzr_limit;
+				if (isset($public_key) && $public_key != "")
+				{
+					if (isset( $_GET['children'] ))
+						$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."/".$_GET['children']."/children?key=".$public_key;
+					else
+						$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."?key=".$public_key.$content.$style.$order.$sort.$mzr_limit;
 				}
+				
 				// Groups
-				else {
+				else
+				{
 					$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType.str_replace("&","?",$content).$style.$order.$sort.$mzr_limit;
 				}
 				
 				
 				
+				
+				// DETERMINE IF FIRST OR SECOND STEP
+				
+				$zp_initial = false;
+				
+				if (isset( $_GET['step'] ) && $_GET['step'] == "one")
+					$zp_initial = true;
+				
+				
+				
 				// DISPLAY
 				
-				if (isset($_GET['curl']) && trim($_GET['curl']) != "" && trim($_GET['curl']) != "false")
+				if (in_array ('curl', get_loaded_extensions()))
 				{
-					if  (in_array ('curl', get_loaded_extensions()))
-					{
-						$curl = new CURL();
+					$curl = new CURL();
+					if ($zp_initial === true) {
+						$curl->setInitial();
+					} else {
 						$curl->enableCache();
-						$zp_xml = $curl->get($zp_url);
+						$curl->recache( $mzr_force_recache );
 					}
-					else // Use the regular away anyways
-					{
-						$curl = new CURL();
-						$curl->enableCache();
-						$zp_xml =  $curl->get_file_get_contents($zp_url);
-					}
+					$zp_xml = $curl->get_curl_contents( $zp_url );
 				}
-				else
+				else // Use the regular away
 				{
-					if  (in_array ('curl', get_loaded_extensions()))
-					{
-						$curl = new CURL();
+					$curl = new CURL();
+					if ($zp_initial === true) {
+						$curl->setInitial();
+					} else {
 						$curl->enableCache();
-						$zp_xml = $curl->get($zp_url);
+						$curl->recache( $mzr_force_recache );
 					}
-					else // Use the regular away
-					{
-						$curl = new CURL();
-						$curl->enableCache();
-						$zp_xml =  $curl->get_file_get_contents($zp_url);
-					}
+					$zp_xml = $curl->get_file_get_contents( $zp_url );
 				}
 			}
 			

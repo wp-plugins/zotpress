@@ -2,12 +2,12 @@
 Contributors: kseaborn
 Plugin Name: Zotpress
 Plugin URI: http://katieseaborn.com/plugins/
-Tags: zotero, zotpress, citation manager, citations, citation, bibliography, bibliographies, reference, references, reference list, reference manager, academic, academia, scholar, scholarly, cv, curriculum vitae, resume
+Tags: zotero, zotpress, citation manager, citations, citation, cite, citing, bibliography, bibliographies, reference, referencing, references, reference list, reference manager, academic, academia, scholar, scholarly, cv, curriculum vitae, resume
 Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
-Tested up to: 3.0.5
-Stable tag: 2.6.1
+Tested up to: 3.1.1
+Stable tag: 3.0
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -20,59 +20,59 @@ Zotero is a community-based cross-platform citation manager that integrates with
 = Features =
 * Display your Zotero citations on your blog
 * Display citations, collections, or tags
-* Sort by a variety of options, including: author, year, collection, tag, and more.
+* Selective CSS styling via IDs and classes
 * Add both user and group Zotero accounts
 * Add thumbnail images to your citations
 * Let visitors download your publications
 * And more!
 
-Tested in Firefox 3 (Mac/Win), IE7 and IE8.
+Tested in Firefox 4 (Mac/Win), IE7 and IE8.
 
 = Requirements =
-jQuery, cUrl [preferably] or file_get_contents enabled on your server.
+jQuery included in your theme, cUrl [preferably] or file_get_contents enabled on your server.  Optional, but recommended: OAuth enabled on your server.
 
 == Installation ==
 
-1. Upload the folder `zotpress` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place the `[zotpress]` shortcode in your blog entry
+1. Upload the folder `zotpress` to the `/wp-content/plugins/` directory.
+1. Activate the plugin through the 'Plugins' menu in WordPress.
+1. If your theme doesn't already support jQuery, you'll need to add `<?php wp_enqueue_script("jquery"); ?>` above the `<?php wp_head(); ?>` call in your theme's header template.
+1. Place the `[zotpress]` shortcode in your blog entry or enable the Zotpress sidebar widget.
 
 = Shortcode =
 You can display your Zotero citations in a number of ways. To display a complete list of citations for all accounts in the default bibliography style (APA), simply use this shortcode:
 
 [zotpress]
 
+An example of the shortcode using parameters is:
+
+[zotpress collection="ZKDTKM3X" limit="5"]
+
+This shortcode will display a list of five citations from the collection with the key "ZKDTKM3X".
+
 = Shortcode Parameters: =
 Here's a list of parameters you can use to display projects in different ways:
 
-* `api_user_id` display a list of citations from a particular user or group.
-* `nickname` display a list of citations by a particular nickname.
+* `user_id` display a list of citations from a particular user or group.
+* `nickname` display a list of citations by a particular Zotero account nickname.
 * `author` display a list of citations from a particular author. Format as follows: "Firstname+Lastname", e.g. "Carl+Sagan". Note: "C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Carl Sagan".
-* `year` display a list of citations from a particular year. Format as follows: "2009". Note: You can display by Author and Year together!
+* `year` display a list of citations from a particular year. Format as follows: "2009". Note: You can display by Author and Year together.
 * `data_type` display a list of a particular data type. Options: items [default], tags, collections
 * `collection_id` id of the collection to draw citations from.
 * `item_key` item key for a single item.
 * `tag_name` name of the tag to draw citations from. Note: make sure you replace all spaces with a + sign, e.g. the tag "electric fish" becomes "electric+fish".
 * `content` format of citation display. Options: html, bib [default]
 * `style` citation style. Options: chicago-note-bibliography, harvard1, mhra, mla, nature, vancouver, apsa, asa, apa [default]. Note: Support for more styles coming; see Zotero Style Repository for details.
-* `order` order by a certain field. Options: itemType, language, conferenceName, volume, issue, place, publisher, date, series, seriesTitle, dateModified, dateAdded [default]. Potentially many more; see Zotero Data Model.
 * `sort` sort direction of the order field. Options: asc, desc [default]
 * `limit` limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]
 * `image` whether or not to display the citation's image, if there is one. Options: yes, no [default]
 * `download` whether or not to display the citation's download URL, if there is one. Options: yes, no [default]
 * `curl` force cURL Options: yes [default], no
 
-= An Example =
-An example of the shortcode using parameters is:
-
-[zotpress collection="ZKDTKM3X" limit="5"]
-
-This shortcode will display a list of five citations from the collection with the key "ZKDTKM3X". 
-
 == Screenshots ==
 
-1. Display and filter your Zotero citations
-2. Manage your Zotero accounts
+1. Display and filter your Zotero citations by account, collection or tag on the admin page. Upload images to citations. Special characters are supported.
+2. Manage both user and group Zotero accounts. Easy private key creation using OAuth (as long as your server supports it).
+3. Search for item keys, citation ids and tag names using the convenient "Zotpress Reference" meta box.
 
 == Changelog ==
 
@@ -137,6 +137,18 @@ This shortcode will display a list of five citations from the collection with th
 * Can now give group accounts a public key.
 * Downloads can now be accessed by anyone (assuming you've enabled downloading).
 
+= 3.0 =
+* New "Zotpress Reference" widget, meant to speed up the process of adding shortcodes to your posts and pages by allowing you to selectively search for ids directly on the add and edit pages.
+* OAuth is now supported, which means that you don't have to go out of your way to generate the required private key for your Zotero account anymore (unless your server doesn't support OAuth, of course).
+* I've changed the way Zotpress's admin splash page loads. Before, the page would hang until finished loading the latest citations from Zotero. This is a friendlier way of letting you know what Zotpress is up to.
+* Manual re-caching and clear cache options added, for those who desire to refresh the cache at their leisure.
+* Citations that have URLs will now have their URLs automatically hyperlinked.
+* More IDs and classes added for greater CSS styling possibilities.
+* Improved handling of multiple Zotpress shortcode calls on a single page.
+* Code reduced and refined plugin-wide, which should equal an overall performance improvement.
+* "Order" parameter no longer available, at least for now; see http://www.zotero.org/support/dev/server_api
+* "Forcing cURL" option abandoned. If your server supports it, cURL will be used; otherwise, Zotpress will resort to file_get_contents(). 
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -180,3 +192,6 @@ Important: JavaScript reductions; download option added to Widget; proper PDF do
 
 = 2.6.1 =
 Downloads can now be accessed by anyone.
+
+= 3.0 =
+Major release! OAuth, convenient "Zotpress Reference" meta box, friendly lag handling, numerous bug fixes, and more!

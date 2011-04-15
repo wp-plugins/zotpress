@@ -2,7 +2,43 @@
         
         <div id="zp-Zotpress" class="wrap">
             
-            <?php include('zotpress.tabs.php'); ?>
+            <?php include('zotpress.display.tabs.php'); ?>
+            
+            <?php
+            
+            // Use iframe to load content nicely
+            if (!isset( $_GET['loaded'] )) {
+            
+            ?>
+            
+            <div class='zp-Loading-Initial'>
+                <h2>Loading ...</h2>
+                <p>Grabbing your latest citations ... this may take a few moments.</p>
+            </div>
+            
+            <?php
+            
+            // Determine if we're forcing a reload
+            if (isset( $_GET['recache'] ))
+                echo '<iframe id="zp-Loading-Initial" src="admin.php?page=Zotpress&amp;loaded=false&amp;recache=true"></iframe>';
+            else
+                echo '<iframe id="zp-Loading-Initial" src="admin.php?page=Zotpress&amp;loaded=false"></iframe>';
+                
+            ?>
+            
+            <?php } else { ?>
+            
+            <?php
+            
+            // Determine if we're forcing a reload
+            if (isset( $_GET['recache'] ))
+                $recache = true;
+            else
+                $recache = false;
+                
+            ?>
+            
+            <span id="ZOTPRESS_PLUGIN_URL"><?php echo ZOTPRESS_PLUGIN_URL; ?></span>
             
             <div id="zp-Filter">
                 <div id="zp-FilterInner">
@@ -67,12 +103,9 @@
                             <option value=''>-------------------</option>
                             <?php
                             
-                            //ini_set('display_errors', 1);
-                            //error_reporting(E_ALL);
-                            
                             // READ ZOTERO XML FOR COLLECTIONS
                             
-                            $zp_xml = MakeZotpressRequest($account_type, $api_user_id, "collections", false, false, false, -1, false, true);
+                            $zp_xml = MakeZotpressRequest($account_type, $api_user_id, "collections", false, false, false, -1, false, true, $recache);
                             
                             $doc_collections = new DOMDocument();
                             $doc_collections->loadXML($zp_xml);
@@ -112,7 +145,7 @@
                             
                             // READ ZOTERO XML FOR TAGS
                             
-                            $zp_xml = MakeZotpressRequest($account_type, $api_user_id, "tags", false, false, false, -1, false, true);
+                            $zp_xml = MakeZotpressRequest($account_type, $api_user_id, "tags", false, false, false, -1, false, true, $recache);
                             
                             $doc_tags = new DOMDocument();
                             $doc_tags->loadXML($zp_xml);
@@ -149,6 +182,8 @@
                 <div class="clear"></div>
             </div>
             
+            <div id="zp-Cache"></div>
+            
             <div id="zp-List">
                 
                 
@@ -164,7 +199,7 @@
                 
                 // READ ZOTERO XML FOR CITATIONS
                 
-                $zp_xml = MakeZotpressRequest($account_type, $api_user_id, false, $collection_id, false, $tag_name, $limit, false, true);
+                $zp_xml = MakeZotpressRequest($account_type, $api_user_id, false, $collection_id, false, $tag_name, $limit, false, true, $recache);
                 
                 $doc_citations = new DOMDocument();
                 $doc_citations->loadXML($zp_xml);
@@ -175,7 +210,7 @@
                 
                 // READ IMAGES XML
                 
-                $zp_xml = MakeZotpressRequest($account_type, $api_user_id, false, false, false, false, -1, true, true);
+                $zp_xml = MakeZotpressRequest($account_type, $api_user_id, false, false, false, false, -1, true, true, $recache);
                 
                 $doc_images = new DOMDocument();
                 $doc_images->loadXML($zp_xml);
@@ -188,6 +223,11 @@
                 
                 foreach ($entries as $entry)
                 {
+                    $item_type = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "itemType")->item(0)->nodeValue;
+                    
+                    if ($item_type == "attachment")
+                        continue;
+                    
                     $citation_id = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue;
                     
                     // GET CITATION CONTENT
@@ -225,7 +265,7 @@
                     
                     echo $citation_content."\n";
                     
-                    echo "<span class='zp-Entry-ID'><span>Item Key (Citation ID):</span> ".$citation_id."</span>\n";
+                    echo "<div class='zp-Entry-ID'><span class='title'>Item Key (Citation ID):</span> <div class='zp-Entry-ID-Text'><span>".$citation_id."</span><input value='".$citation_id."' /></div></div>\n";
                     echo "</div>\n\n";
                 }
                 
@@ -238,14 +278,40 @@
             
             </div>
             
+            <?php if ($_GET['loaded'] == "false") { ?>
+            
+            <script type="text/javascript">
+            
+                jQuery(document).ready(function()
+                {
+                    
+                    /*
+                        
+                        LOAD ADMIN PAGE AFTER LOADING ZOTERO DATA
+                        
+                    */
+                    
+                    jQuery(window).load(function () {
+                        //alert("admin.php?page=Zotpress&amp;loaded=true");
+                        window.parent.location = "admin.php?page=Zotpress&loaded=true";
+                    });
+                    
+                });
+                
+            </script>
+            
+            <?php } // After finishing loading ?>
+            
+            <?php } // Loading check ?>
             
         </div>
+        
         
     <?php } else { ?>
         
         <div id="zp-Zotpress" class="wrap">
             
-            <?php include('zotpress.tabs.php'); ?>
+            <?php include('zotpress.display.tabs.php'); ?>
             
             <p>
                 Zotpress couldn't find any Zotero accounts. Would you like to add a Zotero account?

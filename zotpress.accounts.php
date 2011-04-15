@@ -1,6 +1,13 @@
+    
+    <?php if (isset( $_GET['oauth'] )) { ?>
+    
+    <?php include("zotpress.accounts.oauth.php"); ?>
+    
+    <?php } else { ?>
+    
         <div id="zp-Zotpress" class="wrap">
             
-            <?php include('zotpress.tabs.php'); ?>
+            <?php include('zotpress.display.tabs.php'); ?>
             
             <h3>Add a Zotero Account</h3>
             
@@ -10,7 +17,7 @@
                     <input id="ZOTPRESS_PLUGIN_URL" name="ZOTPRESS_PLUGIN_URL" type="hidden" value="<?php echo ZOTPRESS_PLUGIN_URL; ?>" />
                 
                     <div>
-                        <label for="account_type">Account Type</label>
+                        <label for="account_type" class="required">Account Type</label>
                         <select id="account_type" name="account_type">
                             <option value="users">User</option>
                             <option value="groups">Group</option>
@@ -18,17 +25,17 @@
                     </div>
                 
                     <div>
-                        <label for="api_user_id" class="zp-Help" title="Your API User ID is listed on the Zotero 'Feeds/API' page under 'Settings', right under the 'Feeds/API Settings' heading. Group IDs are found in the group's URL, after &quot;groups&quot;. Both should be a number 1-6+ digits in length."><span id="zp-ID-Label">API User</span> ID</label>
+                        <label for="api_user_id" class="zp-Help required" title="Your User ID is listed on the Zotero 'Feeds/API' page under 'Settings', right under the 'Feeds/API Settings' heading. Group IDs are found in the group's URL, after &quot;groups&quot;. Both should be a number 1-6+ digits in length."><span id="zp-ID-Label">User ID</span></label>
                         <input id="api_user_id" name="api_user_id" type="text" />
                     </div>
                 
                     <div class="zp-public_key">
-                        <label for="public_key" class="zp-Help" title="Create a key on the Zotero 'Feeds/API' page under 'Settings'. Make sure that 'Allow third party access' is checked.">Public Key</label>
+                        <label for="public_key" class="zp-Help" title="<strong>You can create a key using OAuth <u>after</u> you've added your account.</strong> <br />If you've already created a key on the Zotero website, it'll be listed on the 'Feeds/API' page under 'Settings'. Make sure that 'Allow third party access' is checked."><span>Private Key</span></label>
                         <input id="public_key" name="public_key" type="text" />
                     </div>
                 
                     <div>
-                        <label for="nickname" class="zp-Help" title="Your API User/Group ID can be hard to recognize. Make it easier for yourself by giving your account a nickname.">Nickname</label>
+                        <label for="nickname" class="zp-Help" title="Your API User/Group ID can be hard to recognize. Make it easier for yourself by giving your account a nickname."><span>Nickname</span></label>
                         <input id="nickname" name="nickname" type="text" />
                     </div>
                 
@@ -36,10 +43,10 @@
                         <input id="zp-Connect" name="zp-Connect" class="button-primary" type="submit" value="Submit" />
                     </div>
                     
-                    <div class="last">
+                    <div class="message">
                         <div class="zp-Loading">loading</div>
-                        <div class="zp-Errors">errors</div>
-                        <div class="zp-Success">success</div>                
+                        <div class="zp-Errors"><p>Errors!</p></div>
+                        <div class="zp-Success"><p>Success!</p></div>                
                     </div>
                     
                     
@@ -53,8 +60,8 @@
             <div id="zp-Accounts">
                 <div id="zp-AccountsHeader">
                     <span class="account_type first">Type</span>
-                    <span class="api_user_id">API ID</span>
-                    <span class="public_key">Public Key</span>
+                    <span class="api_user_id">User ID</span>
+                    <span class="public_key">Private Key</span>
                     <span class="nickname">Nickname</span>
                     <span class="delete last">Remove</span>
                 </div>
@@ -63,4 +70,15 @@
             </div>
             
             
+            <h3>What is OAuth?</h3>
+            
+            <p>
+                OAuth helps you create the necessary private key for allowing Zotpress to read your Zotero library and display
+                it for all to see. You can do this manually through the Zotero website; using OAuth in Zotpress is just a quicker, more straightforward way of going about it.
+                <strong>Note: You'll need to have OAuth installed on your server to use this option.</strong> If you don't have OAuth installed, you'll have to generate a private key manually through the <a href="http://www.zotero.org/">Zotero</a> website.
+            </p>
+            
+            
         </div>
+        
+    <?php } // OAuth check ?>

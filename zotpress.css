@@ -27,18 +27,16 @@
         }
         
         
-        /* START TABS */
-        
-        div#zp-Zotpress #icon-themes {
-            background-position: -315px -5px;
-        }
-        div#zp-Zotpress .nav-tab-wrapper {
-            border-bottom: 1px solid #CCCCCC;
-            margin-bottom: 20px;
-            padding-bottom: 0;
+        div#zp-Zotpress code {
+            border-radius: 3px;
+            -moz-border-radius: 3px;
+            padding: 2px 5px 2px 4px;
         }
         
-        /* END TABS */
+        div#zp-Zotpress del {
+            color: #aaa;
+            text-decoration: none;
+        }
         
         
         div#zp-Zotpress h3 {
@@ -49,7 +47,13 @@
         
         div#zp-Zotpress h4 {
             font: italic 16px/20px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
-            margin-bottom: 5px;
+            margin-bottom: -5px;
+        }
+        
+        div#zp-Zotpress h5 {
+            font: italic 12px/28px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+            margin-bottom: -15px;
+            /*margin-top: -5px;*/
         }
         
         div#zp-Zotpress hr {
@@ -66,7 +70,16 @@
         }
         
         div#zp-Zotpress ul {
-            margin: 20px 0;
+            list-style: none;
+            margin: 20px 0 25px;
+            padding: 0;
+        }
+        div#zp-Zotpress ul li {
+            background: url('images/bullet.gif') no-repeat 0 7px;
+            padding-left: 15px;
+            margin-left: 5px;
+            margin-bottom: 10px;
+            list-style: none;
         }
         
         div#zp-Zotpress form hr.clear {
@@ -74,6 +87,42 @@
             padding: 0;
             height: 1px;
         }
+        
+        
+        
+        /* START OF INITIAL LOADING CSS */
+        
+        div.zp-Loading-Initial {
+            background: transparent url('images/loading_initial.gif') no-repeat bottom left;
+            margin: 0 auto;
+            padding: 0 5px;
+            width: 400px; /* 220px */
+            height: 110px;
+        }
+        div.zp-Loading-Initial h2 {
+            margin-bottom: -12px;
+        }
+        iframe#zp-Loading-Initial {
+            visibility: hidden;
+        }
+        
+        /* END OF INITIAL LOADING CSS */
+        
+        
+        
+        /* START TABS */
+        
+        div#zp-Zotpress #icon-themes {
+            background-position: -315px -5px;
+        }
+        div#zp-Zotpress .nav-tab-wrapper {
+            border-bottom: 1px solid #CCCCCC;
+            margin-bottom: 20px;
+            padding-bottom: 0;
+        }
+        
+        /* END TABS */
+        
         
         
         /* START CITATIONS */
@@ -149,19 +198,32 @@
             border: 2px solid #a8cf30;
         }
         
-        div#zp-Zotpress div.zp-Entry span.zp-Entry-ID {
+        div#zp-Zotpress div.zp-Entry div.zp-Entry-ID {
             border-top: 1px dashed #EEEEEE;
             color: #999;
             font-size: 10px;
             display: block;
             margin: -5px 0 0 195px;
         }
-        div#zp-Zotpress div.zp-Entry span.zp-Entry-ID span {
+        div#zp-Zotpress div.zp-Entry div.zp-Entry-ID span.title {
             color: #ccc;
             font-family: 'Georgia', serif;
-            /*font-style: italic;*/
-            /*font-weight: bold;*/
             text-transform: uppercase;
+        }
+        div#zp-Zotpress div.zp-Entry div.zp-Entry-ID div {
+            display: inline-block;
+        }
+        div#zp-Zotpress div.zp-Entry div.zp-Entry-ID-Text span {
+            cursor: pointer;
+        }
+        div#zp-Zotpress div.zp-Entry div.zp-Entry-ID input {
+            border: 0;
+            background: transparent;
+            color: #999;
+            display: none;
+            font-size: 10px;
+            padding: 0;
+            margin: 0;
         }
         
         /* END CITATIONS */
@@ -223,6 +285,71 @@
         
         
         
+        /* START OF CACHE CSS */
+        
+        div#zp-Zotpress div#zp-Cache {
+            background: #ccc;
+            background: -moz-linear-gradient(center bottom , #bbb, #ccc) repeat scroll 0 0 transparent;
+            border-radius: 5px;
+            -moz-border-radius: 5px;
+            /*display: none;*/
+            margin: 0 0 20px 0;
+            width: 100%;
+            min-width: 780px;
+            min-height: 25px;
+        }
+        
+        span#ZOTPRESS_PLUGIN_URL {
+            display: none;
+        }
+        
+        div#zp-Zotpress span.zp-ClearCache-Loading {
+            background: url('images/loading_cache.gif') no-repeat 20px 1px;
+            padding: 0 20px;
+        }
+        
+        div#zp-Zotpress div#zp-Cache p {
+            font-size: 10px;
+            margin: 5px 0 20px;
+            padding: 5px 16px 5px 16px;
+            text-shadow: 0 1px 0 #ddd;
+            vertical-align: baseline;
+        }
+        
+        div#zp-Zotpress div#zp-Cache a,
+        div#zp-Zotpress div#zp-Cache a:link,
+        div#zp-Zotpress div#zp-Cache a:visited {
+            border-radius: 10px;
+            -moz-border-radius: 10px;
+            background: #999;
+            background: -moz-linear-gradient(center bottom , #ccc, #ddd) repeat scroll 0 0 transparent;
+            border: 1px solid #999;
+            border-top: 1px solid #aaa;
+            color: #666;
+            font: 9px/9px 'Arial', sans-serif;
+            padding: 3px 5px 2px;
+            margin-left: 10px;
+            text-decoration: none;
+            text-shadow: 0 1px 0 #ddd;
+            text-transform: uppercase;
+            /*letter-spacing: 1px;*/
+        }
+        div#zp-Zotpress div#zp-Cache a.zp-ClearCache-Button {
+            margin-left: 0;
+        }
+        div#zp-Zotpress div#zp-Cache a:hover {
+            background: #eee;
+            text-shadow: 0 1px 0 #fff;
+        }
+        div#zp-Zotpress div#zp-Cache a:active {
+            background: #aaa;
+            text-shadow: 0 1px 0 #bbb;
+        }
+        
+        /* END OF CACHE CSS */
+        
+        
+        
         /* START FILTER */
         
         div#zp-Zotpress div#zp-Filter {
@@ -230,7 +357,7 @@
             background: -moz-linear-gradient(center bottom , #DDDDDD, #f1f1f1) repeat scroll 0 0 transparent;
             border-radius: 5px;
             -moz-border-radius: 5px;
-            margin: 0 0 20px 0;
+            margin: 0;
             width: 100%;
             min-width: 780px;
             min-height: 45px;
@@ -373,14 +500,24 @@
         }
         div#zp-Zotpress div#zp-AccountsHeader span.delete,
         div#zp-Zotpress div#zp-AccountsList div.zp-Account span.delete {
-            width: 30px;
+            width: 50px;
+        }
+        
+        div#zp-Zotpress div#zp-AccountsList div.zp-Account span.delete a {
+            background: url('images/remove.gif') no-repeat top center;
+            display: block;
+            text-indent: -5000px;
+            overflow: hidden;
+            margin: 0 auto;
+            width: 17px;
+            height: 17px;
         }
         
         /* END ACCOUNTS */
         
         
         div#zp-Zotpress .zp-Loading {
-            background: transparent url(loading_list.gif) no-repeat top left;
+            background: transparent url('images/loading_list.gif') no-repeat top left;
             float: left;
             letter-spacing: -1000px;
             overflow: hidden;
@@ -424,6 +561,7 @@
         div#zp-Zotpress form#zp-Add textarea,
         div#zp-Zotpress form#zp-Add input {
             display: block;
+            margin-left: 15px;
         }
         
         div#zp-Zotpress form#zp-Add select[name="account_type"] {
@@ -439,14 +577,16 @@
         
         div#zp-Zotpress form#zp-Add label {
             float: left;
-            padding: 0 30px 3px 0;
+            /*padding: 0 30px 3px 0;*/
+            padding: 0 0 3px 0;
         }
         div#zp-Zotpress form#zp-Add label[for="account_type"] {
             padding-right: 0;
         }
         div#zp-Zotpress form#zp-Add label.required {
-            background: url(req.gif) no-repeat center left;
-            padding-left: 17px;
+            background: url('images/reqd.gif') no-repeat center left;
+            padding-left: 15px;
+            margin-left: 0;
         }
         
         div#zp-Zotpress form#zp-Add label span {
@@ -454,17 +594,15 @@
             font-size: 11px;
             font-style: italic;
         }
-        div#zp-Zotpress form#zp-Add label.zp-Help {
-            background: transparent url('help.png') no-repeat right 3px;
+        div#zp-Zotpress form#zp-Add label.zp-Help span {
+            background: transparent url('images/help.png') no-repeat right 2px;
             cursor: help;
             padding-right: 20px;
-        }
-        div#zp-Zotpress form#zp-Add label span#zp-ID-Label {
             color: #333;
             font-size: 13px;
             font-style: normal;
         }
-
+        
         div#zp-Zotpress form#zp-Add label[for="account_type"] {
             float: none;
         }
@@ -482,6 +620,7 @@
 
         div#zp-Zotpress form#zp-Add input#zp-Connect {
             margin-top: 20px;
+            margin-left: 0;
         }
         
         div#zp-Zotpress form#zp-Add input#zp-Submit {
@@ -495,17 +634,22 @@
             font: italic 10px/10px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
             margin: -7px 0 10px 3px;
         }
+        
+        div#zp-Zotpress form#zp-Add div.message {
+            clear: both;
+            margin-bottom: -10px;
+            width: 100%;
+        }
         div#zp-Zotpress form#zp-Add .zp-Loading {
-            clear: none;
             display: none;
-            margin: 15px 0 0 0;
+            margin: 2px 0 0 10px;
         }
         
         div#zp-Zotpress div.zp-Errors,
         div#zp-Zotpress div.zp-Success {
             display: none;
-            clear: none;
-            margin-top: 5px;
+            font-weight: bold;
+            margin: 0 0 5px 10px;
             padding-left: 42px;
         }
         
@@ -520,13 +664,15 @@
         }
         
         div#zp-Zotpress div.zp-Errors {
-            background: url(error_bg.gif) no-repeat top left;
+            background: url('images/error_bg.gif') no-repeat top left;
+            color: #990033;
         }
         
         div#zp-Zotpress div.zp-Success {
-            background: url(success_bg.gif) no-repeat top left;
+            background: url('images/success_bg.gif') no-repeat top left;
+            color: #009966;
         }
-
+        
 	/* START OF DOWNLOAD CSS */
 	a.zp-AddAccount,
 	a:link.zp-AddAccount,
@@ -553,3 +699,19 @@
 		background: #666;
 	}
 	/* END OF DOWNLOAD CSS */
+	
+        
+        /* START OF MODAL CSS */
+        .zp-Modal #adminmenu,
+        .zp-Modal #footer,
+        .zp-Modal #wphead
+        {
+            display: none;
+        }
+        .zp-Modal #wpbody {
+            margin-left: 25px;
+        }
+        body.wp-admin.zp-Modal {
+            min-width: 400px;
+        }
+        /* END OF MODAL CSS */

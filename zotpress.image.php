@@ -1,6 +1,6 @@
         <div id="zp-Zotpress" class="wrap">
             
-            <?php include('zotpress.tabs.php'); ?>
+            <?php include('zotpress.display.tabs.php'); ?>
             
             <h3>Selected Citation</h3>
             
@@ -28,7 +28,7 @@
                     <div class="section">
                         <label for="upload_image" class="image">
                             <input id="upload_image" type="text" size="36" name="upload_image" value="<?php if (isset($_GET['update'])) { echo $_GET['image_url']; } ?>" />
-                            <input id="upload_image_button" class="button-secondary" type="button" value="Upload Image" /><br />
+                            <input id="upload_image_button" class="button-secondary" type="button" value="Browse" /><br />
                             <span class="help">Enter an URL or upload an image (150 &times; 150 pixels).</span>
                         </label>
                     </div>

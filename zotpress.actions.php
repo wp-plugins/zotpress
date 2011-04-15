@@ -20,8 +20,8 @@
     if (isset($_GET['connect'])) // Delete slide
     {
         // Set up error array
-        $errors = array("api_user_id_blank"=>array(0,"<strong>ID</strong> was left blank."),
-                        "api_user_id_format"=>array(0,"<strong>ID</strong> was formatted incorrectly."),
+        $errors = array("api_user_id_blank"=>array(0,"<strong>User ID</strong> was left blank."),
+                        "api_user_id_format"=>array(0,"<strong>User ID</strong> was formatted incorrectly."),
                         "public_key_blank"=>array(0,"<strong>Public Key</strong> was left blank."),
                         "public_key_format"=>array(0,"<strong>Public Key</strong> was formatted incorrectly."),
                         "nickname_format"=>array(0,"<strong>Nickname</strong> was formatted incorrectly.")
@@ -138,7 +138,7 @@
 
 
 
-     /*
+    /*
             DISPLAY ACCOUNT
             
     */
@@ -163,8 +163,15 @@
             
             // PUBLIC KEY
             $code .= "<span class='public_key'>";
-            if ($account->public_key)
+            if ($account->public_key) {
                 $code .= $account->public_key;
+            }
+            else {
+                if ($account->account_type == "users")
+                    $code .= 'No private key entered. <a class="zp-OAuth-Button" href="'.get_bloginfo( 'url' ).'/wp-content/plugins/zotpress/zotpress.accounts.oauth.php?oauth_user='.$account->api_user_id.'&amp;return_uri='.get_bloginfo('url').'">Start OAuth?</a>';
+                else
+                    $code .= '<del>N/A</del>';
+            }
             $code .= "&nbsp;</span>\n";
             
             // NICKNAME
@@ -174,7 +181,7 @@
             $code .= "&nbsp;</span>\n";
             
             // REMOVE
-            $code .= "<span class='delete last'><a href='#" . $account->id . "'>Remove</a></span>\n";
+            $code .= "<span class='delete last'><a title='Remove this account' href='#" . $account->id . "'>Remove</a></span>\n";
             
             $code .= "</div>\n\n";
             
