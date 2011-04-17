@@ -1,4 +1,15 @@
     
+    <?php
+    
+    // Determine if server supports OAuth
+    if (in_array ('oauth', get_loaded_extensions()))
+        $oauth_is_not_installed = false;
+    else
+        $oauth_is_not_installed = true;
+    
+    ?>
+    
+    
     <?php if (isset( $_GET['oauth'] )) { ?>
     
     <?php include("zotpress.accounts.oauth.php"); ?>
@@ -30,7 +41,7 @@
                     </div>
                 
                     <div class="zp-public_key">
-                        <label for="public_key" class="zp-Help" title="<strong>You can create a key using OAuth <u>after</u> you've added your account.</strong> <br />If you've already created a key on the Zotero website, it'll be listed on the 'Feeds/API' page under 'Settings'. Make sure that 'Allow third party access' is checked."><span>Private Key</span></label>
+                        <label for="public_key" class="zp-Help<?php if ($oauth_is_not_installed){ echo " required"; } ?>" title="<?php if (!$oauth_is_not_installed){ ?><strong>You can create a key using OAuth <u>after</u> you've added your account.</strong><?php } else { ?><strong>You are rquired to create a private key to use Zotpress. You can create one on the Zotero website.</strong><?php } ?><br />If you've already created a key, it'll be listed on the 'Feeds/API' page under 'Settings' on the Zotero website. Make sure that 'Allow third party access' is checked."><span>Private Key</span></label>
                         <input id="public_key" name="public_key" type="text" />
                     </div>
                 
@@ -69,7 +80,7 @@
                 <div id="zp-AccountsList"></div>
             </div>
             
-            
+            <?php if (!$oauth_is_not_installed){ ?>
             <h3>What is OAuth?</h3>
             
             <p>
@@ -77,6 +88,13 @@
                 it for all to see. You can do this manually through the Zotero website; using OAuth in Zotpress is just a quicker, more straightforward way of going about it.
                 <strong>Note: You'll need to have OAuth installed on your server to use this option.</strong> If you don't have OAuth installed, you'll have to generate a private key manually through the <a href="http://www.zotero.org/">Zotero</a> website.
             </p>
+            <?php } else { ?>
+            <h3>Where do I get a private key?</h3>
+            
+            <p>
+               You can generate a private key manually through the <a href="http://www.zotero.org/">Zotero</a> website. Go to <strong>Settings > Feeds/API</strong> and choose "Create new private key."
+            </p>
+            <?php } ?>
             
             
         </div>

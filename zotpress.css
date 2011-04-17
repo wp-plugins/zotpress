@@ -321,7 +321,7 @@
         div#zp-Zotpress div#zp-Cache a:visited {
             border-radius: 10px;
             -moz-border-radius: 10px;
-            background: #999;
+            background: #ddd;
             background: -moz-linear-gradient(center bottom , #ccc, #ddd) repeat scroll 0 0 transparent;
             border: 1px solid #999;
             border-top: 1px solid #aaa;
@@ -418,7 +418,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             -moz-border-radius: 5px;
-            margin: 1em 0;
+            margin: 1em 0 2em;
             padding: 3px;
             width: 775px;
         }
@@ -715,3 +715,26 @@
             min-width: 400px;
         }
         /* END OF MODAL CSS */
+        
+        
+        /* START OF MESSAGE CSS */
+        div.zp-Message {
+            /*border: 1px solid red;*/
+            background: transparent url('images/message.gif') no-repeat top left;
+            display: block;
+            float: right;
+            margin-top: -20px;
+            overflow: hidden;
+            width: 320px;
+            height: 85px;
+        }
+        div.zp-Message p {
+            margin: 15px 20px 0 65px;
+            text-shadow: 0 1px 0 #fff;
+        }
+        a.zp-FiveStar {
+            background: transparent url('images/fivestar.gif') no-repeat left bottom;
+            padding-left: 68px;
+        }
+        /* END OF MESSAGE CSS */
+        

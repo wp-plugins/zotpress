@@ -2,12 +2,13 @@
 Contributors: kseaborn
 Plugin Name: Zotpress
 Plugin URI: http://katieseaborn.com/plugins/
+Donate link: http://katieseaborn.com/
 Tags: zotero, zotpress, citation manager, citations, citation, cite, citing, bibliography, bibliographies, reference, referencing, references, reference list, reference manager, academic, academia, scholar, scholarly, cv, curriculum vitae, resume
 Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.1.1
-Stable tag: 3.0
+Stable tag: 3.0.1
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -15,7 +16,7 @@ Zotpress displays your Zotero citations on Wordpress.
 
 [Zotpress](http://katieseaborn.com/plugins/ "Zotpress for WordPress") displays your [Zotero](http://zotero.org/ "Zotero") citations on Wordpress. It also extends Zotero's meta functionality by allowing you to add thumbnail images to your citations.
 
-Zotero is a community-based cross-platform citation manager that integrates with your browser and word processor.
+[Zotero](http://zotero.org/ "Zotero") is a community-based cross-platform citation manager that integrates with your browser and word processor.
 
 = Features =
 * Display your Zotero citations on your blog
@@ -66,7 +67,10 @@ Here's a list of parameters you can use to display projects in different ways:
 * `limit` limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]
 * `image` whether or not to display the citation's image, if there is one. Options: yes, no [default]
 * `download` whether or not to display the citation's download URL, if there is one. Options: yes, no [default]
-* `curl` force cURL Options: yes [default], no
+
+== Frequently Asked Questions ==
+
+The F.A.Q. can be found on the "Help" page of every Zotpress install. If you have a question that isn't answered there, freel free to post a message in the [forums](http://wordpress.org/tags/zotpress "Zotero forums on Wordpress.com").
 
 == Screenshots ==
 
@@ -149,6 +153,11 @@ Here's a list of parameters you can use to display projects in different ways:
 * "Order" parameter no longer available, at least for now; see http://www.zotero.org/support/dev/server_api
 * "Forcing cURL" option abandoned. If your server supports it, cURL will be used; otherwise, Zotpress will resort to file_get_contents(). 
 
+= 3.0.1 =
+* Sidebar widget fixed.
+* Styles in IE refined.
+* Conditional OAuth messages implemented.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -195,3 +204,6 @@ Downloads can now be accessed by anyone.
 
 = 3.0 =
 Major release! OAuth, convenient "Zotpress Reference" meta box, friendly lag handling, numerous bug fixes, and more!
+
+= 3.0.1 =
+Sidebar widget fixed.

@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 3.0
+    Version: 3.0.1
     Author URI: http://katieseaborn.com
     
 */
@@ -449,28 +449,11 @@
                     ifModified: false // Change to true when implemented on Zotero end
                 });
             }
-        });\n";
+        });
         
-        // Load again, this time checking for updates
-        echo "
-        //jQuery('div#".$GLOBALS['zp_instance_id']." div.zp-Entry').livequery(function()
-        //{
-        //    if (window.ajax_calls.length == ".count($GLOBALS['zp_shortcode_instances']).")
-        //    {
-        //        for (key in window.ajax_calls) {
-        //            jQuery.ajax({
-        //                url: window.ajax_calls[key].replace('&step=one', ''),
-        //                dataType: 'XML',
-        //                cache: false,
-        //                async: true,
-        //                ifModified: false // Change to true when implemented on Zotero end
-        //            });
-        //        }
-        //    }
-        //});
-    });\n";
-        
-        echo "\n</script>\n\n<!-- END OF ZOTPRESS CODE -->\n\n\n";
+    });
+    
+    </script>\n\n<!-- END OF ZOTPRESS CODE -->\n\n\n";
     }
     
     function Zotpress_theme_shortcode_script_footer() {
@@ -485,12 +468,22 @@
     
     class ZotpressSidebarWidget extends WP_Widget {
         
+        /*
+        *   GLOBAL VARIABLES
+        *
+        *   $GLOBALS['zp_shortcode_instances'] {instantiated above}
+        *   $GLOBALS['zp_shortcode_attrs']
+        *   $GLOBALS['zp_accounts']
+        *   $GLOBALS['zp_instance_id']
+        *
+        */
+        
         function ZotpressSidebarWidget()
         {
             $widget_ops = array('description' => __('Display your citations on your sidebar', 'zp-ZotpressSidebarWidget'));
 	    parent::WP_Widget(false, __('Zotpress Widget'), $widget_ops);
         }
-    
+        
         function widget( $args, $instance )
         {
             extract( $args );
@@ -509,12 +502,38 @@
             
             $content = isset( $instance['content'] ) ? $instance['content'] : "bib";
             $style = isset( $instance['style'] ) ? $instance['style'] : "apa";
-            $order = isset( $instance['order'] ) ? $instance['order'] : false;
+            //$order = isset( $instance['order'] ) ? $instance['order'] : false;
             $sort = isset( $instance['sort'] ) ? $instance['sort'] : false;
             $limit = isset( $instance['limit'] ) ? $instance['limit'] : "5";
             
             $image = isset( $instance['image'] ) ? $instance['image'] : "no";
             $download = isset( $instance['download'] ) ? $instance['download'] : "no";
+            
+            
+            // Create global array with the above shortcode attributes
+            $GLOBALS['zp_shortcode_attrs'] = array(
+                    "api_user_id" => $api_user_id,
+                    "nickname" => $nickname,
+                    "author" => $author,
+                    "year" => $year,
+                    
+                    "data_type" => $data_type,
+                    
+                    "collection_id" => $collection_id,
+                    "item_key" => $item_key,
+                    "tag_name" => $tag_name,
+                    
+                    "content" => $content,
+                    "style" => $style,
+                    //"order" => $order,
+                    "sort" => $sort,
+                    "limit" => $limit,
+                    
+                    "image" => $image,
+                    "download" => $download,
+            );
+            
+            
             
             // Required for theme
             echo $before_widget;
@@ -526,35 +545,39 @@
             
             // DISPLAY
             
-            // Connect to database
             global $wpdb;
             
             if ($api_user_id != false)
-                $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
+                $GLOBALS['zp_accounts'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
             else if ($nickname != false)
-                $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
+                $GLOBALS['zp_accounts'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
             else
-                $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
+                $GLOBALS['zp_accounts'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
             
             $zp_accounts_total = $wpdb->num_rows;
-            $zp_instance_id = "zotpress-".rand(100,999);
+            $GLOBALS['zp_instance_id'] = "zotpress-".rand(100,999);
             
             if ($zp_accounts_total > 0)
             {
-                if ($GLOBALS['is_shortcode_displayed'] == false) {
-                    include('zotpress.shortcode.php');
+                if ($GLOBALS['is_shortcode_displayed'] == false)
+                {
+                    add_action('wp_print_footer_scripts', 'Zotpress_theme_shortcode_script_footer');
+                    add_action('wp_print_footer_scripts', 'Zotpress_theme_shortcode_display_script_footer');
                 }
-                include('zotpress.shortcode.display.php');
-                
-                $zp_content = "\n<div id='".$zp_instance_id."' class='zp-Zotpress zp-ZotpressSidebarWidget'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
                 
                 $GLOBALS['is_shortcode_displayed'] = true;
                 
+                ob_start();
+                include( 'zotpress.shortcode.display.php' );
+                $GLOBALS['zp_shortcode_instances'][$GLOBALS['zp_instance_id']] = ob_get_contents();
+                ob_end_clean();
+                
+                $zp_content = "\n<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress zp-ZotpressSidebarWidget'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
                 echo $zp_content;
             }
             else
             {
-                echo "\n<div id='".$zp_instance_id."' class='zp-Zotpress zp-ZotpressSidebarWidget'>Sorry, no citations found.</div>\n";
+                echo "\n<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress zp-ZotpressSidebarWidget'>Sorry, no citations found.</div>\n";
             }
             
             
@@ -580,7 +603,7 @@
             
             $instance['content'] = strip_tags( $new_instance['content'] );
             $instance['style'] = strip_tags($new_instance['style']);
-            $instance['order'] = strip_tags($new_instance['order']);
+            //$instance['order'] = strip_tags($new_instance['order']);
             $instance['sort'] = strip_tags($new_instance['sort']);
             $instance['limit'] = strip_tags($new_instance['limit']);
             if (intval($instance['limit']) > 99)
@@ -687,10 +710,12 @@
 			<input id="<?php echo $this->get_field_id( 'style' ); ?>" name="<?php echo $this->get_field_name( 'style' ); ?>" value="<?php echo $instance['style']; ?>" class="widefat" />
 		</p>
                 
+                <?php if (1 == 2) { ?>
 		<p>
 			<label for="<?php echo $this->get_field_id( 'order' ); ?>">Order By:</label>
 			<input id="<?php echo $this->get_field_id( 'order' ); ?>" name="<?php echo $this->get_field_name( 'order' ); ?>" value="<?php echo $instance['order']; ?>" class="widefat" />
 		</p>
+                <?php } // hehe ?>
                 
                 <p>
 			<label for="<?php echo $this->get_field_id( 'sort' ); ?>">Sort Order:</label>

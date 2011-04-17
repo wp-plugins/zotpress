@@ -4,8 +4,14 @@
             
             <h3>What is Zotpress?</h3>
             
+            <div class="zp-Message">
+                <p>
+                    If you like Zotpress, let the world know with a <a class="zp-FiveStar" title="Rate Zotpress" href="http://wordpress.org/extend/plugins/zotpress/">rating</a> on Wordpress.com!
+                </p>
+            </div>
+            
             <p>
-                Zotpress displays your <a href="https://www.zotero.org/settings/keys">Zotero</a> citations on Wordpress.
+                <a href="http://katieseaborn.com/plugins/">Zotpress</a> displays your <a href="https://www.zotero.org/settings/keys">Zotero</a> citations on Wordpress.
                 It also extends the basic meta functionality offered by Zotero by allowing you to add thumbnail images to and upload publicly visible PDF files of your citations.
             </p>
             
