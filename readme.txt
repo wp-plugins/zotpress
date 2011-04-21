@@ -158,6 +158,10 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 * Styles in IE refined.
 * Conditional OAuth messages implemented.
 
+= 3.0.2 =
+* Meta box fixed in IE and Safari.
+* Styles fixed in IE and Safari.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -207,3 +211,6 @@ Major release! OAuth, convenient "Zotpress Reference" meta box, friendly lag han
 
 = 3.0.1 =
 Sidebar widget fixed.
+
+= 3.0.2 =
+Meta box now working in IE and Safari!
