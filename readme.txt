@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.1.1
-Stable tag: 3.0.1
+Stable tag: 3.0.2
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -27,7 +27,7 @@ Zotpress displays your Zotero citations on Wordpress.
 * Let visitors download your publications
 * And more!
 
-Tested in Firefox 4 (Mac/Win), IE7 and IE8.
+Tested in Firefox 4, Safari 5, IE7 and IE8.
 
 = Requirements =
 jQuery included in your theme, cUrl [preferably] or file_get_contents enabled on your server.  Optional, but recommended: OAuth enabled on your server.

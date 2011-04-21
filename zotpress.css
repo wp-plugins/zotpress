@@ -285,6 +285,81 @@
         
         
         
+        /* START FILTER */
+        
+        div#zp-Zotpress div#zp-Filter {
+            background: #eee;
+            background: -moz-linear-gradient(center bottom , #DDDDDD, #f1f1f1) repeat scroll 0 0 transparent;
+            border-radius: 5px;
+            -moz-border-radius: 5px;
+            margin: 0;
+            width: 100%;
+            min-width: 780px;
+            min-height: 45px;
+        }
+        div#zp-Zotpress div#zp-FilterInner {
+            /*padding: 10px 15px;*/
+            padding: 0 15px;
+        }
+        div#zp-Zotpress div#zp-Filter div.section {
+            position: relative;
+            /*border-right: 1px solid #ccc;*/
+            /*border-left: 1px solid #fafafa;*/
+            float: left;
+            padding: 10px 0;
+        }
+        /*div#zp-Zotpress div#zp-Filter div.section.first {*/
+        /*    border-left: none;*/
+        /*}*/
+        /*div#zp-Zotpress div#zp-Filter div.section.last {*/
+        /*    border-right: none;*/
+        /*}*/
+        div#zp-Zotpress div#zp-Filter div.section span.divider {
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #fafafa;
+            /*font-size: 20px;*/
+            margin: 0 15px;
+            display: block;
+            float: left;
+            width: 0;
+            height: 25px;
+            /*vertical-align: middle;*/
+        }
+        div#zp-Zotpress div#zp-Filter label {
+            /*font-size: 10px;*/
+            /*font-weight: bold;*/
+            display: block;
+            float: left;
+            font-size: 11px;
+            padding: 3px 5px 0 0;
+            vertical-align: baseline;
+            text-shadow: 0 1px 0 #fafafa;
+        }
+        div#zp-Zotpress div#zp-Filter select#zp-FilterByAccount {
+            display: block !important;
+            float: left;
+            width: 110px;
+        }
+        div#zp-Zotpress div#zp-Filter select#zp-FilterByCollection {
+            display: block;
+            float: left;
+            width: 140px;
+        }
+        div#zp-Zotpress div#zp-Filter select#zp-FilterByTag {
+            display: block;
+            float: left;
+            width: 110px;
+        }
+        div#zp-Zotpress input#zp-FilterByLimit {
+            display: block;
+            float: left;
+            width: 30px;
+        }
+        
+        /* END FILTER */
+        
+        
+        
         /* START OF CACHE CSS */
         
         div#zp-Zotpress div#zp-Cache {
@@ -292,11 +367,10 @@
             background: -moz-linear-gradient(center bottom , #bbb, #ccc) repeat scroll 0 0 transparent;
             border-radius: 5px;
             -moz-border-radius: 5px;
-            /*display: none;*/
-            margin: 0 0 20px 0;
+            margin: 5px 0 20px 0;
             width: 100%;
             min-width: 780px;
-            min-height: 25px;
+            height: 25px;
         }
         
         span#ZOTPRESS_PLUGIN_URL {
@@ -310,7 +384,8 @@
         
         div#zp-Zotpress div#zp-Cache p {
             font-size: 10px;
-            margin: 5px 0 20px;
+            /*margin: 5px 0 20px;*/
+            margin: 0;
             padding: 5px 16px 5px 16px;
             text-shadow: 0 1px 0 #ddd;
             vertical-align: baseline;
@@ -348,68 +423,6 @@
         
         /* END OF CACHE CSS */
         
-        
-        
-        /* START FILTER */
-        
-        div#zp-Zotpress div#zp-Filter {
-            background: #eee;
-            background: -moz-linear-gradient(center bottom , #DDDDDD, #f1f1f1) repeat scroll 0 0 transparent;
-            border-radius: 5px;
-            -moz-border-radius: 5px;
-            margin: 0;
-            width: 100%;
-            min-width: 780px;
-            min-height: 45px;
-        }
-        div#zp-Zotpress div#zp-FilterInner {
-            /*padding: 10px 15px;*/
-            padding: 0 15px;
-        }
-        div#zp-Zotpress div#zp-Filter div.section {
-            position: relative;
-            /*border-right: 1px solid #ccc;*/
-            /*border-left: 1px solid #fafafa;*/
-            float: left;
-            padding: 10px 0;
-        }
-        div#zp-Zotpress div#zp-Filter div.section.first {
-            border-left: none;
-        }
-        div#zp-Zotpress div#zp-Filter div.section.last {
-            border-right: none;
-        }
-        div#zp-Zotpress div#zp-Filter div.section span.divider {
-            border-left: 1px solid #ccc;
-            border-right: 1px solid #fafafa;
-            font-size: 20px;
-            margin: 0 10px;
-            vertical-align: middle;
-        }
-        div#zp-Zotpress div#zp-Filter label {
-            /*font-size: 10px;*/
-            /*font-weight: bold;*/
-            font-size: 11px;
-            vertical-align: baseline;
-            text-shadow: 0 1px 0 #fafafa;
-        }
-        *:first-child+html div#zp-Zotpress div#zp-Filter label { /* IE7 hack */
-            vertical-align: 35%;
-        }
-        div#zp-Zotpress div#zp-Filter select#zp-FilterByAccount {
-            width: 110px;
-        }
-        div#zp-Zotpress div#zp-Filter select#zp-FilterByCollection {
-            width: 140px;
-        }
-        div#zp-Zotpress div#zp-Filter select#zp-FilterByTag {
-            width: 110px;
-        }
-        div#zp-Zotpress input#zp-FilterByLimit {
-            width: 30px;
-        }
-        
-        /* END FILTER */
         
         
         /* START ACCOUNTS */
@@ -698,10 +711,13 @@
 	a:active.zp-AddAccount {
 		background: #666;
 	}
+        
 	/* END OF DOWNLOAD CSS */
 	
         
+        
         /* START OF MODAL CSS */
+        
         .zp-Modal #adminmenu,
         .zp-Modal #footer,
         .zp-Modal #wphead
@@ -714,10 +730,13 @@
         body.wp-admin.zp-Modal {
             min-width: 400px;
         }
+        
         /* END OF MODAL CSS */
         
         
+        
         /* START OF MESSAGE CSS */
+        
         div.zp-Message {
             /*border: 1px solid red;*/
             background: transparent url('images/message.gif') no-repeat top left;
@@ -736,5 +755,6 @@
             background: transparent url('images/fivestar.gif') no-repeat left bottom;
             padding-left: 68px;
         }
+        
         /* END OF MESSAGE CSS */
         

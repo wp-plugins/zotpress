@@ -22,7 +22,7 @@
     }
     div#zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li {
         margin: 0;
-        padding: 0 5px;
+        padding: 5px 5px 0;
         float: left;
     }
     div#zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li.ui-state-active {
@@ -31,16 +31,17 @@
         background-color: #fff;
         height: 20px;
     }
-    div#zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li.ui-state-active a {
-        color: #333;
-        vertical-align: bottom;
-    }
     div#zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li a {
         font: 9px/10px 'Arial', sans-serif;
         letter-spacing: 1px;
         padding: 0 3px;
         text-decoration: none;
         text-transform: uppercase;
+        vertical-align: top;
+    }
+    div#zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li.ui-state-active a {
+        color: #333;
+        /*vertical-align: bottom;*/
     }
     
     div#zp-ZotpressMetaBox-Output {
@@ -110,6 +111,13 @@
                 browser_is_IE = true;
         });
         
+        var browser_is_Safari = false;
+        
+        jQuery.each(jQuery.browser, function() {
+            if (jQuery.browser.safari)
+                browser_is_Safari = true;
+        });
+        
         
         // HTML ENCODE ENTITIES
         // Thanks to Markus Ernst at Bytes.com
@@ -148,38 +156,48 @@
         
         // ZOTPRESS REFERENCE TABS
         
-        jQuery( "#zp-ZotpressMetaBox-Tabs" ).tabs();
+        jQuery( "#zp-ZotpressMetaBox-Tabs" ).tabs(
+        {
+            select: function(event, ui)
+            {
+                // Hide output
+                jQuery("#zp-ZotpressMetaBox-Output").hide();
+                
+                // Clear output
+                jQuery("#zp-ZotpressMetaBox-Output").val("");
+            }
+        });
         
         
         // COLLECTIONS: ACCOUNTS
         
         jQuery("#zp-ZotpressMetaBox-Collection-Accounts option").attr("selected", false);
         
-        jQuery("#zp-ZotpressMetaBox-Collection-Accounts option").click( function()
+        jQuery("#zp-ZotpressMetaBox-Collection-Accounts").click( function()
         {
             if (jQuery(this).val() != "")
             {
-                var xmlUriCollections = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery(this).val()+'&api_user_id='+jQuery(this).text()+'&data_type=collections';
+                // Remove existing
+                if (jQuery("#zp-ZotpressMetaBox-Collection-Collections").length > 0)
+                    jQuery("#zp-ZotpressMetaBox-Collection-Collections").parent().remove();
+                
+                // Add loading
+                //jQuery("#zp-ZotpressMetaBox-Collection-Accounts").after("<div class='zp-Loading'>loading...</div>\n");
+                jQuery("#zp-ZotpressMetaBox-Tabs").append("<div class='zp-Loading'>loading...</div>\n");
+                
+                // Set up xml url
+                var xmlUriCollections = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("option:selected", this).attr("class")+'&api_user_id='+jQuery("option:selected", this).text()+'&data_type=collections';
                 
                 // Grab Zotero request
                 jQuery.ajax({
                     url: xmlUriCollections,
                     dataType: "XML",
                     cache: false,
-                    async: false,
+                    async: true,
                     ifModified: false, // Change to true when implemented on Zotero end
-                    beforeSend: function()
-                    {
-                        // Remove existing
-                        if (jQuery("#zp-ZotpressMetaBox-Collection-Collections").length > 0)
-                            jQuery("#zp-ZotpressMetaBox-Collection-Collections").parent().remove();
-                        
-                        // Add loading
-                        jQuery("#zp-ZotpressMetaBox-Collection-Accounts").parent().append("<div class='zp-Loading'>loading...</div>\n");
-                    },
                     success: function(xml, textStatus, jqXHR)
                     {
-                        if (browser_is_IE)
+                        if (browser_is_IE || browser_is_Safari)
                             xml = createXmlDOMObject (xml);
                         
                         // Build select
@@ -188,7 +206,10 @@
                         
                         jQuery(xml).find("entry").each(function()
                         {
-                            collectionsSelect += "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                            if (browser_is_Safari)
+                                collectionsSelect += "<option value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                            else
+                                collectionsSelect += "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
                         });
                         collectionsSelect += "</select>\n</div>\n\n";
                         
@@ -197,7 +218,8 @@
                     complete: function()
                     {
                         // Remove loading
-                        jQuery("#zp-ZotpressMetaBox-Collection-Accounts").parent().find("div.zp-Loading").remove();
+                        //jQuery("#zp-ZotpressMetaBox-Collection-Accounts").parent().find("div.zp-Loading").remove();
+                        jQuery("#zp-ZotpressMetaBox-Tabs").find("div.zp-Loading").remove();
                         
                         // Open up output
                         jQuery("#zp-ZotpressMetaBox-Output").show();
@@ -209,44 +231,46 @@
         
         // COLLECTIONS: COLLECTIONS
         
-        jQuery("#zp-ZotpressMetaBox-Collection-Collections option").livequery("click", function()
+        jQuery("#zp-ZotpressMetaBox-Collection-Collections").livequery("click", function()
         {
             if (jQuery(this).val() != "")
             {
                 // Update output
                 jQuery("#zp-ZotpressMetaBox-Output-Text").val(jQuery(this).val());
                 
+                // Remove existing
+                if (jQuery("#zp-ZotpressMetaBox-Collection-Items").length > 0)
+                    jQuery("#zp-ZotpressMetaBox-Collection-Items").parent().remove();
+                
+                // Add loading
+                //jQuery("#zp-ZotpressMetaBox-Collection-Collections").parent().append("<div class='zp-Loading'>loading...</div>\n");
+                jQuery("#zp-ZotpressMetaBox-Tabs").append("<div class='zp-Loading'>loading...</div>\n");
+                
                 // Build citation url
-                var xmlUriCollections = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("#zp-ZotpressMetaBox-Collection-Accounts option:selected").val()+'&api_user_id='+jQuery("#zp-ZotpressMetaBox-Collection-Accounts option:selected").text()+'&collection_id='+jQuery(this).val();
+                var xmlUriCollections = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("#zp-ZotpressMetaBox-Collection-Accounts option").attr("class")+'&api_user_id='+jQuery("#zp-ZotpressMetaBox-Collection-Accounts option:selected").text()+'&collection_id='+jQuery(this).val();
                 
                 // Grab Zotero request
                 jQuery.ajax({
                     url: xmlUriCollections,
                     dataType: "XML",
                     cache: false,
-                    async: false,
+                    async: true,
                     ifModified: false, // Change to true when implemented on Zotero end
-                    beforeSend: function()
-                    {
-                        // Remove existing
-                        if (jQuery("#zp-ZotpressMetaBox-Collection-Items").length > 0)
-                            jQuery("#zp-ZotpressMetaBox-Collection-Items").parent().remove();
-                        
-                        // Add loading
-                        jQuery("#zp-ZotpressMetaBox-Collection-Collections").parent().append("<div class='zp-Loading'>loading...</div>\n");
-                    },
                     success: function(xml, textStatus, jqXHR)
                     {
-                        if (browser_is_IE)
+                        if (browser_is_IE || browser_is_Safari)
                             xml = createXmlDOMObject (xml);
-                        
+                            
                         // Build select
                         var collectionsItemsSelect = "<div>\n<label for='zp-ZotpressMetaBox-Collection-Items'>Items:</label>\n";
                         collectionsItemsSelect += "<select id='zp-ZotpressMetaBox-Collection-Items' multiple='yes'>\n";
                         
                         jQuery(xml).find("entry").each(function()
                         {
-                            collectionsItemsSelect += "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                            if (browser_is_Safari)
+                                collectionsItemsSelect += "<option value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                            else
+                                collectionsItemsSelect += "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
                         });
                         collectionsItemsSelect += "</select>\n</div>\n\n";
                         
@@ -255,7 +279,8 @@
                     complete: function()
                     {
                         // Remove loading
-                        jQuery("#zp-ZotpressMetaBox-Collection-Collections").parent().find("div.zp-Loading").remove();
+                        //jQuery("#zp-ZotpressMetaBox-Collection-Collections").parent().find("div.zp-Loading").remove();
+                        jQuery("#zp-ZotpressMetaBox-Tabs").find("div.zp-Loading").remove();
                     }
                 });
             }
@@ -264,12 +289,12 @@
         
         // COLLECTIONS: ITEMS
         
-        jQuery("#zp-ZotpressMetaBox-Collection-Items option").livequery("click", function()
+        jQuery("#zp-ZotpressMetaBox-Collection-Items").livequery("click", function()
         {
             if (jQuery(this).val() != "")
             {
                 // Update output
-                jQuery("#zp-ZotpressMetaBox-Output-Text").val(jQuery(this).val());
+                jQuery("#zp-ZotpressMetaBox-Output-Text").val(jQuery("option:selected", this).val());
             }
         });
         
@@ -279,31 +304,31 @@
         
         jQuery("#zp-ZotpressMetaBox-Tags-Accounts option").attr("selected", false);
         
-        jQuery("#zp-ZotpressMetaBox-Tags-Accounts option").click( function()
+        jQuery("#zp-ZotpressMetaBox-Tags-Accounts").click( function()
         {
             if (jQuery(this).val() != "")
             {
-                var xmlUriTags = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery(this).val()+'&api_user_id='+jQuery(this).text()+'&data_type=tags';
+                // Remove existing
+                if (jQuery("#zp-ZotpressMetaBox-Tags-Collections").length > 0)
+                    jQuery("#zp-ZotpressMetaBox-Tags-Collections").parent().remove();
+                
+                // Add loading
+                //jQuery("#zp-ZotpressMetaBox-Tags-Accounts").parent().append("<div class='zp-Loading'>loading...</div>\n");
+                jQuery("#zp-ZotpressMetaBox-Tabs").append("<div class='zp-Loading'>loading...</div>\n");
+                
+                // Create xml uri
+                var xmlUriTags = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("option:selected", this).attr("class")+'&api_user_id='+jQuery("option:selected", this).text()+'&data_type=tags';
                 
                 // Grab Zotero request
                 jQuery.ajax({
                     url: xmlUriTags,
                     dataType: "XML",
                     cache: false,
-                    async: false,
+                    async: true,
                     ifModified: false, // Change to true when implemented on Zotero end
-                    beforeSend: function()
-                    {
-                        // Remove existing
-                        if (jQuery("#zp-ZotpressMetaBox-Tags-Collections").length > 0)
-                            jQuery("#zp-ZotpressMetaBox-Tags-Collections").parent().remove();
-                        
-                        // Add loading
-                        jQuery("#zp-ZotpressMetaBox-Tags-Accounts").parent().append("<div class='zp-Loading'>loading...</div>\n");
-                    },
                     success: function(xml, textStatus, jqXHR)
                     {
-                        if (browser_is_IE)
+                        if (browser_is_IE || browser_is_Safari)
                             xml = createXmlDOMObject (xml);
                         
                         // Build select
@@ -321,7 +346,8 @@
                     complete: function()
                     {
                         // Remove loading
-                        jQuery("#zp-ZotpressMetaBox-Tags-Accounts").parent().find("div.zp-Loading").remove();
+                        //jQuery("#zp-ZotpressMetaBox-Tags-Accounts").parent().find("div.zp-Loading").remove();
+                        jQuery("#zp-ZotpressMetaBox-Tabs").find("div.zp-Loading").remove();
                         
                         // Open up output
                         jQuery("#zp-ZotpressMetaBox-Output").show();
@@ -333,35 +359,34 @@
         
         // TAGS: COLLECTIONS
         
-        jQuery("#zp-ZotpressMetaBox-Tags-Tags option").livequery("click", function()
+        jQuery("#zp-ZotpressMetaBox-Tags-Tags").livequery("click", function()
         {
             if (jQuery(this).val() != "")
             {
                 // Update output
                 jQuery("#zp-ZotpressMetaBox-Output-Text").val(jQuery(this).val());
                 
+                // Remove existing
+                if (jQuery("#zp-ZotpressMetaBox-Tags-Items").length > 0)
+                    jQuery("#zp-ZotpressMetaBox-Tags-Items").parent().remove();
+                
+                // Add loading
+                //jQuery("#zp-ZotpressMetaBox-Tags-Tags").parent().append("<div class='zp-Loading'>loading...</div>\n");
+                jQuery("#zp-ZotpressMetaBox-Tabs").append("<div class='zp-Loading'>loading...</div>\n");
+                
                 // Build citation url
-                var xmlUriTags = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("#zp-ZotpressMetaBox-Tags-Accounts option:selected").val()+'&api_user_id='+jQuery("#zp-ZotpressMetaBox-Tags-Accounts option:selected").text()+'&tag_name='+escape( jQuery(this).val() );
+                var xmlUriTags = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("#zp-ZotpressMetaBox-Tags-Accounts option:selected").attr("class")+'&api_user_id='+jQuery("#zp-ZotpressMetaBox-Tags-Accounts option:selected").text()+'&tag_name='+escape( jQuery(this).val() );
                 
                 // Grab Zotero request
                 jQuery.ajax({
                     url: xmlUriTags,
                     dataType: "XML",
                     cache: false,
-                    async: false,
+                    async: true,
                     ifModified: false, // Change to true when implemented on Zotero end
-                    beforeSend: function()
-                    {
-                        // Remove existing
-                        if (jQuery("#zp-ZotpressMetaBox-Tags-Items").length > 0)
-                            jQuery("#zp-ZotpressMetaBox-Tags-Items").parent().remove();
-                        
-                        // Add loading
-                        jQuery("#zp-ZotpressMetaBox-Tags-Tags").parent().append("<div class='zp-Loading'>loading...</div>\n");
-                    },
                     success: function(xml, textStatus, jqXHR)
                     {
-                        if (browser_is_IE)
+                        if (browser_is_IE || browser_is_Safari)
                             xml = createXmlDOMObject (xml);
                         
                         // Build select
@@ -370,7 +395,10 @@
                         
                         jQuery(xml).find("entry").each(function()
                         {
-                            tagsItemsSelect += "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                            if (browser_is_Safari)
+                                tagsItemsSelect += "<option value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                            else
+                                tagsItemsSelect += "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
                         });
                         tagsItemsSelect += "</select>\n</div>\n\n";
                         
@@ -379,7 +407,8 @@
                     complete: function()
                     {
                         // Remove loading
-                        jQuery("#zp-ZotpressMetaBox-Tags-Tags").parent().find("div.zp-Loading").remove();
+                        //jQuery("#zp-ZotpressMetaBox-Tags-Tags").parent().find("div.zp-Loading").remove();
+                        jQuery("#zp-ZotpressMetaBox-Tabs").find("div.zp-Loading").remove();
                     }
                 });
             }
@@ -388,12 +417,12 @@
         
         // TAGS: ITEMS
         
-        jQuery("#zp-ZotpressMetaBox-Tags-Items option").livequery("click", function()
+        jQuery("#zp-ZotpressMetaBox-Tags-Items").livequery("click", function()
         {
             if (jQuery(this).val() != "")
             {
                 // Update output
-                jQuery("#zp-ZotpressMetaBox-Output-Text").val(jQuery(this).val());
+                jQuery("#zp-ZotpressMetaBox-Output-Text").val(jQuery("option:selected", this).val());
             }
         });
         
@@ -436,7 +465,7 @@
         <select id="zp-ZotpressMetaBox-Collection-Accounts" multiple="yes">
         <?php
             foreach ($accounts as $account)
-                echo "<option id='".$account->api_user_id."' value='".$account->account_type."'>".$account->api_user_id."</option>\n";
+                echo "<option id='".$account->api_user_id."' class='".$account->account_type."' value='".$account->api_user_id."'>".$account->api_user_id."</option>\n";
         ?>
         </select>
         
@@ -451,7 +480,7 @@
         <select id="zp-ZotpressMetaBox-Tags-Accounts" multiple="yes">
         <?php
             foreach ($accounts as $account)
-                echo "<option id='".$account->api_user_id."' value='".$account->account_type."'>".$account->api_user_id."</option>\n";
+                echo "<option id='".$account->api_user_id."' class='".$account->account_type."' value='".$account->api_user_id."'>".$account->api_user_id."</option>\n";
         ?>
         </select>
         
