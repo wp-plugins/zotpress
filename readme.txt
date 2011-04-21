@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.1.1
-Stable tag: 3.0.2
+Stable tag: 3.0.3
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -162,6 +162,9 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 * Meta box fixed in IE and Safari.
 * Styles fixed in IE and Safari.
 
+= 3.0.3 =
+* Groups accounts citation display fixed.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -214,3 +217,6 @@ Sidebar widget fixed.
 
 = 3.0.2 =
 Meta box now working in IE and Safari!
+
+= 3.0.3 =
+Groups accounts citation display fixed.

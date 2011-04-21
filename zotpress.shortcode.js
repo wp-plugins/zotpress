@@ -210,8 +210,14 @@
                 xmlUriCitations += '&order='+order
             if (sort)
                 xmlUriCitations += '&sort='+sort
+            if (year)
+                xmlUriCitations += '&year='+year
+            if (author)
+                xmlUriCitations += '&author='+author
             if (download)
                 xmlUriCitations += '&download='+download
+            if (image)
+                xmlUriCitations += '&image='+image
             if (limit)
                 xmlUriCitations += '&limit='+limit;
             xmlUriCitations += '&step=one';

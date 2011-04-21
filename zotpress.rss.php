@@ -147,8 +147,8 @@
 					$content = "&content=" . $_GET['content'];
 				else
 					$content = "&content=bib";
-				if ($author || $year)
-					$content = "&content=html";
+				//if ($author || $year)
+				//	$content = "&content=html";
 				
 				// Style
 				if (isset($_GET['style']))
@@ -189,22 +189,14 @@
 				
 				
 				
+				
+				// Users & Groups [& Children]
 				// ASSUMED: &format=bib
 				
-				// Users
-				if (isset($public_key) && $public_key != "")
-				{
-					if (isset( $_GET['children'] ))
-						$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."/".$_GET['children']."/children?key=".$public_key;
-					else
-						$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."?key=".$public_key.$content.$style.$order.$sort.$mzr_limit;
-				}
-				
-				// Groups
+				if (isset( $_GET['children'] ))
+					$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."/".$_GET['children']."/children?key=".$public_key;
 				else
-				{
-					$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType.str_replace("&","?",$content).$style.$order.$sort.$mzr_limit;
-				}
+					$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."?key=".$public_key.$content.$style.$order.$sort.$mzr_limit;
 				
 				
 				
