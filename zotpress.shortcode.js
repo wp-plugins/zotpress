@@ -217,7 +217,7 @@
             if (download)
                 xmlUriCitations += '&download='+download
             if (image)
-                xmlUriCitations += '&image='+image
+                xmlUriCitations += '&displayImages='+image
             if (limit)
                 xmlUriCitations += '&limit='+limit;
             xmlUriCitations += '&step=one';
