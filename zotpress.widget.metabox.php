@@ -96,12 +96,6 @@
     jQuery(function()
     {
         
-        // SET UP CITATIONS AND IMAGES ARRAY
-        
-        window.citations = new Array();
-        window.citation_images = new Array();
-        
-        
         // DETERMINE BROWSER
         
         var browser_is_IE = false;

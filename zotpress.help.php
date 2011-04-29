@@ -19,11 +19,11 @@
             
             <p>
                 You can display your Zotero citations in a number of ways using Wordpress shortcodes.
-                To display a complete list of citations for all accounts in the default bibliography style (APA), simply use this shortcode:
+                To display a complete list of citations for an account in the default bibliography style (APA), simply use this shortcode:
             </p>
             
             <code>
-                [zotpress]
+                [zotpress api_user_id="00000"]
             </code>
             
             <p>
@@ -46,7 +46,7 @@
             
             <h5>Filter by Acccount</h5>
             <ul>
-                <li><code>user_id</code> display a list of citations from a particular user or group. <strong>Recommended.</strong></li>
+                <li><code>user_id</code> display a list of citations from a particular user or group. <strong>REQUIRED if not using "nickname" parameter.</strong></li>
                 <li><code>nickname</code> display a list of citations by a particular Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</li>
             </ul>
             

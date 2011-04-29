@@ -1,19 +1,32 @@
 <?php
+
 /*
-Sean Huber CURL library
-Session-based caching added by Mike Purvis
-Caching, get_file_get_contents option, and timed sessions by Katie Seaborn
-
-This library is a basic implementation of CURL capabilities.
-
+        Sean Huber CURL library
+        Session-based caching added by Mike Purvis
+        Caching, get_file_get_contents option, and timed sessions by Katie Seaborn
+        
+        This library is a basic implementation of CURL capabilities.
 */
+
 
 if (!class_exists('CURL'))
 {
         class CURL
         {
                 // Set up variables
-                var $cache = false, $initial = false, $recache = false, $curl_error = false, $timelimit = 3600, $timeout = 300;
+                var $cache = false, $initial = false, $recache = false, $curl_error = false, $timelimit = 3600, $timeout = 300, $shortcode_request = false, $instance_id = false;
+                
+                
+                function setRequestUri( $zp_shortcode_request )
+                {
+                        $this->shortcode_request = $zp_shortcode_request;
+                }
+                
+                
+                function setInstanceId( $zp_instance_id )
+                {
+                        $this->instance_id = $zp_instance_id;
+                }
                 
                 
                 // DO REQUEST
@@ -72,7 +85,9 @@ if (!class_exists('CURL'))
                                 if ($zp_cache_total == 0)
                                 {
                                         //echo "NO CACHE, SO ENTER FALSE INTO DB-";
-                                        $wpdb->query("INSERT INTO ".$wpdb->prefix."zotpress_cache (cache_key, xml_data, cache_time) VALUES ('".$cache_key."', 'FALSE', '".time()."')");
+                                        //echo $this->shortcode_request." WHERE cache_key='".$cache_key."';";
+                                        $wpdb->query("INSERT INTO ".$wpdb->prefix."zotpress_cache (cache_key, xml_data, cache_time, instance_id) VALUES ('".$cache_key."', 'FALSE', '".time()."', '".$this->instance_id."')");
+                                        $wpdb->query($this->shortcode_request." WHERE cache_key='".$cache_key."';");
                                 }
                                 
                                 

@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.1.1
-Stable tag: 3.0.4
+Stable tag: 3.1
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -40,9 +40,9 @@ jQuery included in your theme, cUrl [preferably] or file_get_contents enabled on
 1. Place the `[zotpress]` shortcode in your blog entry or enable the Zotpress sidebar widget.
 
 = Shortcode =
-You can display your Zotero citations in a number of ways. To display a complete list of citations for all accounts in the default bibliography style (APA), simply use this shortcode:
+You can display your Zotero citations in a number of ways. To display a complete list of citations for an account in the default bibliography style (APA), simply use this shortcode:
 
-[zotpress]
+[zotpress api_user_id="00000"]
 
 An example of the shortcode using parameters is:
 
@@ -53,7 +53,7 @@ This shortcode will display a list of five citations from the collection with th
 = Shortcode Parameters: =
 Here's a list of parameters you can use to display projects in different ways:
 
-* `user_id` display a list of citations from a particular user or group.
+* `user_id` display a list of citations from a particular user or group. REQUIRED if not using "nickname" parameter.
 * `nickname` display a list of citations by a particular Zotero account nickname.
 * `author` display a list of citations from a particular author. Format as follows: "Firstname+Lastname", e.g. "Carl+Sagan". Note: "C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Carl Sagan".
 * `year` display a list of citations from a particular year. Format as follows: "2009". Note: You can display by Author and Year together.
@@ -169,6 +169,11 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 * Fixed display images issue.
 * Separated out sidebar widget code from main file.
 
+= 3.1 =
+* New way of caching requests. Speed increase for requests that have already been cached.
+* No more multiple accounts per shortcode. A "user_api_id" or "nickname" must be set.
+* No more collection titles. You can use the Zotero Reference meta box to find and add this information above collection shortcode calls.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -227,3 +232,6 @@ Groups accounts citation display fixed.
 
 = 3.0.4 =
 Fixed display images issue.
+
+= 3.1 =
+Speed increase and a new way of caching. No more multiple accounts per shortcode. No more auto-display of collection title.

@@ -20,7 +20,6 @@
         position: absolute;
         top: 0;
         left: 0;
-        /*float: left;*/
     }
     div.zp-Zotpress div.zp-Entry-Image-Crop {
         overflow: hidden;
@@ -50,6 +49,9 @@
     div.zp-Zotpress p.zp-NoCitations {
         margin: 0;
     }
+    div.zp-Zotpress-Hidden {
+        display: none;
+    }
 -->
 </style>
 
@@ -61,7 +63,7 @@
     jQuery(document).ready(function()
     {
         // SET UP AJAX CALLS ARRAY
-        window.ajax_calls = new Array();
+        window.zp_ajax_calls = new Array();
         
         // SET UP ZOTPRESS PLUGIN URL VAR
         window.ZOTPRESS_PLUGIN_URL = "<?php echo ZOTPRESS_PLUGIN_URL; ?>";

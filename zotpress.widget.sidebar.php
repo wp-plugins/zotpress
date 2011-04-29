@@ -7,7 +7,7 @@
         *
         *   $GLOBALS['zp_shortcode_instances'] {instantiated above}
         *   $GLOBALS['zp_shortcode_attrs']
-        *   $GLOBALS['zp_accounts']
+        *   $GLOBALS['zp_account']
         *   $GLOBALS['zp_instance_id']
         *
         */
@@ -82,11 +82,9 @@
             global $wpdb;
             
             if ($api_user_id != false)
-                $GLOBALS['zp_accounts'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
+                $GLOBALS['zp_account'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
             else if ($nickname != false)
-                $GLOBALS['zp_accounts'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
-            else
-                $GLOBALS['zp_accounts'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
+                $GLOBALS['zp_account'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
             
             $zp_accounts_total = $wpdb->num_rows;
             $GLOBALS['zp_instance_id'] = "zotpress-".rand(100,999);
