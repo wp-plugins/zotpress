@@ -44,29 +44,6 @@
             $download = isset( $instance['download'] ) ? $instance['download'] : "no";
             
             
-            // Create global array with the above shortcode attributes
-            $GLOBALS['zp_shortcode_attrs'] = array(
-                    "api_user_id" => $api_user_id,
-                    "nickname" => $nickname,
-                    "author" => $author,
-                    "year" => $year,
-                    
-                    "data_type" => $data_type,
-                    
-                    "collection_id" => $collection_id,
-                    "item_key" => $item_key,
-                    "tag_name" => $tag_name,
-                    
-                    "content" => $content,
-                    "style" => $style,
-                    //"order" => $order,
-                    "sort" => $sort,
-                    "limit" => $limit,
-                    
-                    "image" => $image,
-                    "download" => $download,
-            );
-            
             
             
             // Required for theme
@@ -87,7 +64,36 @@
                 $GLOBALS['zp_account'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
             
             $zp_accounts_total = $wpdb->num_rows;
-            $GLOBALS['zp_instance_id'] = "zotpress-".rand(100,999);
+	    $api_user_id = $GLOBALS['zp_account'][0]->api_user_id;
+	    $account_type = $GLOBALS['zp_account'][0]->account_type;
+	    
+            //$GLOBALS['zp_instance_id'] = "zotpress-".rand(100,999);
+            // Generate instance id for shortcode
+            $GLOBALS['zp_instance_id'] = "zotpress-".md5($api_user_id.$nickname.$author.$year.$data_type.$collection_id.$item_key.$tag_name.$content.$style.$sort.$order.$limit.$image.$download);
+            
+            // Create global array with the above shortcode attributes
+            $GLOBALS['zp_shortcode_attrs'] = array(
+                    "api_user_id" => $api_user_id,
+		    "account_type" => $account_type,
+                    "nickname" => $nickname,
+                    "author" => $author,
+                    "year" => $year,
+                    
+                    "data_type" => $data_type,
+                    
+                    "collection_id" => $collection_id,
+                    "item_key" => $item_key,
+                    "tag_name" => $tag_name,
+                    
+                    "content" => $content,
+                    "style" => $style,
+                    //"order" => $order,
+                    "sort" => $sort,
+                    "limit" => $limit,
+                    
+                    "image" => $image,
+                    "download" => $download,
+            );
             
             if ($zp_accounts_total > 0)
             {

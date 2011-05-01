@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.1.1
-Stable tag: 3.1
+Stable tag: 3.1.1
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -174,6 +174,9 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 * No more multiple accounts per shortcode. A "user_api_id" or "nickname" must be set.
 * No more collection titles. You can use the Zotero Reference meta box to find and add this information above collection shortcode calls.
 
+=3.1.1 =
+* Fix: Sidebar widget bug.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -235,3 +238,6 @@ Fixed display images issue.
 
 = 3.1 =
 Speed increase and a new way of caching. No more multiple accounts per shortcode. No more auto-display of collection title.
+
+= 3.1.1 =
+Fixed Sidebar widget bug.
