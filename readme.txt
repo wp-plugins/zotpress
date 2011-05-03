@@ -182,6 +182,9 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 * Fixed citation display positioning bugs.
 * Applied new caching method to sidebar widget.
 
+= 3.1.3 =
+* Temporary fix for web servers that don't support long URLs. Unfortunately no special caching for these folks. New solution in the works.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -249,3 +252,6 @@ Fixed Sidebar widget bug.
 
 = 3.1.2 =
 Bug fixes and clean up.
+
+= 3.1.3 =
+Bug fixes.

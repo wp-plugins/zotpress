@@ -101,60 +101,7 @@
 	    
 	    // FIRST, CHECK IF REQUEST EXISTS
 	    
-	    $zp_request_query = "SELECT * FROM ".$wpdb->prefix."zotpress_cache WHERE 
-					api_user_id='".$api_user_id."' AND 
-					data_type='".$data_type."' AND
-					content='".$content."' AND
-					";
-	    if ($author)
-		$zp_request_query .= "author='".$author."' AND ";
-	    else
-		$zp_request_query .= "author IS NULL AND ";
-	    
-	    if ($year)
-		$zp_request_query .= "year='".$year."' AND ";
-	    else
-		$zp_request_query .= "year IS NULL AND ";
-	    
-	    if ($collection_id)
-		$zp_request_query .= "collection_id='".$collection_id."' AND ";
-	    else
-		$zp_request_query .= "collection_id IS NULL AND ";
-	    
-	    if ($item_key)
-		$zp_request_query .= "item_key='".$item_key."' AND ";
-	    else
-		$zp_request_query .= "item_key IS NULL AND ";
-	    
-	    if ($tag_name)
-		$zp_request_query .= "tag_name='".$tag_name."' AND ";
-	    else
-		$zp_request_query .= "tag_name IS NULL AND ";
-	    
-	    if ($order)
-		$zp_request_query .= "zporder='".$order."' AND ";
-	    else
-		$zp_request_query .= "zporder IS NULL AND ";
-	    
-	    if ($sort)
-		$zp_request_query .= "sort='".$sort."' AND ";
-	    else
-		$zp_request_query .= "sort IS NULL AND ";
-	    
-	    if ($limit)
-		$zp_request_query .= "zplimit='".$limit."' AND ";
-	    else
-		$zp_request_query .= "zplimit IS NULL AND ";
-	    
-	    if ($image)
-		$zp_request_query .= "image='".$image."' AND ";
-	    else
-		$zp_request_query .= "image IS NULL AND ";
-	    
-	    if ($style)
-		$zp_request_query .= "style='".$style."'";
-	    else
-		$zp_request_query .= "style='apa'";
+	    $zp_request_query = "SELECT * FROM ".$wpdb->prefix."zotpress_cache WHERE instance_id='".$GLOBALS['zp_instance_id']."' AND zpoutput IS NOT NULL";
 	    
 	    $zp_request = $wpdb->get_results($zp_request_query);
 	    
