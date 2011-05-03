@@ -1,0 +1,5 @@
+<?php
+
+    echo "\n        window.zpDisplayCitations('".$GLOBALS['zp_shortcode_attrs']['account_type']."', '".$GLOBALS['zp_shortcode_attrs']['api_user_id']."', '".$GLOBALS['zp_shortcode_attrs']['data_type']."', '".$GLOBALS['zp_shortcode_attrs']['collection_id']."', '".$GLOBALS['zp_shortcode_attrs']['item_key']."', '".$GLOBALS['zp_shortcode_attrs']['tag_name']."', '".$GLOBALS['zp_shortcode_attrs']['content']."', '".$GLOBALS['zp_shortcode_attrs']['style']."', '".$GLOBALS['zp_shortcode_attrs']['order']."', '".$GLOBALS['zp_shortcode_attrs']['sort']."', '".$GLOBALS['zp_shortcode_attrs']['year']."', '".$GLOBALS['zp_shortcode_attrs']['download']."', '".$GLOBALS['zp_shortcode_attrs']['author']."', '".$GLOBALS['zp_shortcode_attrs']['limit']."', '".$GLOBALS['zp_shortcode_attrs']['image']."', '".$GLOBALS['zp_instance_id']."');\n        ";
+
+?>
