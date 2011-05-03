@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 3.1.1
+    Version: 3.1.2
     Author URI: http://katieseaborn.com
     
 */
@@ -15,7 +15,7 @@
     
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
     
-    $GLOBALS['is_shortcode_displayed'] = false;
+    $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
     global $Zotpress_main_db_version;
@@ -324,327 +324,7 @@
 
 // SHORTCODE -----------------------------------------------------------------------------------------
 
-    // Thanks to rosty dot kerei at gmail dot com at php.net
-    function unicode_urldecode($url)
-    {
-        preg_match_all('/%u([[:alnum:]]{4})/', $url, $a);
-       
-        foreach ($a[1] as $uniord)
-        {
-            $dec = hexdec($uniord);
-            $utf = '';
-           
-            if ($dec < 128)
-            {
-                $utf = chr($dec);
-            }
-            else if ($dec < 2048)
-            {
-                $utf = chr(192 + (($dec - ($dec % 64)) / 64));
-                $utf .= chr(128 + ($dec % 64));
-            }
-            else
-            {
-                $utf = chr(224 + (($dec - ($dec % 4096)) / 4096));
-                $utf .= chr(128 + ((($dec % 4096) - ($dec % 64)) / 64));
-                $utf .= chr(128 + ($dec % 64));
-            }
-           
-            $url = str_replace('%u'.$uniord, $utf, $url);
-        }
-       
-        return urldecode($url);
-    }
-    
-    
-    function Zotpress_func($atts)
-    {
-        /*
-        *   GLOBAL VARIABLES
-        *
-        *   $GLOBALS['zp_shortcode_instances'] {instantiated above}
-        *   $GLOBALS['zp_shortcode_attrs']
-        *   $GLOBALS['zp_account']
-        *   $GLOBALS['zp_instance_id']
-        *
-        */
-        
-        extract(shortcode_atts(array(
-            
-            'user_id' => false,
-            'nickname' => false,
-            'author' => false,
-            'year' => false,
-            
-            'data_type' => "items",
-            
-            'collection_id' => false,
-            'item_key' => false,
-            'tag_name' => false,
-            
-            'content' => "bib",
-            'style' => "apa",
-            'order' => false,
-            'sort' => false,
-            'limit' => "50",
-            
-            'image' => "no",
-            'download' => "no"
-            
-        ), $atts));
-        
-        // Format attributes
-        $api_user_id = str_replace('"','',html_entity_decode($user_id));
-        $nickname = str_replace('"','',html_entity_decode($nickname));
-        $author = str_replace('"','',html_entity_decode($author));
-        $year = str_replace('"','',html_entity_decode($year));
-        
-        $data_type = str_replace('"','',html_entity_decode($data_type));
-        
-        $collection_id = str_replace('"','',html_entity_decode($collection_id));
-        $item_key = str_replace('"','',html_entity_decode($item_key));
-        $tag_name = str_replace('"','',html_entity_decode($tag_name));
-        
-        $content = str_replace('"','',html_entity_decode($content));
-        $style = str_replace('"','',html_entity_decode($style));
-        $order = str_replace('"','',html_entity_decode($order));
-        $sort = str_replace('"','',html_entity_decode($sort));
-        $limit = str_replace('"','',html_entity_decode($limit));
-        
-        $image = str_replace('"','',html_entity_decode($image));
-        $download = str_replace('"','',html_entity_decode($download));
-        if ($download == "true" || $download === true)
-            $download = "yes";
-        
-        // Connect to database
-        global $wpdb;
-        
-        // Get account and private key
-        if ($api_user_id != false)
-            $GLOBALS['zp_account'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
-        else if ($nickname != false)
-            $GLOBALS['zp_account'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
-        
-        // Get total accounts
-        $zp_accounts_total = $wpdb->num_rows;
-        
-        // Set api_user_id and account type
-        $api_user_id = $GLOBALS['zp_account'][0]->api_user_id;
-        $account_type = $GLOBALS['zp_account'][0]->account_type;
-        
-        // Create global array with the above shortcode attributes
-        $GLOBALS['zp_shortcode_attrs'] = array(
-                "api_user_id" => $api_user_id,
-                "nickname" => $nickname,
-                "account_type" => $account_type,
-                "author" => $author,
-                "year" => $year,
-                
-                "data_type" => $data_type,
-                
-                "collection_id" => $collection_id,
-                "item_key" => $item_key,
-                "tag_name" => $tag_name,
-                
-                "content" => $content,
-                "style" => $style,
-                "order" => $order,
-                "sort" => $sort,
-                "limit" => $limit,
-                
-                "image" => $image,
-                "download" => $download,
-        );
-        
-        
-        // FIRST, CHECK IF REQUEST EXISTS
-        
-        $zp_request_query = "SELECT * FROM ".$wpdb->prefix."zotpress_cache WHERE 
-                                    api_user_id='".$api_user_id."' AND 
-                                    data_type='".$data_type."' AND
-                                    content='".$content."' AND
-                                    ";
-        if ($author)
-            $zp_request_query .= "author='".$author."' AND ";
-        else
-            $zp_request_query .= "author IS NULL AND ";
-        
-        if ($year)
-            $zp_request_query .= "year='".$year."' AND ";
-        else
-            $zp_request_query .= "year IS NULL AND ";
-        
-        if ($collection_id)
-            $zp_request_query .= "collection_id='".$collection_id."' AND ";
-        else
-            $zp_request_query .= "collection_id IS NULL AND ";
-        
-        if ($item_key)
-            $zp_request_query .= "item_key='".$item_key."' AND ";
-        else
-            $zp_request_query .= "item_key IS NULL AND ";
-        
-        if ($tag_name)
-            $zp_request_query .= "tag_name='".$tag_name."' AND ";
-        else
-            $zp_request_query .= "tag_name IS NULL AND ";
-        
-        if ($order)
-            $zp_request_query .= "zporder='".$order."' AND ";
-        else
-            $zp_request_query .= "zporder IS NULL AND ";
-        
-        if ($sort)
-            $zp_request_query .= "sort='".$sort."' AND ";
-        else
-            $zp_request_query .= "sort IS NULL AND ";
-        
-        if ($limit)
-            $zp_request_query .= "zplimit='".$limit."' AND ";
-        else
-            $zp_request_query .= "zplimit IS NULL AND ";
-        
-        if ($image)
-            $zp_request_query .= "image='".$image."' AND ";
-        else
-            $zp_request_query .= "image IS NULL AND ";
-        
-        $zp_request_query .= "style='".$style."'";
-        $zp_request = $wpdb->get_results($zp_request_query);
-        
-        // Get total matching requests (should be 0 or 1)
-        $zp_request_match = $wpdb->num_rows;
-        
-        if ($zp_request_match > 0)
-        {
-            $temp = "";
-            
-            // Display cached citation output
-            foreach ($zp_request as $key => $output)
-                $temp .= unicode_urldecode( html_entity_decode( $output->zpoutput ) );
-            
-?><!-- START OF ZOTPRESS CODE -->
-
-<style type="text/css">
-<!--
-    div.zp-Zotpress {
-        margin: 1em 0;
-    }
-    div.zp-ZotpressInner {
-        display: none;
-    }
-    div.zp-Zotpress div.zp-Entry {
-        position: relative;
-        clear: both;
-    }
-    div.zp-Zotpress div.zp-Entry.zp-Image {
-        min-height: 170px;
-    }
-    div.zp-Zotpress div.zp-Entry-Image {
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-    div.zp-Zotpress div.zp-Entry-Image-Crop {
-        overflow: hidden;
-        width: 150px;
-        height: 150px;
-    }
-    div.zp-Zotpress div.csl-bib-body {
-        margin: 0 0 15px 0;
-    }
-    div.zp-Zotpress div.zp-Entry.zp-Image div.csl-bib-body {
-        margin: 0 0 15px 170px;
-    }
-    div.zp-Zotpress span.zp-Loading {
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        -moz-border-radius: 5px;
-        background: #f3f3f3 url('<?php echo ZOTPRESS_PLUGIN_URL; ?>images/loading_list.gif') no-repeat top left;
-        display: block;
-        margin: auto;
-        overflow: hidden;
-        width: 33px;
-        height: 32px;
-    }
-    div.zp-Zotpress span.zp-Loading span {
-        visibility: hidden;
-    }
-    div.zp-Zotpress p.zp-NoCitations {
-        margin: 0;
-    }
--->
-</style>
-
-<!-- END OF ZOTPRESS CODE -->
-<?php
-            echo "<div class='zp-Zotpress'>".$temp."</div>\n";
-        }
-        
-        
-        // IF THE REQUEST IS NEW, PROCEED
-        
-        else
-        {
-            // Generate instance id for shortcode
-            $GLOBALS['zp_instance_id'] = "zotpress-".md5($api_user_id.$nickname.$author.$year.$data_type.$collection_id.$item_key.$tag_name.$content.$style.$sort.$order.$limit.$image.$download);
-            
-            // Display shortcode
-            if ($zp_accounts_total > 0)
-            {
-                if ($GLOBALS['is_shortcode_displayed'] == false)
-                {
-                    add_action('wp_print_footer_scripts', 'Zotpress_theme_shortcode_script_footer');
-                    add_action('wp_print_footer_scripts', 'Zotpress_theme_shortcode_display_script_footer');
-                }
-                
-                $GLOBALS['is_shortcode_displayed'] = true;
-                
-                ob_start();
-                include( 'zotpress.shortcode.display.php' );
-                $GLOBALS['zp_shortcode_instances'][$GLOBALS['zp_instance_id']] = ob_get_contents();
-                ob_end_clean();
-                
-                // This shortcode instance's container
-                $zp_content = "\n<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
-                
-                return $zp_content;
-            }
-            
-            // Display notification if no citations found
-            else {
-                echo "\n<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress'>Sorry, no citations found.</div>\n";
-            }
-        } // $zp_request_match
-    }
-    
-    function Zotpress_theme_shortcode_display_script_footer() {
-        foreach ($GLOBALS['zp_shortcode_instances'] as $id => $zp_shortcode_instance)
-            echo $zp_shortcode_instance;
-        
-        // Load again, this time checking for updates
-        echo "
-        jQuery('div#".$GLOBALS['zp_instance_id']."').one('ajaxStop', function()
-        {
-            for (key in window.zp_ajax_calls) {
-                //alert(window.zp_ajax_calls[key]+'('+key+'/'+window.zp_ajax_calls.length+')');
-                jQuery.ajax({
-                    url: window.zp_ajax_calls[key].replace('&step=one', ''),
-                    dataType: 'XML',
-                    cache: false,
-                    async: false,
-                    ifModified: false // Change to true when implemented on Zotero end
-                });
-            }
-        });
-    });
-    
-    </script>\n\n<!-- END OF ZOTPRESS CODE -->\n\n\n";
-    }
-    
-    function Zotpress_theme_shortcode_script_footer() {
-        include('zotpress.shortcode.php');
-    }
+    include('zotpress.shortcode.php');
     
 // SHORTCODE -----------------------------------------------------------------------------------------
 
@@ -660,8 +340,7 @@
 
 // META BOX WIDGET ---------------------------------------------------------------------------------
     
-    // backwards compatible
-    add_action('admin_init', 'Zotpress_add_meta_box', 1);
+    add_action('admin_init', 'Zotpress_add_meta_box', 1); // backwards compatible
 
     /* Adds a box to the main column on the Post and Page edit screens */
     function Zotpress_add_meta_box()
@@ -748,6 +427,14 @@
         add_menu_page("Zotpress", "Zotpress", 3, "Zotpress", "Zotpress_options", ZOTPRESS_PLUGIN_URL."images/icon.png");
     }
     
+    function Zotpress_theme_styles()
+    {
+        wp_register_style('zotpress.shortcode.css', ZOTPRESS_PLUGIN_URL . 'zotpress.shortcode.css');
+        wp_enqueue_style('zotpress.shortcode.css');
+    }
+    
+    /* ADD ACTIONS */
+    
     if (isset($_GET['page']) && $_GET['page'] == 'Zotpress') {
         add_action('admin_print_scripts', 'Zotpress_admin_scripts');
         add_action('admin_print_styles', 'Zotpress_admin_styles');
@@ -764,8 +451,12 @@
     if (!isset( $GLOBALS['wp_scripts']->registered[ "jquery" ] ))
         wp_enqueue_script("jquery");
 
+    // Shortcode and sidebar widget
     add_shortcode( 'zotpress', 'Zotpress_func' );
     add_action( 'widgets_init', 'ZotpressSidebarWidgetInit' );
+    
+    // Include styles of shortcode displayed
+    add_action( 'wp_print_styles', 'Zotpress_theme_styles' );
     
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
 

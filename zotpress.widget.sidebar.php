@@ -37,7 +37,7 @@
             $content = isset( $instance['content'] ) ? $instance['content'] : "bib";
             $style = isset( $instance['style'] ) ? $instance['style'] : "apa";
             //$order = isset( $instance['order'] ) ? $instance['order'] : false;
-            $sort = isset( $instance['sort'] ) ? $instance['sort'] : false;
+            //$sort = isset( $instance['sort'] ) ? $instance['sort'] : false;
             $limit = isset( $instance['limit'] ) ? $instance['limit'] : "5";
             
             $image = isset( $instance['image'] ) ? $instance['image'] : "no";
@@ -62,12 +62,16 @@
                 $GLOBALS['zp_account'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
             else if ($nickname != false)
                 $GLOBALS['zp_account'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'");
+	    else if ($api_user_id == false && $nickname == false)
+		$GLOBALS['zp_account'] = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1");
             
+	    // Get total accounts
             $zp_accounts_total = $wpdb->num_rows;
+	    
+	    // Set api_user_id and account type
 	    $api_user_id = $GLOBALS['zp_account'][0]->api_user_id;
 	    $account_type = $GLOBALS['zp_account'][0]->account_type;
 	    
-            //$GLOBALS['zp_instance_id'] = "zotpress-".rand(100,999);
             // Generate instance id for shortcode
             $GLOBALS['zp_instance_id'] = "zotpress-".md5($api_user_id.$nickname.$author.$year.$data_type.$collection_id.$item_key.$tag_name.$content.$style.$sort.$order.$limit.$image.$download);
             
@@ -88,37 +92,116 @@
                     "content" => $content,
                     "style" => $style,
                     //"order" => $order,
-                    "sort" => $sort,
+                    //"sort" => $sort,
                     "limit" => $limit,
                     
                     "image" => $image,
                     "download" => $download,
             );
-            
-            if ($zp_accounts_total > 0)
-            {
-                if ($GLOBALS['is_shortcode_displayed'] == false)
-                {
-                    add_action('wp_print_footer_scripts', 'Zotpress_theme_shortcode_script_footer');
-                    add_action('wp_print_footer_scripts', 'Zotpress_theme_shortcode_display_script_footer');
-                }
-                
-                $GLOBALS['is_shortcode_displayed'] = true;
-                
-                ob_start();
-                include( 'zotpress.shortcode.display.php' );
-                $GLOBALS['zp_shortcode_instances'][$GLOBALS['zp_instance_id']] = ob_get_contents();
-                ob_end_clean();
-                
-                $zp_content = "\n<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress zp-ZotpressSidebarWidget'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
-                echo $zp_content;
-            }
-            else
-            {
-                echo "\n<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress zp-ZotpressSidebarWidget'>Sorry, no citations found.</div>\n";
-            }
-            
-            
+	    
+	    // FIRST, CHECK IF REQUEST EXISTS
+	    
+	    $zp_request_query = "SELECT * FROM ".$wpdb->prefix."zotpress_cache WHERE 
+					api_user_id='".$api_user_id."' AND 
+					data_type='".$data_type."' AND
+					content='".$content."' AND
+					";
+	    if ($author)
+		$zp_request_query .= "author='".$author."' AND ";
+	    else
+		$zp_request_query .= "author IS NULL AND ";
+	    
+	    if ($year)
+		$zp_request_query .= "year='".$year."' AND ";
+	    else
+		$zp_request_query .= "year IS NULL AND ";
+	    
+	    if ($collection_id)
+		$zp_request_query .= "collection_id='".$collection_id."' AND ";
+	    else
+		$zp_request_query .= "collection_id IS NULL AND ";
+	    
+	    if ($item_key)
+		$zp_request_query .= "item_key='".$item_key."' AND ";
+	    else
+		$zp_request_query .= "item_key IS NULL AND ";
+	    
+	    if ($tag_name)
+		$zp_request_query .= "tag_name='".$tag_name."' AND ";
+	    else
+		$zp_request_query .= "tag_name IS NULL AND ";
+	    
+	    if ($order)
+		$zp_request_query .= "zporder='".$order."' AND ";
+	    else
+		$zp_request_query .= "zporder IS NULL AND ";
+	    
+	    if ($sort)
+		$zp_request_query .= "sort='".$sort."' AND ";
+	    else
+		$zp_request_query .= "sort IS NULL AND ";
+	    
+	    if ($limit)
+		$zp_request_query .= "zplimit='".$limit."' AND ";
+	    else
+		$zp_request_query .= "zplimit IS NULL AND ";
+	    
+	    if ($image)
+		$zp_request_query .= "image='".$image."' AND ";
+	    else
+		$zp_request_query .= "image IS NULL AND ";
+	    
+	    if ($style)
+		$zp_request_query .= "style='".$style."'";
+	    else
+		$zp_request_query .= "style='apa'";
+	    
+	    $zp_request = $wpdb->get_results($zp_request_query);
+	    
+	    // Get total matching requests (should be 0 or 1)
+	    $zp_request_match = $wpdb->num_rows;
+	    
+	    if ($zp_request_match > 0)
+	    {
+		$temp = "";
+		
+		// Display cached citation output
+		foreach ($zp_request as $key => $output)
+		    $temp .= utf8_encode( unicode_urldecode( html_entity_decode( $output->zpoutput ) ) );
+		
+		echo "<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress zp-ZotpressSidebarWidget'><div class='zp-ZotpressInner'>".$temp."</div></div>\n";
+	    }
+	    
+	    
+	    // IF THE REQUEST IS NEW, PROCEED
+	    
+	    else
+	    {
+		
+		if ($zp_accounts_total > 0)
+		{
+		    if ($GLOBALS['zp_is_shortcode_displayed'] == false)
+		    {
+			add_action('wp_print_footer_scripts', 'Zotpress_theme_shortcode_script_footer');
+			add_action('wp_print_footer_scripts', 'Zotpress_theme_shortcode_display_script_footer');
+		    }
+		    
+		    $GLOBALS['zp_is_shortcode_displayed'] = true;
+		    
+		    ob_start();
+		    include( 'zotpress.shortcode.display.php' );
+		    $GLOBALS['zp_shortcode_instances'][$GLOBALS['zp_instance_id']] = ob_get_contents();
+		    ob_end_clean();
+		    
+		    $zp_content = "\n<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress zp-ZotpressSidebarWidget'><span class='zp-Loading'><span>loading</span></span><div class='zp-ZotpressInner'></div></div>\n";
+		    echo $zp_content;
+		}
+		else
+		{
+		    echo "\n<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress zp-ZotpressSidebarWidget'>Sorry, no citations found.</div>\n";
+		}
+		
+	    } // $zp_request_match
             
             // Required for theme
             echo $after_widget;
@@ -142,7 +225,7 @@
             $instance['content'] = strip_tags( $new_instance['content'] );
             $instance['style'] = strip_tags($new_instance['style']);
             //$instance['order'] = strip_tags($new_instance['order']);
-            $instance['sort'] = strip_tags($new_instance['sort']);
+            //$instance['sort'] = strip_tags($new_instance['sort']);
             $instance['limit'] = strip_tags($new_instance['limit']);
             if (intval($instance['limit']) > 99)
                 $instance['limit'] = "99";
@@ -253,7 +336,6 @@
 			<label for="<?php echo $this->get_field_id( 'order' ); ?>">Order By:</label>
 			<input id="<?php echo $this->get_field_id( 'order' ); ?>" name="<?php echo $this->get_field_name( 'order' ); ?>" value="<?php echo $instance['order']; ?>" class="widefat" />
 		</p>
-                <?php } // hehe ?>
                 
                 <p>
 			<label for="<?php echo $this->get_field_id( 'sort' ); ?>">Sort Order:</label>
@@ -262,6 +344,7 @@
 				<option <?php if ( 'asc' == $instance['sort'] ) echo 'selected="selected"'; ?>>asc</option>
 			</select>
 		</p>
+                <?php } // hehe ?>
                 
 		<p>
 			<label for="<?php echo $this->get_field_id( 'limit' ); ?>">Limit:</label>
