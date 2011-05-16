@@ -278,6 +278,7 @@
                 
                 // GET CITATION IMAGE
                 $has_citation_image = false;
+                $citation_image = false;
                 if (isset($image) && $image == "yes")
                 {
                     $zp_entry_image = $wpdb->get_results("SELECT image FROM ".$wpdb->prefix."zotpress_images WHERE citation_id='".$citation_id."'");
