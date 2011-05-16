@@ -306,9 +306,10 @@
             
             // OUTPUT CITATIONS
             foreach ($zp_citations as $zp_citation)
-                $zp_output .= "<div class='zp-Entry".$zp_citation['hasImage']."'>\n" . $zp_citation['image'] . $zp_citation['content'] . "\n</div>\n \n";
+                $zp_output .= "<div class='zp-Entry".$zp_citation['hasImage']."'>\n" . $zp_citation['image'] . $zp_citation['content'] . "\n</div><!--Entry-->\n\n";
             
-            $zp_output .= "\n	</div>\n</div>\n\n";
+            $zp_output .= "\n</div>\n\n";
+            //$zp_output .= "\n</div>\n</div>\n\n";
             
             return $zp_output;
             
