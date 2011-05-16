@@ -9,7 +9,7 @@
         position: relative;
         clear: both;
     }
-    div.zp-Zotpress div.zp-Entry.zp-Image {
+    div.zp-Zotpress div.zp-Entry.zp-HasImage {
         min-height: 170px;
     }
     div.zp-Zotpress div.zp-Entry-Image {
@@ -25,7 +25,7 @@
     div.zp-Zotpress div.csl-bib-body {
         margin: 0 0 15px 0;
     }
-    div.zp-Zotpress div.zp-Entry.zp-Image div.csl-bib-body {
+    div.zp-Zotpress div.zp-Entry.zp-HasImage div.csl-bib-body {
         margin: 0 0 15px 170px;
     }
     div.zp-Zotpress span.zp-Loading {

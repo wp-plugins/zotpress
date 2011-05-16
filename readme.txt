@@ -7,8 +7,8 @@ Tags: zotero, zotpress, citation manager, citations, citation, cite, citing, bib
 Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
-Tested up to: 3.1.1
-Stable tag: 3.1.2
+Tested up to: 3.1.2
+Stable tag: 4.0
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -42,7 +42,7 @@ jQuery included in your theme, cUrl [preferably] or file_get_contents enabled on
 = Shortcode =
 You can display your Zotero citations in a number of ways. To display a complete list of citations for an account in the default bibliography style (APA), simply use this shortcode:
 
-[zotpress api_user_id="00000"]
+[zotpress userid="00000"]
 
 An example of the shortcode using parameters is:
 
@@ -53,20 +53,20 @@ This shortcode will display a list of five citations from the collection with th
 = Shortcode Parameters: =
 Here's a list of parameters you can use to display projects in different ways:
 
-* `user_id` display a list of citations from a particular user or group. REQUIRED if not using "nickname" parameter.
+* `userid` display a list of citations from a particular user or group. REQUIRED if not using "nickname" parameter.
 * `nickname` display a list of citations by a particular Zotero account nickname.
 * `author` display a list of citations from a particular author. Format as follows: "Firstname+Lastname", e.g. "Carl+Sagan". Note: "C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Carl Sagan".
 * `year` display a list of citations from a particular year. Format as follows: "2009". Note: You can display by Author and Year together.
-* `data_type` display a list of a particular data type. Options: items [default], tags, collections
-* `collection_id` id of the collection to draw citations from.
-* `item_key` item key for a single item.
-* `tag_name` name of the tag to draw citations from. Note: make sure you replace all spaces with a + sign, e.g. the tag "electric fish" becomes "electric+fish".
+* `datatype` display a list of a particular data type. Options: items [default], tags, collections
+* `collection` id of the collection to draw citations from.
+* `item` item key for a single item.
+* `tag` name of the tag to draw citations from. Note: make sure you replace all spaces with a + sign, e.g. the tag "electric fish" becomes "electric+fish".
 * `content` format of citation display. Options: html, bib [default]
 * `style` citation style. Options: chicago-note-bibliography, harvard1, mhra, mla, nature, vancouver, apsa, asa, apa [default]. Note: Support for more styles coming; see Zotero Style Repository for details.
 * `sort` sort direction of the order field. Options: asc, desc [default]
 * `limit` limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]
-* `image` whether or not to display the citation's image, if there is one. Options: yes, no [default]
-* `download` whether or not to display the citation's download URL, if there is one. Options: yes, no [default]
+* `showimage` whether or not to display the citation's image, if there is one. Options: yes, no [default]
+* `downloadable` whether or not to display the citation's download URL, if there is one. Options: yes, no [default]
 
 == Frequently Asked Questions ==
 
@@ -185,6 +185,11 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 = 3.1.3 =
 * Temporary fix for web servers that don't support long URLs. Unfortunately no special caching for these folks. New solution in the works.
 
+= 4.0 =
+* Switched method of requesting from jQuery to PHP. Should mean a speed increase (particularly for Firefox users).
+* Many shortcode parameters have been changed; these parameters are now deprecated: api_user_id (now userid), item_key (now item), tag_name (now tag), data_type (now datatype), collection_id (now collection), download (now downloadable), image (now showimage).
+* New shortcode parameter "sortby" allows you to sort by "author" (first author) and "date" (publication date). By default, citations are sorted by latest added.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -255,3 +260,6 @@ Bug fixes and clean up.
 
 = 3.1.3 =
 Bug fixes.
+
+= 4.0 =
+Requests now processed by PHP instead of jQuery. Shortcode parameters re-envisioned (but backwards-compatible). Can now sort by author and date.

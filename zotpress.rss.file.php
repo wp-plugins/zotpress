@@ -6,7 +6,7 @@
 	define('WP_USE_THEMES', false);
 
 	// Include Special cURL
-	require('zotpress.curl.php');
+	require('zotpress.rss.curl.php');
 	
 	$zp_xml = false;
 	

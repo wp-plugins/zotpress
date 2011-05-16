@@ -23,7 +23,7 @@
             </p>
             
             <code>
-                [zotpress api_user_id="00000"]
+                [zotpress userid="00000"]
             </code>
             
             <p>
@@ -46,7 +46,7 @@
             
             <h5>Filter by Acccount</h5>
             <ul>
-                <li><code>user_id</code> display a list of citations from a particular user or group. <strong>REQUIRED if not using "nickname" parameter.</strong></li>
+                <li><code>userid</code> display a list of citations from a particular user or group. <strong>REQUIRED if not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</li>
                 <li><code>nickname</code> display a list of citations by a particular Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</li>
             </ul>
             
@@ -58,10 +58,10 @@
             
             <h5>Filter by Type</h5>
             <ul>
-                <li><code>data_type</code> display a list of a particular data type. Options: items [default], tags, collections</li>
-                <li><code>collection_id</code> id of the collection to draw citations from.</li>
-                <li><code>item_key</code> item key for a single item.</li>
-                <li><code>tag_name</code> name of the tag to draw citations from. <strong>Note:</strong> make sure you replace all spaces with a <code>+</code> sign, e.g. the tag "electric fish" becomes "electric+fish".</li>
+                <li><code>datatype</code> display a list of a particular data type. Options: items [default], tags, collections</li>
+                <li><code>collection</code> id of the collection to draw citations from.</li>
+                <li><code>item</code> item key for a single item.</li>
+                <li><code>tag</code> name of the tag to draw citations from. <strong>Note:</strong> make sure you replace all spaces with a <code>+</code> sign, e.g. the tag "electric fish" becomes "electric+fish".</li>
             </ul>
             
             <h5>Display Settings</h5>
@@ -69,11 +69,12 @@
                 <li><code>content</code> format of citation display. Options: html, bib [default]</li>
                 <li><code>style</code> citation style. Options: apsa, apa [default], asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, mla, nlm, nature, vancouver. <strong>Note:</strong> Support for more styles is coming; see <a href="http://www.zotero.org/styles">Zotero Style Repository</a> for details. <strong>Note:</strong> I haven't been able to get these styles working: chicago-note-bibliography, chicago-note, ieee, mhra, mhra_note_without_bibliography.</li>
                 <!--<li><code>order</code> order by a certain field. Options: itemType, language, conferenceName, volume, issue, place, publisher, date, series, seriesTitle, dateModified, dateAdded [default]. Potentially many more; see <a href="http://www.zotero.org/support/dev/data_model">Zotero Data Model</a>.</li>-->
+                <li><code>sortby</code> a temporary "order" paramater. Options: author, date, latest added [default]</li>
                 <li><code>sort</code> sort direction of the order field, which is update date by default. Options: asc, desc [default]</li>
                 <li><code>limit</code> limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]</li>
-                <li><code>image</code> whether or not to display the citation's image, if there is one. Options: yes, no [default]</li>
+                <li><code>showimage</code> whether or not to display the citation's image, if there is one. Options: yes, no [default]</li>
                 <!--<li><code>url</code> whether or not to hyperlink the displayed citation URL, if there is one. Options: yes [default], no</li>-->
-                <li><code>download</code> whether or not to display the citation's download URL, if there is one. Options: yes, no [default]</li>
+                <li><code>downloadable</code> whether or not to display the citation's download URL, if there is one. <strong>Enable this option only if you are legally able to provide your files for download.</strong> Options: yes, no [default]</li>
             </ul>
             
             <h3>Widgets</h3>
@@ -126,7 +127,7 @@
             
             <h4>What happened to the "order" parameter and sorting in general?</h4>
             
-            <p>As far as I can tell, it's not working on the Zotero side of things as of Zotpress 3.0. Please see the note beside "order" on <a href="http://www.zotero.org/support/dev/server_api">this page</a>.
+            <p>As far as I can tell, it's not working on the Zotero side of things as of Zotpress 3.0. Please see the note beside "order" on <a href="http://www.zotero.org/support/dev/server_api">this page</a>. In the meantime, try using the temporary "sortby" parameter.
             
             <!--<h4>Why isn't Zotpress sorting my citations?</h4>-->
             <!---->

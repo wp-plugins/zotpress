@@ -17,13 +17,17 @@
 			$mzr_limit=false,
 			$mzr_displayImages=false,
 			$mzr_include=false,
-			$mzr_force_recache=false)
+			$mzr_force_recache=false,
+			$mzr_instance_id=false,
+			$mzr_get_meta=false,
+			$mzr_get_children=false
+			)
 	{
 		// Access Wordpress db
 		global $wpdb;
 		
 		// Include Special cURL
-		require('zotpress.curl.php');
+		require('zotpress.rss.curl.php');
 		
 		// Set up vars
 		$zp_xml = "";
@@ -141,6 +145,14 @@
 					//$zp_shortcode_request .= "item_key IS NULL, ";
 				}
 				
+				// Children
+				if ($mzr_get_children === true)
+				{
+					$urlDataType .= "/children";
+					$zp_shortcode_request .= "download='yes', ";
+				}
+				
+				
 				// Tag Name
 				if ($mzr_tag_name == false) {
 					if (isset($_GET['tag_name']) && $mzr_include == false && trim($_GET['tag_name']) != '') {
@@ -187,6 +199,10 @@
 				else {
 					$content = "&content=bib";
 					$zp_shortcode_request .= "content='bib', ";
+				}
+				if ($mzr_get_meta == true) {
+					$content = "&content=json";
+					$zp_shortcode_request .= "content='json', ";
 				}
 				
 				// Style
@@ -263,14 +279,14 @@
 				else
 					$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."?key=".$public_key.$content.$style.$order.$sort.$mzr_limit;
 				
-				
+				//echo $zp_url;
 				
 				
 				// DETERMINE IF FIRST OR SECOND STEP
 				
 				$zp_initial = false;
 				
-				if (isset( $_GET['step'] ) && $_GET['step'] == "one")
+				if ((isset( $_GET['step'] ) && $_GET['step'] == "one") || $mzr_include)
 					$zp_initial = true;
 				
 				//echo $zp_shortcode_request. "<br /><br /><br />";
@@ -282,8 +298,14 @@
 				if (in_array ('curl', get_loaded_extensions()))
 				{
 					$curl = new CURL();
+					
 					$curl->setRequestUri( $zp_shortcode_request );
-					$curl->setInstanceId( $_GET['instance_id'] );
+					
+					if (!$mzr_instance_id)
+						$curl->setInstanceId( $_GET['instance_id'] );
+					else
+						$curl->setInstanceId( $mzr_instance_id );
+					
 					if ($zp_initial === true) {
 						$curl->setInitial();
 					} else {
@@ -295,8 +317,14 @@
 				else // Use the regular away
 				{
 					$curl = new CURL();
+					
 					$curl->setRequestUri( $zp_shortcode_request );
-					$curl->setInstanceId( $_GET['instance_id'] );
+					
+					if (!$mzr_instance_id)
+						$curl->setInstanceId( $_GET['instance_id'] );
+					else
+						$curl->setInstanceId( $mzr_instance_id );
+					
 					if ($zp_initial === true) {
 						$curl->setInitial();
 					} else {

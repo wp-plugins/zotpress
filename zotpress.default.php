@@ -292,7 +292,6 @@
                     */
                     
                     jQuery(window).load(function () {
-                        //alert("admin.php?page=Zotpress&amp;loaded=true");
                         window.parent.location = "admin.php?page=Zotpress&loaded=true";
                     });
                     

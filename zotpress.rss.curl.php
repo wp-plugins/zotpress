@@ -13,7 +13,7 @@ if (!class_exists('CURL'))
 {
         class CURL
         {
-                // Set up variables
+                
                 var $cache = false, $initial = false, $recache = false, $curl_error = false, $timelimit = 3600, $timeout = 300, $shortcode_request = false, $instance_id = false;
                 
                 
@@ -26,6 +26,11 @@ if (!class_exists('CURL'))
                 function setInstanceId( $zp_instance_id )
                 {
                         $this->instance_id = $zp_instance_id;
+                }
+                
+                
+                function setInitial() {
+                        $this->initial = true;
                 }
                 
                 
@@ -43,8 +48,10 @@ if (!class_exists('CURL'))
                         {
                                 //echo "INITIAL-";
                                 //$cache_key = md5(serialize(func_get_args()));
+                                //echo $url;
+                                
                                 $cache_key = $url;
-                                $zp_cache = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_cache WHERE cache_key='".$cache_key."'");
+                                $zp_cache = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_cache WHERE cache_key='".$url."'");
                                 $zp_cache_total = $wpdb->num_rows;
                                 
                                 if ($zp_cache_total == 0)
@@ -177,11 +184,6 @@ if (!class_exists('CURL'))
                                 $diff = time() - $cache_time;
                                 return $diff;
                         }
-                }
-                
-                function setInitial() {
-                        //echo "SET INITIAL-";
-                        $this->initial = true;
                 }
                 
                 function get_curl_contents( $url ) {
