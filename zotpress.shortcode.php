@@ -335,7 +335,6 @@
             }
             
             // OUTPUT CITATIONS
-            echo $current_title;
             foreach ($zp_citations as $zp_citation) {
                 if (isset($current_title) && $current_title == "") {
                     $current_title = date("Y", strtotime($zp_citation['date']));
