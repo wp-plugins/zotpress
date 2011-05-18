@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.1.2
-Stable tag: 4.0
+Stable tag: 4.1
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -64,6 +64,8 @@ Here's a list of parameters you can use to display projects in different ways:
 * `content` format of citation display. Options: html, bib [default]
 * `style` citation style. Options: chicago-note-bibliography, harvard1, mhra, mla, nature, vancouver, apsa, asa, apa [default]. Note: Support for more styles coming; see Zotero Style Repository for details.
 * `sort` sort direction of the order field. Options: asc, desc [default]
+* `sortby` a temporary "order" paramater. Options: author, date, latest added [default]
+* `title` display a title by year. Options: yes, no [default]
 * `limit` limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]
 * `showimage` whether or not to display the citation's image, if there is one. Options: yes, no [default]
 * `downloadable` whether or not to display the citation's download URL, if there is one. Options: yes, no [default]
@@ -190,6 +192,10 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 * Many shortcode parameters have been changed; these parameters are now deprecated: api_user_id (now userid), item_key (now item), tag_name (now tag), data_type (now datatype), collection_id (now collection), download (now downloadable), image (now showimage).
 * New shortcode parameter "sortby" allows you to sort by "author" (first author) and "date" (publication date). By default, citations are sorted by latest added.
 
+= 4.1 =
+* Bugfixes: Filtering by author and date reinstated.
+* New: Titles by year. (New parameter: title)
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -263,3 +269,6 @@ Bug fixes.
 
 = 4.0 =
 Requests now processed by PHP instead of jQuery. Shortcode parameters re-envisioned (but backwards-compatible). Can now sort by author and date.
+
+= 4.1 =
+Bugfixes: Filtering by year and author reinstated. New: Titles for year.

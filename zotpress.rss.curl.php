@@ -197,7 +197,7 @@ if (!class_exists('CURL'))
                 
                 function getXmlData( $url )
                 {
-                        if ($use_get_file_get_contents)
+                        if (isset($use_get_file_get_contents) && $use_get_file_get_contents === true)
                         {
                                 $data = file_get_contents($url);
                         }

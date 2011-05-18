@@ -71,6 +71,7 @@
                 <!--<li><code>order</code> order by a certain field. Options: itemType, language, conferenceName, volume, issue, place, publisher, date, series, seriesTitle, dateModified, dateAdded [default]. Potentially many more; see <a href="http://www.zotero.org/support/dev/data_model">Zotero Data Model</a>.</li>-->
                 <li><code>sortby</code> a temporary "order" paramater. Options: author, date, latest added [default]</li>
                 <li><code>sort</code> sort direction of the order field, which is update date by default. Options: asc, desc [default]</li>
+                <li><code>title</code> display a title by year. Options: yes, no [default]</li>
                 <li><code>limit</code> limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]</li>
                 <li><code>showimage</code> whether or not to display the citation's image, if there is one. Options: yes, no [default]</li>
                 <!--<li><code>url</code> whether or not to hyperlink the displayed citation URL, if there is one. Options: yes [default], no</li>-->

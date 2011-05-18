@@ -85,6 +85,7 @@
             'sort' => false,
             'limit' => "50",
             
+            'title' => "no",
             'sortby' => false,
             
             'image' => "no",
@@ -150,6 +151,14 @@
         
         if ($download == "true" || $download === true)
             $download = "yes";
+        
+        if ($title != "no") {
+            $title = str_replace('"','',html_entity_decode($title));
+            $current_title = "";
+        }
+        
+        if ($title == "true" || $title === true)
+            $title = "yes";
         
         
         // GET ACCOUNTS
@@ -224,24 +233,31 @@
                 // Get item type
                 $item_type = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "itemType")->item(0)->nodeValue;
                 
+                // IGNORE ATTACHMENTS
                 if ($item_type == "attachment")
                     continue;
                 
                 // Get citation ID
                 $citation_id = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue;
                 
-                // GET CITATION CONTENT
-                $citation_html = new DOMDocument();
-                foreach($entry->getElementsByTagName("content")->item(0)->childNodes as $child) {
-                    $citation_html->appendChild($citation_html->importNode($child, true));
-                    $citation_content = $citation_html->saveHTML();
-                    $citation_content = preg_replace( '/^\s+|\n|\r|\s+$/m', '', trim( $citation_content ) );
-                }
-                
                 // GET META
                 foreach ($zp_meta_entries as $zp_meta_entry)
                     if ($zp_meta_entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue == $citation_id)
                         $zp_this_meta = json_decode( $zp_meta_entry->getElementsByTagName("content")->item(0)->nodeValue );
+                
+                // FILTER BY AUTHOR
+                if ($author !== false && $author !== "")
+                {
+                    $temp_continue = false;
+                    
+                    foreach ($zp_this_meta->creators as $creator) {
+                        if (str_replace(" ", "+", $creator->firstName."+".$creator->lastName) == $author)
+                            $temp_continue = true;
+                    }
+                    
+                    if ($temp_continue === false)
+                        continue;
+                }
                 
                 // Format date
                 $zp_this_meta->date = preg_replace( '/-\d{1,2}/', '', $zp_this_meta->date );
@@ -250,6 +266,19 @@
                 if (is_numeric(substr($zp_this_meta->date, 0, 3))) {
                     $temp = substr($zp_this_meta->date, 0, 4);
                     $zp_this_meta->date = trim(substr($zp_this_meta->date, 4, strlen($zp_this_meta->date))).", ".$temp;
+                }
+                
+                // FILTER BY YEAR
+                if ($year !== false && $year !== "" && date("Y", strtotime($zp_this_meta->date)) != $year)
+                    continue;
+                
+                
+                // GET CITATION CONTENT
+                $citation_html = new DOMDocument();
+                foreach($entry->getElementsByTagName("content")->item(0)->childNodes as $child) {
+                    $citation_html->appendChild($citation_html->importNode($child, true));
+                    $citation_content = $citation_html->saveHTML();
+                    $citation_content = preg_replace( '/^\s+|\n|\r|\s+$/m', '', trim( $citation_content ) );
                 }
                 
                 // Hyperlink URL
@@ -306,8 +335,18 @@
             }
             
             // OUTPUT CITATIONS
-            foreach ($zp_citations as $zp_citation)
+            echo $current_title;
+            foreach ($zp_citations as $zp_citation) {
+                if (isset($current_title) && $current_title == "") {
+                    $current_title = date("Y", strtotime($zp_citation['date']));
+                    $zp_output .= "<h3>".$current_title."</h3>\n";
+                }
+                else if (isset($current_title) && strlen($current_title) > 0 && $current_title != date("Y", strtotime($zp_citation['date']))) {
+                    $current_title = date("Y", strtotime($zp_citation['date']));
+                    $zp_output .= "<h3>".$current_title."</h3>\n";
+                }
                 $zp_output .= "<div class='zp-Entry".$zp_citation['hasImage']."'>\n" . $zp_citation['image'] . $zp_citation['content'] . "\n</div><!--Entry-->\n\n";
+            }
             
             $zp_output .= "\n</div>\n\n";
             //$zp_output .= "\n</div>\n</div>\n\n";

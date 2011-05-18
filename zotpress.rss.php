@@ -279,7 +279,7 @@
 				else
 					$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."?key=".$public_key.$content.$style.$order.$sort.$mzr_limit;
 				
-				//echo $zp_url;
+				//echo "<br />" . $zp_url . "<br />";
 				
 				
 				// DETERMINE IF FIRST OR SECOND STEP
