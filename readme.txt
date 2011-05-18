@@ -196,6 +196,9 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 * Bugfixes: Filtering by author and date reinstated.
 * New: Titles by year. (New parameter: title)
 
+= 4.1.1 =
+* Bugfix: Can now sort by ASC or DESC order.
+
 == Upgrade Notice ==
 
 = 1.2 =
@@ -272,3 +275,6 @@ Requests now processed by PHP instead of jQuery. Shortcode parameters re-envisio
 
 = 4.1 =
 Bugfixes: Filtering by year and author reinstated. New: Titles for year.
+
+= 4.1.1 =
+Bugfix: Can now sort by ASC or DESC order.

@@ -34,11 +34,14 @@
     
     
     // Thanks to http://www.firsttube.com/read/sorting-a-multi-dimensional-array-with-php/
-    function subval_sort($a, $subkey) {
+    function subval_sort($a, $subkey, $sort) {
 	foreach($a as $k=>$v) {
 		$b[$k] = strtolower($v[$subkey]);
 	}
-	asort($b);
+        if ($sort == "ASC")
+            asort($b);
+        else
+            arsort ($b);
 	foreach($b as $key=>$val) {
 		$c[] = $a[$key];
 	}
@@ -82,7 +85,7 @@
             'content' => "bib",
             'style' => "apa",
             'order' => false,
-            'sort' => false,
+            'sort' => "ASC",
             'limit' => "50",
             
             'title' => "no",
@@ -331,7 +334,7 @@
             // SORT CITATIONS
             if ($sortby)
             {
-                $zp_citations = subval_sort( $zp_citations, $sortby );
+                $zp_citations = subval_sort( $zp_citations, $sortby, $sort );
             }
             
             // OUTPUT CITATIONS
