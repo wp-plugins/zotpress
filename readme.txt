@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.1.2
-Stable tag: 4.1
+Stable tag: 4.1.1
 
 Zotpress displays your Zotero citations on Wordpress.
 
