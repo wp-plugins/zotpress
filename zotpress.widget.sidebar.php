@@ -225,7 +225,6 @@
 		// SORT CITATIONS
 		if ($sortby)
 		{
-		     echo "Adada".$sortby.$sort;
 		    $zp_citations = subval_sort( $zp_citations, $sortby, "asc" );
 		}
 		
