@@ -94,7 +94,7 @@
         
         div.zp-Loading-Initial {
             background: transparent url('images/loading_initial.gif') no-repeat bottom left;
-            margin: 0 auto;
+            margin: 0 0 0 60px;
             padding: 0 5px;
             width: 400px; /* 220px */
             height: 110px;

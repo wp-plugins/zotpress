@@ -148,6 +148,29 @@
         }
         
         
+        // SORT ASSOCIATIVE ARRAY (JS OBJECT)
+        // Thanks tohttp://www.latentmotion.com/how-to-sort-an-associative-array-object-in-javascript/
+        function sortObj(arr)
+        {
+            // Setup Arrays
+            var sortedKeys = new Array();
+            var sortedObj = {};
+            
+            // Separate keys and sort them
+            for (var i in arr){
+                    sortedKeys.push(i);
+            }
+            sortedKeys.sort();
+            
+            // Reconstruct sorted obj based on keys
+            for (var i in sortedKeys){
+                    sortedObj[sortedKeys[i]] = arr[sortedKeys[i]];
+            }
+            return sortedObj;
+        }
+        
+        
+        
         // ZOTPRESS REFERENCE TABS
         
         jQuery( "#zp-ZotpressMetaBox-Tabs" ).tabs(
@@ -176,11 +199,10 @@
                     jQuery("#zp-ZotpressMetaBox-Collection-Collections").parent().remove();
                 
                 // Add loading
-                //jQuery("#zp-ZotpressMetaBox-Collection-Accounts").after("<div class='zp-Loading'>loading...</div>\n");
                 jQuery("#zp-ZotpressMetaBox-Tabs").append("<div class='zp-Loading'>loading...</div>\n");
                 
                 // Set up xml url
-                var xmlUriCollections = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("option:selected", this).attr("class")+'&api_user_id='+jQuery("option:selected", this).text()+'&data_type=collections';
+                var xmlUriCollections = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("option:selected", this).attr("class")+'&api_user_id='+jQuery("option:selected", this).attr("id")+'&data_type=collections&limit=150';
                 
                 // Grab Zotero request
                 jQuery.ajax({
@@ -198,13 +220,22 @@
                         var collectionsSelect = "<div>\n<label for='zp-ZotpressMetaBox-Collection-Collections'>Collections:</label>\n";
                         collectionsSelect += "<select id='zp-ZotpressMetaBox-Collection-Collections' multiple='yes'>\n";
                         
+                        var collectionsArray = new Array();
+                        
                         jQuery(xml).find("entry").each(function()
                         {
                             if (browser_is_Safari)
-                                collectionsSelect += "<option value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                                collectionsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
                             else
-                                collectionsSelect += "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                                collectionsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
                         });
+                        
+                        // Add to select
+                        collectionsArray = sortObj( collectionsArray );
+                        
+                        for (var i in collectionsArray)
+                            collectionsSelect += collectionsArray[i];
+                        
                         collectionsSelect += "</select>\n</div>\n\n";
                         
                         jQuery("#zp-ZotpressMetaBox-Collection-Accounts").after(collectionsSelect);
@@ -212,7 +243,6 @@
                     complete: function()
                     {
                         // Remove loading
-                        //jQuery("#zp-ZotpressMetaBox-Collection-Accounts").parent().find("div.zp-Loading").remove();
                         jQuery("#zp-ZotpressMetaBox-Tabs").find("div.zp-Loading").remove();
                         
                         // Open up output
@@ -237,11 +267,10 @@
                     jQuery("#zp-ZotpressMetaBox-Collection-Items").parent().remove();
                 
                 // Add loading
-                //jQuery("#zp-ZotpressMetaBox-Collection-Collections").parent().append("<div class='zp-Loading'>loading...</div>\n");
                 jQuery("#zp-ZotpressMetaBox-Tabs").append("<div class='zp-Loading'>loading...</div>\n");
                 
                 // Build citation url
-                var xmlUriCollections = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("#zp-ZotpressMetaBox-Collection-Accounts option").attr("class")+'&api_user_id='+jQuery("#zp-ZotpressMetaBox-Collection-Accounts option:selected").text()+'&collection_id='+jQuery(this).val();
+                var xmlUriCollections = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("#zp-ZotpressMetaBox-Collection-Accounts option").attr("class")+'&api_user_id='+jQuery("#zp-ZotpressMetaBox-Collection-Accounts option:selected").attr("id")+'&collection_id='+jQuery(this).val()+'&limit=150';
                 
                 // Grab Zotero request
                 jQuery.ajax({
@@ -273,7 +302,6 @@
                     complete: function()
                     {
                         // Remove loading
-                        //jQuery("#zp-ZotpressMetaBox-Collection-Collections").parent().find("div.zp-Loading").remove();
                         jQuery("#zp-ZotpressMetaBox-Tabs").find("div.zp-Loading").remove();
                     }
                 });
@@ -307,11 +335,10 @@
                     jQuery("#zp-ZotpressMetaBox-Tags-Collections").parent().remove();
                 
                 // Add loading
-                //jQuery("#zp-ZotpressMetaBox-Tags-Accounts").parent().append("<div class='zp-Loading'>loading...</div>\n");
                 jQuery("#zp-ZotpressMetaBox-Tabs").append("<div class='zp-Loading'>loading...</div>\n");
                 
                 // Create xml uri
-                var xmlUriTags = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("option:selected", this).attr("class")+'&api_user_id='+jQuery("option:selected", this).text()+'&data_type=tags';
+                var xmlUriTags = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("option:selected", this).attr("class")+'&api_user_id='+jQuery("option:selected", this).attr("id")+'&data_type=tags&limit=150';
                 
                 // Grab Zotero request
                 jQuery.ajax({
@@ -329,10 +356,19 @@
                         var tagsSelect = "<div>\n<label for='zp-ZotpressMetaBox-Tags-Tags'>Tags:</label>\n";
                         tagsSelect += "<select id='zp-ZotpressMetaBox-Tags-Tags' multiple='yes'>\n";
                         
+                        var tagsArray = new Array();
+                        
                         jQuery(xml).find("entry").each(function()
                         {
-                            tagsSelect += "<option value='"+jQuery(this).find("title").text().replace(" ", "+")+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                            tagsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this).find("title").text().replace(" ", "+")+"'>"+jQuery(this).find("title").text()+"</option>\n";
                         });
+                        
+                        // Add to select
+                        tagsArray = sortObj( tagsArray );
+                        
+                        for (var i in tagsArray)
+                            tagsSelect += tagsArray[i];
+                        
                         tagsSelect += "</select>\n</div>\n\n";
                         
                         jQuery("#zp-ZotpressMetaBox-Tags-Accounts").after(tagsSelect);
@@ -340,7 +376,6 @@
                     complete: function()
                     {
                         // Remove loading
-                        //jQuery("#zp-ZotpressMetaBox-Tags-Accounts").parent().find("div.zp-Loading").remove();
                         jQuery("#zp-ZotpressMetaBox-Tabs").find("div.zp-Loading").remove();
                         
                         // Open up output
@@ -369,7 +404,7 @@
                 jQuery("#zp-ZotpressMetaBox-Tabs").append("<div class='zp-Loading'>loading...</div>\n");
                 
                 // Build citation url
-                var xmlUriTags = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("#zp-ZotpressMetaBox-Tags-Accounts option:selected").attr("class")+'&api_user_id='+jQuery("#zp-ZotpressMetaBox-Tags-Accounts option:selected").text()+'&tag_name='+escape( jQuery(this).val() );
+                var xmlUriTags = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("#zp-ZotpressMetaBox-Tags-Accounts option:selected").attr("class")+'&api_user_id='+jQuery("#zp-ZotpressMetaBox-Tags-Accounts option:selected").attr("id")+'&tag_name='+escape( jQuery(this).val() )+'&limit=150';
                 
                 // Grab Zotero request
                 jQuery.ajax({
@@ -428,28 +463,9 @@
 <div id="zp-ZotpressMetaBox-Tabs">
     
     <ul>
-        <li><a href="#zp-ZotpressMetaBox-Tabs-1">Account List</a></li>
         <li><a href="#zp-ZotpressMetaBox-Tabs-2">By Collection</a></li>
         <li><a href="#zp-ZotpressMetaBox-Tabs-3">By Tag</a></li>
     </ul>
-    
-    
-    <!-- START OF Account List -->
-    <div id="zp-ZotpressMetaBox-Tabs-1" class="zp-Tab">
-<?php
-    global $wpdb;
-    $accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
-    
-    foreach ($accounts as $account)
-    {
-        echo "<p><span class='label'>";
-        if (isset( $account->nickname ))
-            echo "<em>".$account->nickname."</em>'s ";
-        echo substr( $account->account_type, 0, strlen( $account->account_type )-1 )." ID</span>: ".$account->api_user_id."</p>\n";
-    }
-?>
-    </div>
-    <!-- END OF Account List -->
     
     
     <!-- START OF By Collection -->
@@ -458,8 +474,16 @@
         <label for="zp-ZotpressMetaBox-Collection-Accounts">Choose Account:</label>
         <select id="zp-ZotpressMetaBox-Collection-Accounts" multiple="yes">
         <?php
+        
+            global $wpdb;
+            $accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
+            
             foreach ($accounts as $account)
-                echo "<option id='".$account->api_user_id."' class='".$account->account_type."' value='".$account->api_user_id."'>".$account->api_user_id."</option>\n";
+                if (isset( $account->nickname ))
+                    echo "<option id='".$account->api_user_id."' class='".$account->account_type."' value='".$account->api_user_id."'>".$account->nickname." (".$account->api_user_id.")</option>\n";
+                else
+                    echo "<option id='".$account->api_user_id."' class='".$account->account_type."' value='".$account->api_user_id."'>".$account->api_user_id." (".str_replace("s", "", $account->account_type).")</option>\n";
+        
         ?>
         </select>
         
@@ -474,7 +498,10 @@
         <select id="zp-ZotpressMetaBox-Tags-Accounts" multiple="yes">
         <?php
             foreach ($accounts as $account)
-                echo "<option id='".$account->api_user_id."' class='".$account->account_type."' value='".$account->api_user_id."'>".$account->api_user_id."</option>\n";
+                if (isset( $account->nickname ))
+                    echo "<option id='".$account->api_user_id."' class='".$account->account_type."' value='".$account->api_user_id."'>".$account->nickname." (".$account->api_user_id.")</option>\n";
+                else
+                    echo "<option id='".$account->api_user_id."' class='".$account->account_type."' value='".$account->api_user_id."'>".$account->api_user_id." (".str_replace("s", "", $account->account_type).")</option>\n";
         ?>
         </select>
         

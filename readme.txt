@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.1.2
-Stable tag: 4.1.1
+Stable tag: 4.2
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -82,66 +82,55 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 
 == Changelog ==
 
-= 1.0 =
-* Zotpress makes its debut.
+= 4.2 =
+* Bugfix: Styles now working again.
+* Bugfix: Now only grabbing top level items.
+* Bugfix: Sidebar widget working again.
+* Metabox widget refined: Limit removed, account info integrated, and tags and collections alphabetized.
 
-= 1.1 =
-* Fixed up the readme.txt. Added a friendly redirect for new users. Made IE8-compliant. Moved some JS calls to footer. Now selectively loads some JS. Made tags and collections into lists for easier formatting.
+= 4.1.1 =
+* Bugfix: Can now sort by ASC or DESC order.
 
-= 1.2 =
-* Optimized JavaScript functions. Fixed some grammatical errors on the Help page. More selective loading of JavaScript. And most importantly ... added a Zotpress widget option. This also means you can have more than one Zotpress call on a single page.
+= 4.1 =
+* Bugfixes: Filtering by author and date reinstated.
+* New: Titles by year. (New parameter: title)
 
-= 1.3 =
-* Added cURL, which is (maybe?) quicker, (definitely?) safer, and (more likely to be?) supported. Requests default to cURL first now.
+= 4.0 =
+* Switched method of requesting from jQuery to PHP. Should mean a speed increase (particularly for Firefox users).
+* Many shortcode parameters have been changed; these parameters are now deprecated: api_user_id (now userid), item_key (now item), tag_name (now tag), data_type (now datatype), collection_id (now collection), download (now downloadable), image (now showimage).
+* New shortcode parameter "sortby" allows you to sort by "author" (first author) and "date" (publication date). By default, citations are sorted by latest added.
 
-= 1.4 =
-* Caching enabled, which should speed things up a bit.
+= 3.1.3 =
+* Temporary fix for web servers that don't support long URLs. Unfortunately no special caching for these folks. New solution in the works.
 
-= 1.5 =
-* Groups citation style issue fixed.
+= 3.1.2 =
+* Added backwards compatibility measure with respect to the new api_user_id / nickname requirement.
+* Fixed citation display positioning bugs.
+* Applied new caching method to sidebar widget.
 
-= 1.6 =
-* Critical request method issue fixed.
+= 3.1.1 =
+* Fix: Sidebar widget bug.
 
-= 2.0 =
-* Zotpress completely restructured.
-* Most requests now made through PHP. Shortcode requests made through PHP/jQuery combo for user-friendliness on the front-end.
-* Cross-user caching implemented. Updates request data every 10 minutes and only if request made.
-* Increased security now that private keys are no longer exposed through JavaScript.
-* Can now filter by Tag in admin.
+= 3.1 =
+* New way of caching requests. Speed increase for requests that have already been cached.
+* No more multiple accounts per shortcode. A "user_api_id" or "nickname" must be set.
+* No more collection titles. You can use the Zotero Reference meta box to find and add this information above collection shortcode calls.
 
-= 2.1 =
-* Now cURL-friendly again.
+= 3.0.4 =
+* Fixed display images issue.
+* Separated out sidebar widget code from main file.
 
-= 2.2 =
-* Fixed CURLOPT_FOLLOWLOCATION error.
+= 3.0.3 =
+* Groups accounts citation display fixed.
 
-= 2.3 =
-* Fixed Group "invalid key" error.
+= 3.0.2 =
+* Meta box fixed in IE and Safari.
+* Styles fixed in IE and Safari.
 
-= 2.4 =
-* Can now display by year.
-* New option to display download links, should they be available.
-
-= 2.5 =
-* Re-wrote display code.
-* Tidied up JavaScript.
-* Fixed update table code.
-
-= 2.5.1 =
-* Fixed single citation display bug.
-
-= 2.5.2 =
-* Fixed image display for author/year citations.
-
-= 2.6 =
-* Important: Reduced multiple instantiations of JavaScript.
-* Download option added to Widget.
-* Proper download links for PDFs implemented.
-
-= 2.6.1 =
-* Can now give group accounts a public key.
-* Downloads can now be accessed by anyone (assuming you've enabled downloading).
+= 3.0.1 =
+* Sidebar widget fixed.
+* Styles in IE refined.
+* Conditional OAuth messages implemented.
 
 = 3.0 =
 * New "Zotpress Reference" widget, meant to speed up the process of adding shortcodes to your posts and pages by allowing you to selectively search for ids directly on the add and edit pages.
@@ -155,49 +144,66 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 * "Order" parameter no longer available, at least for now; see http://www.zotero.org/support/dev/server_api
 * "Forcing cURL" option abandoned. If your server supports it, cURL will be used; otherwise, Zotpress will resort to file_get_contents(). 
 
-= 3.0.1 =
-* Sidebar widget fixed.
-* Styles in IE refined.
-* Conditional OAuth messages implemented.
+= 2.6.1 =
+* Can now give group accounts a public key.
+* Downloads can now be accessed by anyone (assuming you've enabled downloading).
 
-= 3.0.2 =
-* Meta box fixed in IE and Safari.
-* Styles fixed in IE and Safari.
+= 2.6 =
+* Important: Reduced multiple instantiations of JavaScript.
+* Download option added to Widget.
+* Proper download links for PDFs implemented.
 
-= 3.0.3 =
-* Groups accounts citation display fixed.
+= 2.5.2 =
+* Fixed image display for author/year citations.
 
-= 3.0.4 =
-* Fixed display images issue.
-* Separated out sidebar widget code from main file.
+= 2.5.1 =
+* Fixed single citation display bug.
 
-= 3.1 =
-* New way of caching requests. Speed increase for requests that have already been cached.
-* No more multiple accounts per shortcode. A "user_api_id" or "nickname" must be set.
-* No more collection titles. You can use the Zotero Reference meta box to find and add this information above collection shortcode calls.
+= 2.5 =
+* Re-wrote display code.
+* Tidied up JavaScript.
+* Fixed update table code.
 
-= 3.1.1 =
-* Fix: Sidebar widget bug.
+= 2.4 =
+* Can now display by year.
+* New option to display download links, should they be available.
 
-= 3.1.2 =
-* Added backwards compatibility measure with respect to the new api_user_id / nickname requirement.
-* Fixed citation display positioning bugs.
-* Applied new caching method to sidebar widget.
+= 2.3 =
+* Fixed Group "invalid key" error.
 
-= 3.1.3 =
-* Temporary fix for web servers that don't support long URLs. Unfortunately no special caching for these folks. New solution in the works.
+= 2.2 =
+* Fixed CURLOPT_FOLLOWLOCATION error.
 
-= 4.0 =
-* Switched method of requesting from jQuery to PHP. Should mean a speed increase (particularly for Firefox users).
-* Many shortcode parameters have been changed; these parameters are now deprecated: api_user_id (now userid), item_key (now item), tag_name (now tag), data_type (now datatype), collection_id (now collection), download (now downloadable), image (now showimage).
-* New shortcode parameter "sortby" allows you to sort by "author" (first author) and "date" (publication date). By default, citations are sorted by latest added.
+= 2.1 =
+* Now cURL-friendly again.
 
-= 4.1 =
-* Bugfixes: Filtering by author and date reinstated.
-* New: Titles by year. (New parameter: title)
+= 2.0 =
+* Zotpress completely restructured.
+* Most requests now made through PHP. Shortcode requests made through PHP/jQuery combo for user-friendliness on the front-end.
+* Cross-user caching implemented. Updates request data every 10 minutes and only if request made.
+* Increased security now that private keys are no longer exposed through JavaScript.
+* Can now filter by Tag in admin.
 
-= 4.1.1 =
-* Bugfix: Can now sort by ASC or DESC order.
+= 1.6 =
+* Critical request method issue fixed.
+
+= 1.5 =
+* Groups citation style issue fixed.
+
+= 1.4 =
+* Caching enabled, which should speed things up a bit.
+
+= 1.3 =
+* Added cURL, which is (maybe?) quicker, (definitely?) safer, and (more likely to be?) supported. Requests default to cURL first now.
+
+= 1.2 =
+* Optimized JavaScript functions. Fixed some grammatical errors on the Help page. More selective loading of JavaScript. And most importantly ... added a Zotpress widget option. This also means you can have more than one Zotpress call on a single page.
+
+= 1.1 =
+* Fixed up the readme.txt. Added a friendly redirect for new users. Made IE8-compliant. Moved some JS calls to footer. Now selectively loads some JS. Made tags and collections into lists for easier formatting.
+
+= 1.0 =
+* Zotpress makes its debut.
 
 == Upgrade Notice ==
 
@@ -278,3 +284,6 @@ Bugfixes: Filtering by year and author reinstated. New: Titles for year.
 
 = 4.1.1 =
 Bugfix: Can now sort by ASC or DESC order.
+
+= 4.2 =
+Bugfixes and metabox widget refinements.

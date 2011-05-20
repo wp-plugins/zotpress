@@ -1,5 +1,5 @@
 <?php
-
+    
     class ZotpressSidebarWidget extends WP_Widget {
         
         /*
@@ -17,17 +17,18 @@
             $widget_ops = array('description' => __('Display your citations on your sidebar', 'zp-ZotpressSidebarWidget'));
 	    parent::WP_Widget(false, __('Zotpress Widget'), $widget_ops);
         }
-        
+	
         function widget( $args, $instance )
         {
             extract( $args );
             
             // ARGUMENTS
-            $title = apply_filters('widget_title', $instance['title'] );
+            $widget_title = apply_filters('widget_title', $instance['widget_title'] );
             
             $api_user_id = $instance['api_user_id'];
             $nickname = isset( $instance['nickname'] ) ? $instance['nickname'] : false;
             $author = isset( $instance['author'] ) ? $instance['author'] : false;
+            $year = isset( $instance['year'] ) ? $instance['year'] : false;
             
             $data_type = isset( $instance['data_type'] ) ? $instance['data_type'] : "items";
             $collection_id = isset( $instance['collection_id'] ) ? $instance['collection_id'] : false;
@@ -37,7 +38,7 @@
             $content = isset( $instance['content'] ) ? $instance['content'] : "bib";
             $style = isset( $instance['style'] ) ? $instance['style'] : "apa";
             //$order = isset( $instance['order'] ) ? $instance['order'] : false;
-            //$sort = isset( $instance['sort'] ) ? $instance['sort'] : false;
+            $sort = isset( $instance['sort'] ) ? $instance['sort'] : false;
             $limit = isset( $instance['limit'] ) ? $instance['limit'] : "5";
 	    
             $sortby = isset( $instance['sortby'] ) ? $instance['sortby'] : false;
@@ -46,6 +47,7 @@
             
             $image = isset( $instance['image'] ) ? $instance['image'] : "no";
             $download = isset( $instance['download'] ) ? $instance['download'] : "no";
+            $title = isset( $instance['zptitle'] ) ? $instance['zptitle'] : "no";
             
             
             
@@ -53,8 +55,8 @@
             // Required for theme
             echo $before_widget;
             
-            if ($title)
-                echo $before_title . $title . $after_title;
+            if ($widget_title)
+                echo $before_title . $widget_title . $after_title;
             
             
             
@@ -92,7 +94,7 @@
 		
 		// READ FORMATTED CITATION XML
 		
-		$zp_xml = MakeZotpressRequest($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, false, true, $recache, $GLOBALS['zp_instance_id']);
+		$zp_xml = MakeZotpressRequest($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, false, true, $recache, $GLOBALS['zp_instance_id'], false, false, $style);
 		
 		$doc_citations = new DOMDocument();
 		$doc_citations->loadXML($zp_xml);
@@ -104,7 +106,7 @@
 		
 		// READ CITATION META XML
 		
-		$zp_meta_xml = MakeZotpressRequest($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, false, true, $recache, $GLOBALS['zp_instance_id'], true);
+		$zp_meta_xml = MakeZotpressRequest($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, false, true, $recache, $GLOBALS['zp_instance_id'], true, false, $style);
 		
 		$doc_meta = new DOMDocument();
 		$doc_meta->loadXML($zp_meta_xml);
@@ -125,24 +127,31 @@
 		    // Get item type
 		    $item_type = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "itemType")->item(0)->nodeValue;
 		    
+		    // IGNORE ATTACHMENTS
 		    if ($item_type == "attachment")
 			continue;
 		    
 		    // Get citation ID
 		    $citation_id = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue;
 		    
-		    // GET CITATION CONTENT
-		    $citation_html = new DOMDocument();
-		    foreach($entry->getElementsByTagName("content")->item(0)->childNodes as $child) {
-			$citation_html->appendChild($citation_html->importNode($child, true));
-			$citation_content = $citation_html->saveHTML();
-			$citation_content = preg_replace( '/^\s+|\n|\r|\s+$/m', '', trim( $citation_content ) );
-		    }
-		    
 		    // GET META
 		    foreach ($zp_meta_entries as $zp_meta_entry)
 			if ($zp_meta_entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue == $citation_id)
 			    $zp_this_meta = json_decode( $zp_meta_entry->getElementsByTagName("content")->item(0)->nodeValue );
+		    
+		    // FILTER BY AUTHOR
+		    if ($author !== false && $author !== "")
+		    {
+			$temp_continue = false;
+			
+			foreach ($zp_this_meta->creators as $creator) {
+			    if (str_replace(" ", "+", $creator->firstName."+".$creator->lastName) == $author)
+				$temp_continue = true;
+			}
+			
+			if ($temp_continue === false)
+			    continue;
+		    }
 		    
 		    // Format date
 		    $zp_this_meta->date = preg_replace( '/-\d{1,2}/', '', $zp_this_meta->date );
@@ -151,6 +160,19 @@
 		    if (is_numeric(substr($zp_this_meta->date, 0, 3))) {
 			$temp = substr($zp_this_meta->date, 0, 4);
 			$zp_this_meta->date = trim(substr($zp_this_meta->date, 4, strlen($zp_this_meta->date))).", ".$temp;
+		    }
+		    
+		    // FILTER BY YEAR
+		    if ($year !== false && $year !== "" && date("Y", strtotime($zp_this_meta->date)) != $year)
+			continue;
+		    
+		    
+		    // GET CITATION CONTENT
+		    $citation_html = new DOMDocument();
+		    foreach($entry->getElementsByTagName("content")->item(0)->childNodes as $child) {
+			$citation_html->appendChild($citation_html->importNode($child, true));
+			$citation_content = $citation_html->saveHTML();
+			$citation_content = preg_replace( '/^\s+|\n|\r|\s+$/m', '', trim( $citation_content ) );
 		    }
 		    
 		    // Hyperlink URL
@@ -163,7 +185,7 @@
 		    {
 			if ($entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numChildren")->item(0)->nodeValue > 0)
 			{
-			    $zp_item_xml = MakeZotpressRequest($account_type, $api_user_id, "items", false, $citation_id, false, false, false, true, false, $GLOBALS['zp_instance_id'], false, true);
+			    $zp_item_xml = MakeZotpressRequest($account_type, $api_user_id, "items", false, $citation_id, false, false, false, true, false, $GLOBALS['zp_instance_id'], false, true, $style);
 			    
 			    $item_meta = new DOMDocument();
 			    $item_meta->loadXML($zp_item_xml);
@@ -179,6 +201,7 @@
 		    
 		    // GET CITATION IMAGE
 		    $has_citation_image = false;
+		    $citation_image = false;
 		    if (isset($image) && $image == "yes")
 		    {
 			$zp_entry_image = $wpdb->get_results("SELECT image FROM ".$wpdb->prefix."zotpress_images WHERE citation_id='".$citation_id."'");
@@ -202,12 +225,22 @@
 		// SORT CITATIONS
 		if ($sortby)
 		{
-		    $zp_citations = subval_sort( $zp_citations, $sortby );
+		     echo "Adada".$sortby.$sort;
+		    $zp_citations = subval_sort( $zp_citations, $sortby, "asc" );
 		}
 		
 		// OUTPUT CITATIONS
-		foreach ($zp_citations as $zp_citation)
-		    $zp_output .= "<div class='zp-Entry".$zp_citation['hasImage']."'>\n" . $zp_citation['image'] . $zp_citation['content'] . "\n</div>\n \n";
+		foreach ($zp_citations as $zp_citation) {
+		    if (isset($current_title) && $current_title == "") {
+			$current_title = date("Y", strtotime($zp_citation['date']));
+			$zp_output .= "<h3>".$current_title."</h3>\n";
+		    }
+		    else if (isset($current_title) && strlen($current_title) > 0 && $current_title != date("Y", strtotime($zp_citation['date']))) {
+			$current_title = date("Y", strtotime($zp_citation['date']));
+			$zp_output .= "<h3>".$current_title."</h3>\n";
+		    }
+		    $zp_output .= "<div class='zp-Entry".$zp_citation['hasImage']."'>\n" . $zp_citation['image'] . $zp_citation['content'] . "\n</div><!--Entry-->\n\n";
+		}
 		
 		$zp_output .= "\n</div>\n</div>\n\n";
 		
@@ -231,11 +264,12 @@
         {
             $instance = $old_instance;
             
-            $instance['title'] = strip_tags( $new_instance['title'] );
+            $instance['widget_title'] = strip_tags( $new_instance['widget_title'] );
             
             $instance['api_user_id'] = strip_tags( $new_instance['api_user_id'] );
             $instance['nickname'] = strip_tags($new_instance['nickname']);
             $instance['author'] = str_replace(" ", "+", strip_tags($new_instance['author']));
+            $instance['year'] = str_replace(" ", "+", strip_tags($new_instance['year']));
             
             $instance['data_type'] = strip_tags( $new_instance['data_type'] );
             $instance['collection_id'] = strip_tags($new_instance['collection_id']);
@@ -245,24 +279,25 @@
             $instance['content'] = strip_tags( $new_instance['content'] );
             $instance['style'] = strip_tags($new_instance['style']);
             //$instance['order'] = strip_tags($new_instance['order']);
-            //$instance['sort'] = strip_tags($new_instance['sort']);
+            $instance['sort'] = strip_tags($new_instance['sort']);
+            $instance['sortby'] = strip_tags($new_instance['sortby']);
+	    
             $instance['limit'] = strip_tags($new_instance['limit']);
             if (intval($instance['limit']) > 99)
                 $instance['limit'] = "99";
             if (trim($instance['limit']) == "")
                 $instance['limit'] = "5";
             
-            $instance['sortby'] = strip_tags($new_instance['sortby']);
-            
             $instance['image'] = strip_tags($new_instance['image']);
             $instance['download'] = strip_tags($new_instance['download']);
+            $instance['zptitle'] = strip_tags($new_instance['zptitle']);
             
             return $instance;
         }
         
         function form( $instance )
         {
-            $title = esc_attr( $instance['title'] );
+            $widget_title = esc_attr( $instance['widget_title'] );
             ?>
             
                 <style type="text/css">
@@ -289,8 +324,8 @@
                 </style>
             
 		<p>
-			<label for="<?php echo $this->get_field_id( 'title' ); ?>">Widget Title:</label>
-			<input id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" class="widefat" />
+			<label for="<?php echo $this->get_field_id( 'widget_title' ); ?>">Widget Title:</label>
+			<input id="<?php echo $this->get_field_id( 'widget_title' ); ?>" name="<?php echo $this->get_field_name( 'widget_title' ); ?>" value="<?php echo $instance['widget_title']; ?>" class="widefat" />
 		</p>
                 
                 <div class="zp-ZotpressSidebarWidget-Required">
@@ -326,6 +361,11 @@
 		</p>
                 
 		<p>
+			<label for="<?php echo $this->get_field_id( 'year' ); ?>">Enter Year to List by Year:</label>
+			<input id="<?php echo $this->get_field_id( 'year' ); ?>" name="<?php echo $this->get_field_name( 'year' ); ?>" value="<?php echo $instance['year']; ?>" class="widefat" />
+		</p>
+                
+		<p>
 			<label for="<?php echo $this->get_field_id( 'collection_id' ); ?>">Enter Collection ID to List by Collection:</label>
 			<input id="<?php echo $this->get_field_id( 'collection_id' ); ?>" name="<?php echo $this->get_field_name( 'collection_id' ); ?>" value="<?php echo $instance['collection_id']; ?>" class="widefat" />
 		</p>
@@ -358,14 +398,6 @@
 			<label for="<?php echo $this->get_field_id( 'order' ); ?>">Order By:</label>
 			<input id="<?php echo $this->get_field_id( 'order' ); ?>" name="<?php echo $this->get_field_name( 'order' ); ?>" value="<?php echo $instance['order']; ?>" class="widefat" />
 		</p>
-                
-                <p>
-			<label for="<?php echo $this->get_field_id( 'sort' ); ?>">Sort Order:</label>
-			<select id="<?php echo $this->get_field_id( 'sort' ); ?>" name="<?php echo $this->get_field_name( 'sort' ); ?>" class="widefat">
-				<option <?php if ( 'desc' == $instance['sort'] ) echo 'selected="selected"'; ?>>desc</option>
-				<option <?php if ( 'asc' == $instance['sort'] ) echo 'selected="selected"'; ?>>asc</option>
-			</select>
-		</p>
                 <?php } // hehe ?>
                 
                 <p>
@@ -374,6 +406,14 @@
 				<option>latest updated</option>
 				<option <?php if ( 'author' == $instance['sortby'] ) echo 'selected="selected"'; ?>>author</option>
 				<option <?php if ( 'date' == $instance['sortby'] ) echo 'selected="selected"'; ?>>date</option>
+			</select>
+		</p>
+                
+                <p>
+			<label for="<?php echo $this->get_field_id( 'sort' ); ?>">Sort Order:</label>
+			<select id="<?php echo $this->get_field_id( 'sort' ); ?>" name="<?php echo $this->get_field_name( 'sort' ); ?>" class="widefat">
+				<option <?php if ( 'desc' == $instance['sort'] ) echo 'selected="selected"'; ?>>desc</option>
+				<option <?php if ( 'asc' == $instance['sort'] ) echo 'selected="selected"'; ?>>asc</option>
 			</select>
 		</p>
                 
@@ -395,6 +435,14 @@
 			<select id="<?php echo $this->get_field_id( 'download' ); ?>" name="<?php echo $this->get_field_name( 'download' ); ?>" class="widefat">
 				<option <?php if ( 'no' == $instance['download'] ) echo 'selected="selected"'; ?>>no</option>
 				<option <?php if ( 'yes' == $instance['download'] ) echo 'selected="selected"'; ?>>yes</option>
+			</select>
+		</p>
+                
+                <p>
+			<label for="<?php echo $this->get_field_id( 'zptitle' ); ?>">Show Title(s)?:</label>
+			<select id="<?php echo $this->get_field_id( 'zptitle' ); ?>" name="<?php echo $this->get_field_name( 'zptitle' ); ?>" class="widefat">
+				<option <?php if ( 'no' == $instance['zptitle'] ) echo 'selected="selected"'; ?>>no</option>
+				<option <?php if ( 'yes' == $instance['zptitle'] ) echo 'selected="selected"'; ?>>yes</option>
 			</select>
 		</p>
                 

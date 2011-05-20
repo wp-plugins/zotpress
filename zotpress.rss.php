@@ -20,7 +20,8 @@
 			$mzr_force_recache=false,
 			$mzr_instance_id=false,
 			$mzr_get_meta=false,
-			$mzr_get_children=false
+			$mzr_get_children=false,
+			$mzr_get_style=false
 			)
 	{
 		// Access Wordpress db
@@ -106,7 +107,7 @@
 						$urlDataType = trim($_GET['data_type']);
 					}
 					else {
-						$urlDataType = "items";
+						$urlDataType = "items/top";
 					}
 				}
 				else {
@@ -213,6 +214,10 @@
 				else {
 					$style = "&style=apa";
 					$zp_shortcode_request .= "style='apa', ";
+				}
+				if ($mzr_get_style == true) {
+					$style = "&style=".$mzr_get_style;
+					$zp_shortcode_request .= "style='".$mzr_get_style."', ";
 				}
 				
 				// Order

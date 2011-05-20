@@ -38,7 +38,7 @@
 	foreach($a as $k=>$v) {
 		$b[$k] = strtolower($v[$subkey]);
 	}
-        if ($sort == "ASC")
+        if (strtolower($sort) == "asc")
             asort($b);
         else
             arsort ($b);
@@ -203,7 +203,7 @@
             
             // READ FORMATTED CITATION XML
             
-            $zp_xml = MakeZotpressRequest($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, false, true, $recache, $GLOBALS['zp_instance_id']);
+            $zp_xml = MakeZotpressRequest($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, false, true, $recache, $GLOBALS['zp_instance_id'], false, false, $style);
             
             $doc_citations = new DOMDocument();
             $doc_citations->loadXML($zp_xml);
@@ -215,7 +215,7 @@
             
             // READ CITATION META XML
             
-            $zp_meta_xml = MakeZotpressRequest($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, false, true, $recache, $GLOBALS['zp_instance_id'], true);
+            $zp_meta_xml = MakeZotpressRequest($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, false, true, $recache, $GLOBALS['zp_instance_id'], true, false, $style);
             
             $doc_meta = new DOMDocument();
             $doc_meta->loadXML($zp_meta_xml);
@@ -294,7 +294,7 @@
                 {
                     if ($entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numChildren")->item(0)->nodeValue > 0)
                     {
-                        $zp_item_xml = MakeZotpressRequest($account_type, $api_user_id, "items", false, $citation_id, false, false, false, true, false, $GLOBALS['zp_instance_id'], false, true);
+                        $zp_item_xml = MakeZotpressRequest($account_type, $api_user_id, "items", false, $citation_id, false, false, false, true, false, $GLOBALS['zp_instance_id'], false, true, $style);
                         
                         $item_meta = new DOMDocument();
                         $item_meta->loadXML($zp_item_xml);
