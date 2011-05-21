@@ -112,6 +112,8 @@
 				}
 				else {
 					$urlDataType = $mzr_data_type;
+					if ($urlDataType == "items")
+						$urlDataType = "items/top";
 				}
 				$zp_shortcode_request .= "data_type='".$urlDataType."', ";
 				
@@ -284,7 +286,7 @@
 				else
 					$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."?key=".$public_key.$content.$style.$order.$sort.$mzr_limit;
 				
-				//echo "<br />" . $zp_url . "<br />";
+				echo "<br />" . $zp_url . "<br />";
 				
 				
 				// DETERMINE IF FIRST OR SECOND STEP
