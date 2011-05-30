@@ -34,7 +34,8 @@
     
     
     // Thanks to http://www.firsttube.com/read/sorting-a-multi-dimensional-array-with-php/
-    function subval_sort($a, $subkey, $sort) {
+    function subval_sort($a, $subkey, $sort)
+    {
 	foreach($a as $k=>$v) {
 		$b[$k] = strtolower($v[$subkey]);
 	}
@@ -206,7 +207,18 @@
             $zp_xml = MakeZotpressRequest($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, false, true, $recache, $GLOBALS['zp_instance_id'], false, false, $style);
             
             $doc_citations = new DOMDocument();
-            $doc_citations->loadXML($zp_xml);
+            libxml_use_internal_errors(true);
+            
+            try {
+                //if (trim($zp_xml) == "FALSE" || trim($zp_xml) === false || trim($zp_xml) == "" || is_null($zp_xml)) {
+                if (!$doc_citations->loadXML($zp_xml)) {
+                    throw new Exception("Sorry, but Zotpress was unable to contact the Zotero server.");
+                }
+                
+            }
+            catch(Exception $e) {
+                $zp_output .= $e->getMessage() ." <a href='".ZOTPRESS_PLUGIN_URL."zotpress.rss.reset.php?zp_instance_id=".$GLOBALS['zp_instance_id']."&amp;zp_return_url=".$_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]."'>(Try again?)</a></div>\n";
+            }
             
             $zp_entries = $doc_citations->getElementsByTagName("entry");
             

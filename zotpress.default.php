@@ -244,22 +244,25 @@
                     
                     // GET CITATION IMAGE
                     
-                    $citation_image = "<a href='admin.php?page=Zotpress&amp;image=true&amp;account_type=".$account_type."&amp;api_user_id=".$api_user_id."&amp;citation_id=".$citation_id."&amp;citation=".urlencode($citation_content)."'>\n";
-                    $citation_image .= "<span>Upload Image</span>";
+                    $citation_image = "<a class='upload' href='admin.php?page=Zotpress&amp;image=true&amp;account_type=".$account_type."&amp;api_user_id=".$api_user_id."&amp;citation_id=".$citation_id."&amp;citation=".urlencode($citation_content)."'>Upload Image</a>\n";
                     
                     foreach ($zpimages as $zpimage)
                     {
-                        if ($zpimage->getAttribute('citation_id') == $citation_id) {
-                            $citation_image = "<a href='admin.php?page=Zotpress&amp;image=true&update=true&image_url=".$zpimage->getAttribute('image_url')."&amp;account_type=".$account_type."&amp;api_user_id=".$api_user_id."&amp;citation_id=".$citation_id."&amp;citation=".urlencode($citation_content)."'>\n";
-                            $citation_image .= "<span>Change Image</span>";
-                            $citation_image .= "<img src='".$zpimage->getAttribute('image_url')."' alt='image' />\n";
+                        if ($zpimage->getAttribute('citation_id') == $citation_id)
+                        {
+                            // Update
+                            $citation_image = "<a class='change' href='admin.php?page=Zotpress&amp;image=true&update=true&image_url=".$zpimage->getAttribute('image_url')."&amp;account_type=".$account_type."&amp;api_user_id=".$api_user_id."&amp;citation_id=".$citation_id."&amp;citation=".urlencode($citation_content)."'>Change Image</a>\n";
+                            
+                            // Delete
+                            $citation_image .= "<a class='delete' rel='".$citation_id."' href='javascript:void(0);'>&times;</a>\n";
+                            
+                            $citation_image .= "<img class='thumb' src='".$zpimage->getAttribute('image_url')."' alt='image' />\n";
                         }
                     }
                     
                     echo $citation_image;
                     
                     // DISPLAY CONT.
-                    echo "</a>\n";
                     echo "<div class='bg'></div>";
                     echo "</div>\n";
                     

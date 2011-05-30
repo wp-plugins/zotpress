@@ -7,8 +7,8 @@ Tags: zotero, zotpress, citation manager, citations, citation, cite, citing, bib
 Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
-Tested up to: 3.1.2
-Stable tag: 4.2.2
+Tested up to: 3.1.3
+Stable tag: 4.2.3
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -81,6 +81,11 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 3. Search for item keys, citation ids and tag names using the convenient "Zotpress Reference" meta box.
 
 == Changelog ==
+
+= 4.2.3 =
+* More friendly XML error messages, including ability to (at least try) repeating the Zotero request.
+* Spite-ified most images for quicker display.
+* Citation images can now be deleted.
 
 = 4.2.2 =
 * Bugfix: Typo!
@@ -299,3 +304,6 @@ Bugfix: Limit issue resolved.
 
 = 4.2.2 =
 Bugfix: Typo!
+
+= 4.2.3 =
+Friendly XML error messages, spite-ified images, and ability to delete citation images.

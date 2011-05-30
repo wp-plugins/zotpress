@@ -75,7 +75,7 @@
             padding: 0;
         }
         div#zp-Zotpress ul li {
-            background: url('images/bullet.gif') no-repeat 0 7px;
+            background: url('images/sprite.png') no-repeat 0 -60px;
             padding-left: 15px;
             margin-left: 5px;
             margin-bottom: 10px;
@@ -158,17 +158,38 @@
             height: 150px;
         }
         
-      div#zp-Zotpress div.zp-Entry-Image span {
+      div#zp-Zotpress div.zp-Entry-Image a.change,
+      div#zp-Zotpress div.zp-Entry-Image a.upload {
             position: absolute;
             z-index: 3;
-            top: 60px;
-            left: 20px;
+            /*top: 60px;*/
+            /*left: 20px;*/
             color: #fff;
             display: block;
             font-weight: bold;
+            padding-top: 60px;
+            overflow: hidden;
+            visibility: hidden;
+            width: 150px;
+            height: 150px;
+        }
+      div#zp-Zotpress div.zp-Entry-Image a.delete {
+            position: absolute;
+            z-index: 4;
+            top: 0;
+            right: 0;
+            left: auto;
+            background-color: #fe2701;
+            border: 2px solid #e72301;
+            color: #fff;
+            display: block;
+            font-weight: bold;
+            padding: 5px 10px;
+            width: auto;
+            height: auto;
             visibility: hidden;
         }
-        div#zp-Zotpress div.zp-Entry-Image.hover span {
+        div#zp-Zotpress div.zp-Entry-Image.hover a {
             visibility: visible;
         }
         
@@ -517,7 +538,7 @@
         }
         
         div#zp-Zotpress div#zp-AccountsList div.zp-Account span.delete a {
-            background: url('images/remove.gif') no-repeat top center;
+            background: url('images/sprite.png') no-repeat -107px -1px;
             display: block;
             text-indent: -5000px;
             overflow: hidden;
@@ -597,7 +618,7 @@
             padding-right: 0;
         }
         div#zp-Zotpress form#zp-Add label.required {
-            background: url('images/reqd.gif') no-repeat center left;
+            background: url('images/sprite.png') no-repeat 0 -36px;
             padding-left: 15px;
             margin-left: 0;
         }
@@ -668,6 +689,7 @@
         
         div#zp-Zotpress form#zp-Add div.zp-Errors,
         div#zp-Zotpress form#zp-Add div.zp-Success {
+            padding-left: 35px;
             min-width: 600px;
         }
         
@@ -677,12 +699,12 @@
         }
         
         div#zp-Zotpress div.zp-Errors {
-            background: url('images/error_bg.gif') no-repeat top left;
+            background: url('images/sprite.png') no-repeat 0 -140px;
             color: #990033;
         }
         
         div#zp-Zotpress div.zp-Success {
-            background: url('images/success_bg.gif') no-repeat top left;
+            background: url('images/sprite.png') no-repeat 0 -77px;
             color: #009966;
         }
         
@@ -752,7 +774,7 @@
             text-shadow: 0 1px 0 #fff;
         }
         a.zp-FiveStar {
-            background: transparent url('images/fivestar.gif') no-repeat left bottom;
+            background: transparent url('images/sprite.png') no-repeat -160px -1px;
             padding-left: 68px;
         }
         

@@ -1,3 +1,36 @@
+<?php
+
+    if (isset($_GET['delete']))
+    {
+        require('../../../wp-load.php');
+        
+	if (!defined('WP_USE_THEMES'))
+		define('WP_USE_THEMES', false);
+        
+        /*
+         
+            DELETE IMAGE
+            
+        */
+        
+        global $wpdb;
+        
+        $query = "DELETE FROM ".$wpdb->prefix."zotpress_images WHERE citation_id='".htmlentities(trim($_GET['delete']))."'";
+        $wpdb->query($query);
+        
+        // Display success XML
+        header('Content-Type: application/xml; charset=ISO-8859-1');
+        echo "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n";
+        echo "<image>\n";
+        echo "<result success='true' />\n";
+        echo "<image citation_id='".htmlentities(trim($_GET['delete']))."' type='delete' />\n";
+        echo "</image>";
+    }
+    
+    // Display image form
+    else
+    {
+?>
         <div id="zp-Zotpress" class="wrap">
             
             <?php include('zotpress.display.tabs.php'); ?>
@@ -51,3 +84,5 @@
             </form>
             
         </div>
+        
+<?php } ?>

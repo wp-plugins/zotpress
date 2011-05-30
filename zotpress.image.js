@@ -102,6 +102,41 @@ jQuery(document).ready(function() {
         jQuery('#upload_image').val(imgurl);
         tb_remove();
     }
+    
+
+
+
+
+    /*
+    
+            DELETE IMAGE
+            
+    */
+
+    jQuery('.zp-Entry-Image').delegate("a.delete", "click", function () {
+        
+            $this = jQuery(this);
+            
+            var confirmDelete = confirm("Are you sure you want to remove this image?");
+            
+            if (confirmDelete==true)
+            {
+                // Set up uri
+                var xmlUri = jQuery('span#ZOTPRESS_PLUGIN_URL').text() + 'zotpress.image.php?delete=' + $this.attr("rel");
+                
+                // AJAX
+                jQuery.get(xmlUri, {}, function(xml)
+                {
+                    var $result = jQuery('result', xml).attr('success');
+                    
+                    if ($result == "true")
+                        window.location.reload(true);
+                    else // Show errors
+                        alert("Sorry - couldn't remove that image!");
+                });
+            }
+        
+    });
 
 
 
