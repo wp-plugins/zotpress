@@ -37,7 +37,7 @@
             
             $content = isset( $instance['content'] ) ? $instance['content'] : "bib";
             $style = isset( $instance['style'] ) ? $instance['style'] : "apa";
-            //$order = isset( $instance['order'] ) ? $instance['order'] : false;
+            $order = isset( $instance['order'] ) ? $instance['order'] : false;
             $sort = isset( $instance['sort'] ) ? $instance['sort'] : false;
             $limit = isset( $instance['limit'] ) ? $instance['limit'] : "5";
 	    

@@ -203,7 +203,7 @@
                 
                 // Set up xml url
                 var xmlUriCollections = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("option:selected", this).attr("class")+'&api_user_id='+jQuery("option:selected", this).attr("id")+'&data_type=collections&limit=150';
-                
+
                 // Grab Zotero request
                 jQuery.ajax({
                     url: xmlUriCollections,
@@ -225,9 +225,9 @@
                         jQuery(xml).find("entry").each(function()
                         {
                             if (browser_is_Safari)
-                                collectionsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                                collectionsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>"+jQuery(this).find("title").text()+" ("+jQuery(this.getElementsByTagName("numItems")[0]).text()+")</option>\n";
                             else
-                                collectionsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                                collectionsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+" ("+jQuery(this).find("zapi\\:numItems").text()+")</option>\n";
                         });
                         
                         // Add to select
@@ -288,13 +288,22 @@
                         var collectionsItemsSelect = "<div>\n<label for='zp-ZotpressMetaBox-Collection-Items'>Items:</label>\n";
                         collectionsItemsSelect += "<select id='zp-ZotpressMetaBox-Collection-Items' multiple='yes'>\n";
                         
+                        var collectionItemsArray = new Array();
+                        
                         jQuery(xml).find("entry").each(function()
                         {
                             if (browser_is_Safari)
-                                collectionsItemsSelect += "<option value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                                collectionItemsArray[jQuery(this.getElementsByTagName("creatorSummary")[0]).text()+"-"+jQuery(this.getElementsByTagName("key")[0]).text()] = "<option title='"+jQuery(this).find("title").text()+"' value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>("+jQuery(this.getElementsByTagName("creatorSummary")[0]).text()+") "+jQuery(this).find("title").text()+"</option>\n";
                             else
-                                collectionsItemsSelect += "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                                collectionItemsArray[jQuery(this).find("zapi\\:creatorSummary").text()+"-"+jQuery(this).find("zapi\\:key").text()] += "<option title='"+jQuery(this).find("title").text()+"' value='"+jQuery(this).find("zapi\\:key").text()+"'>("+jQuery(this).find("zapi\\:creatorSummary").text()+") "+jQuery(this).find("title").text()+"</option>\n";
                         });
+                        
+                        // Add to select
+                        collectionItemsArray = sortObj( collectionItemsArray );
+                        
+                        for (var i in collectionItemsArray)
+                            collectionsItemsSelect += collectionItemsArray[i];
+                        
                         collectionsItemsSelect += "</select>\n</div>\n\n";
                         
                         jQuery("#zp-ZotpressMetaBox-Collection-Collections").after(collectionsItemsSelect);
@@ -360,7 +369,10 @@
                         
                         jQuery(xml).find("entry").each(function()
                         {
-                            tagsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this).find("title").text().replace(" ", "+")+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                            if (browser_is_Safari)
+                                tagsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this).find("title").text().replace(" ", "+")+"'>"+jQuery(this).find("title").text()+" ("+jQuery(this.getElementsByTagName("numItems")[0]).text()+")</option>\n";
+                            else
+                                tagsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this).find("title").text().replace(" ", "+")+"'>"+jQuery(this).find("title").text()+" ("+jQuery(this).find("zapi\\:numItems").text()+")</option>\n";
                         });
                         
                         // Add to select
@@ -422,13 +434,22 @@
                         var tagsItemsSelect = "<div>\n<label for='zp-ZotpressMetaBox-Tags-Items'>Items:</label>\n";
                         tagsItemsSelect += "<select id='zp-ZotpressMetaBox-Tags-Items' multiple='yes'>\n";
                         
+                        var tagItemsArray = new Array();
+                        
                         jQuery(xml).find("entry").each(function()
                         {
                             if (browser_is_Safari)
-                                tagsItemsSelect += "<option value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                                tagItemsArray[jQuery(this.getElementsByTagName("creatorSummary")[0]).text()+"-"+jQuery(this.getElementsByTagName("key")[0]).text()] = "<option title='"+jQuery(this).find("title").text()+"' value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>("+jQuery(this.getElementsByTagName("creatorSummary")[0]).text()+") "+jQuery(this).find("title").text()+"</option>\n";
                             else
-                                tagsItemsSelect += "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+"</option>\n";
+                                tagItemsArray[jQuery(this).find("zapi\\:creatorSummary").text()+"-"+jQuery(this).find("zapi\\:key").text()] = "<option title='"+jQuery(this).find("title").text()+"' value='"+jQuery(this).find("zapi\\:key").text()+"'>("+jQuery(this).find("zapi\\:creatorSummary").text()+") "+jQuery(this).find("title").text()+"</option>\n";
                         });
+                        
+                        // Add to select
+                        tagItemsArray = sortObj( tagItemsArray );
+                        
+                        for (var i in tagItemsArray)
+                            tagsItemsSelect += tagItemsArray[i];
+                        
                         tagsItemsSelect += "</select>\n</div>\n\n";
                         
                         jQuery("#zp-ZotpressMetaBox-Tags-Tags").after(tagsItemsSelect);

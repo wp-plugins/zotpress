@@ -3,7 +3,7 @@
         margin: 1em 0;
     }
     div.zp-ZotpressInner {
-        display: none;
+        /*display: none;*/
     }
     div.zp-Zotpress div.zp-Entry {
         position: relative;
