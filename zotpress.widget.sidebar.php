@@ -218,8 +218,19 @@
 			    $citation_image = false;
 			}
 		    }
+                    
+                    $zp_author = false;
+                    if (isset($zp_this_meta->creators[0]->lastName))
+                        $zp_author = $zp_this_meta->creators[0]->lastName;
+                    
 		    
-		    $zp_citations[count($zp_citations)] = array( 'author' => $zp_this_meta->creators[0]->lastName, 'date' => date( "Y-m-d", strtotime( $zp_this_meta->date ) ), 'hasImage' => $has_citation_image, 'image' => $citation_image, 'content' => $citation_content );
+		    $zp_citations[count($zp_citations)] = array(
+                                                                'author' => $zp_author,
+                                                                'date' => date( "Y-m-d", strtotime( $zp_this_meta->date ) ),
+                                                                'hasImage' => $has_citation_image,
+                                                                'image' => $citation_image,
+                                                                'content' => $citation_content
+                                                                );
 		}
 		
 		// SORT CITATIONS
