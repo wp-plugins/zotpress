@@ -75,7 +75,7 @@
             padding: 0;
         }
         div#zp-Zotpress ul li {
-            background: url('images/sprite.png') no-repeat 0 -60px;
+            background: url('images/sprite.png') no-repeat -40px -60px;
             padding-left: 15px;
             margin-left: 5px;
             margin-bottom: 10px;
