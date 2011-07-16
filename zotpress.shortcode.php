@@ -217,7 +217,7 @@
                 
             }
             catch(Exception $e) {
-                $zp_output .= $e->getMessage() ." <a href='".ZOTPRESS_PLUGIN_URL."zotpress.rss.reset.php?zp_instance_id=".$GLOBALS['zp_instance_id']."&amp;zp_return_url=".$_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]."'>(Try again?)</a></div>\n";
+                $zp_output .= $e->getMessage() ." <a href='".ZOTPRESS_PLUGIN_URL."zotpress.rss.reset.php?zp_instance_id=".$GLOBALS['zp_instance_id']."&amp;zp_return_url=".$_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]."'>(Try again?)</a>\n";
             }
             
             $zp_entries = $doc_citations->getElementsByTagName("entry");
