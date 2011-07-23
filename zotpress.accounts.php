@@ -18,7 +18,7 @@
     
         <div id="zp-Zotpress" class="wrap">
             
-            <?php include('zotpress.display.tabs.php'); ?>
+            <?php include('zotpress.admin.display.tabs.php'); ?>
             
             <h3>Add a Zotero Account</h3>
             

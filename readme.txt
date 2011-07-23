@@ -7,8 +7,8 @@ Tags: zotero, zotpress, citation manager, citations, citation, cite, citing, bib
 Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
-Tested up to: 3.1.3
-Stable tag: 4.2.7
+Tested up to: 3.2.1
+Stable tag: 4.3
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -27,7 +27,7 @@ Zotpress displays your Zotero citations on Wordpress.
 * Let visitors download your publications
 * And more!
 
-Tested in Firefox 4, Safari 5, IE7 and IE8.
+Tested in Firefox 5, Safari 5, IE7 and IE8.
 
 = Requirements =
 jQuery included in your theme, cUrl [preferably] or file_get_contents enabled on your server.  Optional, but recommended: OAuth enabled on your server.
@@ -81,6 +81,14 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 3. Search for item keys, citation ids and tag names using the convenient "Zotpress Reference" meta box.
 
 == Changelog ==
+
+= 4.3 =
+* Introducing "Zotpress InText", a new shortcode that let's you add in-text citations, and then auto-generates a bibliography for you. jQuery must be enabled. Only supports APA style; requests can be made in the forums. Use information can be found in your Zotpress installation's "Help" page.
+* Recaching and auto-checking for new or updated Zotero data back in action.
+* The "collection" shortcode parameter now working.
+* Zotero XML data gathering functions optimized.
+* Tags with spaces are now working again for the "tag" shortcode parameter.
+* Tag shortcode parameter now accepts nonexistent tags.
 
 = 4.2.7 =
 * Error display error fixed.
@@ -332,3 +340,6 @@ Fixed bullet image issue.
 
 = 4.2.7 =
 Error display error fixed.
+
+= 4.3 =
+Zotpress InText and various fixes.

@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 4.2.7
+    Version: 4.3
     Author URI: http://katieseaborn.com
     
 */
@@ -174,11 +174,9 @@
     
     function Zotpress_admin_footer()
     {
-        // Connect to database
         global $wpdb;
         
         $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
-            
         $zp_accounts_total = $wpdb->num_rows;
         
         // INCLUDE FILTER SCRIPT
@@ -191,7 +189,7 @@
     
     jQuery(document).ready(function()
     {
-        <?php include('zotpress.display.filter.php'); ?>
+        <?php include('zotpress.admin.display.filter.php'); ?>
         
         /*
             
@@ -215,7 +213,7 @@
     {
         // Keep out those without access!
         if (!current_user_can('manage_options'))  {
-                wp_die( __('You do not have sufficient permissions to access this page.') );
+            wp_die( __('You do not have sufficient permissions to access this page.') );
         }
         
         
@@ -245,7 +243,7 @@
         
         else if (isset($_GET['help']))
         {
-            include('zotpress.help.php');
+            include('zotpress.admin.help.php');
         }
         
         
@@ -314,7 +312,7 @@
             
             // DISPLAY ADMIN CITATIONS
             
-            include('zotpress.default.php');
+            include('zotpress.admin.default.php');
         }
     }
 
@@ -325,6 +323,7 @@
 // SHORTCODE -----------------------------------------------------------------------------------------
 
     include('zotpress.shortcode.php');
+    include('zotpress.shortcode.intext.php');
     
 // SHORTCODE -----------------------------------------------------------------------------------------
 
@@ -431,6 +430,9 @@
     {
         wp_register_style('zotpress.shortcode.css', ZOTPRESS_PLUGIN_URL . 'zotpress.shortcode.css');
         wp_enqueue_style('zotpress.shortcode.css');
+        
+        wp_register_script('jquery.livequery.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.livequery.js', array('jquery'));
+        wp_enqueue_script('jquery.livequery.js');
     }
     
     /* ADD ACTIONS */
@@ -451,8 +453,9 @@
     if (!isset( $GLOBALS['wp_scripts']->registered[ "jquery" ] ))
         wp_enqueue_script("jquery");
 
-    // Shortcode and sidebar widget
+    // Shortcodes and sidebar widget
     add_shortcode( 'zotpress', 'Zotpress_func' );
+    add_shortcode( 'zotpressInText', 'Zotpress_zotpressInText' );
     add_action( 'widgets_init', 'ZotpressSidebarWidgetInit' );
     
     // Include styles of shortcode displayed

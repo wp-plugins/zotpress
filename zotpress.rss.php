@@ -35,7 +35,6 @@
 		$zp_shortcode_request = "UPDATE ".$wpdb->prefix."zotpress_cache SET ";
 		
 		
-		
 		// SET UP VARS
 		
 		// API User ID
@@ -167,7 +166,8 @@
 					}
 				}
 				else {
-					$urlDataType = "tags/".urlencode($mzr_tag_name)."/items";
+					//$urlDataType = "tags/".urlencode($mzr_tag_name)."/items";
+					$urlDataType = "tags/".$mzr_tag_name."/items";
 					$zp_shortcode_request .= "tag_name='".$mzr_tag_name."', ";
 				}
 				
@@ -278,8 +278,7 @@
 				
 				
 				
-				// Users & Groups [& Children]
-				// ASSUMED: &format=bib
+				// GENERATE URL: Users & Groups [& Children]		ASSUMED TO BE SET AS: &format=bib
 				
 				if (isset( $_GET['children'] ))
 					$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."/".$_GET['children']."/children?key=".$public_key;
@@ -287,61 +286,26 @@
 					$zp_url = "https://api.zotero.org/".$mzr_account_type."/".$mzr_api_user_id."/".$urlDataType."?key=".$public_key.$content.$style.$order.$sort.$mzr_limit;
 				
 				//echo "<br />" . $zp_url . "<br />";
-				
-				
-				// DETERMINE IF FIRST OR SECOND STEP
-				
-				$zp_initial = false;
-				
-				if ((isset( $_GET['step'] ) && $_GET['step'] == "one") || $mzr_include)
-					$zp_initial = true;
-				
 				//echo $zp_shortcode_request. "<br /><br /><br />";
 				
 				
 				
-				// DISPLAY
+				// GET & DISPLAY CITATIONS
+				
+				$curl = new CURL();
+				
+				$curl->setRequestUri( $zp_shortcode_request );
+				
+				if (!$mzr_instance_id)
+					$curl->setInstanceId( $_GET['instance_id'] );
+				else
+					$curl->setInstanceId( $mzr_instance_id );
 				
 				if (in_array ('curl', get_loaded_extensions()))
-				{
-					$curl = new CURL();
-					
-					$curl->setRequestUri( $zp_shortcode_request );
-					
-					if (!$mzr_instance_id)
-						$curl->setInstanceId( $_GET['instance_id'] );
-					else
-						$curl->setInstanceId( $mzr_instance_id );
-					
-					if ($zp_initial === true) {
-						$curl->setInitial();
-					} else {
-						$curl->enableCache();
-						$curl->recache( $mzr_force_recache );
-					}
-					$zp_xml = $curl->get_curl_contents( $zp_url );
-				}
-				else // Use the regular away
-				{
-					$curl = new CURL();
-					
-					$curl->setRequestUri( $zp_shortcode_request );
-					
-					if (!$mzr_instance_id)
-						$curl->setInstanceId( $_GET['instance_id'] );
-					else
-						$curl->setInstanceId( $mzr_instance_id );
-					
-					if ($zp_initial === true) {
-						$curl->setInitial();
-					} else {
-						$curl->enableCache();
-						$curl->recache( $mzr_force_recache );
-					}
-					$zp_xml = $curl->get_file_get_contents( $zp_url );
-				}
+					$zp_xml = $curl->get_curl_contents( $zp_url, $mzr_force_recache );
+				else // Use the old way:
+					$zp_xml = $curl->get_file_get_contents( $zp_url, $mzr_force_recache );
 			}
-			
 			
 			return $zp_xml;
 		}

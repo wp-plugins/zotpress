@@ -78,6 +78,7 @@
     }
     
     div.zp-Tab {
+        background-color: #fff;
         padding: 6px;
         padding-top: 2px;
     }

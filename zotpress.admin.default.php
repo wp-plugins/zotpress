@@ -2,7 +2,7 @@
         
         <div id="zp-Zotpress" class="wrap">
             
-            <?php include('zotpress.display.tabs.php'); ?>
+            <?php include('zotpress.admin.display.tabs.php'); ?>
             
             <?php
             
@@ -313,7 +313,7 @@
         
         <div id="zp-Zotpress" class="wrap">
             
-            <?php include('zotpress.display.tabs.php'); ?>
+            <?php include('zotpress.admin.display.tabs.php'); ?>
             
             <p>
                 Zotpress couldn't find any Zotero accounts. Would you like to add a Zotero account?

@@ -49,6 +49,9 @@
             font: italic 16px/20px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
             margin-bottom: -5px;
         }
+        div#zp-Zotpress h4.short {
+            margin-bottom: -15px;
+        }
         
         div#zp-Zotpress h5 {
             font: italic 12px/28px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
@@ -86,6 +89,11 @@
             margin: 0;
             padding: 0;
             height: 1px;
+        }
+        
+        div#zp-Zotpress p.example {
+            font-family: monospace;
+            font-size: 1.1em;
         }
         
         
@@ -760,7 +768,6 @@
         /* START OF MESSAGE CSS */
         
         div.zp-Message {
-            /*border: 1px solid red;*/
             background: transparent url('images/message.gif') no-repeat top left;
             display: block;
             float: right;
@@ -770,12 +777,20 @@
             height: 85px;
         }
         div.zp-Message p {
-            margin: 15px 20px 0 65px;
+            font-size: 12pt;
+            margin: 8px 30px 0 60px;
             text-shadow: 0 1px 0 #fff;
         }
         a.zp-FiveStar {
             background: transparent url('images/sprite.png') no-repeat -160px -1px;
             padding-left: 68px;
+        }
+        
+        ol.zp-WaysToUseZotpress li {
+            background: transparent url('images/sprite.png') no-repeat -290px -1px;
+            list-style-position: inside;
+            padding-left: 5px;
+            margin-bottom: 12px;
         }
         
         /* END OF MESSAGE CSS */

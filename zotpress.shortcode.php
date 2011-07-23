@@ -1,53 +1,8 @@
 <?php
 
-    // Thanks to rosty dot kerei at gmail dot com at php.net
-    function unicode_urldecode($url)
-    {
-        preg_match_all('/%u([[:alnum:]]{4})/', $url, $a);
-       
-        foreach ($a[1] as $uniord)
-        {
-            $dec = hexdec($uniord);
-            $utf = '';
-           
-            if ($dec < 128)
-            {
-                $utf = chr($dec);
-            }
-            else if ($dec < 2048)
-            {
-                $utf = chr(192 + (($dec - ($dec % 64)) / 64));
-                $utf .= chr(128 + ($dec % 64));
-            }
-            else
-            {
-                $utf = chr(224 + (($dec - ($dec % 4096)) / 4096));
-                $utf .= chr(128 + ((($dec % 4096) - ($dec % 64)) / 64));
-                $utf .= chr(128 + ($dec % 64));
-            }
-           
-            $url = str_replace('%u'.$uniord, $utf, $url);
-        }
-       
-        return urldecode($url);
-    }
-    
-    
-    // Thanks to http://www.firsttube.com/read/sorting-a-multi-dimensional-array-with-php/
-    function subval_sort($a, $subkey, $sort)
-    {
-	foreach($a as $k=>$v) {
-		$b[$k] = strtolower($v[$subkey]);
-	}
-        if (strtolower($sort) == "asc")
-            asort($b);
-        else
-            arsort ($b);
-	foreach($b as $key=>$val) {
-		$c[] = $a[$key];
-	}
-	return $c;
-    }
+
+    // Include shortcode functions
+    require("zotpress.shortcode.functions.php");
     
     
     function Zotpress_func($atts)
@@ -96,7 +51,9 @@
             'showimage' => "no",
             
             'download' => "no",
-            'downloadable' => "no"
+            'downloadable' => "no",
+            
+            'notes' => false,
             
         ), $atts));
         
@@ -119,6 +76,8 @@
         
         if ($collection_id)
             $collection_id = str_replace('"','',html_entity_decode($collection_id));
+        else if ($collection)
+            $collection_id = str_replace('"','',html_entity_decode($collection));
         else
             $collection_id = str_replace('"','',html_entity_decode($collection));
         
@@ -167,7 +126,6 @@
         
         // GET ACCOUNTS
         
-        // Connect to database
         global $wpdb;
         
         // Get account and private key
@@ -199,12 +157,16 @@
             $include = true;
             require_once("zotpress.rss.php");
             $recache = false;
-            $zp_output = "\n<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress'>";
+            
+            
+            $zp_output = "\n<div id='".$GLOBALS['zp_instance_id']."' class='zp-Zotpress'>\n";
+            $zp_output .= "<style type='text/css'>.zp-ZotpressMeta { display: none; }</style>\n\n";
             
             
             // READ FORMATTED CITATION XML
             
             $zp_xml = MakeZotpressRequest($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, false, true, $recache, $GLOBALS['zp_instance_id'], false, false, $style);
+            //var_dump($zp_xml);
             
             $doc_citations = new DOMDocument();
             libxml_use_internal_errors(true);
@@ -212,7 +174,7 @@
             try {
                 //if (trim($zp_xml) == "FALSE" || trim($zp_xml) === false || trim($zp_xml) == "" || is_null($zp_xml)) {
                 if (!$doc_citations->loadXML($zp_xml)) {
-                    throw new Exception("Sorry, but Zotpress was unable to contact the Zotero server.");
+                    throw new Exception("Sorry, but Zotpress encountered an error after attempting to contact the Zotero server.");
                 }
                 
             }
@@ -340,17 +302,18 @@
                     }
                 }
                 
-                $zp_citations[count($zp_citations)] = array( 'author' => $zp_this_meta->creators[0]->lastName, 'date' => date( "Y-m-d", strtotime( $zp_this_meta->date ) ), 'hasImage' => $has_citation_image, 'image' => $citation_image, 'content' => $citation_content );
+                $zp_citations[count($zp_citations)] = array( 'citation_id' => $citation_id, 'author' => $zp_this_meta->creators[0]->lastName, 'date' => date( "Y-m-d", strtotime( $zp_this_meta->date ) ), 'hasImage' => $has_citation_image, 'image' => $citation_image, 'content' => $citation_content );
             }
+            
             
             // SORT CITATIONS
             if ($sortby)
-            {
                 $zp_citations = subval_sort( $zp_citations, $sortby, $sort );
-            }
+            
             
             // OUTPUT CITATIONS
-            foreach ($zp_citations as $zp_citation) {
+            foreach ($zp_citations as $zp_citation)
+            {
                 if (isset($current_title) && $current_title == "") {
                     $current_title = date("Y", strtotime($zp_citation['date']));
                     $zp_output .= "<h3>".$current_title."</h3>\n";
@@ -359,7 +322,10 @@
                     $current_title = date("Y", strtotime($zp_citation['date']));
                     $zp_output .= "<h3>".$current_title."</h3>\n";
                 }
-                $zp_output .= "<div class='zp-Entry".$zp_citation['hasImage']."'>\n" . $zp_citation['image'] . $zp_citation['content'] . "\n</div><!--Entry-->\n\n";
+                $zp_output .= "<div class='zp-Entry".$zp_citation['hasImage']."' rel='".$zp_citation['citation_id']."'>\n";
+                $zp_output .= $zp_citation['image'] . $zp_citation['content'] . "\n";
+                //$zp_output .= "<span class='zp-ZotpressMeta'>".$zp_this_meta->date."</span>\n";
+                $zp_output .= "</div><!--Entry-->\n\n";
             }
             
             $zp_output .= "\n</div>\n\n";

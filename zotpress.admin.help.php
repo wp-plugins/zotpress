@@ -1,6 +1,6 @@
         <div id="zp-Zotpress" class="wrap">
             
-            <?php include('zotpress.display.tabs.php'); ?>
+            <?php include('zotpress.admin.display.tabs.php'); ?>
             
             <h3>What is Zotpress?</h3>
             
@@ -15,10 +15,28 @@
                 It also extends the basic meta functionality offered by Zotero by allowing you to add thumbnail images to and upload publicly visible PDF files of your citations.
             </p>
             
-            <h3>Displaying Citations Using Shortcode</h3>
+            <p>There's a few ways to use Zotpress:</p>
+            
+            <ol class="zp-WaysToUseZotpress">
+                <li>
+                    <strong>The Zotpress Shortcode</strong><br />
+                    Generate a bibliography of your Zotero citations wherever you can call shortcodes. <a href="#zotpress">Learn more &raquo;</a>
+                </li>
+                <li>
+                    <strong>The Zotpress InText Shortcode</strong><br />
+                    Generate APA-styled in-text citations and generate a bibliography that appears at the bottom of your entry. <a href="#intext">Learn more &raquo;</a>
+                </li>
+                <li>
+                    <strong>The Zotpress Sidebar Widget</strong><br />
+                    Drag-n-drop this widget onto a sidebar and fill out the form to generate a bibliography. <a href="#widget">Learn more &raquo;</a>
+                </li>
+            </ol>
+            
+            
+            <a name="zotpress"></a>
+            <h3>Displaying Citations Using the Zotpress Shortcode</h3>
             
             <p>
-                You can display your Zotero citations in a number of ways using Wordpress shortcodes.
                 To display a complete list of citations for an account in the default bibliography style (APA), simply use this shortcode:
             </p>
             
@@ -38,15 +56,11 @@
                 This shortcode will display a list of five citations from the collection with the key "ZKDTKM3X". (<strong>Hint:</strong> Collection keys are listed beside each item in the Collections dropdown on the <a href="admin.php?page=Zotpress&amp;display=true">Citations page</a>.)
             </p>
             
-            <h4>Shortcode Parameters</h4>
-            
-            <p>
-                Here be a list of Zotpress shortcode parameters:
-            </p>
+            <h4 class="short">Shortcode Parameters</h4>
             
             <h5>Filter by Acccount</h5>
             <ul>
-                <li><code>userid</code> display a list of citations from a particular user or group. <strong>REQUIRED if not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</li>
+                <li><code>userid</code> display a list of citations from a particular user or group. <strong>REQUIRED if you have multiple accounts and are not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</li>
                 <li><code>nickname</code> display a list of citations by a particular Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</li>
             </ul>
             
@@ -78,9 +92,48 @@
                 <li><code>downloadable</code> whether or not to display the citation's download URL, if there is one. <strong>Enable this option only if you are legally able to provide your files for download.</strong> Options: yes, no [default]</li>
             </ul>
             
-            <h3>Widgets</h3>
             
-            <p>Zotpress offers two kinds of widgets. You can create a sidebar widget on your <a href="widgets.php">Widgets</a> page. You can also hide or show the editing page widget using the "Screen Options" tab when adding or editing posts.
+            <a name="intext"></a>
+            <h3>Displaying Citations Using the Zotpress InText Shortcode</h3>
+            
+            <p>
+                When you use one or more Zotpress Intext shortcodes, a bibliography will be auto-generated at the end of the entry. Here's an example:
+            </p>
+            
+            <p class="example">
+                Katie said, "I am a Zotpress user, and I am rad" <code>[zotpress item="U9Z5JTKC" pages="36"]</code>.
+            </p>
+            
+            <p>Which will display on your blog as:</p>
+            
+            <p class="example">
+                Katie said, "I am a Zotpress user, and I am rad" (Seaborn, 2011, p. 36).
+            </p>
+            
+            <p>
+                ... with an auto-generated bibliography at the bottom of the entry, of course.
+            </p>
+            
+            <h4>Shortcode Parameters</h4>
+            
+            <ul>
+                <li><code>item</code> item key for a single item. <strong>Hint:</strong> Use Zotpress Reference to quickly retrieve item keys.</li>
+                <li><code>pages</code> what page/s you're referencing, if any. OPTIONAL.</li>
+                <li><code>userid</code> set the user or group. <strong>REQUIRED if you have multiple accounts and are not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</li>
+                <li><code>nickname</code> set based on a Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</li>
+            </ul>
+            
+            
+            <a name="widget"></a>
+            <h3>Displaying Citations Using the Zotpress Sidebar Widget</h3>
+            
+            <p>You can drag-n-drop a Zotpress sidebar widget on your <a href="widgets.php">Widgets</a> page. Fill out the form, save, and you're done.</p>
+            
+            
+            <h3>Zotpress Reference</h3>
+            
+            <p>Zotpress Reference is a metabox widget that shows up on your writing pages. It lets you quickly retrieve item keys for collections, tags, and citations. You can hide or show the widget using the "Screen Options" tab when adding or editing posts.</p>
+            
             
             <h3>Pre-emptive F.A.Q.</h3>
             
