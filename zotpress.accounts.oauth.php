@@ -19,6 +19,22 @@
     *         to the provider.
    **/
   
+    // check incoming values
+    $regex = "((https?|ftp)\:\/\/)?"; // SCHEME
+    $regex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?"; // User and Pass
+    $regex .= "([a-z0-9-.]*)\.([a-z]{2,3})"; // Host or IP
+    $regex .= "(\:[0-9]{2,5})?"; // Port
+    $regex .= "(\/([a-z0-9+\$_-]\.?)+)*\/?"; // Path
+    $regex .= "(\?[a-z+&\$_.-][a-z0-9;:@&%=+\/\$_.-]*)?"; // GET Query
+    $regex .= "(#[a-z_.-][a-z0-9+\$_.-]*)?"; // Anchor
+    
+    if (preg_match("/^$regex$/", $_GET['return_uri']) === false
+        || preg_match("/^[a-zA-Z]{1,25}$/", $_GET['oauth_user']) === false
+        || preg_match("/^[a-zA-Z0-9]{1,50}$/", $_GET['oauth_token']) === false)
+    {
+        exit();
+    }
+  
     //initialize some variables to start with.
     //clientkey, clientSecret, and callbackurl should correspond to http://www.zotero.org/oauth/apps
     $clientKey = 'f8daeb1c6ec190ef3db1'; 
@@ -210,27 +226,5 @@
         echo $finish;
     }
 
-
-    ////zotero will send the userID associated with the key along too
-    //$zoteroUserID = $access_token_info['userID'];
-    //echo " ".$zoteroUserID. " <br />";
-    //
-    ////Now we can use the token secret the same way we already used a Zotero API key
-    //$zoteroApiKey = $access_token_info['oauth_token_secret'];
-    //echo " ".$zoteroApiKey. " <br />";
-    
-    
-    
-    // State 2 - Authorized. We have an access token stored already which we can use for requests on behalf of this user
-    //echo "<p>Redirecting to Zotero to authenticate.</p>";
-    
-    // HOW YOU USE IT
-    //$feed = file_get_contents("https://api.zotero.org/users/{$zoteroUserID}/items?limit=1&key={$zoteroApiKey}");
-    //
-    //var_dump($state);
-    //echo "<pre>" . htmlentities($feed) . "</pre>";
-    /** OAuth support for all api requests may be added in the future
-      * but for now secure https provides similar benefits anyway
-     */
     
   ?>

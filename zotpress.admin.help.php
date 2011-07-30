@@ -73,8 +73,8 @@
             <h5>Filter by Type</h5>
             <ul>
                 <li><code>datatype</code> display a list of a particular data type. Options: items [default], tags, collections</li>
-                <li><code>collection</code> id of the collection to draw citations from.</li>
-                <li><code>item</code> item key for a single item.</li>
+                <li><code>collection</code> id of the collection/s to draw citations from. For multiple collections, format in a list, e.g. colleciton="GMGCJU34,U9Z5JTKC"</li>
+                <li><code>item</code> item key for single item/s.  For multiple items, format in a list, e.g. item="GMGCJU34,U9Z5JTKC"</li></li>
                 <li><code>tag</code> name of the tag to draw citations from. <strong>Note:</strong> make sure you replace all spaces with a <code>+</code> sign, e.g. the tag "electric fish" becomes "electric+fish".</li>
             </ul>
             
@@ -90,6 +90,7 @@
                 <li><code>showimage</code> whether or not to display the citation's image, if there is one. Options: yes, no [default]</li>
                 <!--<li><code>url</code> whether or not to hyperlink the displayed citation URL, if there is one. Options: yes [default], no</li>-->
                 <li><code>downloadable</code> whether or not to display the citation's download URL, if there is one. <strong>Enable this option only if you are legally able to provide your files for download.</strong> Options: yes, no [default]</li>
+                <li><code>notes</code> whether or not to display the citation's notes, if they exist. <strong>Must have notes made publicly viewable via the private key settings on Zotero.</strong> Options: yes, no [default]</li>
             </ul>
             
             
@@ -101,7 +102,7 @@
             </p>
             
             <p class="example">
-                Katie said, "I am a Zotpress user, and I am rad" <code>[zotpress item="U9Z5JTKC" pages="36"]</code>.
+                Katie said, "I am a Zotpress user, and I am rad" <code>[zotpressInText item="U9Z5JTKC" pages="36"]</code>.
             </p>
             
             <p>Which will display on your blog as:</p>
@@ -163,8 +164,7 @@
             <h4>I've added a group to Zotpress, but it's not displaying citations. How do I display a group's citations?</h4>
             
             <p>
-                You can list any group on Zotpress, but only groups that have a "Public" Group Type will allow you to display their citations publicly, and
-                only the group owner can set this option. If you're not the group owner, you can try sending the owner a request to make the group's citations public.
+                You can list any group on Zotpress as long as you have the correct private key. If you're not the group owner, you can try sending the owner a request for one.
             </p>
             
             <h4>How do I find a collection ID?</h4>

@@ -8,18 +8,16 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 4.3
+Stable tag: 4.4
 
 Zotpress displays your Zotero citations on Wordpress.
 
 == Description ==
 
-[Zotpress](http://katieseaborn.com/plugins/ "Zotpress for WordPress") displays your [Zotero](http://zotero.org/ "Zotero") citations on Wordpress. It also extends Zotero's meta functionality by allowing you to add thumbnail images to your citations.
-
-[Zotero](http://zotero.org/ "Zotero") is a community-based cross-platform citation manager that integrates with your browser and word processor.
+[Zotpress](http://katieseaborn.com/plugins/ "Zotpress for WordPress") brings scholarly blogging to WordPress. This plugin displays your [Zotero](http://zotero.org/ "Zotero") citations on your Wordpress blog. [Zotero](http://zotero.org/ "Zotero") is a community-based cross-platform citation manager that integrates with your browser and word processor.
 
 = Features =
-* Display your Zotero citations on your blog
+* Display your Zotero citations on your blog using in-text citations and bibliographies
 * Display citations, collections, or tags
 * Selective CSS styling via IDs and classes
 * Add both user and group Zotero accounts
@@ -27,10 +25,10 @@ Zotpress displays your Zotero citations on Wordpress.
 * Let visitors download your publications
 * And more!
 
-Tested in Firefox 5, Safari 5, IE7 and IE8.
+Tested in Firefox 5, Safari 5, Chrome 12, IE7 and IE8.
 
 = Requirements =
-jQuery included in your theme, cUrl [preferably] or file_get_contents enabled on your server.  Optional, but recommended: OAuth enabled on your server.
+jQuery included in your theme, and cUrl [preferably] or file_get_contents enabled on your server.  Optional, but recommended: OAuth enabled on your server.
 
 == Installation ==
 
@@ -50,25 +48,13 @@ An example of the shortcode using parameters is:
 
 This shortcode will display a list of five citations from the collection with the key "ZKDTKM3X".
 
-= Shortcode Parameters: =
-Here's a list of parameters you can use to display projects in different ways:
+You can also use in-text citations:
 
-* `userid` display a list of citations from a particular user or group. REQUIRED if not using "nickname" parameter.
-* `nickname` display a list of citations by a particular Zotero account nickname.
-* `author` display a list of citations from a particular author. Format as follows: "Firstname+Lastname", e.g. "Carl+Sagan". Note: "C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Carl Sagan".
-* `year` display a list of citations from a particular year. Format as follows: "2009". Note: You can display by Author and Year together.
-* `datatype` display a list of a particular data type. Options: items [default], tags, collections
-* `collection` id of the collection to draw citations from.
-* `item` item key for a single item.
-* `tag` name of the tag to draw citations from. Note: make sure you replace all spaces with a + sign, e.g. the tag "electric fish" becomes "electric+fish".
-* `content` format of citation display. Options: html, bib [default]
-* `style` citation style. Options: chicago-note-bibliography, harvard1, mhra, mla, nature, vancouver, apsa, asa, apa [default]. Note: Support for more styles coming; see Zotero Style Repository for details.
-* `sort` sort direction of the order field. Options: asc, desc [default]
-* `sortby` a temporary "order" paramater. Options: author, date, latest added [default]
-* `title` display a title by year. Options: yes, no [default]
-* `limit` limit the item list to a certain amount. Options: numbers between 1-99 [default: 50]
-* `showimage` whether or not to display the citation's image, if there is one. Options: yes, no [default]
-* `downloadable` whether or not to display the citation's download URL, if there is one. Options: yes, no [default]
+[zotpressInText item="U9Z5JTKC" pages="36-45"]
+
+This shortcode will display the following APA-styled in-text citation for the citation with the key "U9Z5JTKC": (Seaborn, 2011, p. 36). The full citation will be shown in an auto-generated bibliography placed below the post.
+
+Check out the "Help" page on your installation of Zotpress for more information and a full listing of parameters for both shortcodes.
 
 == Frequently Asked Questions ==
 
@@ -81,6 +67,14 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 3. Search for item keys, citation ids and tag names using the convenient "Zotpress Reference" meta box.
 
 == Changelog ==
+
+= 4.4 =
+* A number of security measures added.
+* Fixed "Help" page shortcode for in-text citations and private vs. public groups: oops!
+* The Zotpress shortcode now accepts lists for these parameters: collection, item.
+* Notes can now be shown, if made publicly available through Zotero.
+* Zotpress Reference should now show up on custom post type writing/editing pages.
+* Zotpress Reference now working with the latest versions of Chrome and Safari.
 
 = 4.3 =
 * Introducing "Zotpress InText", a new shortcode that let's you add in-text citations, and then auto-generates a bibliography for you. jQuery must be enabled. Only supports APA style; requests can be made in the forums. Use information can be found in your Zotpress installation's "Help" page.
@@ -343,3 +337,6 @@ Error display error fixed.
 
 = 4.3 =
 Zotpress InText and various fixes.
+
+= 4.4 =
+Security measures added. Fixed "Help" page info. Zotpress shortcode now accepts lists for these parameters: collection, item. Notes can now be shown. Zotpress Reference on custom post type writing/editing pages and working with the latest versions of Chrome and Safari.

@@ -14,29 +14,25 @@
 	
 	// SET UP VARS
 	
+	$zp_url_regex = "((https?|ftp)\:\/\/)?([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?([a-z0-9-.]*)\.([a-z]{2,3})(\:[0-9]{2,5})?(\/([a-z0-9+\$_-]\.?)+)*\/?(\?[a-z+&\$_.-][a-z0-9;:@&%=+\/\$_.-]*)?(#[a-z_.-][a-z0-9+\$_.-]*)?";
+	
 	// Download URL
-	if (isset($_GET['download_url']) && trim($_GET['download_url']) != "") {
+	if (isset($_GET['download_url']) && preg_match("/".$zp_url_regex."/", $_GET['download_url']))
 		$zp_download_url = trim(urldecode($_GET['download_url']));
-	}
-	else {
+	else
 		$zp_xml = "No download URL provided.";
-	}
 	
 	// Account Type
-	if (isset($_GET['account_type']) && trim($_GET['account_type']) != "") {
+	if (isset($_GET['account_type']) && preg_match("/^[a-zA-Z]+$/", $_GET['account_type']))
 		$zp_account_type = trim(urldecode($_GET['account_type']));
-	}
-	else {
+	else
 		$zp_xml = "No account type provided.";
-	}
 	
 	// Api User ID
-	if (isset($_GET['api_user_id']) && trim($_GET['api_user_id']) != "") {
+	if (isset($_GET['api_user_id']) && preg_match("/^[a-zA-Z0-9]+$/", $_GET['api_user_id']))
 		$zp_api_user_id = trim(urldecode($_GET['api_user_id']));
-	}
-	else {
+	else
 		$zp_xml = "No API User ID provided.";
-	}
 	
 	
 	
@@ -61,5 +57,9 @@
 		{
 			$zp_xml = "No account found.";
 		}
+	}
+	else
+	{
+		echo $zp_xml;
 	}
 ?>

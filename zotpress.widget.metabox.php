@@ -41,7 +41,6 @@
     }
     div#zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li.ui-state-active a {
         color: #333;
-        /*vertical-align: bottom;*/
     }
     
     div#zp-ZotpressMetaBox-Output {
@@ -100,17 +99,13 @@
         // DETERMINE BROWSER
         
         var browser_is_IE = false;
+        var browser_is_Safari_Chrome = false;
         
         jQuery.each(jQuery.browser, function() {
             if (jQuery.browser.msie)
                 browser_is_IE = true;
-        });
-        
-        var browser_is_Safari = false;
-        
-        jQuery.each(jQuery.browser, function() {
-            if (jQuery.browser.safari)
-                browser_is_Safari = true;
+            else if (jQuery.browser.safari || jQuery.browser.webkit)
+                browser_is_Safari_Chrome = true;
         });
         
         
@@ -159,13 +154,13 @@
             
             // Separate keys and sort them
             for (var i in arr){
-                    sortedKeys.push(i);
+                sortedKeys.push(i);
             }
             sortedKeys.sort();
             
             // Reconstruct sorted obj based on keys
             for (var i in sortedKeys){
-                    sortedObj[sortedKeys[i]] = arr[sortedKeys[i]];
+                sortedObj[sortedKeys[i]] = arr[sortedKeys[i]];
             }
             return sortedObj;
         }
@@ -204,7 +199,7 @@
                 
                 // Set up xml url
                 var xmlUriCollections = '<?php echo ZOTPRESS_PLUGIN_URL; ?>zotpress.rss.php?'+ 'account_type='+jQuery("option:selected", this).attr("class")+'&api_user_id='+jQuery("option:selected", this).attr("id")+'&data_type=collections&limit=150';
-
+                
                 // Grab Zotero request
                 jQuery.ajax({
                     url: xmlUriCollections,
@@ -214,7 +209,7 @@
                     ifModified: false, // Change to true when implemented on Zotero end
                     success: function(xml, textStatus, jqXHR)
                     {
-                        if (browser_is_IE || browser_is_Safari)
+                        if (browser_is_IE)
                             xml = createXmlDOMObject (xml);
                         
                         // Build select
@@ -225,7 +220,7 @@
                         
                         jQuery(xml).find("entry").each(function()
                         {
-                            if (browser_is_Safari)
+                            if (browser_is_Safari_Chrome)
                                 collectionsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>"+jQuery(this).find("title").text()+" ("+jQuery(this.getElementsByTagName("numItems")[0]).text()+")</option>\n";
                             else
                                 collectionsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this).find("zapi\\:key").text()+"'>"+jQuery(this).find("title").text()+" ("+jQuery(this).find("zapi\\:numItems").text()+")</option>\n";
@@ -282,7 +277,7 @@
                     ifModified: false, // Change to true when implemented on Zotero end
                     success: function(xml, textStatus, jqXHR)
                     {
-                        if (browser_is_IE || browser_is_Safari)
+                        if (browser_is_IE)
                             xml = createXmlDOMObject (xml);
                             
                         // Build select
@@ -293,7 +288,7 @@
                         
                         jQuery(xml).find("entry").each(function()
                         {
-                            if (browser_is_Safari)
+                            if (browser_is_Safari_Chrome)
                                 collectionItemsArray[jQuery(this.getElementsByTagName("creatorSummary")[0]).text()+"-"+jQuery(this.getElementsByTagName("key")[0]).text()] = "<option title='"+jQuery(this).find("title").text()+"' value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>("+jQuery(this.getElementsByTagName("creatorSummary")[0]).text()+") "+jQuery(this).find("title").text()+"</option>\n";
                             else
                                 collectionItemsArray[jQuery(this).find("zapi\\:creatorSummary").text()+"-"+jQuery(this).find("zapi\\:key").text()] += "<option title='"+jQuery(this).find("title").text()+"' value='"+jQuery(this).find("zapi\\:key").text()+"'>("+jQuery(this).find("zapi\\:creatorSummary").text()+") "+jQuery(this).find("title").text()+"</option>\n";
@@ -359,7 +354,7 @@
                     ifModified: false, // Change to true when implemented on Zotero end
                     success: function(xml, textStatus, jqXHR)
                     {
-                        if (browser_is_IE || browser_is_Safari)
+                        if (browser_is_IE)
                             xml = createXmlDOMObject (xml);
                         
                         // Build select
@@ -370,7 +365,7 @@
                         
                         jQuery(xml).find("entry").each(function()
                         {
-                            if (browser_is_Safari)
+                            if (browser_is_Safari_Chrome)
                                 tagsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this).find("title").text().replace(" ", "+")+"'>"+jQuery(this).find("title").text()+" ("+jQuery(this.getElementsByTagName("numItems")[0]).text()+")</option>\n";
                             else
                                 tagsArray[jQuery(this).find("title").text().replace(" ","+")] = "<option value='"+jQuery(this).find("title").text().replace(" ", "+")+"'>"+jQuery(this).find("title").text()+" ("+jQuery(this).find("zapi\\:numItems").text()+")</option>\n";
@@ -428,7 +423,7 @@
                     ifModified: false, // Change to true when implemented on Zotero end
                     success: function(xml, textStatus, jqXHR)
                     {
-                        if (browser_is_IE || browser_is_Safari)
+                        if (browser_is_IE)
                             xml = createXmlDOMObject (xml);
                         
                         // Build select
@@ -439,7 +434,7 @@
                         
                         jQuery(xml).find("entry").each(function()
                         {
-                            if (browser_is_Safari)
+                            if (browser_is_Safari_Chrome)
                                 tagItemsArray[jQuery(this.getElementsByTagName("creatorSummary")[0]).text()+"-"+jQuery(this.getElementsByTagName("key")[0]).text()] = "<option title='"+jQuery(this).find("title").text()+"' value='"+jQuery(this.getElementsByTagName("key")[0]).text()+"'>("+jQuery(this.getElementsByTagName("creatorSummary")[0]).text()+") "+jQuery(this).find("title").text()+"</option>\n";
                             else
                                 tagItemsArray[jQuery(this).find("zapi\\:creatorSummary").text()+"-"+jQuery(this).find("zapi\\:key").text()] = "<option title='"+jQuery(this).find("title").text()+"' value='"+jQuery(this).find("zapi\\:key").text()+"'>("+jQuery(this).find("zapi\\:creatorSummary").text()+") "+jQuery(this).find("title").text()+"</option>\n";

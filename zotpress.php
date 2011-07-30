@@ -6,10 +6,11 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 4.3
+    Version: 4.4
     Author URI: http://katieseaborn.com
     
 */
+
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
@@ -40,6 +41,7 @@
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
+
 
 // INSTALL -----------------------------------------------------------------------------------------
     
@@ -230,11 +232,19 @@
         
         else if (isset($_GET['image']))
         {
-            global $wpdb;
-            
-            $zp_image = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_images WHERE citation_id='".trim($_GET['citation_id'])."'");
-            
-            include('zotpress.image.php');
+            // Check vars
+            $zp_citation_id = false;
+            if (preg_match("/^[0-9a-zA-Z]+$/", $_GET['citation_id']))
+                $zp_citation_id = htmlentities(trim($_GET['citation_id']));
+                
+            if ($zp_citation_id !== false)
+            {
+                global $wpdb;
+                
+                $zp_image = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_images WHERE citation_id='".$zp_citation_id."'");
+                
+                include('zotpress.image.php');
+            }
         }
         
         
@@ -248,70 +258,10 @@
         
         
         
-        // ADMIN VIEW CITATIONS
+        // ADMIN CITATIONS VIEW
         
         else
         {
-            global $wpdb;
-            
-            $zp_accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY account_type DESC");
-            
-            $zp_accounts_total = $wpdb->num_rows;
-            
-            
-            // FILTER PARAMETERS
-            
-            // Account ID
-            
-            global $account_id;
-            
-            if (isset($_GET['account_id']))
-                if (trim($_GET['account_id']) != "")
-                    $account_id = trim($_GET['account_id']);
-                else
-                    $account_id = false;
-            else
-                $account_id = false;
-            
-            // Collection ID
-            
-            global $collection_id;
-            
-            if (isset($_GET['collection_id']))
-                if (trim($_GET['collection_id']) != "")
-                    $collection_id = trim($_GET['collection_id']);
-                else
-                    $collection_id = false;
-            else
-                $collection_id = false;
-            
-            // Tag Name
-            
-            global $tag_name;
-            
-            if (isset($_GET['tag_name']))
-                if (trim($_GET['tag_name']) != "")
-                    $tag_name = trim($_GET['tag_name']);
-                else
-                    $tag_name = false;
-            else
-                $tag_name = false;
-            
-            // Limit
-            
-            global $limit;
-            
-            if (isset($_GET['limit']))
-                if (trim($_GET['limit']) != "")
-                    $limit = trim($_GET['limit']);
-                else
-                    $limit = "5";
-            else
-                $limit = "5";
-            
-            
-            // DISPLAY ADMIN CITATIONS
-            
             include('zotpress.admin.default.php');
         }
     }
@@ -344,20 +294,18 @@
     /* Adds a box to the main column on the Post and Page edit screens */
     function Zotpress_add_meta_box()
     {
-        add_meta_box( 
-            'ZotpressMetaBox',
-            __( 'Zotpress Reference', 'Zotpress_textdomain' ),
-            'Zotpress_show_meta_box',
-            'post',
-            'side'
-        );
-        add_meta_box(
-            'ZotpressMetaBox',
-            __( 'Zotpress Reference', 'Zotpress_textdomain' ), 
-            'Zotpress_show_meta_box',
-            'page',
-            'side'
-        );
+        $post_types=get_post_types('','names');
+        
+        foreach ($post_types as $post_type )
+        {
+            add_meta_box( 
+                'ZotpressMetaBox',
+                __( 'Zotpress Reference', 'Zotpress_textdomain' ),
+                'Zotpress_show_meta_box',
+                $post_type,
+                'side'
+            );
+        }
     }
     
     /* Prints the box content */

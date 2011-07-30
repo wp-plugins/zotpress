@@ -170,8 +170,6 @@
       div#zp-Zotpress div.zp-Entry-Image a.upload {
             position: absolute;
             z-index: 3;
-            /*top: 60px;*/
-            /*left: 20px;*/
             color: #fff;
             display: block;
             font-weight: bold;
@@ -188,11 +186,17 @@
             right: 0;
             left: auto;
             background-color: #fe2701;
-            border: 2px solid #e72301;
+            border: 1px solid #f57465;
+            border-radius: 0 0 0 10px;
+            -moz-border-radius: 0 0 0 10px;
+            box-shadow: -1px 1px 5px #7b8930;
+            -moz-box-shadow: -1px 1px 5px #7b8930;
+            -webkit-box-shadow: -1px 1px 5px #7b8930;
             color: #fff;
             display: block;
+            font-size: 14pt;
             font-weight: bold;
-            padding: 5px 10px;
+            padding: 3px 8px 5px 10px;
             width: auto;
             height: auto;
             visibility: hidden;
@@ -291,9 +295,11 @@
         div#zp-Zotpress div.zp-Citation {
             width: 780px;
         }
-        
         div#zp-Zotpress div.zp-Citation div.csl-bib-body {
             margin: 0;
+        }
+        div#zp-Zotpress div.zp-Citation div.zp-Entry {
+            min-height: 0;
         }
         
         div#zp-Zotpress form#zp-Image span.help {

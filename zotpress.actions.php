@@ -53,7 +53,7 @@
         // PUBLIC KEY
         if ($_GET['public_key'] != "")
             if (preg_match("/^[0-9a-zA-Z]+$/", $_GET['public_key']) == 1)
-                $public_key = htmlentities($_GET['public_key']);
+                $public_key = htmlentities(trim($_GET['public_key']));
             else
                 if ($account_type == "users")
                     $errors['public_key_format'][0] = 1;
@@ -126,14 +126,21 @@
 
     else if (isset($_GET['delete']))
     {
-        $query = "DELETE FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['delete']."'";
-        
-        // Insert new list item into the list:
-        $wpdb->query($query);
-
-        // Display success XML
-        $xml .= "<result success='true' />\n";
-        $xml .= "<account id='".str_replace("#","",$_GET['delete'])."' type='delete' />\n";
+        if (preg_match("/^[0-9]+$/", $_GET['delete']))
+        {
+            $query = "DELETE FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['delete']."'";
+            
+            // Insert new list item into the list:
+            $wpdb->query($query);
+            
+            // Display success XML
+            $xml .= "<result success='true' />\n";
+            $xml .= "<account id='".str_replace("#","",$_GET['delete'])."' type='delete' />\n";
+        }
+        else // die
+        {
+            exit();
+        }
     }
 
 
@@ -207,11 +214,30 @@
                         "upload_image_format"=>array(0,"<strong>Image</strong> was formatted incorrectly."));
         
         
+        // BASIC VARS
+        $citation_id = false;
+        if (preg_match("/^[0-9a-zA-Z]+$/", $_GET['citation_id']))
+            $citation_id = htmlentities(trim($_GET['citation_id']));
+        else
+            $errorCheck = true;
+        
+        $account_type = false;
+        if (preg_match("/^[a-zA-Z]+$/", $_GET['account_type']))
+            $account_type = htmlentities(trim($_GET['account_type']));
+        else
+            $errorCheck = true;
+        
+        $api_user_id = false;
+        if (preg_match("/^[0-9]+$/", $_GET['api_user_id']))
+            $api_user_id = htmlentities(trim($_GET['api_user_id']));
+        else
+            $errorCheck = true;
+        
+        
        // UPLOAD IMAGE
-
         if ($_GET['upload_image'] != "")
             if (preg_match('/^http:\/\/[^&"\'\s]+$/', $_GET['upload_image']) == 1)
-                $image = htmlentities($_GET['upload_image']);
+                $image = htmlentities(trim($_GET['upload_image']));
             else
                 $errors['upload_image_blank'][0] = 1;
         else
@@ -219,7 +245,6 @@
         
         
         // CHECK ERRORS
-        
         $errorCheck = false;
         foreach ($errors as $field => $error) {
                 if ($error[0] == 1) {
@@ -234,8 +259,8 @@
         if ($errorCheck == false)
         {
             $query = "INSERT INTO ".$wpdb->prefix."zotpress_images (citation_id, image, account_type, api_user_id) ";
-            $query .= "VALUES ('".$_GET['citation_id']."', '$image', '".$_GET['account_type']."', '".$_GET['api_user_id']."')";
-        
+            $query .= "VALUES ('".$citation_id."', '$image', '".$account_type."', '".$api_user_id."')";
+            
             // Insert new list item into the list:
             $wpdb->query($query);
             
@@ -273,11 +298,30 @@
                         "upload_image_format"=>array(0,"<strong>Image</strong> was formatted incorrectly."));
         
         
-       // UPLOAD IMAGE
-
+        // BASIC VARS
+        $citation_id = false;
+        if (preg_match("/^[0-9a-zA-Z]+$/", $_GET['update']))
+            $citation_id = htmlentities(trim($_GET['update']));
+        else
+            $errorCheck = true;
+        
+        $account_type = false;
+        if (preg_match("/^[a-zA-Z]+$/", $_GET['account_type']))
+            $account_type = htmlentities(trim($_GET['account_type']));
+        else
+            $errorCheck = true;
+        
+        $api_user_id = false;
+        if (preg_match("/^[0-9]+$/", $_GET['api_user_id']))
+            $api_user_id = htmlentities(trim($_GET['api_user_id']));
+        else
+            $errorCheck = true;
+        
+        
+        // UPLOAD IMAGE
         if ($_GET['upload_image'] != "")
             if (preg_match('/^http:\/\/[^&"\'\s]+$/', $_GET['upload_image']) == 1)
-                $image = htmlentities($_GET['upload_image']);
+                $image = htmlentities(trim($_GET['upload_image']));
             else
                 $errors['upload_image_blank'][0] = 1;
         else
@@ -300,13 +344,13 @@
         if ($errorCheck == false)
         {
             $query = "UPDATE ".$wpdb->prefix."zotpress_images ";
-            $query .= "SET image='$image' WHERE account_type='".$_GET['account_type']."' AND api_user_id='".$_GET['api_user_id']."' AND citation_id='".$_GET['update']."';";
-        
+            $query .= "SET image='$image' WHERE account_type='".$account_type."' AND api_user_id='".$api_user_id."' AND citation_id='".$citation_id."';";
+            
             // Insert new list item into the list:
             $wpdb->query($query);
             
             // Display success XML
-            $xml .= "<result success='true' citation_id='".$_GET['citation_id']."' />\n";
+            $xml .= "<result success='true' citation_id='".$citation_id."' />\n";
         }
         
         
