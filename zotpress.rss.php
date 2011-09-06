@@ -90,7 +90,7 @@
 				
 				global $wpdb;
 				
-				if (isset($_GET['displayImageByCitationID']))
+				if (isset($_GET['displayImageByCitationID']) && preg_match("/^[a-zA-Z0-9]+$/", $_GET['displayImageByCitationID']))
 					$images = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_images WHERE citation_id='".trim($_GET['displayImageByCitationID'])."'");
 				else
 					$images = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_images");
