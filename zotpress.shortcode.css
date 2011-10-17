@@ -1,0 +1,47 @@
+
+    div.zp-Zotpress {
+        margin: 1em 0;
+    }
+    div.zp-ZotpressInner {
+        /*display: none;*/
+    }
+    div.zp-Zotpress div.zp-Entry {
+        position: relative;
+        clear: both;
+    }
+    div.zp-Zotpress div.zp-Entry.zp-HasImage {
+        min-height: 170px;
+    }
+    div.zp-Zotpress div.zp-Entry-Image {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    div.zp-Zotpress div.zp-Entry-Image-Crop {
+        overflow: hidden;
+        width: 150px;
+        height: 150px;
+    }
+    div.zp-Zotpress div.csl-bib-body {
+        margin: 0 0 15px 0;
+    }
+    div.zp-Zotpress div.zp-Entry.zp-HasImage div.csl-bib-body {
+        margin: 0 0 15px 170px;
+    }
+    div.zp-Zotpress span.zp-Loading {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        background: #f3f3f3 url('images/loading_list.gif') no-repeat top left;
+        display: block;
+        margin: auto;
+        overflow: hidden;
+        width: 33px;
+        height: 32px;
+    }
+    div.zp-Zotpress span.zp-Loading span {
+        visibility: hidden;
+    }
+    div.zp-Zotpress p.zp-NoCitations {
+        margin: 0;
+    }
