@@ -180,12 +180,12 @@
             // DEAL WITH LISTS
             if (is_array($item_key))
                 foreach($item_key as $item_key)
-                    $zp_output .= GenerateZotpressEntries($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, $showimage, true, $recache, $GLOBALS['zp_instance_id'], $title, $sortby, $style, $download, $notes, $author, $year);
+                    $zp_output .= GenerateZotpressEntries($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, $showimage, true, $recache, $GLOBALS['zp_instance_id'], $title, $sortby, $sort, $style, $download, $notes, $author, $year);
             else if (is_array($collection_id))
                 foreach($collection_id as $collection_id)
-                    $zp_output .= GenerateZotpressEntries($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, $showimage, true, $recache, $GLOBALS['zp_instance_id'], $title, $sortby, $style, $download, $notes, $author, $year);
+                    $zp_output .= GenerateZotpressEntries($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, $showimage, true, $recache, $GLOBALS['zp_instance_id'], $title, $sortby, $sort, $style, $download, $notes, $author, $year);
             else
-                $zp_output .= GenerateZotpressEntries($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, $showimage, true, $recache, $GLOBALS['zp_instance_id'], $title, $sortby, $style, $download, $notes, $author, $year);
+                $zp_output .= GenerateZotpressEntries($account_type, $api_user_id, $data_type, $collection_id, $item_key, $tag_name, $limit, $showimage, true, $recache, $GLOBALS['zp_instance_id'], $title, $sortby, $sort, $style, $download, $notes, $author, $year);
             
             
             $zp_output .= "\n</div><!--.zp-Zotpress-->\n\n";
@@ -220,6 +220,7 @@
             $instance_id=false,
             $title=false,
             $sortby=false,
+            $sort=false,
             $style=false,
             $download=false,
             $notes=false,
@@ -383,6 +384,9 @@
             $citation_image = false;
             if (isset($showimage) && $showimage == "yes")
             {
+                if (!isset($wpdb))
+                    global $wpdb;
+                
                 $zp_entry_image = $wpdb->get_results("SELECT image FROM ".$wpdb->prefix."zotpress_images WHERE citation_id='".$citation_id."'");
                 
                 if ($wpdb->num_rows > 0)

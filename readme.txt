@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 4.4.1
+Stable tag: 4.5
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -68,8 +68,12 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 
 == Changelog ==
 
+= 4.5 =
+* New: Shortcode Creator in the Zotpress Reference Metabox Widget.
+* "Show Image" and "Sort" bugs fixed.
+
 = 4.4.1 =
-Security fix!
+* Security fix!
 
 = 4.4 =
 * A number of security measures added.
@@ -346,3 +350,6 @@ Security measures added. Fixed "Help" page info. Zotpress shortcode now accepts 
 
 = 4.4.1 =
 Security fix!
+
+= 4.5 =
+Shortcode Creator. "Show Image" and "Sort" bugs fixed.

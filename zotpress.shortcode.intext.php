@@ -163,12 +163,14 @@
             $zp_output .= "\n<script type='text/javascript'>jQuery(document).ready(function(){";
             
             //$zp_output .= "alert('".$citation_content."');";
+            //$zp_output .= "
+            //
+            //if (jQuery('#zp-ZotpressInTextBib').length == 0)
+            //    jQuery('.zp-ZotpressInText').parent().parent().append('<div id=\"zp-ZotpressInTextBib\"></div>');
+            
             $zp_output .= "
             
-            if (jQuery('#zp-ZotpressInTextBib').length == 0)
-                jQuery('.zp-ZotpressInText').parent().parent().append('<div id=\"zp-ZotpressInTextBib\"></div>');
-            
-            jQuery('#zp-ZotpressInTextBib').livequery(function(){
+            jQuery('#zp-Zotpress-InText-Bibliography').livequery(function(){
                 jQuery(this).append('<div class=\"zp-Entry\" rel=\"".$item."\">".$citation_content."</div>');
             });
             

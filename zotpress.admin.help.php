@@ -58,7 +58,7 @@
             
             <h4 class="short">Shortcode Parameters</h4>
             
-            <h5>Filter by Acccount</h5>
+            <h5>Filter by Account</h5>
             <ul>
                 <li><code>userid</code> display a list of citations from a particular user or group. <strong>REQUIRED if you have multiple accounts and are not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</li>
                 <li><code>nickname</code> display a list of citations by a particular Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</li>

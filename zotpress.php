@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 4.4.1
+    Version: 4.5
     Author URI: http://katieseaborn.com
     
 */
@@ -266,7 +266,7 @@
         }
     }
 
-// ADMIN -----------------------------------------------------------------------------------------
+// END ADMIN ------------------------------------------------------------------------------------------
 
 
 
@@ -274,6 +274,11 @@
 
     include('zotpress.shortcode.php');
     include('zotpress.shortcode.intext.php');
+    
+    function Zotpress_zotpressInTextBib ()
+    {
+        return "\n<div id='zp-Zotpress-InText-Bibliography'></div>\n\n";
+    }
     
 // SHORTCODE -----------------------------------------------------------------------------------------
 
@@ -404,6 +409,7 @@
     // Shortcodes and sidebar widget
     add_shortcode( 'zotpress', 'Zotpress_func' );
     add_shortcode( 'zotpressInText', 'Zotpress_zotpressInText' );
+    add_shortcode( 'zotpressInTextBib', 'Zotpress_zotpressInTextBib' );
     add_action( 'widgets_init', 'ZotpressSidebarWidgetInit' );
     
     // Include styles of shortcode displayed
