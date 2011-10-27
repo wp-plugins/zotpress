@@ -59,7 +59,7 @@
         
         
         // SORT ASSOCIATIVE ARRAY (JS OBJECT)
-        // Thanks tohttp://www.latentmotion.com/how-to-sort-an-associative-array-object-in-javascript/
+        // Thanks to http://www.latentmotion.com/how-to-sort-an-associative-array-object-in-javascript/
         function sortObj(arr)
         {
             // Setup Arrays
@@ -89,7 +89,7 @@
         */
         
         // ZOTPRESS SHORTCODE CREATOR TABS
-        jQuery("#zp-ZotpressMetaBox-ShortcodeCreator").tabs({ selected: 5 });
+        jQuery("#zp-ZotpressMetaBox-ShortcodeCreator").tabs();
         
         // FORMAT
         jQuery("#zp-ZotpressMetaBox-ShortcodeCreator-0-Type").click(function() {
