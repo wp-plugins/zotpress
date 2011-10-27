@@ -427,6 +427,7 @@
     
     // Metabox
     add_action('admin_print_styles-post.php', 'Zotpress_admin_post_styles');
+    add_action('admin_print_styles-post-new.php', 'Zotpress_admin_post_styles');
     
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
 
