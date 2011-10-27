@@ -793,7 +793,7 @@
         </script>
         
         <!--<form id="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Form" action="<?php //echo $PHP_SELF;?>" method="post">-->
-            <label for="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button">Set Style as Post Default:</label>
+            <label for="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button">Set Style as Default:</label>
             <input type="button" id="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button" class="button-secondary" value="Set Default Style" />
             <div class="zp-Loading">loading</div>
             <div class="zp-Success">Success!</div>
