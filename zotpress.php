@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Display your Zotero citations on your Wordpress blog.
     Author: Katie Seaborn
-    Version: 4.5
+    Version: 4.5.1
     Author URI: http://katieseaborn.com
     
 */
@@ -274,11 +274,7 @@
 
     include('zotpress.shortcode.php');
     include('zotpress.shortcode.intext.php');
-    
-    function Zotpress_zotpressInTextBib ()
-    {
-        return "\n<div id='zp-Zotpress-InText-Bibliography'></div>\n\n";
-    }
+    include('zotpress.shortcode.intextbib.php');
     
 // SHORTCODE -----------------------------------------------------------------------------------------
 
@@ -338,6 +334,9 @@
         
         wp_register_script('jquery.livequery.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.livequery.js', array('jquery'));
         wp_enqueue_script('jquery.livequery.js');
+        
+        wp_register_script('jquery.dotimeout.min.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.dotimeout.min.js', array('jquery'));
+        wp_enqueue_script('jquery.dotimeout.min.js');
     }
     
     function Zotpress_admin_scripts()
@@ -374,6 +373,12 @@
         wp_enqueue_style('zotpress.css');
     }
     
+    function Zotpress_admin_post_styles()
+    {
+        wp_register_style('zotpress.metabox.css', ZOTPRESS_PLUGIN_URL . 'zotpress.metabox.css');
+        wp_enqueue_style('zotpress.metabox.css');
+    }
+    
     function Zotpress_admin_menu()
     {
         add_menu_page("Zotpress", "Zotpress", 3, "Zotpress", "Zotpress_options", ZOTPRESS_PLUGIN_URL."images/icon.png");
@@ -388,7 +393,12 @@
         wp_enqueue_script('jquery.livequery.js');
     }
     
-    /* ADD ACTIONS */
+    
+    /*
+     
+        ADD ACTIONS
+        
+    */
     
     if (isset($_GET['page']) && $_GET['page'] == 'Zotpress') {
         add_action('admin_print_scripts', 'Zotpress_admin_scripts');
@@ -414,6 +424,9 @@
     
     // Include styles of shortcode displayed
     add_action( 'wp_print_styles', 'Zotpress_theme_styles' );
+    
+    // Metabox
+    add_action('admin_print_styles-post.php', 'Zotpress_admin_post_styles');
     
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
 

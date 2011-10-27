@@ -1,180 +1,3 @@
-<style type="text/css">
-
-    div#ZotpressMetaBox h3.hndle span {
-        background: transparent url('<?php echo ZOTPRESS_PLUGIN_URL; ?>/images/icon.png') no-repeat left center;
-        padding-left: 22px;
-    }
-    
-    div.zp-ZotpressMetaBox-Tabs {
-        border-radius: 5px;
-        -moz-border-radius: 5px;
-        border: 1px solid #ccc;
-        padding: 1px;
-        margin-bottom: 10px;
-    }
-    div.zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav {
-        border-radius: 4px 4px 0 0;
-        -moz-border-radius: 4px 4px 0 0;
-        background-color: #f6f6f6;
-        padding: 3px;
-        padding-bottom: 0;
-        overflow: hidden;
-        /*height: 20px;*/
-    }
-    div.zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li {
-        margin: 0;
-        padding: 5px 5px 0;
-        float: left;
-        height: 13px;
-    }
-    div.zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li.ui-state-active {
-        border-radius: 4px 4px 0 0;
-        -moz-border-radius: 4px 4px 0 0;
-        background-color: #fff;
-        height: 13px;
-    }
-    div.zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li a {
-        font: 9px/10px 'Arial', sans-serif;
-        letter-spacing: 1px;
-        padding: 0 3px;
-        text-decoration: none;
-        text-transform: uppercase;
-        vertical-align: top;
-    }
-    div.zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li.ui-state-active a {
-        color: #333;
-    }
-    div.zp-ZotpressMetaBox-Tabs input[type="radio"] {
-        vertical-align: text-top;
-    }
-    
-    div#ZotpressMetaBox h4 {
-        font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
-        margin: 0 0 5px 0;
-        padding-top: 5px;
-    }
-    
-    div#zp-ZotpressMetaBox-Output {
-        display: none;
-        padding-top: 5px;
-    }
-    div#ZotpressMetaBox label {
-        font-family: "Arial", sans-serif;
-        font-size: 12px;
-        margin: 0 0 0 5px;
-        font-weight: bold;
-    }
-    div#ZotpressMetaBox div.zp-Tab label {
-        font-family: "Arial", sans-serif;
-        font-size: 12px;
-        display: block;
-        margin: 0;
-        padding: 0 0 5px 0;
-    }
-    div#ZotpressMetaBox div.zp-Tab select {
-        width: 100%;
-        height: 5em !important;
-    }
-    div#ZotpressMetaBox div.zp-Tab select#zp-ZotpressMetaBox-Collection-Collections,
-    div#ZotpressMetaBox div.zp-Tab select#zp-ZotpressMetaBox-Collection-Items,
-    div#ZotpressMetaBox div.zp-Tab select#zp-ZotpressMetaBox-Tags-Tags,
-    div#ZotpressMetaBox div.zp-Tab select#zp-ZotpressMetaBox-Tags-Items {
-        height: 10em !important;
-    }
-    div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-0 select,
-    div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-1 select,
-    div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-3 select,
-    div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-4 select,
-    div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-5 select,
-    div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-6 select,
-    div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-7 select
-    {
-        height: auto !important;
-    }
-
-    div#zp-ZotpressMetaBox-Tabs div.zp-Loading {
-        background: transparent url('<?php echo ZOTPRESS_PLUGIN_URL; ?>/images/loading_list.gif') no-repeat center;
-        letter-spacing: -1000px;
-        overflow: hidden;
-        text-indent: -5000px;
-        width: 100%;
-        height: 50px;
-    }
-    
-    div.zp-Tab {
-        background-color: #fff;
-        padding: 0.6em !important;
-    }
-    p.zp-Note,
-    div.zp-ZotpressMetaBox-Tabs p.note {
-        font-size: 9px !important;
-        font-style: italic !important;
-        color: #aaaaaa !important;
-        margin-top: 0 !important;
-    }
-    p.zp-Note {
-        font-size: 10px !important;
-        color: #888 !important;
-    }
-    div.zp-ZotpressMetaBox-Tabs div#zp-ZotpressMetaBox-ShortcodeCreator-Text-InTextBib-Container p.note {
-        color: #999 !important;
-        margin: 0 0 3px 5px !important;
-    }
-    div.zp-Tab span.label {
-        margin-top: 5px;
-        font-weight: bold;
-    }
-    div.zp-Tab span.label em {
-        font-style: normal;
-        text-decoration: underline;
-    }
-    div#zp-ZotpressMetaBox-ShortcodeCreator-Output {
-        border-radius: 4px;
-        -moz-border-radius: 4px;
-        border: 1px solid #eee;
-        background-color: #fafafa;
-        margin: 0 5px 5px;
-        padding: 4px;
-    }
-    div.zp-ZotpressMetaBox-RadioButtons {
-        margin-bottom: 10px;
-    }
-    div.zp-ZotpressMetaBox-RadioButtons label {
-        display: inline !important;
-    }
-    label#zp-ZotpressMetaBox-ShortcodeCreator-1-UserID {
-        padding-left: 1em;
-    }
-    select.zp-ZotpressMetaBox-ShortcodeCreator-1-UserIDText {
-        display: none;
-    }
-    #zp-ZotpressMetaBox-ShortcodeCreator-Text {
-        margin-top: 3px;
-        font-size: 9px;
-        width: 100%;
-    }
-    .postbox div.zp-Tab input[type="text"],
-    div.zp-Tab select {
-        margin-bottom: 10px;
-    }
-    
-    .inner-sidebar .zp-ZotpressMetaBox-Tabs .wide {
-        display: none;
-    }
-    #post-body .zp-ZotpressMetaBox-Tabs .sm {
-        display: none;
-    }
-    .bibOnly {
-        display: none;
-    }
-    div#zp-ZotpressMetaBox-ShortcodeCreator-Text-InTextBib-Container {
-        padding-top: 5px;
-    }
-    div#zp-ZotpressMetaBox-ShortcodeCreator-Text-InTextBib-Container input {
-        font-size: 9px;
-    }
-    
-</style>
 
 <script>
     jQuery(function()
@@ -266,7 +89,7 @@
         */
         
         // ZOTPRESS SHORTCODE CREATOR TABS
-        jQuery( "#zp-ZotpressMetaBox-ShortcodeCreator" ).tabs();
+        jQuery("#zp-ZotpressMetaBox-ShortcodeCreator").tabs({ selected: 5 });
         
         // FORMAT
         jQuery("#zp-ZotpressMetaBox-ShortcodeCreator-0-Type").click(function() {
@@ -448,6 +271,21 @@
                 jQuery("#zp-ZotpressMetaBox-ShortcodeCreator-Text").val(shortcode);
             }
         });
+        
+        // DEFAULT STYLE BUTTON - IN PROGRESS
+        //jQuery("#zp-ZotpressMetaBox-ShortcodeCreator-5-Default").click(function() {
+        //    
+        //    jQuery("#editorcontainer iframe").contents().find("p").each(function() {
+        //        if (jQuery(this).text().search("zotpressInTextBib style") == -1) {
+        //            var content = jQuery(this).text().replace("zotpressInTextBib", "zotpressInTextBib style="+jQuery("#zp-ZotpressMetaBox-ShortcodeCreator-5-Style").val());
+        //            jQuery(this).text(content);
+        //        }
+        //        if (jQuery(this).text().search("zotpress") > -1 && jQuery(this).text().search("style") == -1) {
+        //            var content = jQuery(this).text().replace("zotpress", "zotpress style="+jQuery("#zp-ZotpressMetaBox-ShortcodeCreator-5-Style").val());
+        //            jQuery(this).text(content);
+        //        }
+        //    });
+        //});
         
         
         
@@ -883,22 +721,85 @@
     <!-- START OF STYLE -->
     <div id="zp-ZotpressMetaBox-ShortcodeCreator-5" class="zp-Tab">
         <p class="note">Optional. Default is "apa."</p>
-        <label for="zp-ZotpressMetaBox-ShortcodeCreator-5-Style">Choose Content:</label>
+        
+        <label for="zp-ZotpressMetaBox-ShortcodeCreator-5-Style">Choose Style:</label>
         <select id="zp-ZotpressMetaBox-ShortcodeCreator-5-Style">
             <?php
             
             $zp_styles = "apa, apsa, asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, mla, nlm, nature, vancouver";
             $zp_styles = explode(", ", $zp_styles);
             
+            // See if default exists
+            $zp_default_style = "apa";
+            if (get_option("Zotpress_DefaultStyle"))
+                $zp_default_style = get_option("Zotpress_DefaultStyle");
+            
             foreach($zp_styles as $zp_style)
-                if ($zp_style == "apa")
+                if ($zp_style == $zp_default_style)
                     echo "<option id=\"".$zp_style."\" value=\"".$zp_style."\" selected='selected'>".$zp_style."</option>\n";
                 else
                     echo "<option id=\"".$zp_style."\" value=\"".$zp_style."\">".$zp_style."</option>\n";
             
             ?>
         </select>
-        </select>
+        
+        <script type="text/javascript" >
+        jQuery(document).ready(function() {
+        
+            jQuery("#zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button").click(function()
+            {
+                // Plunk it together
+                var data = 'submit=true&style=' + jQuery('#zp-ZotpressMetaBox-ShortcodeCreator-5-Style').val();
+                
+                // Disable the submit button
+                jQuery('input#zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button').attr('disabled','true');
+                
+                // Show the loading sign
+                jQuery('.zp-Loading').show();
+                
+                // Set up uri
+                var xmlUri = '<?php echo ZOTPRESS_PLUGIN_URL; ?>/zotpress.widget.metabox.actions.php?'+data;
+                
+                // AJAX
+                jQuery.get(xmlUri, {}, function(xml)
+                {
+                    var $result = jQuery('result', xml).attr('success');
+                    
+                    jQuery('.zp-Loading').hide();
+                    jQuery('input#zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button').removeAttr('disabled');
+                    
+                    if ($result == "true")
+                    {
+                        jQuery('div.zp-Errors').hide();
+                        jQuery('div.zp-Success').show();
+                        
+                        jQuery.doTimeout(1000,function() {
+                            jQuery('div.zp-Success').hide();
+                        });
+                    }
+                    else // Show errors
+                    {
+                        jQuery('div.zp-Errors').html("<p>"+jQuery('errors', xml).text()+"</p>\n");
+                        jQuery('div.zp-Errors').show();
+                    }
+                });
+                
+                // Cancel default behaviours
+                return false;
+                
+            });
+            
+        });
+        </script>
+        
+        <!--<form id="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Form" action="<?php //echo $PHP_SELF;?>" method="post">-->
+            <label for="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button">Set Style as Post Default:</label>
+            <input type="button" id="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button" class="button-secondary" value="Set Default Style" />
+            <div class="zp-Loading">loading</div>
+            <div class="zp-Success">Success!</div>
+            <div class="zp-Errors">Errors!</div>
+        <!--</form>-->
+        
     </div>
     <!-- END OF STYLE -->
     

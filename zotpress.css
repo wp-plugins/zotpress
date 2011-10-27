@@ -564,6 +564,7 @@
         /* END ACCOUNTS */
         
         
+        div#zp-ZotpressMetaBox-ShortcodeCreator .zp-Loading,
         div#zp-Zotpress .zp-Loading {
             background: transparent url('images/loading_list.gif') no-repeat top left;
             float: left;

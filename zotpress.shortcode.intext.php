@@ -58,10 +58,6 @@
         // Get total accounts
         $zp_accounts_total = $wpdb->num_rows;
         
-        // Set api_user_id and account type
-        //$api_user_id = $GLOBALS['zp_account'][0]->api_user_id;
-        //$account_type = $GLOBALS['zp_account'][0]->account_type;
-        
         // Generate instance id for shortcode
         $GLOBALS['zp_instance_id'] = "zotpress-".md5($api_user_id.$nickname."items".$item."bib"."apa"."ASC"."50"."no"."no");
         
@@ -74,12 +70,17 @@
             
             $include = true;
             require_once("zotpress.rss.php");
-            //$recache = false;
+            
+            
+            // Default style
+            $zp_default_style = "apa";
+            if (get_option("Zotpress_DefaultStyle"))
+                $zp_default_style = get_option("Zotpress_DefaultStyle");
             
             
             // READ FORMATTED CITATION HTML
             
-            $zp_xml = MakeZotpressRequest($GLOBALS['zp_account'][0]->account_type, $GLOBALS['zp_account'][0]->api_user_id, "items", false, $item, false, 1, false, true, false, $GLOBALS['zp_instance_id'], false, false, "apa");
+            $zp_xml = MakeZotpressRequest($GLOBALS['zp_account'][0]->account_type, $GLOBALS['zp_account'][0]->api_user_id, "items", false, $item, false, 1, false, true, false, $GLOBALS['zp_instance_id'], false, false, $zp_default_style);
             
             $doc_citations = new DOMDocument();
             libxml_use_internal_errors(true);
@@ -101,7 +102,7 @@
             
             // READ CITATION META XML
             
-            $zp_meta_xml = MakeZotpressRequest($GLOBALS['zp_account'][0]->account_type, $GLOBALS['zp_account'][0]->api_user_id, "items", false, $item, false, 1, false, true, false, $GLOBALS['zp_instance_id'], true, false, "apa");
+            $zp_meta_xml = MakeZotpressRequest($GLOBALS['zp_account'][0]->account_type, $GLOBALS['zp_account'][0]->api_user_id, "items", false, $item, false, 1, false, true, false, $GLOBALS['zp_instance_id'], true, false, $zp_default_style);
             
             $doc_meta = new DOMDocument();
             $doc_meta->loadXML($zp_meta_xml);
@@ -136,7 +137,7 @@
             }
             
             
-            // DISPLAY CITATION
+            // DISPLAY IN-TEXT CITATION
             $zp_output = "<span rel='".$item."' class='zp-ZotpressInText'>(";
             
             // Author
@@ -159,24 +160,8 @@
             $zp_output .= ")</span>";
             
             
-            // ADD TO BIBLIOGRAPHY
-            $zp_output .= "\n<script type='text/javascript'>jQuery(document).ready(function(){";
-            
-            //$zp_output .= "alert('".$citation_content."');";
-            //$zp_output .= "
-            //
-            //if (jQuery('#zp-ZotpressInTextBib').length == 0)
-            //    jQuery('.zp-ZotpressInText').parent().parent().append('<div id=\"zp-ZotpressInTextBib\"></div>');
-            
-            $zp_output .= "
-            
-            jQuery('#zp-Zotpress-InText-Bibliography').livequery(function(){
-                jQuery(this).append('<div class=\"zp-Entry\" rel=\"".$item."\">".$citation_content."</div>');
-            });
-            
-            ";
-            
-            $zp_output .= "});</script>\n";
+            // Add to shortcode instances
+            $GLOBALS['zp_shortcode_instances'][count($GLOBALS['zp_shortcode_instances'])] = "jQuery(this).append('<div class=\"zp-Entry\" rel=\"".$item."\">".$citation_content."</div>');";
         }
         
         
