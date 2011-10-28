@@ -802,3 +802,34 @@
         
         /* END OF MESSAGE CSS */
         
+        
+        /* START OF OPTIONS PAGE CSS */
+        
+        div.zp-Zotpress-Options {
+            padding: 1em;
+        }
+        
+        div.zp-Zotpress-Options label,
+        div.zp-Zotpress-Options select {
+            display: block;
+        }
+        div.zp-Zotpress-Options select {
+            margin-bottom: 0.5em;
+        }
+        
+        input#zp-Zotpress-Options-Style-Button {
+            float: left;
+        }
+        
+        div#zp-Zotpress div.zp-Zotpress-Options div.zp-Loading {
+            display: none;
+        }
+        div#zp-Zotpress div.zp-Zotpress-Options div.zp-Success,
+        div#zp-Zotpress div.zp-Zotpress-Options div.zp-Errors {
+            margin-left: 0;
+            padding: 5px 0 5px 32px;
+            float: left;
+        }
+        
+        /* END OF OPTIONS PAGE CSS */
+        

@@ -15,10 +15,10 @@
         // DISPLAY IN-TEXT BIBLIOGRAPHY
         
         $zp_output = "\n<script type='text/javascript'>jQuery(document).ready(function(){";
-        $zp_output .= "jQuery('#zp-Zotpress-InText-Bibliography').livequery(function(){\n";
+        $zp_output .= "jQuery('#zp-Zotpress-InText-Bibliography').livequery(function(){";
         
         foreach ($GLOBALS['zp_shortcode_instances'] as $zp_instance)
-            $zp_output .= $zp_instance . "\n";
+            $zp_output .= $zp_instance . "";
         
         $zp_output .= "});";
         $zp_output .= "});</script>\n";

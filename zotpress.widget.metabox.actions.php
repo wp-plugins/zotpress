@@ -22,7 +22,9 @@
     {
         // Set up error array
         $errors = array("style_empty"=>array(0,"<strong>Style</strong> was left blank."),
-                                "style_format"=>array(0,"<strong>Style</strong> was incorrectly formatted."),);
+                                "style_format"=>array(0,"<strong>Style</strong> was incorrectly formatted."),
+                                "post_empty"=>array(0,"<strong>Post ID</strong> was left blank."),
+                                "post_format"=>array(0,"<strong>Post ID</strong> was incorrectly formatted."));
         
         // Check the post variables and record errors
         if (isset($_GET['style']) && trim($_GET['style']) != '')
@@ -32,6 +34,16 @@
                 $errors['style_format'][0] = 1;
         else
             $errors['style_empty'][0] = 1;
+        
+        // Only for post-specific
+        if (isset($_GET['forpost']) && $_GET['forpost'] == "true")
+            if (isset($_GET['post']) && trim($_GET['post']) != '')
+                if (preg_match('/^[\'0-9]+$/', stripslashes($_GET['post'])) == 1)
+                    $post = str_replace("'","",str_replace(" ","",trim(urldecode($_GET['post']))));
+                else
+                    $errors['post_format'][0] = 1;
+            else
+                $errors['post_empty'][0] = 1;
         
         
         // CHECK ERRORS
@@ -47,10 +59,16 @@
         // SET DEFAULT STYLE
         if ($errorCheck == false)
         {
-            update_option("Zotpress_DefaultStyle", $style);
-            
-            // Display success XML
-            $xml .= "<result success='true' style='".$style."' />\n";
+            if (isset($_GET['forpost']) && $_GET['forpost'] == "true")
+            {
+                update_option("Zotpress_DefaultStyle_".$post, $style);
+                $xml .= "<result success='true' post='".$post."' style='".$style."' />\n";
+            }
+            else // Overal defaults
+            {
+                update_option("Zotpress_DefaultStyle", $style);
+                $xml .= "<result success='true' style='".$style."' />\n";
+            }
         }
         
         

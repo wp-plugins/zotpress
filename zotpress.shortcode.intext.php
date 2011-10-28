@@ -72,10 +72,13 @@
             require_once("zotpress.rss.php");
             
             
-            // Default style
+            // Default style, per post or overall
             $zp_default_style = "apa";
-            if (get_option("Zotpress_DefaultStyle"))
-                $zp_default_style = get_option("Zotpress_DefaultStyle");
+            if (get_option("Zotpress_DefaultStyle_". get_the_ID()))
+                $zp_default_style = get_option("Zotpress_DefaultStyle_". get_the_ID());
+            else
+                if (get_option("Zotpress_DefaultStyle"))
+                    $zp_default_style = get_option("Zotpress_DefaultStyle");
             
             
             // READ FORMATTED CITATION HTML
@@ -164,10 +167,7 @@
             $GLOBALS['zp_shortcode_instances'][count($GLOBALS['zp_shortcode_instances'])] = "jQuery(this).append('<div class=\"zp-Entry\" rel=\"".$item."\">".$citation_content."</div>');";
         }
         
-        
-        
         return $zp_output;
-        
     }
 
     

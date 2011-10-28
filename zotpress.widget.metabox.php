@@ -720,7 +720,18 @@
     
     <!-- START OF STYLE -->
     <div id="zp-ZotpressMetaBox-ShortcodeCreator-5" class="zp-Tab">
-        <p class="note">Optional. Default is "apa."</p>
+        <?php
+        
+        // Default style, per post or overall
+        $zp_default_style = "apa";
+        if (get_option("Zotpress_DefaultStyle_". get_the_ID()))
+            $zp_default_style = get_option("Zotpress_DefaultStyle_". get_the_ID());
+        else
+            if (get_option("Zotpress_DefaultStyle"))
+                $zp_default_style = get_option("Zotpress_DefaultStyle");
+                
+        ?>
+        <p class="note">Optional. Default is "<?php echo $zp_default_style; ?>."</p>
         
         <label for="zp-ZotpressMetaBox-ShortcodeCreator-5-Style">Choose Style:</label>
         <select id="zp-ZotpressMetaBox-ShortcodeCreator-5-Style">
@@ -728,11 +739,6 @@
             
             $zp_styles = "apa, apsa, asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, mla, nlm, nature, vancouver";
             $zp_styles = explode(", ", $zp_styles);
-            
-            // See if default exists
-            $zp_default_style = "apa";
-            if (get_option("Zotpress_DefaultStyle"))
-                $zp_default_style = get_option("Zotpress_DefaultStyle");
             
             foreach($zp_styles as $zp_style)
                 if ($zp_style == $zp_default_style)
@@ -749,12 +755,10 @@
             jQuery("#zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button").click(function()
             {
                 // Plunk it together
-                var data = 'submit=true&style=' + jQuery('#zp-ZotpressMetaBox-ShortcodeCreator-5-Style').val();
+                var data = 'submit=true&style=' + jQuery('#zp-ZotpressMetaBox-ShortcodeCreator-5-Style').val() + '&forpost=true&post=<?php the_ID(); ?>';
                 
-                // Disable the submit button
+                // Prep for validation
                 jQuery('input#zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button').attr('disabled','true');
-                
-                // Show the loading sign
                 jQuery('.zp-Loading').show();
                 
                 // Set up uri
@@ -793,7 +797,7 @@
         </script>
         
         <!--<form id="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Form" action="<?php //echo $PHP_SELF;?>" method="post">-->
-            <label for="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button">Set Style as Default:</label>
+            <label for="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button">Set Style as Post Default:</label>
             <input type="button" id="zp-ZotpressMetaBox-ShortcodeCreator-5-Default-Button" class="button-secondary" value="Set Default Style" />
             <div class="zp-Loading">loading</div>
             <div class="zp-Success">Success!</div>
