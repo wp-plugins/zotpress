@@ -120,8 +120,6 @@
                 if ($zp_meta_entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue == $item)
                     $zp_this_meta = json_decode( $zp_meta_entry->getElementsByTagName("content")->item(0)->nodeValue );
             
-            //var_dump($zp_this_meta);
-            
             
             // GET CITATION CONTENT
             $citation_content = "";
@@ -164,7 +162,7 @@
             
             
             // Add to shortcode instances
-            $GLOBALS['zp_shortcode_instances'][count($GLOBALS['zp_shortcode_instances'])] = "jQuery(this).append('<div class=\"zp-Entry\" rel=\"".$item."\">".$citation_content."</div>');";
+            $GLOBALS['zp_shortcode_instances'][count($GLOBALS['zp_shortcode_instances'])] = "<div class=\"zp-Entry\" rel=\"".$item."\">" . preg_replace('/[\r\n]+/', "", $citation_content) . "</div>\n";
         }
         
         return $zp_output;
