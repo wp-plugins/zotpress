@@ -23,8 +23,8 @@
                     Generate a bibliography of your Zotero citations wherever you can call shortcodes. <a href="#zotpress">Learn more &raquo;</a>
                 </li>
                 <li>
-                    <strong>The Zotpress InText Shortcode</strong><br />
-                    Generate APA-styled in-text citations and generate a bibliography that appears at the bottom of your entry. <a href="#intext">Learn more &raquo;</a>
+                    <strong>The Zotpress InText Shortcodes</strong><br />
+                    Generate APA-styled in-text citations and a bibliography. <a href="#intext">Learn more &raquo;</a>
                 </li>
                 <li>
                     <strong>The Zotpress Sidebar Widget</strong><br />
@@ -95,10 +95,10 @@
             
             
             <a name="intext"></a>
-            <h3>Displaying Citations Using the Zotpress InText Shortcode</h3>
+            <h3>Displaying Citations Using the Zotpress InText Shortcodes</h3>
             
             <p>
-                When you use one or more Zotpress Intext shortcodes, a bibliography will be auto-generated at the end of the entry. Here's an example:
+                Use one or more <code>[zotpressInText]</code> shortcodes in your blog entry. Place the <code>[zotpressInTextBib]</code> somewhere in your entry to auto-generate the in-text citations bibliography. Here's an example:
             </p>
             
             <p class="example">
@@ -116,6 +116,8 @@
             </p>
             
             <h4>Shortcode Parameters</h4>
+            
+            <p><strong>Note:</strong> These parameters only work for the <code>[zotpressInText]</code> shortcode.</p>
             
             <ul>
                 <li><code>item</code> item key for a single item. <strong>Hint:</strong> Use Zotpress Reference to quickly retrieve item keys.</li>

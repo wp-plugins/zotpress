@@ -338,9 +338,12 @@
                     $item_meta = new DOMDocument();
                     $item_meta->loadXML($zp_item_xml);
                     
-                    $zp_download_url = "<a class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."zotpress.rss.file.php?account_type=".$account_type."&api_user_id=".$api_user_id."&download_url=".$item_meta->getElementsByTagName("entry")->item(0)->getElementsByTagName("link")->item(3)->getAttribute('href')."'>(Download)</a>";
-                    
-                    $citation_content = str_replace("</div></div>", " ".$zp_download_url."</div></div>", $citation_content);
+                    if ($item_meta->getElementsByTagName("entry")->item(0)->getElementsByTagName("link")->length >3)
+                    {
+                        $zp_download_url = "<a class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."zotpress.rss.file.php?account_type=".$account_type."&api_user_id=".$api_user_id."&download_url=".$item_meta->getElementsByTagName("entry")->item(0)->getElementsByTagName("link")->item(3)->getAttribute('href')."'>(Download)</a>";
+                        
+                        $citation_content = str_replace("</div></div>", " ".$zp_download_url."</div></div>", $citation_content);
+                    }
                     
                     unset($zp_item_xml);
                     unset($item_meta);
@@ -402,7 +405,17 @@
                 }
             }
             
-            $zp_citations[count($zp_citations)] = array( 'citation_id' => $citation_id, 'author' => $zp_this_meta->creators[0]->lastName, 'date' => date( "Y-m-d", strtotime( $zp_this_meta->date ) ), 'hasImage' => $has_citation_image, 'image' => $citation_image, 'content' => $citation_content );
+            // Sometimes there's no authors ...
+            $zp_this_meta_author = "";
+            if (count($zp_this_meta->creators) > 0)
+                $zp_this_meta_author = $zp_this_meta->creators[0]->lastName;
+            
+            $zp_citations[count($zp_citations)] = array( 'citation_id' => $citation_id,
+                                                                            'author' => $zp_this_meta_author,
+                                                                            'date' => date( "Y-m-d", strtotime( $zp_this_meta->date ) ),
+                                                                            'hasImage' => $has_citation_image,
+                                                                            'image' => $citation_image,
+                                                                            'content' => $citation_content );
         }
         
         

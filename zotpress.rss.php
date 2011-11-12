@@ -22,7 +22,7 @@
 			$mzr_get_meta=false,
 			$mzr_get_children=false,
 			$mzr_get_style=false
-			)
+		)
 	{
 		// Access Wordpress db
 		global $wpdb;

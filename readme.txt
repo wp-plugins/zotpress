@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 4.5.3
+Stable tag: 4.5.4
 
 Zotpress displays your Zotero citations on Wordpress.
 
@@ -67,6 +67,10 @@ The F.A.Q. can be found on the "Help" page of every Zotpress install. If you hav
 3. Search for item keys, citation ids and tag names using the convenient "Zotpress Reference" meta box.
 
 == Changelog ==
+
+= 4.5.4 =
+* Fixed "downloadable" bug.
+* Updated Help page.
 
 = 4.5.3 =
 * Styles for metabox tabs added.
@@ -375,3 +379,6 @@ Options page to set blog-wide style defaults (more coming). Post-specific style 
 
 = 4.5.3 =
 Styles for metabox tabs added. In-Text Bibliography fixed (I promise).
+
+= 4.5.4 =
+Fixed "downloadable" bug. Updated Help page.
