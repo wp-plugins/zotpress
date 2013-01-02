@@ -237,48 +237,54 @@
             
             $entry_zebra = true;
             
-            foreach ($zp_citations as $entry)
+            if (count($zp_citations) == 0)
             {
-                $item_type = $entry->itemType;
-                $citation_id = $entry->item_key;
-                $citation_content = $entry->citation;
-                
-                // DISPLAY IMAGE
-                if ($entry_zebra === true)
-                    echo "<div class='zp-Entry'>\n";
-                else
-                    echo "<div class='zp-Entry odd'>\n";
-                
-                echo "<div id='zp-Citation-".$citation_id."' class='zp-Entry-Image' rel='".$citation_id."'>\n";
-                
-                // GET CITATION IMAGE
-                $citation_image = "<a class='upload' href='admin.php?page=Zotpress&amp;image=true&amp;api_user_id=".$api_user_id."&amp;citation_id=".$citation_id."'>Upload Image</a>\n";
-                
-                if (is_null($entry->image) === false && $entry->image != "")
-                {
-                    $citation_image = "<a class='change' href='admin.php?page=Zotpress&amp;image=true&update=true&amp;api_user_id=".$api_user_id."&amp;citation_id=".$citation_id."'>Change Image</a>\n";
-                    $citation_image .= "<a class='delete' rel='lib/actions/actions.php?remove=".$citation_id."&amp;api_user_id=".$api_user_id."' href='javascript:void(0);'>&times;</a>\n";
-                    $citation_image .= "<img class='thumb' src='".$entry->image."' alt='image' />\n";
-                }
-                
-                echo $citation_image;
-                
-                // DISPLAY CONT.
-                echo "<div class='bg'></div>";
-                echo "</div>\n";
-                
-                echo html_entity_decode($citation_content, ENT_QUOTES)."\n";
-                
-                echo "<div class='zp-Entry-ID'><span class='title'>Item Key (Citation ID):</span> <div class='zp-Entry-ID-Text'><span>".$citation_id."</span><input value='".$citation_id."' /></div></div>\n";
-                echo "</div>\n\n";
-                
-                // Zebra striping
-                if ($entry_zebra === true)
-                    $entry_zebra = false;
-                else
-                    $entry_zebra = true;
+                echo "<p>There are no citations to display. If you're new to Zotpress 5+, you'll need to <a title=\"Import your Zotero items\" href=\"admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=".$api_user_id."\" style=\"color: #f00000; text-shadow: none;\">import your items</a>.</p>";
             }
-            
+            else // display
+            {
+                foreach ($zp_citations as $entry)
+                {
+                    $item_type = $entry->itemType;
+                    $citation_id = $entry->item_key;
+                    $citation_content = $entry->citation;
+                    
+                    // DISPLAY IMAGE
+                    if ($entry_zebra === true)
+                        echo "<div class='zp-Entry'>\n";
+                    else
+                        echo "<div class='zp-Entry odd'>\n";
+                    
+                    echo "<div id='zp-Citation-".$citation_id."' class='zp-Entry-Image' rel='".$citation_id."'>\n";
+                    
+                    // GET CITATION IMAGE
+                    $citation_image = "<a class='upload' href='admin.php?page=Zotpress&amp;image=true&amp;api_user_id=".$api_user_id."&amp;citation_id=".$citation_id."'>Upload Image</a>\n";
+                    
+                    if (is_null($entry->image) === false && $entry->image != "")
+                    {
+                        $citation_image = "<a class='change' href='admin.php?page=Zotpress&amp;image=true&update=true&amp;api_user_id=".$api_user_id."&amp;citation_id=".$citation_id."'>Change Image</a>\n";
+                        $citation_image .= "<a class='delete' rel='lib/actions/actions.php?remove=".$citation_id."&amp;api_user_id=".$api_user_id."' href='javascript:void(0);'>&times;</a>\n";
+                        $citation_image .= "<img class='thumb' src='".$entry->image."' alt='image' />\n";
+                    }
+                    
+                    echo $citation_image;
+                    
+                    // DISPLAY CONT.
+                    echo "<div class='bg'></div>";
+                    echo "</div>\n";
+                    
+                    echo html_entity_decode($citation_content, ENT_QUOTES)."\n";
+                    
+                    echo "<div class='zp-Entry-ID'><span class='title'>Item Key (Citation ID):</span> <div class='zp-Entry-ID-Text'><span>".$citation_id."</span><input value='".$citation_id."' /></div></div>\n";
+                    echo "</div>\n\n";
+                    
+                    // Zebra striping
+                    if ($entry_zebra === true)
+                        $entry_zebra = false;
+                    else
+                        $entry_zebra = true;
+                }
+            }
             
             ?>
         
