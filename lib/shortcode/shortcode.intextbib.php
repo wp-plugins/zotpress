@@ -56,6 +56,8 @@
         // DISPLAY IN-TEXT BIBLIOGRAPHY
         
         $current_title =  "";
+        $citation_notes = "";
+        $zp_notes_num = 1;
         
         $zp_output = "\n<div class=\"zp-Zotpress\">\n\n";
         $zp_output .= "<span class=\"ZOTPRESS_PLUGIN_URL\" style=\"display:none;\">" . ZOTPRESS_PLUGIN_URL . "</span>\n\n";
@@ -69,7 +71,6 @@
         {
             $citation_image = false;
             $has_citation_image = false;
-            $citation_notes = false;
             $zp_this_meta = json_decode( $zp_citation["json"] );
             $zp_output .= "<span class=\"zp-Zotpress-Userid\" style=\"display:none;\">".$zp_citation['userid']."</span>\n\n";
             
@@ -92,14 +93,18 @@
                 
                 if (count($zp_notes) > 0)
                 {
-                    $citation_notes = "<div class='zp-Citation-Notes'>\n<h4>Notes</h4>\n<ul>\n";
+                    $citation_notes = "<li>\n<ul class='zp-Citation-Item-Notes'>\n";
                     
                     foreach ($zp_notes as $note) {
                         $note_json = json_decode($note->json);
-                        $citation_notes .= "<li class='zp-Citation-note'>" . $note_json->note . "\n</li>\n";
+                        $citation_notes .= "<li class='zp-Citation-Note'>" . $note_json->note . "\n</li>\n";
                     }
                     
-                    $citation_notes .= "\n</ul>\n</div>\n\n";
+                    $citation_notes .= "\n</ul>\n</li>\n\n";
+                    
+                    // Add note reference
+                    $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"zp-Notes-Reference\">".$zp_notes_num."</sup> </div>" . '$2', $zp_citation['citation'], 1);
+                    $zp_notes_num++;
                 }
                 unset($zp_notes);
             }
@@ -119,11 +124,11 @@
                 if (!is_null($zp_download_url))
                 {
                     if ($zp_download_url->linkMode == "imported_file") {
-                        $zp_citation['citation'] = preg_replace('/<\/div>/', " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['userid']."&download=".$zp_download_url->item_key."'>(Download)</a> </div>", $zp_citation['citation'], 1);
+                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['userid']."&download=".$zp_download_url->item_key."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
                     }
                     else {
                         $zp_download_meta = json_decode($zp_download_url->json);
-                        $zp_citation['citation'] = preg_replace('/<\/div>/', " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_meta->url."'>(Download)</a> </div>", $zp_citation['citation'], 1);
+                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_meta->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
                     }
                 }
             }
@@ -132,7 +137,7 @@
             if ($cite == "yes" || $cite == "true" || $cite === true)
             {
                 $cite_url = "https://api.zotero.org/".$zp_citation["account_type"]."/".$zp_citation['userid']."/items/".$zp_citation["item_key"]."?format=ris";
-                $zp_citation['citation'] = preg_replace('/<\/div>/', " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>(Cite)</a> </div>", $zp_citation['citation'], 1);
+                $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>(Cite)</a> </div>" . '$2', $zp_citation['citation'], 1);
             }
             
             // TITLE
@@ -145,12 +150,19 @@
                 }
             }
             
+            // SHOW CURRENT STYLE AS REL
+            $zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );
+            
             // OUTPUT
             
             $zp_output .= "<div class='zp-Entry".$has_citation_image."' rel='".$zp_citation["item_key"]."'>\n";
-            $zp_output .= $citation_image . $zp_citation['citation'] . $citation_notes . "\n";
+            $zp_output .= $citation_image . $zp_citation['citation'] . "\n";
             $zp_output .= "</div><!--Entry-->\n\n";
         }
+        
+        // DISPLAY NOTES, if exist
+        if (strlen($citation_notes) > 0)
+            $zp_output .= "<div class='zp-Citation-Notes'>\n<h4>Notes</h4>\n<ol>\n" . $citation_notes . "</ol>\n</div><!-- .zp-Citation-Notes -->\n\n";
         
         $zp_output .= "</div><!--.zp-Zotpress-->\n\n";
         

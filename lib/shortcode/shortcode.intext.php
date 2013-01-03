@@ -94,7 +94,6 @@
             
             // PREPARE ITEM QUERY
             
-            $zp_query_item_list = "";
             $zp_query = "SELECT item_key, author, title, citation, zpdate, image, json
                     FROM ".$wpdb->prefix."zotpress_zoteroItems
                     WHERE api_user_id='".$api_user_id."' AND ";
@@ -102,27 +101,32 @@
             if (is_array($items))
             {
                 if (count($items) == 2 && !is_array($items[0])) {
-                    $zp_query_item_list .= " item_key='" . $items[0] . "'";
+                    $zp_query .= " item_key='" . $items[0] . "'";
                 }
                 else
                 {
+                    $zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.item_key IN ( ";
                     foreach ($items as $id => $item) {
-                        $zp_query_item_list .= " item_key='" . $item[0] . "'";
+                        $zp_query .= "'" . $item[0] . "'";
                         if (count($items)-1 != $id)
-                            $zp_query_item_list .= " OR";
+                            $zp_query .= ",";
                     }
+                    $zp_query .=" )";
                 }
             }
             else // single item
             {
-                
-                $zp_query_item_list .= " item_key='" . $items . "'";
+                $zp_query .= " item_key='" . $items . "'";
             }
             
-            $zp_query .= $zp_query_item_list . " ORDER BY ".$wpdb->prefix."zotpress_zoteroItems.author ASC;";
+            $zp_query .= " ORDER BY ".$wpdb->prefix."zotpress_zoteroItems.author ASC;";
+            
+            
             
             // QUERY DATABASE
+            //var_dump($zp_query . "<br /><br />");
             $zp_results = $wpdb->get_results($zp_query, OBJECT);
+            //var_dump($zp_results);
             
             $zp_intext_citation = "";
             
@@ -186,6 +190,11 @@
             }
             
             return "<span id='.$zp_instance_id.' class='zp-ZotpressInText'>" . str_replace(")(", "; ", str_replace("][", ", ", $zp_intext_citation)) . "</span>";
+            
+            unset($zp_query);
+            unset($zp_results);
+            unset($zp_intext_citation);
+            $wpdb->flush();
         }
         
         // Display notification if no citations found

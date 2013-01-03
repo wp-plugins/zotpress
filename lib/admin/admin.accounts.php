@@ -78,7 +78,11 @@
                                     $code .= "&nbsp;</span>\n";
                                     
                                     // ACTIONS
-                                    $code .= "                          <span class='delete last'><a title='Sync' class='sync' rel='".$account->api_user_id."' href='javascript:void(0);'>Sync</a><a title='(Re)Import' class='import' href='admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=" . $account->api_user_id . "'>Import</a><a title='Remove this account' class='delete' href='#" . $account->id . "'>Remove</a></span>\n";
+                                    $code .= "                          <span class='delete last'>\n";
+                                    $code .= "                              <a title='Sync' class='sync' rel='".$account->api_user_id."' href='javascript:void(0);'>Sync</a>\n";
+                                    $code .= "                              <a title='(Re)Import' class='import' href='admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=" . $account->api_user_id . "'>Import</a>\n";
+                                    $code .= "                              <a title='Remove this account' class='delete' href='#" . $account->id . "'>Remove</a>\n";
+                                    $code .= "                          </span>\n";
                                     
                                     $code .= "                         </div>\n\n";
                                     

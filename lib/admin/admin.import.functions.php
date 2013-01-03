@@ -295,7 +295,7 @@
             // Move to the next set
             $zpi += 50;
             
-            
+            //$wpdb->print_error(); // REMOVE
             
             // DEBUGGING: Stop at 150 items; needs debugging above uncommented
             //if ($zp_set >= 150)

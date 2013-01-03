@@ -23,6 +23,7 @@
 
     // Access Wordpress db
     global $wpdb;
+    //define( 'DIEONDBERROR', true ); // REMOVE
     
     // Include Special cURL
     require("../request/rss.curl.php");

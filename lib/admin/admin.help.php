@@ -151,6 +151,8 @@
                 <li><code>nickname</code> set based on a Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a title="Accounts" href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</li>
             </ul>
             
+            <p>The <code>[zotpressInTextBib]</code> shortcode takes the same parameters as the <code>[zotpress]</code> shortcode, minus the "userid," "nickname," and "limit" parameters.</p>
+            
             
             <hr />
             

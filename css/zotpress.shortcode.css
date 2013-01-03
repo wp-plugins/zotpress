@@ -6,6 +6,16 @@
         margin: 0 0 1.71429rem;
     }
     
+    /* Thanks to http://css-tricks.com/snippets/css/prevent-long-urls-from-breaking-out-of-container/ */
+    div.zp-Zotpress a {
+        -ms-word-break: break-all;
+        word-break: break-all;
+        word-break: break-word;
+        -webkit-hyphens: auto;
+       -moz-hyphens: auto;
+        hyphens: auto;
+    }
+    
     /*.ZOTPRESS_UPDATE_NOTICE {*/
     /*    background: transparent url('../images/syncing_bw.gif') no-repeat left center;*/
     /*    color: #999;*/
@@ -29,6 +39,10 @@
     }
     div.zp-Zotpress div.zp-Entry-Image {
         float: left;
+    }
+    
+    div.zp-Zotpress div.zp-Entry .csl-left-margin {
+        width: auto !important;
     }
 
     div.zp-Zotpress div.zp-Entry.zp-HasImage div.csl-bib-body {
