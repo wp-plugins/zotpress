@@ -10,11 +10,11 @@
     global $wpdb;
     
     // Include Special cURL
-    include("/../request/rss.curl.php");
+    require("../request/rss.curl.php");
     
     // Include Import and Sync Functions
-    include("/admin.import.functions.php");
-    include("/admin.sync.functions.php");
+    require("admin.import.functions.php");
+    require("admin.sync.functions.php");
     
 
     // Set up XML document

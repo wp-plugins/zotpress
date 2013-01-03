@@ -1,5 +1,6 @@
 <?php
 
+
     /*
     *   IMPORT PSEUDOCODE:
     *
@@ -24,10 +25,10 @@
     global $wpdb;
     
     // Include Special cURL
-    include("/../request/rss.curl.php");
+    require("../request/rss.curl.php");
     
     // Include Import Functions
-    include("/admin.import.functions.php");
+    require("admin.import.functions.php");
     
     
 ?><!DOCTYPE html 
@@ -66,9 +67,6 @@
         // Get account
         $zp_account = zp_get_account($wpdb);
         
-        // Set account status to import
-        //zp_set_account_status ($zp_account[0]->api_user_id, "import");
-        
         // Set current import time
         zp_set_update_time( date('Y-m-d') );
         
@@ -82,11 +80,12 @@
         $zp_all_itemkeys_count = zp_get_item_count ($zp_account, $nokey);
         
         // DEBUGGING: Item count
-        //echo "ITEMS <br /><br />\n";
+        echo "ITEMS <br /><br />\n";
         //echo "item count: ". $zp_all_itemkeys_count. "<br /><br />\n";
         
         // IMPORT ITEMS
         zp_get_items ($wpdb, $zp_account, $nokey, $zp_all_itemkeys_count);
+        
         
         
         ?><script type="text/javascript">
@@ -119,6 +118,7 @@
         zp_get_collections ($wpdb, $zp_account, $nokey);
         
         
+        
         ?><script type="text/javascript">
         
         jQuery(document).ready(function()
@@ -148,8 +148,6 @@
         // IMPORT TAGS
         zp_get_tags ($wpdb, $zp_account, $nokey);
         
-        // Set account status
-        //zp_set_account_status ($zp_account[0]->api_user_id, "normal");
         
         
         ?><script type="text/javascript">

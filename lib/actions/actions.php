@@ -198,7 +198,7 @@
         
         if ($errorCheck == false)
         {
-            $query = "UPDATE ".$wpdb->prefix."zotpress_zoteroitems ";
+            $query = "UPDATE ".$wpdb->prefix."zotpress_zoteroItems ";
             $query .= "SET image='$image' WHERE api_user_id='".$api_user_id."' AND item_key='".$citation_id."';";
             
             // Insert new list item into the list:
@@ -252,7 +252,7 @@
         
         if ($errorCheck == false)
         {
-            $query = "UPDATE ".$wpdb->prefix."zotpress_zoteroitems ";
+            $query = "UPDATE ".$wpdb->prefix."zotpress_zoteroItems ";
             $query .= "SET image='' WHERE api_user_id='".$api_user_id."' AND item_key='".$citation_id."';";
             
             // Update db

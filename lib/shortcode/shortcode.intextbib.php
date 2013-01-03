@@ -87,7 +87,7 @@
             {
                 global $wpdb;
                 
-                $zp_notes = $wpdb->get_results("SELECT json FROM ".$wpdb->prefix."zotpress_zoteroitems WHERE api_user_id='".$zp_citation['userid']."'
+                $zp_notes = $wpdb->get_results("SELECT json FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['userid']."'
                         AND parent = '".$zp_citation["item_key"]."' AND itemType = 'note';", OBJECT);
                 
                 if (count($zp_notes) > 0)
@@ -113,7 +113,7 @@
             {
                 global $wpdb;
                 
-                $zp_download_url = $wpdb->get_row("SELECT item_key, citation, json, linkMode FROM ".$wpdb->prefix."zotpress_zoteroitems WHERE api_user_id='".$zp_citation['userid']."'
+                $zp_download_url = $wpdb->get_row("SELECT item_key, citation, json, linkMode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['userid']."'
                         AND parent = '".$zp_citation["item_key"]."' AND linkMode IN ( 'imported_file', 'linked_url' ) ORDER BY linkMode ASC LIMIT 1;", OBJECT);
                 
                 if (!is_null($zp_download_url))

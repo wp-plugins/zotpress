@@ -95,7 +95,7 @@
         
         // ZOTERO COLLECTIONS TABLE
         
-        if (!get_option("Zotpress_zoteroCollection_db_version") || get_option("Zotpress_zoteroCollection_db_version") != $Zotpress_zoteroCollections_db_version)
+        if (!get_option("Zotpress_zoteroCollections_db_version") || get_option("Zotpress_zoteroCollections_db_version") != $Zotpress_zoteroCollections_db_version)
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_zoteroCollections (
                 id INT(9) NOT NULL AUTO_INCREMENT,
@@ -114,10 +114,10 @@
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($structure);
             
-            if (!get_option("Zotpress_zoteroCollection_db_version"))
-                add_option("Zotpress_zoteroCollection_db_version", $Zotpress_zoteroCollection_db_version);
-            else if (get_option("Zotpress_zoteroCollection_db_version") != $Zotpress_zoteroCollection_db_version)
-                update_option("Zotpress_zoteroCollection_db_version", $Zotpress_zoteroCollection_db_version);
+            if (!get_option("Zotpress_zoteroCollections_db_version"))
+                add_option("Zotpress_zoteroCollections_db_version", $Zotpress_zoteroCollections_db_version);
+            else if (get_option("Zotpress_zoteroCollections_db_version") != $Zotpress_zoteroCollections_db_version)
+                update_option("Zotpress_zoteroCollections_db_version", $Zotpress_zoteroCollections_db_version);
         }
         
         

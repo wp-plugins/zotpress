@@ -42,7 +42,7 @@
         
         <div id="zp-Setup-Step">
             
-            <?php include('\..\admin\admin.options.form.php'); ?>
+            <?php include("admin.options.form.php"); ?>
             
             <div id="zp-Zotpress-Setup-Buttons">
                 <input type="button" id="zp-Zotpress-Setup-Options-Next" class="button-primary" value="Next" />

@@ -153,8 +153,11 @@
                 $parent = "";
                 $link_mode = "";
                 
-                foreach ( $json_content_decoded->creators as $creator )
-                    $author .= $creator->lastName . ", ";
+                if (count($json_content_decoded->creators) > 0)
+                    foreach ( $json_content_decoded->creators as $creator )
+                        $author .= $creator->lastName . ", ";
+                else
+                    $author .= $creator->creators["lastName"] . ", ";
                 
                 $author = substr ($author, 0, strlen($author)-2);
                 

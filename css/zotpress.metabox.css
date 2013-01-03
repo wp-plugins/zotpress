@@ -12,7 +12,7 @@
     
     .ui-autocomplete li {
         border-bottom: 1px solid #ddd;
-        font-size: 9px;
+        font-size: 10px;
         line-height: 12px;
         white-space: normal;
         width: 245px;
@@ -27,7 +27,8 @@
         -webkit-border-radius: 0;
     }
     
-    .ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a {
+    .ui-tabs .ui-tabs-nav li a,
+    .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a {
         outline: none;
     }
     
@@ -81,16 +82,16 @@
         padding: 3px 5px;
     }
     
-    .ui-widget-content a#zp-ZotpressMetaBox-Biblio-Generate-Button,
-    .ui-widget-content a#zp-ZotpressMetaBox-InTextCreator-Generate-Button {
+    #ZotpressMetaBox .ui-widget-content a#zp-ZotpressMetaBox-Biblio-Generate-Button,
+    #ZotpressMetaBox .ui-widget-content a#zp-ZotpressMetaBox-InTextCreator-Generate-Button {
         color: #fff;
         float: right;
         line-height: 1.75em;
         font-family: "Arial", sans-serif;
         height: auto;
     }
-    .ui-widget-content a#zp-ZotpressMetaBox-Biblio-Clear-Button,
-    .ui-widget-content a#zp-ZotpressMetaBox-InTextCreator-Clear-Button {
+    #ZotpressMetaBox .ui-widget-content a#zp-ZotpressMetaBox-Biblio-Clear-Button,
+    #ZotpressMetaBox .ui-widget-content a#zp-ZotpressMetaBox-InTextCreator-Clear-Button {
         float: left;
         line-height: 1.75em;
         font-family: "Arial", sans-serif;

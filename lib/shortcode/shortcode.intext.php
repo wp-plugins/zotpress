@@ -96,7 +96,7 @@
             
             $zp_query_item_list = "";
             $zp_query = "SELECT item_key, author, title, citation, zpdate, image, json
-                    FROM ".$wpdb->prefix."zotpress_zoteroitems
+                    FROM ".$wpdb->prefix."zotpress_zoteroItems
                     WHERE api_user_id='".$api_user_id."' AND ";
             
             if (is_array($items))
@@ -119,7 +119,7 @@
                 $zp_query_item_list .= " item_key='" . $items . "'";
             }
             
-            $zp_query .= $zp_query_item_list . " ORDER BY ".$wpdb->prefix."zotpress_zoteroitems.author ASC;";
+            $zp_query .= $zp_query_item_list . " ORDER BY ".$wpdb->prefix."zotpress_zoteroItems.author ASC;";
             
             // QUERY DATABASE
             $zp_results = $wpdb->get_results($zp_query, OBJECT);

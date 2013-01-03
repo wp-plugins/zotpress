@@ -19,10 +19,17 @@
             $temp = $wpdb->get_row("SELECT id FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".get_option("Zotpress_DefaultAccount")."'", OBJECT);
             $account_id = $temp->id;
         }
-        else{
-            $account_id = false;
+        else
+        {
+            $temp = $wpdb->get_results("SELECT id FROM ".$wpdb->prefix."zotpress LIMIT 1");
+            
+            if (count($temp) > 0)
+                $account_id = $temp[0]->id;
+            else
+                $account_id = false;
         }
     }
+    
     
     
     // Collection ID
@@ -211,24 +218,31 @@
             
             // By Collection ID
             if (isset($_GET['collection_id']) && preg_match("/^[a-zA-Z0-9]+$/", $_GET['collection_id']) == 1) {
-                $zp_citations = $wpdb->get_results("SELECT ".$wpdb->prefix."zotpress_zoteroitems.* FROM ".$wpdb->prefix."zotpress_zoterocollections, ".$wpdb->prefix."zotpress_zoteroitems WHERE ".$wpdb->prefix."zotpress_zoterocollections.item_key='".$_GET['collection_id']."' AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroitems.item_key, ".$wpdb->prefix."zotpress_zoterocollections.listitems) AND itemType != 'note' AND itemType != 'attachment' ORDER BY author ASC");
+                $zp_citations = $wpdb->get_results("SELECT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroCollections, ".$wpdb->prefix."zotpress_zoteroItems WHERE ".$wpdb->prefix."zotpress_zoteroCollections.item_key='".$_GET['collection_id']."' AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroItems.item_key, ".$wpdb->prefix."zotpress_zoteroCollections.listitems) AND itemType != 'note' AND itemType != 'attachment' ORDER BY author ASC");
             
             // By Tag ID
             } else if (isset($_GET['tag_id']) && preg_match("/^[0-9]+$/", $_GET['tag_id']) == 1) {
-                $zp_citations = $wpdb->get_results("SELECT ".$wpdb->prefix."zotpress_zoteroitems.* FROM ".$wpdb->prefix."zotpress_zoterotags, ".$wpdb->prefix."zotpress_zoteroitems WHERE ".$wpdb->prefix."zotpress_zoterotags.id='".$_GET['tag_id']."' AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroitems.item_key, ".$wpdb->prefix."zotpress_zoterotags.listitems) AND itemType != 'note' AND itemType != 'attachment' ORDER BY author ASC");
+                $zp_citations = $wpdb->get_results("SELECT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroTags, ".$wpdb->prefix."zotpress_zoteroItems WHERE ".$wpdb->prefix."zotpress_zoteroTags.id='".$_GET['tag_id']."' AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroItems.item_key, ".$wpdb->prefix."zotpress_zoteroTags.listitems) AND itemType != 'note' AND itemType != 'attachment' ORDER BY author ASC");
             
             // Top-level
             } else {
                 $zp_all_citations = $wpdb->get_col("SELECT item_key FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."' AND itemType != 'note' AND itemType != 'attachment'");
                 $zp_all_collection_citations = $wpdb->get_results("SELECT listItems FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$api_user_id."'");
                 
-                $zp_all_collection_citations_arr = array();
-                foreach ($zp_all_collection_citations as $list)
-                    foreach(explode(",", $list->listItems) as $list_item )
-                        array_push($zp_all_collection_citations_arr, $list_item);
-                
-                $zp_toplevel_citations = array_diff( $zp_all_citations, $zp_all_collection_citations_arr );
-                $zp_citations = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroitems WHERE item_key IN ('" . implode("','", $zp_toplevel_citations) . "') AND api_user_id='".$api_user_id."' ORDER BY author ASC");
+                if (count($zp_all_collection_citations) > 0)
+                {
+                    $zp_all_collection_citations_arr = array();
+                    foreach ($zp_all_collection_citations as $list)
+                        foreach(explode(",", $list->listItems) as $list_item )
+                            array_push($zp_all_collection_citations_arr, $list_item);
+                    
+                    $zp_toplevel_citations = array_diff( $zp_all_citations, $zp_all_collection_citations_arr );
+                    $zp_citations = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE item_key IN ('" . implode("','", $zp_toplevel_citations) . "') AND api_user_id='".$api_user_id."' ORDER BY author ASC");
+                }
+                else // no collections
+                {
+                    $zp_citations = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."' AND itemType != 'note' AND itemType != 'attachment' LIMIT 99");
+                }
             }
             
             
@@ -239,7 +253,7 @@
             
             if (count($zp_citations) == 0)
             {
-                echo "<p>There are no citations to display. If you're new to Zotpress 5+, you'll need to <a title=\"Import your Zotero items\" href=\"admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=".$api_user_id."\" style=\"color: #f00000; text-shadow: none;\">import your items</a>.</p>";
+                echo "<p>There are no citations to display. If you think you're receiving this message in error, you may need to <a title=\"Import your Zotero items\" href=\"admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=".$api_user_id."\" style=\"color: #f00000; text-shadow: none;\">import your Zotero library</a>.</p>";
             }
             else // display
             {
@@ -248,6 +262,7 @@
                     $item_type = $entry->itemType;
                     $citation_id = $entry->item_key;
                     $citation_content = $entry->citation;
+                    
                     
                     // DISPLAY IMAGE
                     if ($entry_zebra === true)

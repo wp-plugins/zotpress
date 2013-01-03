@@ -229,6 +229,7 @@ jQuery(document).ready(function() {
         
         // Set up uri
         var xmlUri = jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel");
+        //alert(xmlUri);
         
         // AJAX
         jQuery.get(xmlUri, {}, function(xml)

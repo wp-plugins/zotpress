@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bring Zotero and scholarly blogging to your Wordpress site.
     Author: Katie Seaborn
-    Version: 5.0
+    Version: 5.0.1
     Author URI: http://katieseaborn.com
     
 */
@@ -39,19 +39,19 @@
     $GLOBALS['zp_shortcode_instances'] = array();
     
     global $Zotpress_main_db_version;
-    $Zotpress_main_db_version = "4.001";
+    $Zotpress_main_db_version = "5.0.1";
     
     global $Zotpress_oauth_db_version;
-    $Zotpress_oauth_db_version = "4.001";
+    $Zotpress_oauth_db_version = "5.0.1";
     
     global $Zotpress_zoteroItems_db_version;
-    $Zotpress_zoteroItems_db_version = "4.008";
+    $Zotpress_zoteroItems_db_version = "5.0.1";
     
     global $Zotpress_zoteroCollections_db_version;
-    $Zotpress_zoteroCollections_db_version = "4.002";
+    $Zotpress_zoteroCollections_db_version = "5.0.1";
     
     global $Zotpress_zoteroTags_db_version;
-    $Zotpress_zoteroTags_db_version = "4.002";
+    $Zotpress_zoteroTags_db_version = "5.0.1";
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
@@ -256,9 +256,9 @@
         )
     {
         add_action('admin_print_scripts', 'Zotpress_admin_metabox_scripts');
-        add_action('admin_footer', 'Zotpress_admin_ckeditor_scripts');
+        //add_action('admin_footer', 'Zotpress_admin_ckeditor_scripts');
         add_action('admin_print_styles', 'Zotpress_admin_post_styles');
-        add_action('admin_print_styles', 'Zotpress_admin_ckeditor_css');
+        //add_action('admin_print_styles', 'Zotpress_admin_ckeditor_css');
     }
     
     add_action('admin_menu', 'Zotpress_admin_menu');

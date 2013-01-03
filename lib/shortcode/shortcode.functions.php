@@ -50,7 +50,7 @@
     function zp_get_fullname_author_items ($wpdb, $author)
     {
 	$zp_authors_items = "";
-	$zp_authors_query = "SELECT item_key, json FROM ".$wpdb->prefix."zotpress_zoteroitems WHERE author LIKE '%".$author[1]."%'";
+	$zp_authors_query = "SELECT item_key, json FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE author LIKE '%".$author[1]."%'";
 	$zp_authors = $wpdb->get_results($zp_authors_query, ARRAY_A);
 	
 	// Create item_key list

@@ -29,11 +29,11 @@
 		// Access Wordpress db
 		global $wpdb;
 		
-		$zp_download_url_query = "SELECT ".$wpdb->prefix."zotpress.public_key, ".$wpdb->prefix."zotpress_zoteroitems.citation
+		$zp_download_url_query = "SELECT ".$wpdb->prefix."zotpress.public_key, ".$wpdb->prefix."zotpress_zoteroItems.citation
 				FROM ".$wpdb->prefix."zotpress
-				JOIN ".$wpdb->prefix."zotpress_zoteroitems ON ".$wpdb->prefix."zotpress.api_user_id = ".$wpdb->prefix."zotpress_zoteroitems.api_user_id
-				WHERE ".$wpdb->prefix."zotpress_zoteroitems.item_key='".$zp_item_key."' 
-				AND ".$wpdb->prefix."zotpress_zoteroitems.api_user_id='".$zp_api_user_id."';";
+				JOIN ".$wpdb->prefix."zotpress_zoteroItems ON ".$wpdb->prefix."zotpress.api_user_id = ".$wpdb->prefix."zotpress_zoteroItems.api_user_id
+				WHERE ".$wpdb->prefix."zotpress_zoteroItems.item_key='".$zp_item_key."' 
+				AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id='".$zp_api_user_id."';";
 		
 		$zp_download_url = $wpdb->get_results( $zp_download_url_query, OBJECT );
 		

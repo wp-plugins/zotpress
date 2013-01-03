@@ -20,8 +20,6 @@
             <?php include('admin.display.tabs.php'); ?>
             
             
-            <!-- ZOTPRESS ADD ACCOUNT FORM -->
-            
             <!-- ZOTPRESS MANAGE ACCOUNTS -->
             
             <div id="zp-ManageAccounts">

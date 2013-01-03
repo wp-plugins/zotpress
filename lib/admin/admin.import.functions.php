@@ -1,6 +1,10 @@
 <?php
 
 
+    //ini_set('max_execution_time', 300);
+    //set_time_limit(300);
+    
+    
 
     function zp_db_prep($input)
     {
@@ -83,29 +87,6 @@
                 break;
         }
     }
-    
-    
-    
-    //function zp_set_account_status ($zp_api_user_id, $status)
-    //{
-    //    if (!get_option("Zotpress_".$zp_api_user_id."_status")) {
-    //        add_option("Zotpress_".$zp_api_user_id."_status", $status);
-    //    }
-    //    else {
-    //        update_option("Zotpress_".$zp_api_user_id."_status", $status);
-    //    }
-    //}
-    //
-    //
-    //
-    //function zp_get_account_status ($zp_api_user_id)
-    //{
-    //    if (!get_option("Zotpress_".$zp_api_user_id."_status")) {
-    //        add_option("Zotpress_".$zp_api_user_id."_status", "normal");
-    //    }
-    //    
-    //    return get_option("Zotpress_".$zp_api_user_id."_status");
-    //}
     
     
     
@@ -219,8 +200,11 @@
                 $parent = "";
                 $link_mode = "";
                 
-                foreach ( $json_content_decoded->creators as $creator )
-                    $author .= $creator->lastName . ", ";
+                if (count($json_content_decoded->creators) > 0)
+                    foreach ( $json_content_decoded->creators as $creator )
+                        $author .= $creator->lastName . ", ";
+                else
+                    $author .= $creator->creators["lastName"] . ", ";
                 
                 $author = substr ($author, 0, strlen($author)-2);
                 
@@ -315,7 +299,7 @@
             
             // DEBUGGING: Stop at 150 items; needs debugging above uncommented
             //if ($zp_set >= 150)
-            //    exit();
+            //    continue 2;
             
             
             
