@@ -2,6 +2,12 @@
     
     
     
+    /****************************************************************************************
+    *
+    *     ZOTPRESS BASIC SYNC FUNCTIONS
+    *
+    ****************************************************************************************/
+    
     function zp_autoupdate()
     {
 	// Get interval
@@ -29,11 +35,15 @@
     
     
     
-    function zp_get_local_items ($wpdb, $zp_account, $limit=0)
+    /****************************************************************************************
+    *
+    *     ZOTPRESS SYNC ITEMS
+    *
+    ****************************************************************************************/
+    
+    function zp_get_local_items ($wpdb, $api_user_id)
     {
-        $query = "SELECT * FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_account[0]->api_user_id."'";
-        if ($limit > 0)
-            $query .= " LIMIT ".$limit;
+        $query = "SELECT * FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."'";
         
         $results = $wpdb->get_results( $query, OBJECT );
         $items = array();
@@ -50,208 +60,232 @@
     
     
     
-    function zp_get_server_items ($wpdb, $zp_account, $nokey, $zp_all_itemkeys_count, $zp_local_items, $limit=0)
+    function zp_get_server_items ($wpdb, $api_user_id, $zp_start)
     {
-        $zpi = 0;
-        $zp_items_to_update = array();
-        $query_total_items_to_add = 0;
-        $zp_items_to_add = array();
+        $zp_import_curl = new CURL();
+        $zp_account = $_SESSION['zp_session'][$api_user_id]['zp_account'];
         
         
-        // DEBUGGING:
-        if ($limit > 0) {
-            $zp_all_itemkeys_count = $limit;
-            echo "Server total: " . $zp_all_itemkeys_count . "<br />n";
-            echo "Local total: " . count($zp_local_items) . "<br /><br />\n\n";
+        // See if default exists
+        $zp_default_style = "apa";
+        if (get_option("Zotpress_DefaultStyle"))
+            $zp_default_style = get_option("Zotpress_DefaultStyle");
+        
+        // Build request URL
+        $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$api_user_id."/items?";
+        if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
+            $zp_import_url .= "key=".$zp_account[0]->public_key."&";
+        $zp_import_url .= "format=atom&content=json,bib&style=".$zp_default_style."&limit=50&start=".$zp_start;
+        
+        // Read the external data
+        if (in_array ('curl', get_loaded_extensions()))
+            $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
+        else // Use the old way:
+            $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+        
+        // Make it DOM-traversable 
+        $doc_citations = new DOMDocument();
+        $doc_citations->loadXML($zp_xml);
+        
+        // Get last set
+        if (!isset($_SESSION['zp_session'][$api_user_id]['items']['last_set']))
+        {
+            $last_set = "";
+            $links = $doc_citations->getElementsByTagName("link");
+            
+            foreach ($links as $link)
+            {
+                if ($link->getAttribute('rel') == "last")
+                {
+                    if (stripos($link->getAttribute('href'), "start=") !== false)
+                    {
+                        $last_set = explode("start=", $link->getAttribute('href'));
+                        $_SESSION['zp_session'][$api_user_id]['items']['last_set'] = intval($last_set[1]);
+                    }
+                    else
+                    {
+                        $_SESSION['zp_session'][$api_user_id]['items']['last_set'] = 0;
+                    }
+                }
+            }
         }
         
+        $entries = $doc_citations->getElementsByTagName("entry");
         
-        // Query each group at Zotero
-        while ($zpi < $zp_all_itemkeys_count)
+        
+        // COMPARE EACH ENTRY TO LOCAL
+        // Entries can be items or attachments (e.g. notes)
+        
+        foreach ($entries as $entry)
         {
-            $zp_import_curl = new CURL();
+            $item_key = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue;
+            $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
+            //$_SESSION['zp_session'][$api_user_id]['items']['zp_current_local_count']++;
             
-            // See if default exists
-            $zp_default_style = "apa";
-            if (get_option("Zotpress_DefaultStyle"))
-                $zp_default_style = get_option("Zotpress_DefaultStyle");
-            
-            if ($nokey === true)
-                $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/items?";
-            else // normal with key
-                $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/items?key=".$zp_account[0]->public_key."&";
-            $zp_import_url .= "format=atom&content=json,bib&style=".$zp_default_style."&limit=50&start=".$zpi;
-            
-            // Read the external data
-            if (in_array ('curl', get_loaded_extensions()))
-                $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-            else // Use the old way:
-                $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
-            
-            // Make it DOM-traversable 
-            $doc_citations = new DOMDocument();
-            $doc_citations->loadXML($zp_xml);
-            
-            $entries = $doc_citations->getElementsByTagName("entry");
-            
-            
-            // COMPARE EACH ENTRY TO LOCAL
-            // Entries can be items or attachments (e.g. notes)
-            
-            foreach ($entries as $entry)
+            // Check to see if item key exists in local
+            if (array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'] ))
             {
-                $item_key = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue;
-                $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
-                
-                // Check to see if item key exists in local
-                if (array_key_exists( $item_key, $zp_local_items ))
+                // Check to see if it needs updating
+                if ($retrieved != $_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]->retrieved)
                 {
-                    // Check to see if it needs updating
-                    if ($retrieved != $zp_local_items[$item_key]->retrieved)
-                    {
-                        $zp_items_to_update[$item_key] = $zp_local_items[$item_key]->id;
-                        unset($zp_local_items[$item_key]); // Leave only the local ones that should be deleted
-                    }
-                    else // ignore
-                    {
-                        unset($zp_local_items[$item_key]); // Leave only the local ones that should be deleted
-                        continue;
+                    $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'][$item_key] = $_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]->id;
+                    unset($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]); // Leave only the local ones that should be deleted
+                }
+                else // ignore
+                {
+                    unset($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]); // Leave only the local ones that should be deleted
+                    continue;
+                }
+            }
+            
+            // Item key doesn't exist in local, or needs updating, so collect metadata and add
+            $item_type = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "itemType")->item(0)->nodeValue;
+            
+            // Get citation content (json and bib)
+            
+            $citation_content = "";
+            $citation_content_temp = new DOMDocument();
+            
+            foreach($entry->getElementsByTagNameNS("http://zotero.org/ns/api", "subcontent") as $child)
+            {
+                if ($child->attributes->getNamedItem("type")->nodeValue == "json")
+                {
+                    $json_content = $child->nodeValue;
+                }
+                else // Styled citation
+                {
+                    foreach($child->childNodes as $child_content) {
+                        $citation_content_temp->appendChild($citation_content_temp->importNode($child_content, true));
+                        $citation_content = $citation_content_temp->saveHTML();
                     }
                 }
-                
-                // Item key doesn't exist in local, or needs updating, so collect metadata and add
-                $item_type = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "itemType")->item(0)->nodeValue;
-                
-                // Get citation content (json and bib)
-                
-                $citation_content = "";
-                $citation_content_temp = new DOMDocument();
-                
-                foreach($entry->getElementsByTagNameNS("http://zotero.org/ns/api", "subcontent") as $child)
-                {
-                    if ($child->attributes->getNamedItem("type")->nodeValue == "json")
-                    {
-                        $json_content = $child->nodeValue;
-                    }
-                    else // Styled citation
-                    {
-                        foreach($child->childNodes as $child_content) {
-                            $citation_content_temp->appendChild($citation_content_temp->importNode($child_content, true));
-                            $citation_content = $citation_content_temp->saveHTML();
-                        }
-                    }
-                }
-                
-                // Get basic metadata from JSON
-                $json_content_decoded = json_decode($json_content);
-                
-                $author = "";
-                $date = "";
-                $year = "";
-                $title = "";
-                $numchildren = 0;
-                $parent = "";
-                $link_mode = "";
-                
-                if (count($json_content_decoded->creators) > 0)
-                    foreach ( $json_content_decoded->creators as $creator )
+            }
+            
+            // Get basic metadata from JSON
+            $json_content_decoded = json_decode($json_content);
+            
+            $author = "";
+            $date = "";
+            $year = "";
+            $title = "";
+            $numchildren = 0;
+            $parent = "";
+            $link_mode = "";
+            
+            if (count($json_content_decoded->creators) > 0)
+                foreach ( $json_content_decoded->creators as $creator )
+                    if ($creator->creatorType == "author")
                         $author .= $creator->lastName . ", ";
-                else
-                    $author .= $creator->creators["lastName"] . ", ";
-                
-                $author = substr ($author, 0, strlen($author)-2);
-                
-                $date = $json_content_decoded->date;
-                $year = zp_extract_year($date);
-                
-                if (trim($year) == "")
-                    $year = "1977";
-                
-                $title = $json_content_decoded->title;
-                
-                $numchildren = intval($entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numChildren")->item(0)->nodeValue);
-                
-                // DOWNLOAD: Find URL
-                if ($item_type == "attachment")
-                {
-                    if (isset($json_content_decoded->linkMode))
-                        $link_mode = $json_content_decoded->linkMode;
-                }
-                
-                // PARENT
-                foreach($entry->getElementsByTagName("link") as $entry_link)
-                {
-                    if ($entry_link->getAttribute('rel') == "up") {
-                        $temp = explode("items/", $entry_link->getAttribute('href'));
-                        $temp = explode("?", $temp[1]);
-                        $parent = $temp[0];
-                    }
-                    
-                    // Get download URL
-                    if ($link_mode == "imported_file" && $entry_link->getAttribute('rel') == "self") {
-                        $citation_content = substr($entry_link->getAttribute('href'), 0, strpos($entry_link->getAttribute('href'), "?"));
-                    }
-                }
-                
-                // If item key needs updating
-                if (array_key_exists( $item_key, $zp_items_to_update ))
-                {
-                    $zp_items_to_update[$item_key] = array (
-                            "api_user_id" => $zp_account[0]->api_user_id,
-                            "item_key" => $item_key,
-                            "retrieved" => zp_db_prep($retrieved),
-                            "json" => zp_db_prep($json_content),
-                            "author" => zp_db_prep($author),
-                            "zpdate" => zp_db_prep($date),
-                            "year" => zp_db_prep($year),
-                            "title" => zp_db_prep($title),
-                            "itemType" => $item_type,
-                            "linkMode" => $link_mode,
-                            "citation" => zp_db_prep($citation_content),
-                            "style" => zp_db_prep($zp_default_style),
-                            "numchildren" => $numchildren,
-                            "parent" => $parent);
-                }
-                // If item key isn't in local, add it
-                else if (!array_key_exists( $item_key, $zp_local_items ))
-                {
-                    array_push($zp_items_to_add,
-                            $zp_account[0]->api_user_id,
-                            $item_key,
-                            zp_db_prep($retrieved),
-                            zp_db_prep($json_content),
-                            zp_db_prep($author),
-                            zp_db_prep($date),
-                            zp_db_prep($year),
-                            zp_db_prep($title),
-                            $item_type,
-                            $link_mode,
-                            zp_db_prep($citation_content),
-                            zp_db_prep($zp_default_style),
-                            $numchildren,
-                            $parent);
-                    $query_total_items_to_add++;
-                }
-                
-            } // entry
+            else
+                $author .= $creator->creators["lastName"];
             
-            unset($zp_import_curl);
-            unset($zp_import_url);
-            unset($zp_xml);
-            unset($doc_citations);
-            unset($entries);
+            $author = preg_replace('~(.*)' . preg_quote(', ', '~') . '~', '$1' . '', $author, 1);
             
-            // Move to the next set
-            $zpi += 50;
+            $date = $json_content_decoded->date;
+            $year = zp_extract_year($date);
             
-        } // while loop - every 50 items
+            if (trim($year) == "")
+                $year = "1977";
+            
+            $title = $json_content_decoded->title;
+            
+            $numchildren = intval($entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numChildren")->item(0)->nodeValue);
+            
+            // DOWNLOAD: Find URL
+            if ($item_type == "attachment")
+            {
+                if (isset($json_content_decoded->linkMode))
+                    $link_mode = $json_content_decoded->linkMode;
+            }
+            
+            // PARENT
+            foreach($entry->getElementsByTagName("link") as $entry_link)
+            {
+                if ($entry_link->getAttribute('rel') == "up") {
+                    $temp = explode("items/", $entry_link->getAttribute('href'));
+                    $temp = explode("?", $temp[1]);
+                    $parent = $temp[0];
+                }
+                
+                // Get download URL
+                if ($link_mode == "imported_file" && $entry_link->getAttribute('rel') == "self") {
+                    $citation_content = substr($entry_link->getAttribute('href'), 0, strpos($entry_link->getAttribute('href'), "?"));
+                }
+            }
+            
+            
+            // If item key needs updating
+            if (array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'] ))
+            {
+                $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'][$item_key] = array (
+                        "api_user_id" => $zp_account[0]->api_user_id,
+                        "item_key" => $item_key,
+                        "retrieved" => zp_db_prep($retrieved),
+                        "json" => zp_db_prep($json_content),
+                        "author" => zp_db_prep($author),
+                        "zpdate" => zp_db_prep($date),
+                        "year" => zp_db_prep($year),
+                        "title" => zp_db_prep($title),
+                        "itemType" => $item_type,
+                        "linkMode" => $link_mode,
+                        "citation" => zp_db_prep($citation_content),
+                        "style" => zp_db_prep($zp_default_style),
+                        "numchildren" => $numchildren,
+                        "parent" => $parent);
+            }
+            // If item key isn't in local, add it
+            else if (!array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'] ))
+            {
+                array_push($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add'],
+                        $zp_account[0]->api_user_id,
+                        $item_key,
+                        zp_db_prep($retrieved),
+                        zp_db_prep($json_content),
+                        zp_db_prep($author),
+                        zp_db_prep($date),
+                        zp_db_prep($year),
+                        zp_db_prep($title),
+                        $item_type,
+                        $link_mode,
+                        zp_db_prep($citation_content),
+                        zp_db_prep($zp_default_style),
+                        $numchildren,
+                        $parent);
+                
+                $_SESSION['zp_session'][$api_user_id]['items']['query_total_items_to_add']++;
+            }
+            
+        } // foreach entry
         
         
+        // LAST ITEM
+        //if ($_SESSION['zp_session'][$api_user_id]['items']['zp_server_item_count'] == $_SESSION['zp_session'][$api_user_id]['items']['zp_current_local_count'])
+        if ($_SESSION['zp_session'][$api_user_id]['items']['last_set'] == $zp_start)
+        {
+            return false;
+        }
+        else // continue to next set of items
+        {
+            return true;
+        }
+        
+        unset($zp_import_curl);
+        unset($zp_import_url);
+        unset($zp_xml);
+        unset($doc_citations);
+        unset($entries);
+        
+    } // FUNCTION: zp_get_server_items
+    
+    
+    
+    function zp_save_synced_items ($wpdb, $api_user_id)
+    {
         // RUN QUERIES: UPDATE
         
-        if (count($zp_items_to_update) > 0)
+        if (count($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update']) > 0)
         {
-            foreach ($zp_items_to_update as $item_params)
+            foreach ($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'] as $item_params)
             {
                 $wpdb->update( 
                     $wpdb->prefix.'zotpress_zoteroItems', 
@@ -267,14 +301,14 @@
         
         // ADD
         
-        if (count($zp_items_to_add) > 0)
+        if (count($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add']) > 0)
         {
             $wpdb->query( $wpdb->prepare(
                     "
                     INSERT INTO ".$wpdb->prefix."zotpress_zoteroItems 
                     ( api_user_id, item_key, retrieved, json, author, zpdate, year, title, itemType, linkMode, citation, style, numchildren, parent )
-                    VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )".str_repeat(", ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )", $query_total_items_to_add-1), 
-                $zp_items_to_add
+                    VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )".str_repeat(", ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )", $_SESSION['zp_session'][$api_user_id]['items']['query_total_items_to_add']-1), 
+                $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add']
             ) );
             
             $wpdb->flush();
@@ -282,9 +316,9 @@
         
         // REMOVE
         
-        if (count($zp_local_items) > 0)
+        if (count($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items']) > 0)
         {
-            foreach ($zp_local_items as $item_params)
+            foreach ($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'] as $item_params)
             {
                 $wpdb->query( $wpdb->prepare( 
                         "
@@ -299,20 +333,25 @@
             $wpdb->flush();
         }
         
-        unset($zp_items_to_update);
-        unset($query_total_items_to_add);
-        unset($zp_items_to_add);
-        unset($zp_local_items);
+        unset($_SESSION['zp_session'][$api_user_id]['items']);
+        //unset($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update']);
+        //unset($_SESSION['zp_session'][$api_user_id]['items']['query_total_items_to_add']);
+        //unset($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add']);
+        //unset($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items']);
         
-    } // FUNCTION: zp_get_server_items
+    } // FUNCTION: zp_save_synced_items
     
     
     
-    function zp_get_local_collections ($wpdb, $zp_account, $limit=0)
+    /****************************************************************************************
+    *
+    *     ZOTPRESS SYNC COLLECTIONS
+    *
+    ****************************************************************************************/
+    
+    function zp_get_local_collections ($wpdb, $api_user_id)
     {
-        $query = "SELECT * FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$zp_account[0]->api_user_id."'";
-        if ($limit > 0)
-            $query .= " LIMIT ".$limit;
+        $query = "SELECT * FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$api_user_id."'";
         
         $results = $wpdb->get_results( $query, OBJECT );
         $items = array();
@@ -329,21 +368,14 @@
     
     
     
-    function zp_get_server_collections ($wpdb, $zp_account, $nokey, $zp_local_collections, $limit=0)
+    function zp_get_server_collections ($wpdb, $api_user_id, $zp_start)
     {
-        $zp_collections_to_update = array();
-        $zp_collections_to_add = array();
-        $query_total_collections_to_add = 0;
-        
-        
-        // IMPORT COLLECTIONS
-        
         $zp_import_curl = new CURL();
+        $zp_account = $_SESSION['zp_session'][$api_user_id]['zp_account'];
         
-        if ($nokey === true)
-            $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections?limit=50";
-        else
-            $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections?key=".$zp_account[0]->public_key."&limit=50";
+        $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections?limit=50&start=".$zp_start;
+        if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
+            $zp_import_url .= "&key=".$zp_account[0]->public_key;
         
         if (in_array ('curl', get_loaded_extensions()))
             $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
@@ -355,147 +387,162 @@
         $doc_citations = new DOMDocument();
         $doc_citations->loadXML($zp_xml);
         
-        // Get request pages to loop through
-        $max_page = "";
-        $current_page = 0;
-        $links = $doc_citations->getElementsByTagName("link");
-        
-        foreach ($links as $link)
+        // Get last set
+        if (!isset($_SESSION['zp_session'][$api_user_id]['collections']['last_set']))
         {
-            if ($link->getAttribute('rel') == "last") {
-                $max_page = explode("start=", $link->getAttribute('href'));
-                $max_page = intval($max_page[1])+50;
-                break;
+            $last_set = "";
+            $links = $doc_citations->getElementsByTagName("link");
+            
+            foreach ($links as $link)
+            {
+                if ($link->getAttribute('rel') == "last")
+                {
+                    if (stripos($link->getAttribute('href'), "start=") !== false)
+                    {
+                        $last_set = explode("start=", $link->getAttribute('href'));
+                        $_SESSION['zp_session'][$api_user_id]['collections']['last_set'] = intval($last_set[1]);
+                    }
+                    else
+                    {
+                        $_SESSION['zp_session'][$api_user_id]['collections']['last_set'] = 0;
+                    }
+                }
             }
         }
         
-        while ($current_page != $max_page)
+        
+        // PREPARE EACH ENTRY FOR DB INSERT
+        
+        $entries = $doc_citations->getElementsByTagName("entry");
+        
+        foreach ($entries as $entry)
         {
-            // PREPARE EACH ENTRY FOR DB INSERT
+            $item_key = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue;
+            $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
             
-            $entries = $doc_citations->getElementsByTagName("entry");
-            
-            foreach ($entries as $entry)
+            // Check to see if item key exists in local
+            if (array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'] ))
             {
-                $item_key = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue;
-                $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
-                
-                // Check to see if item key exists in local
-                if (array_key_exists( $item_key, $zp_local_collections ))
+                // Check to see if it needs updating
+                if ($retrieved != $_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]->retrieved)
                 {
-                    // Check to see if it needs updating
-                    if ($retrieved != $zp_local_collections[$item_key]->retrieved)
-                    {
-                        $zp_collections_to_update[$item_key] = $zp_local_collections[$item_key]->id;
-                        unset($zp_local_collections[$item_key]); // Leave only the local ones that should be deleted
-                    }
-                    else // ignore
-                    {
-                        unset($zp_local_collections[$item_key]); // Leave only the local ones that should be deleted
-                        continue;
-                    }
+                    $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'][$item_key] = $_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]->id;
+                    unset($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]); // Leave only the local ones that should be deleted
                 }
-                
-                $title = $entry->getElementsByTagName("title")->item(0)->nodeValue;
-                $parent = "";
-                
-                // Get parent collection
-                foreach($entry->getElementsByTagName("link") as $link)
+                else // ignore
                 {
-                    if ($link->attributes->getNamedItem("rel")->nodeValue == "up")
-                    {
-                        $parent_temp = explode("/", $link->attributes->getNamedItem("href")->nodeValue);
-                        $parent = $parent_temp[count($parent_temp)-1];
-                    }
+                    unset($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]); // Leave only the local ones that should be deleted
+                    continue;
                 }
-                
-                $numCollections = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numCollections")->item(0)->nodeValue;
-                $numItems = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numItems")->item(0)->nodeValue;
-                
-                unset($zp_import_curl);
-                unset($zp_import_url);
-                unset($zp_xml);
-                
-                
-                
-                // GET LIST OF ITEM KEYS
-                $zp_import_curl = new CURL();
-                
-                if ($nokey === true)
-                    $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections/".$item_key."/items?format=keys";
-                else
-                    $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections/".$item_key."/items?key=".$zp_account[0]->public_key."&format=keys";
-                
-                // Import depending on method: cURL or file_get_contents
-                if (in_array ('curl', get_loaded_extensions()))
-                    $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-                else // Use the old way:
-                    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
-                
-                $zp_collection_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
-                
-                
-                
-                // If item key needs updating
-                if (array_key_exists( $item_key, $zp_collections_to_update ))
+            }
+            
+            $title = $entry->getElementsByTagName("title")->item(0)->nodeValue;
+            $parent = "";
+            
+            // Get parent collection
+            foreach($entry->getElementsByTagName("link") as $link)
+            {
+                if ($link->attributes->getNamedItem("rel")->nodeValue == "up")
                 {
-                    $zp_collections_to_update[$item_key] = array (
-                            "api_user_id" => $zp_account[0]->api_user_id,
-                            "title" => zp_db_prep($title),
-                            "retrieved" => zp_db_prep($retrieved),
-                            "parent" => $parent,
-                            "item_key" => $item_key,
-                            "numCollections" => $numCollections,
-                            "numItems" => $numItems,
-                            "listItems" => zp_db_prep($zp_collection_itemkeys)
-                            );
+                    $parent_temp = explode("/", $link->attributes->getNamedItem("href")->nodeValue);
+                    $parent = $parent_temp[count($parent_temp)-1];
                 }
-                // If item key isn't in local, add it
-                else if (!array_key_exists( $item_key, $zp_local_collections ))
-                {
-                    array_push($zp_collections_to_add,
-                        $zp_account[0]->api_user_id,
-                        zp_db_prep($title),
-                        zp_db_prep($retrieved),
-                        $parent,
-                        $item_key,
-                        $numCollections,
-                        $numItems,
-                        zp_db_prep($zp_collection_itemkeys)
-                        );
-                    $query_total_collections_to_add++;
-                }
-                
-            } // entry
+            }
+            
+            $numCollections = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numCollections")->item(0)->nodeValue;
+            $numItems = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numItems")->item(0)->nodeValue;
+            
+            unset($zp_import_curl);
+            unset($zp_import_url);
+            unset($zp_xml);
             
             
-            // MOVE ON TO THE NEXT REQUEST PAGE
             
-            $current_page += 50;
+            // GET LIST OF ITEM KEYS
             $zp_import_curl = new CURL();
             
-            if ($nokey === true)
-                $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections?limit=50&start=$current_page";
-            else
-                $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections?key=".$zp_account[0]->public_key."&limit=50&start=$current_page";
+            $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections/".$item_key."/items?format=keys";
+            if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
+                $zp_import_url .= "&key=".$zp_account[0]->public_key;
             
+            // Import depending on method: cURL or file_get_contents
             if (in_array ('curl', get_loaded_extensions()))
                 $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
             else // Use the old way:
                 $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
             
-            // Make it DOM-traversable 
-            $doc_citations = new DOMDocument();
-            $doc_citations->loadXML($zp_xml);
+            $zp_collection_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
             
-        } // while
+            
+            
+            // If item key needs updating
+            if (array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'] ))
+            {
+                $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'][$item_key] = array (
+                        "api_user_id" => $zp_account[0]->api_user_id,
+                        "title" => zp_db_prep($title),
+                        "retrieved" => zp_db_prep($retrieved),
+                        "parent" => $parent,
+                        "item_key" => $item_key,
+                        "numCollections" => $numCollections,
+                        "numItems" => $numItems,
+                        "listItems" => zp_db_prep($zp_collection_itemkeys)
+                        );
+            }
+            // If item key isn't in local, add it
+            else if (!array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'] ))
+            {
+                array_push($_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_add'],
+                    $zp_account[0]->api_user_id,
+                    zp_db_prep($title),
+                    zp_db_prep($retrieved),
+                    $parent,
+                    $item_key,
+                    $numCollections,
+                    $numItems,
+                    zp_db_prep($zp_collection_itemkeys)
+                    );
+                $_SESSION['zp_session'][$api_user_id]['collections']['query_total_collections_to_add']++;
+            }
+            
+            unset($title);
+            unset($retrieved);
+            unset($parent);
+            unset($item_key);
+            unset($numCollections);
+            unset($numItems);
+            unset($zp_collection_itemkeys);
+            
+        } // entry
         
         
+        // LAST SET
+        if ($_SESSION['zp_session'][$api_user_id]['collections']['last_set'] == $zp_start)
+        {
+            return $_SESSION['zp_session'][$api_user_id]['collections'];
+        }
+        else // continue to next set of collections
+        {
+            return true;
+        }
+        
+        unset($zp_import_curl);
+        unset($zp_import_url);
+        unset($zp_xml);
+        unset($doc_citations);
+        unset($entries);
+        
+    } // FUNCTION: zp_get_server_collections
+    
+    
+    
+    function zp_save_synced_collections ($wpdb, $api_user_id)
+    {
         // RUN QUERIES: UPDATE
         
-        if (count($zp_collections_to_update) > 0)
+        if (count($_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update']) > 0)
         {
-            foreach ($zp_collections_to_update as $item_params)
+            foreach ($_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'] as $item_params)
             {
                 $wpdb->update( 
                     $wpdb->prefix.'zotpress_zoteroCollections', 
@@ -511,14 +558,14 @@
         
         // ADD
         
-        if (count($zp_collections_to_add) > 0)
+        if (count($_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_add']) > 0)
         {
             $wpdb->query( $wpdb->prepare(
                     "
                         INSERT INTO ".$wpdb->prefix."zotpress_zoteroCollections
                         ( api_user_id, title, retrieved, parent, item_key, numCollections, numItems, listItems )
-                        VALUES ( %s, %s, %s, %s, %s, %d, %d, %s )".str_repeat(", ( %s, %s, %s, %s, %s, %d, %d, %s )", $query_total_collections_to_add-1), 
-                $zp_collections_to_add
+                        VALUES ( %s, %s, %s, %s, %s, %d, %d, %s )".str_repeat(", ( %s, %s, %s, %s, %s, %d, %d, %s )", $_SESSION['zp_session'][$api_user_id]['collections']['query_total_collections_to_add']-1), 
+                $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_add']
             ) );
             
             $wpdb->flush();
@@ -526,9 +573,9 @@
         
         // REMOVE
         
-        if (count($zp_local_collections) > 0)
+        if (count($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections']) > 0)
         {
-            foreach ($zp_local_collections as $item_params)
+            foreach ($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'] as $item_params)
             {
                 $wpdb->query( $wpdb->prepare( 
                         "
@@ -543,26 +590,21 @@
             $wpdb->flush();
         }
         
-        unset($zp_collections_to_update);
-        unset($query_total_collections_to_add);
-        unset($zp_collections_to_add);
-        unset($zp_local_collections);
-        unset($zp_import_query);
-        unset($zp_import_curl);
-        unset($zp_import_url);
-        unset($zp_xml);
-        unset($doc_citations);
-        unset($entries);
+        unset($_SESSION['zp_session'][$api_user_id]['collections']);
         
-    } // FUNCTION: zp_get_server_collections    
+    } // FUNCTION: zp_save_synced_collections
+
     
     
+    /****************************************************************************************
+    *
+    *     ZOTPRESS SYNC TAGS
+    *
+    ****************************************************************************************/
     
-    function zp_get_local_tags ($wpdb, $zp_account, $limit=0)
+    function zp_get_local_tags ($wpdb, $api_user_id)
     {
-        $query = "SELECT * FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$zp_account[0]->api_user_id."'";
-        if ($limit > 0)
-            $query .= " LIMIT ".$limit;
+        $query = "SELECT * FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$api_user_id."'";
         
         $results = $wpdb->get_results( $query, OBJECT );
         $items = array();
@@ -579,20 +621,15 @@
     
     
     
-    function zp_get_server_tags ($wpdb, $zp_account, $nokey, $zp_local_tags, $limit=0)
+    function zp_get_server_tags ($wpdb, $api_user_id, $zp_start)
     {
-        $zp_tags_to_update = array();
-        $zp_tags_to_add = array();
-        $query_total_tags_to_add = 0;
-        
-        
-        // Get first 50 tags
         $zp_import_curl = new CURL();
+        $zp_account = $_SESSION['zp_session'][$api_user_id]['zp_account'];
         
-        if ($nokey === true)
-            $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags?limit=50";
-        else
-            $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags?key=".$zp_account[0]->public_key."&limit=50";
+        // Build request URL
+        $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags?limit=50&start=".$zp_start;
+        if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
+            $zp_import_url .= "&key=".$zp_account[0]->public_key;
         
         if (in_array ('curl', get_loaded_extensions()))
             $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
@@ -603,130 +640,136 @@
         $doc_citations = new DOMDocument();
         $doc_citations->loadXML($zp_xml);
         
-        // Get request pages to loop through
-        $max_page = "";
-        $current_page = 0;
-        $links = $doc_citations->getElementsByTagName("link");
-        
-        foreach ($links as $link)
+        // Get last set
+        if (!isset($_SESSION['zp_session'][$api_user_id]['tags']['last_set']))
         {
-            if ($link->getAttribute('rel') == "last") {
-                $max_page = explode("start=", $link->getAttribute('href'));
-                $max_page = intval($max_page[1])+50;
-                break;
+            $last_set = "";
+            $links = $doc_citations->getElementsByTagName("link");
+            
+            foreach ($links as $link)
+            {
+                if ($link->getAttribute('rel') == "last")
+                {
+                    if (stripos($link->getAttribute('href'), "start=") !== false)
+                    {
+                        $last_set = explode("start=", $link->getAttribute('href'));
+                        $_SESSION['zp_session'][$api_user_id]['tags']['last_set'] = intval($last_set[1]);
+                    }
+                    else
+                    {
+                        $_SESSION['zp_session'][$api_user_id]['tags']['last_set'] = 0;
+                    }
+                }
             }
         }
         
-        while ($current_page != $max_page)
+       $entries = $doc_citations->getElementsByTagName("entry");
+        
+        foreach ($entries as $entry)
         {
-            $entries = $doc_citations->getElementsByTagName("entry");
+            $title = $entry->getElementsByTagName("title")->item(0)->nodeValue;
+            $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
             
-            foreach ($entries as $entry)
+            // Check to see if tags exists in local
+            if (array_key_exists( trim($title), $_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'] ))
             {
-                $title = $entry->getElementsByTagName("title")->item(0)->nodeValue;
-                $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
-                
-                // Check to see if tags exists in local
-                if (array_key_exists( trim($title), $zp_local_tags ))
+                // Check to see if it needs updating
+                if ($retrieved != $_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]->retrieved)
                 {
-                    // Check to see if it needs updating
-                    if ($retrieved != $zp_local_tags[trim($title)]->retrieved)
-                    {
-                        $zp_tags_to_update[trim($title)] = $zp_local_tags[trim($title)]->id;
-                        unset($zp_local_tags[trim($title)]); // Leave only the local ones that should be deleted
-                    }
-                    else // ignore
-                    {
-                        unset($zp_local_tags[trim($title)]); // Leave only the local ones that should be deleted
-                        continue;
-                    }
+                    $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'][trim($title)] = $_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]->id;
+                    unset($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]); // Leave only the local ones that should be deleted
                 }
-                
-                $numItems = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numItems")->item(0)->nodeValue;
-                
-                unset($zp_import_curl);
-                unset($zp_import_url);
-                unset($zp_xml);
-                
-                
-                
-                // GET LIST OF ITEM KEYS
-                $zp_import_curl = new CURL();
-                
-                if ($nokey === true)
-                    $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags/".urlencode($title)."/items?format=keys";
-                else
-                    $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags/".urlencode($title)."/items?key=".$zp_account[0]->public_key."&format=keys";
-                
-                // Import depending on method: cURL or file_get_contents
-                if (in_array ('curl', get_loaded_extensions()))
-                    $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-                else // Use the old way:
-                    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
-                
-                $zp_tag_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
-                
-                
-                
-                // If item key needs updating
-                if (array_key_exists( trim($title), $zp_tags_to_update ))
+                else // ignore
                 {
-                    $zp_tags_to_update[trim($title)] = array (
-                            "api_user_id" => $zp_account[0]->api_user_id,
-                            "title" => zp_db_prep($title),
-                            "retrieved" => zp_db_prep($retrieved),
-                            "numItems" => $numItems,
-                            "listItems" => zp_db_prep($zp_tag_itemkeys)
-                            );
+                    unset($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]); // Leave only the local ones that should be deleted
+                    continue;
                 }
-                // If item key isn't in local, add it
-                else if (!array_key_exists( trim($title), $zp_local_tags ))
-                {
-                    array_push($zp_tags_to_add,
-                        $zp_account[0]->api_user_id,
-                        zp_db_prep($title),
-                        zp_db_prep($retrieved),
-                        $numItems,
-                        zp_db_prep($zp_tag_itemkeys)
-                        );
-                    $query_total_tags_to_add++;
-                }
-                
-                unset($title);
-                unset($retrieved);
-                unset($numItems);
-                unset($zp_tag_itemkeys);
-                
-            } // entry
+            }
+            
+            $numItems = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numItems")->item(0)->nodeValue;
+            
+            unset($zp_import_curl);
+            unset($zp_import_url);
+            unset($zp_xml);
             
             
-            // MOVE ON TO THE NEXT REQUEST PAGE
             
-            $current_page += 50;
+            // GET LIST OF ITEM KEYS
             $zp_import_curl = new CURL();
             
-            if ($nokey === true)
-                $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags?limit=50&start=$current_page";
-            else
-                $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags?key=".$zp_account[0]->public_key."&limit=50&start=$current_page";
+            $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags/".urlencode($title)."/items?format=keys";
+            if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
+                $zp_import_url .= "&key=".$zp_account[0]->public_key;
             
+            // Import depending on method: cURL or file_get_contents
             if (in_array ('curl', get_loaded_extensions()))
                 $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
             else // Use the old way:
                 $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
             
-            // Make it DOM-traversable 
-            $doc_citations = new DOMDocument();
-            $doc_citations->loadXML($zp_xml);
+            $zp_tag_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
             
-        } // while page
+            
+            
+            // If item key needs updating
+            if (array_key_exists( trim($title), $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'] ))
+            {
+                $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'][trim($title)] = array (
+                        "api_user_id" => $zp_account[0]->api_user_id,
+                        "title" => zp_db_prep($title),
+                        "retrieved" => zp_db_prep($retrieved),
+                        "numItems" => $numItems,
+                        "listItems" => zp_db_prep($zp_tag_itemkeys)
+                        );
+            }
+            // If item key isn't in local, add it
+            else if (!array_key_exists( trim($title), $_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'] ))
+            {
+                array_push($_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_add'],
+                    $zp_account[0]->api_user_id,
+                    zp_db_prep($title),
+                    zp_db_prep($retrieved),
+                    $numItems,
+                    zp_db_prep($zp_tag_itemkeys)
+                    );
+                $_SESSION['zp_session'][$api_user_id]['tags']['query_total_tags_to_add']++;
+            }
+            
+            unset($title);
+            unset($retrieved);
+            unset($numItems);
+            unset($zp_tag_itemkeys);
+            
+        } // entry
         
         
+        // LAST SET
+        if ($_SESSION['zp_session'][$api_user_id]['tags']['last_set'] == $zp_start)
+        {
+            return false;
+        }
+        else // continue to next set of tags
+        {
+            return true;
+        }
+        
+        unset($zp_import_curl);
+        unset($zp_import_url);
+        unset($zp_xml);
+        unset($doc_citations);
+        unset($entries);
+        
+    } // FUNCTION: zp_get_server_tags
+    
+    
+    
+    function zp_save_synced_tags ($wpdb, $api_user_id)
+    {
         // RUN QUERIES: UPDATE
         
-        if (count($zp_tags_to_update) > 0)
+        if (count($_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update']) > 0)
         {
-            foreach ($zp_tags_to_update as $item_params)
+            foreach ($_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'] as $item_params)
             {
                 $wpdb->update( 
                     $wpdb->prefix.'zotpress_zoteroTags', 
@@ -742,14 +785,14 @@
         
         // ADD
         
-        if (count($zp_tags_to_add) > 0)
+        if (count($_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_add']) > 0)
         {
             $wpdb->query( $wpdb->prepare(
                     "
                         INSERT INTO ".$wpdb->prefix."zotpress_zoteroTags
                         ( api_user_id, title, retrieved, numItems, listItems )
-                        VALUES ( %s, %s, %s, %d, %s )".str_repeat(", ( %s, %s, %s, %d, %s )", $query_total_tags_to_add-1), 
-                $zp_tags_to_add
+                        VALUES ( %s, %s, %s, %d, %s )".str_repeat(", ( %s, %s, %s, %d, %s )", $_SESSION['zp_session'][$api_user_id]['tags']['query_total_tags_to_add']-1), 
+                $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_add']
             ) );
             
             $wpdb->flush();
@@ -757,9 +800,9 @@
         
         // REMOVE
         
-        if (count($zp_local_tags) > 0)
+        if (count($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags']) > 0)
         {
-            foreach ($zp_local_tags as $item_params)
+            foreach ($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'] as $item_params)
             {
                 $wpdb->query( $wpdb->prepare( 
                         "
@@ -774,18 +817,9 @@
             $wpdb->flush();
         }
         
-        unset($zp_tags_to_update);
-        unset($query_total_tags_to_add);
-        unset($zp_tags_to_add);
-        unset($zp_local_tags);
-        unset($zp_import_query);
-        unset($zp_import_curl);
-        unset($zp_import_url);
-        unset($zp_xml);
-        unset($doc_citations);
-        unset($entries);
+        unset($_SESSION['zp_session'][$api_user_id]['tags']);
         
-    } // FUNCTION: zp_get_server_tags
+    } // FUNCTION: zp_save_synced_tags
 
 
 

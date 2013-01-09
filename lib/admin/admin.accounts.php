@@ -13,7 +13,9 @@
     {
         include("admin.accounts.oauth.php");
         
-    } else { ?>
+    } else {
+        
+    ?>
     
         <div id="zp-Zotpress" class="wrap">
             
@@ -46,11 +48,23 @@
                                 
                                 foreach ($accounts as $num => $account)
                                 {
+                                    // Set up sync sessions
+                                    $zp_session_key = "";
+                                    if (!isset($_SESSION['zp_session'][$account->api_user_id]['key']))
+                                    {
+                                        $zp_session_key = substr(number_format(time() * rand(),0,'',''),0,10); /* Thanks to http://elementdesignllc.com/2011/06/generate-random-10-digit-number-in-php/ */
+                                        $_SESSION['zp_session'][$account->api_user_id]['key'] = $zp_session_key;
+                                    }
+                                    else // already set
+                                    {
+                                        $zp_session_key = $_SESSION['zp_session'][$account->api_user_id]['key'];
+                                    }
+                                    
                                     $zebra = " stripe";
                                     if ($num % 2 == 0)
                                         $zebra = "";
                                         
-                                    $code = "<div class='zp-Account".$zebra."'>\n";
+                                    $code = "<div id='zp-Account-" . $account->api_user_id . "' class='zp-Account".$zebra."' rel='" . $account->api_user_id . "'>\n";
                                     
                                     // ACCOUNT TYPE
                                     $code .= "                          <span class='account_type first'>" . $account->account_type . "</span>\n";
@@ -79,9 +93,10 @@
                                     
                                     // ACTIONS
                                     $code .= "                          <span class='delete last'>\n";
-                                    $code .= "                              <a title='Sync' class='sync' rel='".$account->api_user_id."' href='javascript:void(0);'>Sync</a>\n";
+                                    $code .= "                              <a title='Sync' class='sync' rel='".$account->api_user_id."' href='javascript:void(0);'>Sync<span style=\"display:none;\">".$zp_session_key."</a>\n";
                                     $code .= "                              <a title='(Re)Import' class='import' href='admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=" . $account->api_user_id . "'>Import</a>\n";
                                     $code .= "                              <a title='Remove this account' class='delete' href='#" . $account->id . "'>Remove</a>\n";
+                                    $code .= "                              <span class='zp-Sync-Messages'>&nbsp;</span>\n";
                                     $code .= "                          </span>\n";
                                     
                                     $code .= "                         </div>\n\n";

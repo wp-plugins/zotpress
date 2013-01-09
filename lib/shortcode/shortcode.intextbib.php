@@ -61,6 +61,7 @@
         
         $zp_output = "\n<div class=\"zp-Zotpress\">\n\n";
         $zp_output .= "<span class=\"ZOTPRESS_PLUGIN_URL\" style=\"display:none;\">" . ZOTPRESS_PLUGIN_URL . "</span>\n\n";
+        
         //$zp_output .= "<span class=\"ZOTPRESS_UPDATE_NOTICE\">Checking ...</span>\n\n";
         
         // Add style, if set
@@ -73,6 +74,11 @@
             $has_citation_image = false;
             $zp_this_meta = json_decode( $zp_citation["json"] );
             $zp_output .= "<span class=\"zp-Zotpress-Userid\" style=\"display:none;\">".$zp_citation['userid']."</span>\n\n";
+            
+            // AUTOUPDATE
+            //if (!isset($_SESSION['zp_session'][$zp_citation['userid']]['key']))
+            //    $_SESSION['zp_session'][$zp_citation['userid']]['key'] = substr(number_format(time() * rand(),0,'',''),0,10); /* Thanks to http://elementdesignllc.com/2011/06/generate-random-10-digit-number-in-php/ */
+            //$zp_output .= "<span class=\"ZOTPRESS_AUTOUPDATE_KEY\" style=\"display:none;\">" . $_SESSION['zp_session'][$zp_citation['userid']]['key'] . "</span>\n\n";
             
             // IMAGE
             if ($showimage == "yes" && is_null($zp_citation["image"]) === false && $zp_citation["image"] != "")

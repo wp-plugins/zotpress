@@ -94,7 +94,7 @@
             
             // PREPARE ITEM QUERY
             
-            $zp_query = "SELECT item_key, author, title, citation, zpdate, image, json
+            $zp_query = "SELECT item_key, author, title, citation, zpdate, image, json, style 
                     FROM ".$wpdb->prefix."zotpress_zoteroItems
                     WHERE api_user_id='".$api_user_id."' AND ";
             
@@ -185,7 +185,8 @@
                         "download" => $item->download,
                         "image" => $item->image,
                         "json" => $item->json,
-                        "citation" => $item->citation
+                        "citation" => $item->citation,
+                        "style" => $item->style
                     );
             }
             

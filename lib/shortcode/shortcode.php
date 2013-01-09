@@ -504,6 +504,7 @@
                     $has_citation_image = false;
                     $zp_this_meta = json_decode( $zp_citation["json"] );
                     $zp_output .= "<span class=\"zp-Zotpress-Userid\" style=\"display:none;\">".$zp_citation['api_user_id']."</span>\n\n";
+                    //$zp_output .= "<span class=\"ZOTPRESS_AUTOUPDATE_KEY\" style=\"display:none;\">" . $_SESSION['zp_session'][$zp_citation['api_user_id']]['key'] . "</span>\n\n";
                     
                     // IMAGE
                     if ($showimage && !is_null($zp_citation["image"]) && $zp_citation["image"] != "")
@@ -562,7 +563,7 @@
                     }
                     
                     // CITE LINK
-                    if ($cite)
+                    if ($cite == "yes" || $cite == "true" || $cite === true)
                     {
                         $cite_url = "https://api.zotero.org/".$zp_account->account_type."/".$zp_account->api_user_id."/items/".$zp_citation["item_key"]."?format=ris";
                         $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>(Cite)</a> </div>" . '$2', $zp_citation['citation'], 1);

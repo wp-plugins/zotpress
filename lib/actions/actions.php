@@ -130,10 +130,17 @@
     {
         if (preg_match("/^[0-9]+$/", $_GET['delete']))
         {
-            $query = "DELETE FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['delete']."'";
+            // Get api_user_id
+            $api_user_id = $wpdb->get_var("SELECT api_user_id FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['delete']."'");
             
-            // Insert new list item into the list:
-            $wpdb->query($query);
+            // Delete account and items
+            $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['delete']."'");
+            $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."'");
+            $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$api_user_id."'");
+            $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$api_user_id."'");
+            
+            $wpdb->flush();
+            unset($api_user_id);
             
             // Display success XML
             $xml .= "<result success='true' />\n";

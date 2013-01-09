@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bring Zotero and scholarly blogging to your Wordpress site.
     Author: Katie Seaborn
-    Version: 5.0.2
+    Version: 5.0.3
     Author URI: http://katieseaborn.com
     
 */
@@ -235,6 +235,19 @@
         wp_enqueue_style('zotpress.shortcode.css');
     }
     
+    // SESSION HANDLING
+    // Thanks to http://devondev.com/2012/02/03/using-the-php-session-in-wordpress/
+    
+    function Zotpress_import_session()
+    {
+        if (!session_id()) { session_start(); }
+    }
+    
+    function Zotpress_import_session_end()
+    {
+        //session_destroy(); // just in case there's more than one session
+        unset($_SESSION['zp_session']);
+    }
     
     /*
      
@@ -244,10 +257,15 @@
     
     if (isset($_GET['page']) && $_GET['page'] == 'Zotpress')
     {
+        add_action('init', 'Zotpress_import_session');
+        
         add_action('admin_print_scripts', 'Zotpress_admin_scripts');
         add_action('admin_print_styles', 'Zotpress_admin_styles');
         add_action('admin_footer', 'Zotpress_admin_footer');
     }
+    
+    add_action('wp_logout', 'Zotpress_import_session_end');
+    add_action('wp_login', 'Zotpress_import_session_end');
     
     // For post and page editing and CKEDITOR only
     if (
@@ -275,7 +293,7 @@
     add_action( 'widgets_init', 'ZotpressSidebarWidgetInit' );
     
     // Conditionally serve shortcode scripts
-    function Zotpress_theme_conditional_scripts()
+    function Zotpress_theme_conditional_scripts_footer()
     {
         if ( $GLOBALS['zp_is_shortcode_displayed'] === true)
         {
@@ -290,7 +308,7 @@
         }
     }
 
-    add_action('wp_footer', 'Zotpress_theme_conditional_scripts');
+    add_action('wp_footer', 'Zotpress_theme_conditional_scripts_footer');
     add_action('wp_print_styles', 'Zotpress_theme_includes');
     
     // Metabox

@@ -43,47 +43,6 @@ jQuery(document).ready(function() {
     
     
     /*
-     
-        SETUP "IMPORT" BUTTON
-        
-    */
-    
-    jQuery("iframe#zp-Setup-Import").ready(function() {
-        
-        //if (!jQuery("input#zp-Zotpress-Setup-Import").hasClass("import"))
-        //{
-            jQuery("input#zp-Zotpress-Setup-Import").removeAttr('disabled');
-            
-            jQuery("input#zp-Zotpress-Setup-Import").click(function()
-            {
-                jQuery("div.zp-Loading-Initial").show();
-                jQuery("#zp-Import-Messages").show();
-                jQuery(this).attr('disabled', 'true');
-                
-                var currentSrc = jQuery("iframe#zp-Setup-Import").attr('src');
-                
-                if (currentSrc.indexOf("api_user_id") == -1)
-                    jQuery("iframe#zp-Setup-Import").attr('src', jQuery("iframe#zp-Setup-Import").attr('src') + "?go=true&step=items");
-                else
-                    jQuery("iframe#zp-Setup-Import").attr('src', jQuery("iframe#zp-Setup-Import").attr('src') + "&go=true&step=items");
-                
-                //alert(jQuery("iframe#zp-Setup-Import").attr('src'));
-                
-                return false;
-            });
-        //}
-        //else // still importing
-        //{
-        //    jQuery("div.zp-Loading-Initial.zp-Loading-Import").show();
-        //    jQuery("span#zp-Import-Messages").show();
-        //}
-        
-    });
-
-    
-    
-    
-    /*
         
         SYNC ACCOUNT WITH ZOTPRESS
         
@@ -210,8 +169,32 @@ jQuery(document).ready(function() {
     
     
     /*
+     
+        SET UP IMPORT BUTTON
         
-        SYNC (IMPORT) BUTTON
+    */
+    
+    jQuery("iframe#zp-Setup-Import").ready(function()
+    {
+        jQuery("input#zp-Zotpress-Setup-Import").removeAttr('disabled');
+        
+        jQuery("input#zp-Zotpress-Setup-Import").click(function()
+        {
+            jQuery("div.zp-Loading-Initial").show();
+            jQuery("#zp-Import-Messages").show();
+            jQuery(this).attr('disabled', 'true');
+            
+            jQuery("iframe#zp-Setup-Import").attr('src', jQuery("iframe#zp-Setup-Import").attr('src') + "&go=true&step=items");
+            
+            return false;
+        });
+    });
+    
+    
+    
+    /*
+        
+        SET UP SYNC BUTTON
         
     */
 
@@ -227,24 +210,22 @@ jQuery(document).ready(function() {
         $this.removeClass("error");
         $this.addClass("syncing");
         
-        // Set up uri
-        var xmlUri = jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel");
-        //alert(xmlUri);
-        
-        // AJAX
-        jQuery.get(xmlUri, {}, function(xml)
+        // Add sync iframe to DOM
+        if (jQuery("iframe#zp-Sync-" + jQuery("span", $this).text()).length == 0)
         {
-            var $result = jQuery('result', xml).attr('success');
-            
-            $this.removeClass("syncing");
-            
-            if ($result == "true") {
-                $this.addClass("success");
-            }
-            else { // Show errors
-                $this.addClass("error");
-            }
-        });
+            jQuery('<iframe/>', {
+                id: 'zp-Sync-' + jQuery("span", $this).text(),
+                class: 'zp-Setup-Sync',
+                src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span", $this).text() + '&step=items',
+                scrolling: 'yes'
+            }).appendTo('#zp-ManageAccounts');
+        }
+        else
+        {
+            jQuery("iframe#zp-Sync-" + jQuery("span", $this).text()).attr("src", jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span", $this).text() + '&step=items');
+        }
+        
+        $this.parent().find('.zp-Sync-Messages').text("Syncing items 1-50 ...");
         
         return false;
     });

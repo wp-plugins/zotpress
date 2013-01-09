@@ -218,6 +218,7 @@
                 
             </div>
             
+            <?php /* autoupdate temporarily disabled */ if ( 1==2) { ?>
             <hr />
             
             <div class="zp-Column-1">
@@ -298,4 +299,4 @@
                 <!-- END OF ACCOUNT -->
                 
             
-            </div>
+            </div><!-- .zp-Column-1 --><?php } ?>

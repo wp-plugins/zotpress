@@ -183,8 +183,8 @@
             
             <p>
                 You can use the buttons found on the <a title="Accounts" href="admin.php?page=Zotpress&amp;accounts=true">Accounts</a>
-                page next to the account for which you'd like to sync or re-import items. Accounts will auto-update depending on your
-                <a title="Options" href="admin.php?page=Zotpress&amp;options=true">settings</a>.
+                page next to the account for which you'd like to sync or re-import items. <!--Accounts will auto-update depending on your
+                <a title="Options" href="admin.php?page=Zotpress&amp;options=true">settings</a>.-->
             </p>
             
             <h4>How can I edit a Zotero account listed on the Accounts page?</h4>

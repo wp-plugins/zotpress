@@ -1,10 +1,12 @@
 <?php
 
-
     // Include WordPress
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
+    // Ignore user abort
+    ignore_user_abort(true);
+    set_time_limit(60*10); // ten minutes
     
     // Access Wordpress db
     global $wpdb;
@@ -16,102 +18,210 @@
     require("admin.import.functions.php");
     require("admin.sync.functions.php");
     
-
-    // Set up XML document
-    $xml = "";
+    // Get session ready
+    if (!session_id()) { session_start(); }
     
     
-
-    /*
-     
-        IMPORT UPDATE
-        
-    */
-
-    if (isset($_GET['api_user_id']))
+?><!DOCTYPE html 
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head profile="http://www.w3.org/2005/11/profile">
+        <title> Syncing </title>
+        <script type="text/javascript" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>js/jquery-1.5.2.min.js"></script>
+        <script type="text/javascript" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>js/jquery.livequery.min.js"></script>
+    </head>
+    
+    <body><?php
+    
+    
+    // START WITH ITEMS
+    
+    if ( isset($_GET['step']) && $_GET['step'] == "items")
     {
-        // Set up error array
-        $errors = array("api_user_id_blank"=>array(0,"<strong>User ID</strong> was left blank."),
-                "api_user_id_format"=>array(0,"<strong>User ID</strong> was formatted incorrectly."));
+        $api_user_id = zp_get_api_user_id();
         
-        
-        // CHECK API USER ID
-        
-        if ($_GET['api_user_id'] != "")
-            if (preg_match("/^[0-9]+$/", $_GET['api_user_id']) == 1)
-                $api_user_id = htmlentities($_GET['api_user_id']);
-            else
-                $errors['api_user_id_format'][0] = 1;
-        else
-            $errors['api_user_id_blank'][0] = 1;
-        
-        // CHECK ERRORS
-        
-        $errorCheck = false;
-        foreach ($errors as $field => $error) {
-            if ($error[0] == 1) {
-                $errorCheck = true;
-                break;
-            }
-        }
-        
-        
-        // IMPORT AND SYNC ITEMS
-        
-        if ($errorCheck == false)
+        if (isset($_SESSION['zp_session'][$api_user_id]['key']) && isset($_GET['key']) && $_SESSION['zp_session'][$api_user_id]['key'] == $_GET['key'])
         {
-            $debug_limit = 0;
+            // Get account
+            $_SESSION['zp_session'][$api_user_id]['zp_account'] = zp_get_account($wpdb, $api_user_id);
             
-            // Set current import time
+            // Set current sync time
             zp_set_update_time( date('Y-m-d') );
             
-            // Get account
-            $zp_account = zp_get_account($wpdb);
+            // GET ITEM COUNT AND LOCAL ITEMS
+            $_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'] = zp_get_local_items ($wpdb, $api_user_id);
             
-            // Figure out whether account needs a key
-            $nokey = zp_get_account_haskey ($zp_account);
+            // Set up session item query vars
+            $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add'] = array();
+            $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'] = array();
+            $_SESSION['zp_session'][$api_user_id]['items']['query_total_items_to_add'] = 0;
             
-            // IMPORT AND SYNC ITEMS
-            zp_get_server_items ($wpdb, $zp_account, $nokey, zp_get_item_count ($zp_account, $nokey), zp_get_local_items ($wpdb, $zp_account, $debug_limit), $debug_limit);
+            // SYNC ITEMS
+            ?><script type="text/javascript">
             
-            // IMPORT AND SYNC COLLECTIONS
-            zp_get_server_collections ($wpdb, $zp_account, $nokey, zp_get_local_collections ($wpdb, $zp_account, $debug_limit), $debug_limit);
+            jQuery(document).ready(function()
+            {
+                function zp_get_items (zp_plugin_url, api_user_id, zp_key, zp_start)
+                {
+                    var zpXMLurl = zp_plugin_url + "lib/actions/actions.sync.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=items&start=" + zp_start;
+                    //alert(zpXMLurl); // DEBUG
+                    
+                    jQuery.get( zpXMLurl, {}, function(xml)
+                    {
+                        var $result = jQuery("result", xml);
+                        
+                        if ($result.attr("success") == "true") // Move on to the next 50
+                        {
+                            //alert( $result.attr("success") + " | " + $result.attr("next")); // DEBUG
+                            jQuery('div#zp-Account-<?php echo $api_user_id; ?> span.delete .zp-Sync-Messages', window.parent.document).text("Syncing items " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
+                            zp_get_items (zp_plugin_url, api_user_id, zp_key, $result.attr("next"));
+                        }
+                        else if ($result.attr("success") == "next")
+                        {
+                            //alert( $result.text()  + " |  so move on to " + $result.attr("next")); // DEBUG
+                            jQuery('div#zp-Account-<?php echo $api_user_id; ?> span.delete .zp-Sync-Messages', window.parent.document).text("Syncing collections 1-50 ...");
+                            jQuery("iframe#zp-Sync-<?php echo $_SESSION['zp_session'][$api_user_id]['key']; ?>", window.parent.document).attr('src', jQuery("iframe#zp-Sync-<?php echo $_SESSION['zp_session'][$api_user_id]['key']; ?>", window.parent.document).attr('src').replace("step=items", "step=collections"));
+                        }
+                        else // Show errors
+                        {
+                            alert( "Sorry, but there was a problem syncing items: " + jQuery("errors", xml).text() );
+                        }
+                    });
+                }
+                
+                zp_get_items( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . $_SESSION['zp_session'][$api_user_id]['key']; ?>', 0);
+                
+            });
             
-            // IMPORT AND SYNC TAGS
-            zp_get_server_tags ($wpdb, $zp_account, $nokey, zp_get_local_tags ($wpdb, $zp_account, $debug_limit), $debug_limit);
-            
-            // Display success XML
-            $xml .= "<result success=\"true\" api_user_id=\"".$api_user_id."\" />\n";
+            </script><?php
         }
         
+        else /* key fails */ { exit ("key incorrect "); }
         
-        // DISPLAY ERRORS
-        
-        else
-        {
-            $xml .= "<result success=\"false\" />\n";
-            $xml .= "<import>\n";
-            $xml .= "<errors>\n";
-            foreach ($errors as $field => $error)
-                if ($error[0] == 1)
-                    $xml .= $error[1]."\n";
-            $xml .= "</errors>\n";
-            $xml .= "</import>\n";
-        }
     }
     
     
+    // THEN COLLECTIONS
     
-    /*
-     
-        DISPLAY XML
+    else if ( isset($_GET['step']) && $_GET['step'] == "collections")
+    {
+        $api_user_id = zp_get_api_user_id();
         
-    */
+        if (isset($_SESSION['zp_session'][$api_user_id]['key']) && isset($_GET['key']) && $_SESSION['zp_session'][$api_user_id]['key'] == $_GET['key'])
+        {
+            // GET LOCAL COLLECTIONS
+            $_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'] = zp_get_local_collections ($wpdb, $api_user_id);
+            
+            // Set up session item query vars
+            $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'] = array();
+            $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_add'] = array();
+            $_SESSION['zp_session'][$api_user_id]['collections']['query_total_collections_to_add'] = 0;
+            
+            // SYNC COLLECTIONS
+            ?><script type="text/javascript">
+            
+            jQuery(document).ready(function()
+            {
+                function zp_get_collections (zp_plugin_url, api_user_id, zp_key, zp_start)
+                {
+                    var zpXMLurl = zp_plugin_url + "lib/actions/actions.sync.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=collections&start=" + zp_start;
+                    //alert(zpXMLurl); // DEBUG
+                    
+                    jQuery.get( zpXMLurl, {}, function(xml)
+                    {
+                        var $result = jQuery("result", xml);
+                        
+                        if ($result.attr("success") == "true") // Move on to the next 50
+                        {
+                            //alert( $result.attr("success") + " | " + $result.attr("next")); // DEBUG
+                            jQuery('div#zp-Account-<?php echo $api_user_id; ?> span.delete .zp-Sync-Messages', window.parent.document).text("Syncing collections " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
+                            zp_get_collections (zp_plugin_url, api_user_id, zp_key, $result.attr("next"));
+                        }
+                        else if ($result.attr("success") == "next")
+                        {
+                            //alert( "move on to " + $result.attr("next") + ": "+ $result.text()); // DEBUG
+                            jQuery('div#zp-Account-<?php echo $api_user_id; ?> span.delete .zp-Sync-Messages', window.parent.document).text("Syncing tags 1-50 ...");
+                            jQuery("iframe#zp-Sync-<?php echo $_SESSION['zp_session'][$api_user_id]['key']; ?>", window.parent.document).attr('src', jQuery("iframe#zp-Sync-<?php echo $_SESSION['zp_session'][$api_user_id]['key']; ?>", window.parent.document).attr('src').replace("step=collections", "step=tags"));
+                        }
+                        else // Show errors
+                        {
+                            alert( "Sorry, but there was a problem syncing collections: " + jQuery("errors", xml).text() );
+                        }
+                    });
+                }
+                
+                zp_get_collections( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . $_SESSION['zp_session'][$api_user_id]['key']; ?>', 0);
+                
+            });
+            
+            </script><?php
+        }
+        else /* key fails */ { exit ("key incorrect "); }
+    }
+    
+    
+    // THEN TAGS
+    
+    else if ( isset($_GET['step']) && $_GET['step'] == "tags")
+    {
+        $api_user_id = zp_get_api_user_id();
+        
+        if (isset($_SESSION['zp_session'][$api_user_id]['key']) && isset($_GET['key']) && $_SESSION['zp_session'][$api_user_id]['key'] == $_GET['key'])
+        {
+            // GET LOCAL TAGS
+            $_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'] = zp_get_local_tags ($wpdb, $api_user_id);
+            
+            // Set up session item query vars
+            $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'] = array();
+            $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_add'] = array();
+            $_SESSION['zp_session'][$api_user_id]['tags']['query_total_tags_to_add'] = 0;
+            
+            // SYNC TAGS
+            ?><script type="text/javascript">
+            
+            jQuery(document).ready(function()
+            {
+                function zp_get_tags (zp_plugin_url, api_user_id, zp_key, zp_start)
+                {
+                    var zpXMLurl = zp_plugin_url + "lib/actions/actions.sync.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=tags&start=" + zp_start;
+                    //alert(zpXMLurl); // DEBUG
+                    
+                    jQuery.get( zpXMLurl, {}, function(xml)
+                    {
+                        var $result = jQuery("result", xml);
+                        
+                        if ($result.attr("success") == "true") // Move on to the next 50
+                        {
+                            //alert( $result.attr("success") + " | " + $result.attr("next")); // DEBUG
+                            jQuery('div#zp-Account-<?php echo $api_user_id; ?> span.delete .zp-Sync-Messages', window.parent.document).text("Syncing tags " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
+                            zp_get_tags (zp_plugin_url, api_user_id, zp_key, $result.attr("next"));
+                        }
+                        else if ($result.attr("success") == "next")
+                        {
+                            //alert( "done sync: " + $result.attr("next")); // DEBUG
+                            jQuery('div#zp-Account-<?php echo $api_user_id; ?> span.delete .zp-Sync-Messages', window.parent.document).text("Sync complete!");
+                            jQuery('div#zp-Account-<?php echo $api_user_id; ?> span.delete a.sync', window.parent.document).removeClass("syncing").addClass("success");
+                        }
+                        else // Show errors
+                        {
+                            alert( "Sorry, but there was a problem syncing tags: " + jQuery("errors", xml).text() );
+                        }
+                    });
+                }
+                
+                zp_get_tags( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . $_SESSION['zp_session'][$api_user_id]['key']; ?>', 0);
+                
+            });
+            
+            </script><?php
+        }
+        
+        else /* key fails */ { exit ("key incorrect "); }
+        
+    } ?>
 
-    header('Content-Type: application/xml; charset=ISO-8859-1');
-    echo "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n";
-    echo "<import>\n";
-    echo $xml;
-    echo "</import>";
-
-?>
+    </body>
+</html>

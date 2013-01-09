@@ -57,7 +57,22 @@
     
 <?php } else if (isset($_GET['setupstep']) && $_GET['setupstep'] == "three") { ?>
 
-    <?php if (isset($_GET['api_user_id']) && preg_match("/^[0-9]+$/", $_GET['api_user_id']) == 1) { $api_user_id = htmlentities($_GET['api_user_id']); } else { $api_user_id = false; } ?>
+    <?php
+    
+        if (isset($_GET['api_user_id']) && preg_match("/^[0-9]+$/", $_GET['api_user_id']) == 1)
+        {
+            $api_user_id = htmlentities($_GET['api_user_id']);
+        }
+        else // not set, so ...
+        {
+            global $wpdb;
+            $api_user_id = $wpdb->get_var( "SELECT api_user_id FROM ".$wpdb->prefix."zotpress ORDER BY id DESC LIMIT 1" );
+        }
+        
+    ?>
+    
+    <?php $_SESSION['zp_session'][$api_user_id]['key'] = substr(number_format(time() * rand(),0,'',''),0,10); /* Thanks to http://elementdesignllc.com/2011/06/generate-random-10-digit-number-in-php/ */ ?>
+
 
     <div id="zp-Setup">
         
@@ -77,11 +92,11 @@
             
             <input id="zp-Zotpress-Setup-Import" type="button"  disabled="disabled" class="button-primary" value="Start Import" />
             <div class="zp-Loading-Initial zp-Loading-Import"></div>
-            <span id="zp-Import-Messages">Importing items ...</span>
+            <span id="zp-Import-Messages">Importing items 1-50 ...</span>
             
             <hr class="clear" />
             
-            <iframe id="zp-Setup-Import" name="zp-Setup-Import" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/admin/admin.setup.import.php?api_user_id=<?php echo $api_user_id; ?>" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+            <iframe id="zp-Setup-Import" name="zp-Setup-Import" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/admin/admin.import.php?api_user_id=<?php echo $api_user_id; ?>&key=<?php echo $_SESSION['zp_session'][$api_user_id]['key']; ?>" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
             
         </div>
         

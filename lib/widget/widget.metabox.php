@@ -18,7 +18,7 @@
     
     <div id="zp-ZotpressMetaBox-Bibliography">
         
-        <?php if ($wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM ".$wpdb->prefix."zotpress;" ) ) > 1) { ?>
+        <?php if ($wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."zotpress;") > 1) { ?>
         <!-- START OF ACCOUNT -->
         <div id="zp-ZotpressMetaBox-Biblio-Account">
             <?php
@@ -193,7 +193,7 @@
     
     <div id="zp-ZotpressMetaBox-InTextCreator">
         
-        <?php if ($wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM ".$wpdb->prefix."zotpress;" ) ) > 1) { ?>
+        <?php if ($wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."zotpress;") > 1) { ?>
         <!-- START OF ACCOUNT -->
         <div id="zp-ZotpressMetaBox-Account">
             <?php

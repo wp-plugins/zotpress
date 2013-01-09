@@ -3,25 +3,25 @@ jQuery(document).ready(function() {
     
     /*
         
-        TRIGGER AUTO-UPDATE
+        TRIGGER AUTO-UPDATE: Needs to be reworked
         
     */
     
-    var zp_autoupdate_xmlUri = jQuery('.ZOTPRESS_PLUGIN_URL:first').text() + 'lib/actions/actions.autoupdate.php?autoupdate=true';
-    //alert(zp_autoupdate_xmlUri);
-    
-    // AJAX
-    jQuery.get(zp_autoupdate_xmlUri, {}, function(xml)
-    {
-        var $result = jQuery('result', xml).attr('success');
-        
-        //if ($result == "true") {
-        //    alert("updated");
-        //}
-        //else { // Show errors
-        //    alert("error - not time to update yet");
-        //}
-    });
+    //var zp_autoupdate_xmlUri = jQuery('.ZOTPRESS_PLUGIN_URL:first').text() + 'lib/actions/actions.autoupdate.php?autoupdate=true&step=items&api_user_id=all&key=' + jQuery('.ZOTPRESS_AUTOUPDATE_KEY:first').text();
+    ////alert(zp_autoupdate_xmlUri);
+    //
+    //// AJAX
+    //jQuery.get(zp_autoupdate_xmlUri, {}, function(xml)
+    //{
+    //    var $result = jQuery('result', xml).attr('success');
+    //    
+    //    if ($result == "true") {
+    //        alert("updated");
+    //    }
+    //    else { // Show errors
+    //        alert("error - not time to update yet");
+    //    }
+    //});
     
     
     

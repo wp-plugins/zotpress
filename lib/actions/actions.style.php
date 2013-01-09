@@ -100,15 +100,15 @@
                 $zp_import_curl = new CURL();
                 
                 // Get account
-                $zp_account = zp_get_account ($wpdb);
+                $zp_account = zp_get_account ($wpdb, $api_user_id);
                 
                 // Figure out whether account needs a key
-                $nokey = zp_get_account_haskey ($zp_account);
+                //$nokey = zp_get_account_haskey ($zp_account);
                 
-                if ($nokey === true)
-                    $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/items?";
-                else // normal with key
-                    $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/items?key=".$zp_account[0]->public_key."&";
+                $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/items?";
+                if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "") {
+                    $zp_import_url .= "key=".$zp_account[0]->public_key."&";
+                }
                 $zp_import_url .= "format=atom&content=bib&style=".$style."&itemKey=".$items;
                 
                 // Read the external data
