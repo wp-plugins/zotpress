@@ -73,9 +73,6 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
             // Clear last import
             zp_clear_last_import ($wpdb, $api_user_id, $_GET['step']);
             
-            // GET ITEM COUNT
-            $_SESSION['zp_session'][$api_user_id]['items']['zp_all_itemkeys_count'] = zp_get_item_count ($api_user_id);
-            
             // Set up session item query vars
             $_SESSION['zp_session'][$api_user_id]['items']['query_params'] = array();
             $_SESSION['zp_session'][$api_user_id]['items']['query_total_entries'] = 0;
@@ -88,7 +85,6 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                 function zp_get_items (zp_plugin_url, api_user_id, zp_key, zp_start)
                 {
                     var zpXMLurl = zp_plugin_url + "lib/actions/actions.import.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=items&start=" + zp_start;
-                    //alert(zpXMLurl); // DEBUG
                     
                     jQuery.get( zpXMLurl, {}, function(xml)
                     {
@@ -96,13 +92,11 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                         
                         if ($result.attr("success") == "true") // Move on to the next 50
                         {
-                            //alert( $result.attr("success") + " | " + $result.attr("next")); // DEBUG
                             jQuery('#zp-Import-Messages', window.parent.document).text("Importing items " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
                             zp_get_items (zp_plugin_url, api_user_id, zp_key, $result.attr("next"));
                         }
                         else if ($result.attr("success") == "next")
                         {
-                            //alert( $result.text()  + " |  so move on to " + $result.attr("next")); // DEBUG
                             jQuery('#zp-Import-Messages', window.parent.document).text("Importing collections 1-50 ...");
                             jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src', jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src').replace("step=items", "step=collections"));
                         }
@@ -146,7 +140,6 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                 function zp_get_collections (zp_plugin_url, api_user_id, zp_key, zp_start)
                 {
                     var zpXMLurl = zp_plugin_url + "lib/actions/actions.import.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=collections&start=" + zp_start;
-                    //alert(zpXMLurl); // DEBUG
                     
                     jQuery.get( zpXMLurl, {}, function(xml)
                     {
@@ -154,13 +147,11 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                         
                         if ($result.attr("success") == "true") // Move on to the next 50
                         {
-                            //alert( $result.attr("success") + " | " + $result.attr("next")); // DEBUG
                             jQuery('#zp-Import-Messages', window.parent.document).text("Importing collections " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
                             zp_get_collections (zp_plugin_url, api_user_id, zp_key, $result.attr("next"));
                         }
                         else if ($result.attr("success") == "next")
                         {
-                            //alert( "move on to " + $result.attr("next")); // DEBUG
                             jQuery('#zp-Import-Messages', window.parent.document).text("Importing tags 1-50 ...");
                             jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src', jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src').replace("step=collections", "step=tags"));
                         }
@@ -204,7 +195,6 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                 function zp_get_tags (zp_plugin_url, api_user_id, zp_key, zp_start)
                 {
                     var zpXMLurl = zp_plugin_url + "lib/actions/actions.import.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=tags&start=" + zp_start;
-                    //alert(zpXMLurl); // DEBUG
                     
                     jQuery.get( zpXMLurl, {}, function(xml)
                     {
@@ -212,13 +202,11 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                         
                         if ($result.attr("success") == "true") // Move on to the next 50
                         {
-                            //alert( $result.attr("success") + " | " + $result.attr("next")); // DEBUG
                             jQuery('#zp-Import-Messages', window.parent.document).text("Importing tags " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
                             zp_get_tags (zp_plugin_url, api_user_id, zp_key, $result.attr("next"));
                         }
                         else if ($result.attr("success") == "next")
                         {
-                            //alert( "done import: " + $result.attr("next")); // DEBUG
                             jQuery('#zp-Import-Messages', window.parent.document).text("Import complete!");
                             window.parent.location = "<?php echo ZOTPRESS_PLUGIN_URL; ?>../../../wp-admin/admin.php?page=Zotpress&account_id=<?php echo $_SESSION['zp_session'][$api_user_id]['zp_account'][0]->id; ?>";
                         }

@@ -19,12 +19,6 @@
         filter: alpha(opacity = 100);
     }
     
-    div#zp-Zotpress code {
-        border-radius: 3px;
-        -moz-border-radius: 3px;
-        padding: 2px 5px 2px 4px;
-    }
-    
     div#zp-Zotpress del {
         color: #aaa;
         text-decoration: none;
@@ -34,22 +28,35 @@
         clear: both;
         /*font: italic 21px/24px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
         /*margin-bottom: 5px;*/
-        font: normal 23px/29px "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+        font: 400 26px/32px "Oswald", "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
         margin: 0;
         padding: 9px 15px 4px 0;
+        text-transform: uppercase;
+    }
+    div#zp-Zotpress h3.zp-HeaderGroup {
+        margin-bottom: -0.5em;
     }
     
+    div#zp-Setup h3,
+    div#zp-Setup h4,
     div#zp-Zotpress h4 {
-        font: italic 17px/21px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
-        margin-bottom: -5px;
+        /*font: italic 17px/21px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
+        font: italic 400 17px/21px "Droid Serif", "Georgia", serif;
+        margin: 1.5em 0 1em;
+    }
+    div#zp-Setup h3,
+    div#zp-Setup h4 {
+        font: italic 400 16px/21px "Droid Serif", "Georgia", serif;
     }
     div#zp-Zotpress h4.short {
         margin-bottom: -15px;
     }
     
     div#zp-Zotpress h5 {
-        font: italic 12px/28px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+        /*font: italic 12px/28px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
+        font: 300 11px/30px "Droid Serif", serif;
         margin-bottom: -15px;
+        text-transform: uppercase;
     }
     
     div#zp-Zotpress hr {
@@ -105,14 +112,12 @@
     }
     
     div#zp-Setup h1 {
-        background: url("../images/sprite.png") no-repeat scroll 3px -319px transparent;
+        background: url("../images/sprite.png") no-repeat scroll 3px -318px transparent;
         /*font: italic 21px/30px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
-        font: normal 23px/29px "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+        /*font: normal 23px/29px "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;*/
+        font: 400 26px/32px "Oswald", "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
         padding-left: 44px;
-    }
-    
-    div#zp-Setup h4 {
-        font-size: 1.1em;
+        text-transform: uppercase;
     }
     
     div#zp-Setup-ProcessBar {
@@ -120,8 +125,8 @@
         color: #999;
         text-shadow: 0 1px 0 #000;
         overflow: hidden;
-        /*width: 830px;*/
         width: auto;
+        /*height: 45px;*/
         height: 40px;
     }
     
@@ -129,19 +134,23 @@
         cursor: default;
         float: left;
         font-size: 1.5em;
+        /*font: 300 1.85em/1em "Oswald", sans-serif;*/
         padding: 0.6em 0.75em;
+        /*padding: 0.45em 0.75em;*/
+        /*text-transform: uppercase;*/
         height: 40px;
     }
     div#zp-Setup-ProcessBar div.current {
         background: #ad1836;
         color: #fff;
         text-shadow: 0 1px 0 #400000;
+        /*text-shadow: none;*/
     }
     
     div#zp-Setup-Step {
         background-color: #fafafa;
         border-bottom: 1px solid #eee;
-        padding: 5px 15px 15px;
+        padding: 5px 15px 15px 30px;
     }
     
     div#zp-Setup-Step hr {
@@ -160,10 +169,7 @@
         width: 400px;
     }
     div#zp-Setup div.zp-Column-1 {
-        margin: 0 10px;
-    }
-    div#zp-Setup div.zp-Column-2 {
-        width: 300px;
+        margin: 0 10px 0 0;
     }
     
     div#zp-Setup p.note {
@@ -343,6 +349,7 @@
         display: block;
         float: left;
         font-size: 11px;
+        font-family: "Droid Serif", serif;
         padding: 5px 5px 0 0;
         vertical-align: baseline;
         text-shadow: 0 1px 0 #fafafa;
@@ -358,6 +365,7 @@
         display: block;
         float: left;
         font-size: 11px;
+        font-family: "Droid Serif", serif;
         text-shadow: 0 1px 0 #FAFAFA;
     }
     
@@ -428,7 +436,8 @@
         background: linear-gradient(top,  #959aa5 0%,#888c96 100%); /* W3C */
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#959aa5', endColorstr='#888c96',GradientType=0 ); /* IE6-8 */
         color: #fff;
-        font: italic 17px/24px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+        /*font: italic 17px/24px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
+        font: 400 19px/24px "Oswald","Times New Roman","Bitstream Charter",Times,serif;
         margin: -3px 0 3px;
         padding: 10px 15px;
         text-shadow: 0 1px 0 #888;
@@ -438,6 +447,7 @@
     div#zp-Zotpress div#zp-List a:visited
     {
         color: #bae1fe;
+        text-decoration: none;
         text-shadow: 0 1px 0 #777;
     }
     div#zp-Zotpress div#zp-List a:hover,
@@ -602,7 +612,7 @@
     }
     div#zp-Zotpress div.zp-Entry div.zp-Entry-ID span.title {
         color: #ccc;
-        font-family: 'Georgia', serif;
+        font-family: 'Droid Serif', 'Georgia', serif;
         text-transform: uppercase;
     }
     div#zp-Zotpress div.zp-Entry div.zp-Entry-ID div {
@@ -735,7 +745,8 @@
         display: block;
         float: left;
         padding: 1em;
-        font: normal 1em/1em "Georgia", serif;
+        /*font: normal 1em/1em "Georgia", serif;*/
+        font: 400 1em/1em "Droid Serif", "Georgia", serif;
         width: 100px;
     }
     div#zp-AccountsHeader span.first {
@@ -997,7 +1008,7 @@
         text-align: center;
         text-decoration: none;
         text-shadow: 0 1px 0 #7aa824;
-        vertical-align: -1.25em;
+        vertical-align: -1.45em;
         
         border-radius: 5px;
         -moz-border-radius: 5px;
@@ -1059,6 +1070,108 @@
     
     
     
+    /* START OF DOCUMENTATION CSS */
+    
+    div#zp-Zotpress code {
+        background: #eaeaea;
+        border-radius: 3px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        font-family: "Monaco", monospace;
+        padding: 2px 3px;
+    }
+    
+    .zp-Documentation {
+        border: none;
+        background-color: #f6f6f6;
+        margin: 2em 0;
+        padding: 0;
+    }
+    
+    .zp-Documentation strong {
+        font-weight: bold;
+    }
+    div#zp-Zotpress .zp-Documentation code {
+        background: #e1e1e1;
+    }
+    
+    .zp-Documentation tr,
+    .zp-Documentation th,
+    .zp-Documentation td {
+        border: none;
+        font-weight: 300;
+        margin: 0;
+        padding: 8px 16px;
+        text-align: left;
+        vertical-align: top;
+    }
+    .zp-Documentation td {
+        border-bottom: 1px solid #fff;
+    }
+    .zp-Documentation td {
+        padding: 12px 16px;
+    }
+    .zp-Documentation p {
+        margin: 0;
+    }
+    
+    .zp-Documentation .main {
+        background-color: #333;
+        border-bottom: none;
+        color: #fff;
+        font: 400 1.5em/1.5em "Oswald", sans-serif;
+    }
+    
+    .zp-Documentation .category,
+    .zp-Documentation .type {
+        font: 300 1.15em/1.25em "Oswald", sans-serif;
+        text-transform: uppercase;
+    }
+    
+    .zp-Documentation .category,
+    .zp-Documentation .zebra .category {
+        background-color: #666;
+        border-bottom: 1px solid #999;
+        color: #fff;
+    }
+    
+    .zp-Documentation .type {
+        background-color: #ACBAD5;
+        border-bottom: 1px solid #d5dcea;
+    }
+    .zp-Documentation .zebra .type {
+        background-color: #99abcc;
+        border-bottom: 1px solid #c1cde1;
+    }
+    
+    .zp-Documentation .zebra td {
+        background-color: #f1f1f1;
+    }
+    .zp-Documentation .code {
+        background-color: #ffcb15;
+        border-bottom: 1px solid #fff09d;
+    }
+    .zp-Documentation .zebra .code {
+        background-color: #ffb915;
+        border-bottom: 1px solid #ffe866;
+    }
+    .zp-Documentation .example {
+        min-width: 20em;
+        padding-right: 0;
+    }
+    .zp-Documentation .example p {
+        margin-bottom: 0.25em;
+    }
+    
+    .zp-Documentation tr.last td,
+    .zp-Documentation td.last {
+        border-bottom: none;
+    }
+    
+    /* END OF DOCUMENTATION CSS */
+    
+    
+    
     /* START OF MESSAGE CSS */
     
     div.zp-Message {
@@ -1072,8 +1185,9 @@
     }
     div.zp-Message p {
         color: #fff;
-        font-size: 12pt;
-        line-height: 16pt;
+        /*font-size: 12pt;*/
+        font: italic 400 14px/21px "Droid Serif", "Georgia", serif;
+        /*line-height: 16pt;*/
         margin: 8px 30px 0 60px;
         text-shadow: 0 1px 0 #000;
     }

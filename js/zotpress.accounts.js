@@ -149,7 +149,6 @@ jQuery(document).ready(function() {
         {
             // Set up uri
             var xmlUri = jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/actions/actions.php?delete=' + $this.attr("href").replace("#", "");
-            //alert(xmlUri);
             
             // AJAX
             jQuery.get(xmlUri, {}, function(xml)

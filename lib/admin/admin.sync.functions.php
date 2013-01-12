@@ -60,7 +60,7 @@
     
     
     
-    function zp_get_server_items ($wpdb, $api_user_id, $zp_start)
+    function zp_get_server_items ($api_user_id, $zp_start)
     {
         $zp_import_curl = new CURL();
         $zp_account = $_SESSION['zp_session'][$api_user_id]['zp_account'];
@@ -259,7 +259,6 @@
         
         
         // LAST ITEM
-        //if ($_SESSION['zp_session'][$api_user_id]['items']['zp_server_item_count'] == $_SESSION['zp_session'][$api_user_id]['items']['zp_current_local_count'])
         if ($_SESSION['zp_session'][$api_user_id]['items']['last_set'] == $zp_start)
         {
             return false;
@@ -279,7 +278,7 @@
     
     
     
-    function zp_save_synced_items ($wpdb, $api_user_id)
+    function zp_save_synced_items ($wpdb, $api_user_id, $done=true)
     {
         // RUN QUERIES: UPDATE
         
@@ -314,9 +313,9 @@
             $wpdb->flush();
         }
         
-        // REMOVE
+        // REMOVE: Only at the last set
         
-        if (count($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items']) > 0)
+        if ($done && count($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items']) > 0)
         {
             foreach ($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'] as $item_params)
             {
@@ -333,11 +332,16 @@
             $wpdb->flush();
         }
         
-        unset($_SESSION['zp_session'][$api_user_id]['items']);
-        //unset($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update']);
-        //unset($_SESSION['zp_session'][$api_user_id]['items']['query_total_items_to_add']);
-        //unset($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add']);
-        //unset($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items']);
+        if ($done) // unset everything
+        {
+            unset($_SESSION['zp_session'][$api_user_id]['items']);
+        }
+        else // reset add and update
+        {
+            $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add'] = array();
+            $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'] = array();
+            $_SESSION['zp_session'][$api_user_id]['items']['query_total_items_to_add'] = 0;
+        }
         
     } // FUNCTION: zp_save_synced_items
     
@@ -368,7 +372,7 @@
     
     
     
-    function zp_get_server_collections ($wpdb, $api_user_id, $zp_start)
+    function zp_get_server_collections ($api_user_id, $zp_start)
     {
         $zp_import_curl = new CURL();
         $zp_account = $_SESSION['zp_session'][$api_user_id]['zp_account'];
@@ -519,7 +523,7 @@
         // LAST SET
         if ($_SESSION['zp_session'][$api_user_id]['collections']['last_set'] == $zp_start)
         {
-            return $_SESSION['zp_session'][$api_user_id]['collections'];
+            return false;
         }
         else // continue to next set of collections
         {
@@ -536,7 +540,7 @@
     
     
     
-    function zp_save_synced_collections ($wpdb, $api_user_id)
+    function zp_save_synced_collections ($wpdb, $api_user_id, $done=true)
     {
         // RUN QUERIES: UPDATE
         
@@ -573,7 +577,7 @@
         
         // REMOVE
         
-        if (count($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections']) > 0)
+        if ($done && count($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections']) > 0)
         {
             foreach ($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'] as $item_params)
             {
@@ -590,7 +594,16 @@
             $wpdb->flush();
         }
         
-        unset($_SESSION['zp_session'][$api_user_id]['collections']);
+        if ($done) // unset everything
+        {
+            unset($_SESSION['zp_session'][$api_user_id]['collections']);
+        }
+        else // reset add and update
+        {
+            $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'] = array();
+            $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_add'] = array();
+            $_SESSION['zp_session'][$api_user_id]['collections']['query_total_collections_to_add'] = 0;
+        }
         
     } // FUNCTION: zp_save_synced_collections
 
@@ -621,7 +634,7 @@
     
     
     
-    function zp_get_server_tags ($wpdb, $api_user_id, $zp_start)
+    function zp_get_server_tags ($api_user_id, $zp_start)
     {
         $zp_import_curl = new CURL();
         $zp_account = $_SESSION['zp_session'][$api_user_id]['zp_account'];
@@ -763,7 +776,7 @@
     
     
     
-    function zp_save_synced_tags ($wpdb, $api_user_id)
+    function zp_save_synced_tags ($wpdb, $api_user_id, $done=true)
     {
         // RUN QUERIES: UPDATE
         
@@ -800,7 +813,7 @@
         
         // REMOVE
         
-        if (count($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags']) > 0)
+        if ($done && count($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags']) > 0)
         {
             foreach ($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'] as $item_params)
             {
@@ -817,7 +830,16 @@
             $wpdb->flush();
         }
         
-        unset($_SESSION['zp_session'][$api_user_id]['tags']);
+        if ($done) // unset everything
+        {
+            unset($_SESSION['zp_session'][$api_user_id]['tags']);
+        }
+        else // reset add and update
+        {
+            $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'] = array();
+            $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_add'] = array();
+            $_SESSION['zp_session'][$api_user_id]['tags']['query_total_tags_to_add'] = 0;
+        }
         
     } // FUNCTION: zp_save_synced_tags
 

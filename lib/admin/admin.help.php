@@ -34,6 +34,16 @@
                 </li>
             </ol>
             
+            <p>
+                You can build shortcodes and search for item keys using the <a title="Zotpress Reference widget" href="#ref">Zotpresss Reference widget</a>
+                on the post and page write/edit screens.
+            </p>
+            
+            <p>
+                Have questions? First, check out the <a title="F.A.Q." href="#faq">F.A.Q.</a> Then search the
+                <a title="Zotpress Forums" href="http://wordpress.org/support/plugin/zotpress">Zotpress Support Forums</a>. If you can't find an answer,
+                feel free to post your question there.
+            </p>
             
             
             
@@ -51,7 +61,7 @@
             </code>
             
             <p>
-                An example of how to use shortcode parameters is:
+                An example of how to use shortcode attributes is:
             </p>
             
             <code>
@@ -62,48 +72,129 @@
                 This shortcode will display a list of five citations from the collection with the key "ZKDTKM3X". (<strong>Hint:</strong> Collection keys are listed beside each item on the <a title="Browse" href="admin.php?page=Zotpress">Browse page</a>.)
             </p>
             
-            <h4 class="short">Shortcode Parameters</h4>
+            <h4 class="short">Shortcode Attributes</h4>
             
-            <h5>Filter by Account</h5>
-            <ul>
-                <li><code>userid</code> display a list of citations from a particular user or group. <strong>REQUIRED if you have multiple accounts and are not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</li>
-                <li><code>nickname</code> display a list of citations by a particular Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a title="Accounts" href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</li>
-            </ul>
+            <table class="zp-Documentation" border="0" cellpadding="0" cellspacing="0">
+                
+                <tr class="main">
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Attribute</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                
+                <tr>
+                    <td rowspan="13" class="category">Filtering</td>
+                    
+                    <td rowspan="2" class="type">Account</td>
+                    
+                    <td class="code">userid</td>
+                    <td><p>Display a list of citations from a particular user or group. <strong>REQUIRED if you have multiple accounts and are not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</p></td>
+                    <td class="example"><p><code>[zotpress userid="000000"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">nickname</td>
+                    <td><p>Display a list of citations by a particular Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a title="Accounts" href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</p></td>
+                    <td class="example"><p><code>[zotpress nickname="Katie"]</code></p></td>
+                </tr>
+                
+                <tr class="zebra">
+                    <td rowspan="2" class="type">Meta</td>
+                    
+                    <td class="code">authors</td>
+                    <td><p>Alternative: <code>author</code>. Display a list of citations from a particular author or authors. <strong>Note:</strong> "Carl Sagan","C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Sagan".</p></td>
+                    <td class="example"><p><code>[zotpress author="Carl Sagan"]</code></p><p><code>[zotpress authors="Carl Sagan,Stephen Hawking"]</code></p></td>
+                </tr>
+                <tr class="zebra">
+                    <td class="code">years</td>
+                    <td><p>Alternative: <code>year</code>. Display a list of citations from a particular year or years. <strong>Note:</strong> You <em>can</em> display by Author and Year together.</p></td>
+                    <td class="example"><p><code>[zotpress year="1990"]</code></p><p><code>[zotpress years="1990,1998,2013"]</code></p></td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="4" class="type">Type</td>
+                    
+                    <td class="code">datatype</td>
+                    <td><p>Display a list of a particular data type. <strong>Options: items [default], tags, collections.</strong></p></td>
+                    <td class="example"><p><code>[zotpress datatype="tags"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">items</td>
+                    <td><p>Alternative: <code>item</code>. Display an item or list of items using particular item keys.</p></td>
+                    <td class="example"><p><code>[zotpress item="GMGCJU34"]</code></p><p><code>[zotpress items="GMGCJU34,U9Z5JTKC"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">collections</td>
+                    <td><p>Alternative: <code>collection</code>. Display items from a collection or list of collections using particular collection keys.</p></td>
+                    <td class="example"><p><code>[zotpress collection="GMGCJU34"]</code></p><p><code>[zotpress collections="GMGCJU34,U9Z5JTKC"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">tags</td>
+                    <td><p>Alternative: <code>tag</code>. Display items associated with one or more tags. <strong>Warning:</strong> Will break if the tag has a comma.</p></td>
+                    <td class="example"><p><code>[zotpress tag="zotero"]</code></p><p><code>[zotpress tags="zotero,scholarly blogging"]</code></p></td>
+                </tr>
+                
+                <tr class="zebra">
+                    <td rowspan="5" class="type">Settings</td>
+                    
+                    <td class="code">inclusive</td>
+                    <td><p>When filtering, include all items that match ANY criteria or exclude all items except those that match the criteria exactly. Works with collection/s, tag/s, author, year. <strong>Options: yes [default], no.</strong></p></td>
+                    <td class="example"><p><code>[zotpress author="Carl Sagan" inclusive="yes"]</code></p></td>
+                </tr>
+                <tr class="zebra">
+                    <td class="code">order</td>
+                    <td><p>Sort multiple citations using meta data as attributes. <strong>Options: title, author, date, default (latest added) [default].</strong></p></td>
+                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="year"]</code></p></td>
+                </tr>
+                <tr class="zebra">
+                    <td class="code">sortby</td>
+                    <td><p>Alternative: <code>sort</code>. Order of the sortby attribute. <strong>Options: asc [default], desc.</strong></p></td>
+                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="year"]</code></p></td>
+                </tr>
+                <tr class="zebra">
+                    <td class="code">title</td>
+                    <td><p>Dispay a title by year. <strong>Options: yes, no [default].</strong></p></td>
+                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="year" title="yes"]</code></p></td>
+                </tr>
+                <tr class="zebra">
+                    <td class="code">limit</td>
+                    <td><p>Limit the item list to by a given number. <strong>Optional.</strong> Options: Any number between 1 and infinity.</p></td>
+                    <td class="example"><p><code>[zotpress limit="5"]</code></p></td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="5" class="category last">Display</td>
+                    
+                    <td rowspan="5" class="type last">Settings</td>
+                    
+                    <td class="code">style</td>
+                    <td><p>Citation style. <strong>Options: apsa, apa [default], asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, mla, nlm, nature, vancouver.</strong> Note: Support for more styles is coming; see <a title="Zotero Style Repository" href="http://www.zotero.org/styles">Zotero Style Repository</a> for details.</p></td>
+                    <td class="example"><p><code>[zotpress collection="GMGCJU34" style="apa"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">showimage</td>
+                    <td><p>Whether or not to display the citation's image, if one exists. <strong>Options: yes, no [default]</strong></p></td>
+                    <td class="example"><p><code>[zotpress collection="GMGCJU34" showimage="yes"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">download</td>
+                    <td><p>Alternative: <code>downloadable</code> Whether or not to display the citation's download URL, if one exists. <strong>Enable this option only if you are legally able to provide your files for download.</strong> Options: yes, no [default].</p></td>
+                    <td class="example"><p><code>[zotpress collection="GMGCJU34" download="yes"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">notes</td>
+                    <td><p>Alternative: <code>downloadable</code> Whether or not to display the citation's notes, if one exists. <strong>Must have notes made public via the private key settings on Zotero.</strong> Options: yes, no [default].</p></td>
+                    <td class="example"><p><code>[zotpress collection="GMGCJU34" notes="yes"]</code></p></td>
+                </tr>
+                <tr class="last">
+                    <td class="code">cite</td>
+                    <td><p>Make the displayed citations citable by generating RIS links. <strong>Options: yes, no [default].</strong></p></td>
+                    <td class="example"><p><code>[zotpress collection="GMGCJU34" cite="yes"]</code></p></td>
+                </tr>
+                
+            </table>
             
-            <h5>Filter by Author or Year</h5>
-            <ul>
-                <li><code>author</code> or <code>authors</code> display a list of citations from a particular author/s. Format as follows: "Firstname Lastname" or "Lastname1,Firstname Lastname2", e.g. "Carl Sagan" or "Hawking,Carl Sagan". <strong>Note:</strong> "Carl Sagan","C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Sagan".</li>
-                <li><code>year</code> or <code>years</code> display a list of citations from a particular year/s. Format as follows: "2009" or "2001,2008,2009". <strong>Note:</strong> You <em>can</em> display by Author and Year together.</li>
-            </ul>
-            
-            <h5>Filter by Type</h5>
-            <ul>
-                <li><code>datatype</code> display a list of a particular data type. Options: items [default], tags, collections</li>
-                <li><code>item</code> or <code>items</code> item key for single item/s.  For multiple items, format in a list, e.g. item="GMGCJU34,U9Z5JTKC"</li></li>
-                <li><code>collection</code> or <code>collections</code> id of the collection/s to draw citations from. For multiple collections, format in a list, e.g. collection="GMGCJU34,U9Z5JTKC"</li>
-                <li><code>tag</code> or <code>tags</code> name of the tag to draw citations from. For multiple tags, format in a list, e.g. tags="tag one,tag two" <strong>Warning:</strong> Will break if tag has a comma. <!--<strong>Note:</strong> make sure you replace all spaces with a <code>+</code> sign, e.g. the tag "electric fish" becomes "electric+fish".--></li>
-            </ul>
-            
-            <h5>Filter Settings</h5>
-            <ul>
-                <li><code>inclusive</code> when filtering, include all items that match ANY criteria or exclude all items except those that match the criteria exactly. Works with collection/s, tag/s, author, year. Options: yes [default], no</li>
-                <li><code>sortby</code> sort multiple citations. Options: title, author, date, default (latest added) [default]</li>
-                <li><code>order</code> or <code>sort</code> sort order. Options: asc [default], desc</li>
-                <li><code>title</code> display a title by year. Options: yes, no [default]</li>
-                <li><code>limit</code> limit the item list to a certain amount. <strong>Optional.</strong> Options: numbers between 1 and infinity</li>
-            </ul>
-            
-            <h5>Display Settings</h5>
-            <ul>
-                <!--<li><code>content</code> format of citation display. Options: html, bib [default]</li>-->
-                <li><code>style</code> citation style. Options: apsa, apa [default], asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, mla, nlm, nature, vancouver. <strong>Note:</strong> Support for more styles is coming; see <a title="Zotero Style Repository" href="http://www.zotero.org/styles">Zotero Style Repository</a> for details. <!--<strong>Note:</strong> I haven't been able to get these styles working: chicago-note-bibliography, chicago-note, ieee, mhra, mhra_note_without_bibliography.--></li>
-                <!--<li><code>order</code> order by a certain field. Options: itemType, language, conferenceName, volume, issue, place, publisher, date, series, seriesTitle, dateModified, dateAdded [default]. Potentially many more; see <a href="http://www.zotero.org/support/dev/data_model">Zotero Data Model</a>.</li>-->
-                <li><code>showimage</code> whether or not to display the citation's image, if there is one. Options: yes, no [default]</li>
-                <!--<li><code>url</code> whether or not to hyperlink the displayed citation URL, if there is one. Options: yes [default], no</li>-->
-                <li><code>download</code> or <code>downloadable</code> whether or not to display the citation's download URL, if there is one. <strong>Enable this option only if you are legally able to provide your files for download.</strong> Options: yes, no [default]</li>
-                <li><code>notes</code> whether or not to display the citation's notes, if they exist. <strong>Must have notes made public via the private key settings on Zotero.</strong> Options: yes, no [default]</li>
-                <li><code>cite</code> make the displayed citations citable by generating RIS links. Options: yes, no [default]</li>
-            </ul>
             
             
             
@@ -113,7 +204,7 @@
             <h3>Displaying Citations Using the Zotpress In-Text Shortcodes</h3>
             
             <p>
-                Use one or more <code>[zotpressInText]</code> shortcodes in your blog entry. Place the <code>[zotpressInTextBib]</code> somewhere in your entry to auto-generate the in-text citations bibliography. Here's an example:
+                Use one or more <code>[zotpressInText]</code> shortcodes in your blog entry to create in-text citations. Place the <code>[zotpressInTextBib]</code> somewhere in your entry to auto-generate the in-text citations bibliography. Here's an example:
             </p>
             
             <p class="example">
@@ -130,28 +221,53 @@
                 ... with an auto-generated bibliography wherever you've placed the <code>[zotpressInTextBib]</code>, of course.
             </p>
             
-            <h5>Further Examples</h5>
-            <ul>
-                <li>With formatting: <code>[zotpressInText item="NCXAA92F" format="%a% (%d%, %p%)"]</code>, which will display as: <span style="padding-left: 0.5em; font-family: monospace;">author (date, pages)</span></li>
-                <li>With multiple items: <code>[zotpressInText item="{NCXAA92F,10-15},{55MKF89B,1578},{3ITTIXHP}"]</code></li>
-                <li>The old way: <code>[zotpressInText item="3ITTIXHP" pages="10-15"]</code> (Single items only, not recommended.)</li>
-            </ul>
+            <h4>In-Text Shortcode Attributes</h4>
             
+            <table class="zp-Documentation" border="0" cellpadding="0" cellspacing="0">
+                
+                <tr class="main">
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Attribute</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                
+                <tr>
+                    <td rowspan="3" class="category">Filtering</td>
+                    
+                    <td rowspan="2" class="type">Account</td>
+                    
+                    <td class="code">userid</td>
+                    <td><p>Display a list of citations from a particular user or group. <strong>REQUIRED if you have multiple accounts and are not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</p></td>
+                    <td class="example"><p><code>[zotpress userid="000000"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">nickname</td>
+                    <td><p>Display a list of citations by a particular Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a title="Accounts" href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</p></td>
+                    <td class="example"><p><code>[zotpress nickname="Katie"]</code></p></td>
+                </tr>
+                <tr>
+                    <td rowspan="1" class="type">Meta</td>
+                    
+                    <td class="code">items</td>
+                    <td><p>Alternative: <code>item</code> Item keys and page number pairs formatted like so: <code>ITEMKEY</code> or <code>{ITEMKEY,PAGES}</code> or <code>{ITEMKEY1,PAGES},{ITEMKEY2,PAGES},...</code>.</p></td>
+                    <td class="example"><p><code>[zotpressInText item="NCXAA92F"]</code></p><p><code>[zotpressInText item="{NCXAA92F,10-15}"]</code></p><p><code>[zotpressInText items="{NCXAA92F,10-15},{55MKF89B,1578},{3ITTIXHP}"]</code></p></td>
+                </tr>
+                
+                <tr class="zebra last">
+                    <td rowspan="1" class="category last">Display</td>
+                    
+                    <td rowspan="1" class="type last">Settings</td>
+                    
+                    <td class="code">format</td>
+                    <td><p>How the in-text citation should be presented. Use these placeholders: %a% for author, %d% for date, %p% for page, %num% for list number.</p></td>
+                    <td class="example"><p><code>[zotpressInText item="NCXAA92F" format="%a% (%d%, %p%)"]</code>, which will display as: <span style="padding-left: 0.5em; font-family: monospace;">author (date, pages)</span></p></td>
+                </tr>
+                
+            </table>
             
-            
-            <h4>Shortcode Parameters</h4>
-            
-            <p><strong>Note:</strong> These parameters only work for the <code>[zotpressInText]</code> shortcode.</p>
-            
-            <ul>
-                <li><code>item</code> or <code>items</code> item keys and page number pairs formatted like so: <code>ITEMKEY</code> or <code>{ITEMKEY,PAGES}</code> or <code>{ITEMKEY1,PAGES},{ITEMKEY2,PAGES},...</code>.</li>
-                <li><code>format</code> how the in-text citation should be presented. Use these placeholders: %a% for author, %d% for date, %p% for page, %num% for list number.</li>
-                <li><code>pages</code> what page/s you're referencing, if any. <em>DEPRECATED</em>.</li>
-                <li><code>userid</code> set the user or group. <strong>REQUIRED if you have multiple accounts and are not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</li>
-                <li><code>nickname</code> set based on a Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a title="Accounts" href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</li>
-            </ul>
-            
-            <p>The <code>[zotpressInTextBib]</code> shortcode takes the same parameters as the <code>[zotpress]</code> shortcode, minus the "userid," "nickname," and "limit" parameters.</p>
+            <p>The <code>[zotpressInTextBib]</code> shortcode takes the same attributes as the <code>[zotpress]</code> shortcode, minus the "userid," "nickname," and "limit" attributes.</p>
             
             
             <hr />
@@ -165,6 +281,7 @@
             
             <hr />
             
+            <a name="ref"></a>
             <h3>Zotpress Reference</h3>
             
             <p>
@@ -177,7 +294,8 @@
             
             <hr />
             
-            <h3>F.A.Q.</h3>
+            <a name="faq"></a>
+            <h3 class="zp-HeaderGroup">F.A.Q.</h3>
             
             <h4>How can I sync or re-import my local library in Zotpress?</h4>
             

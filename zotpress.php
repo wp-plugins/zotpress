@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bring Zotero and scholarly blogging to your Wordpress site.
     Author: Katie Seaborn
-    Version: 5.0.3
+    Version: 5.0.4
     Author URI: http://katieseaborn.com
     
 */
@@ -34,24 +34,25 @@
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
+    define('ZOTPRESS_PLUGIN_FILE',  __FILE__ );
     
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
-    global $Zotpress_main_db_version;
-    $Zotpress_main_db_version = "5.0.1";
+    //global $Zotpress_main_db_version;
+    $Zotpress_main_db_version = "5.0.4";
     
-    global $Zotpress_oauth_db_version;
-    $Zotpress_oauth_db_version = "5.0.1";
+    //global $Zotpress_oauth_db_version;
+    $Zotpress_oauth_db_version = "5.0.4";
     
-    global $Zotpress_zoteroItems_db_version;
-    $Zotpress_zoteroItems_db_version = "5.0.1";
+    //global $Zotpress_zoteroItems_db_version;
+    $Zotpress_zoteroItems_db_version = "5.0.4";
     
-    global $Zotpress_zoteroCollections_db_version;
-    $Zotpress_zoteroCollections_db_version = "5.0.1";
+    //global $Zotpress_zoteroCollections_db_version;
+    $Zotpress_zoteroCollections_db_version = "5.0.4";
     
-    global $Zotpress_zoteroTags_db_version;
-    $Zotpress_zoteroTags_db_version = "5.0.1";
+    //global $Zotpress_zoteroTags_db_version;
+    $Zotpress_zoteroTags_db_version = "5.0.4";
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
@@ -159,18 +160,21 @@
         wp_enqueue_script('zotpress.widget.metabox.js');
     }
     
-    // CKEDITOR SCRIPTS & STYLES
+    // EDITOR SCRIPTS & STYLES
     // In progress, and experimental
     
-    //function Zotpress_admin_ckeditor_scripts()
+    //function Zotpress_admin_editor_scripts()
     //{
-    //    wp_register_script('zotpress.widget.ckeditor.js', ZOTPRESS_PLUGIN_URL . 'zotpress.widget.ckeditor.js', array('jquery'));
-    //    wp_enqueue_script('zotpress.widget.ckeditor.js');
+    //    wp_register_script('zotpress.widget.tinymce.js', ZOTPRESS_PLUGIN_URL . 'js/zotpress.widget.tinymce.js', array('jquery'));
+    //    wp_enqueue_script('zotpress.widget.tinymce.js');
+    //    
+    //    //wp_register_script('zotpress.widget.ckeditor.js', ZOTPRESS_PLUGIN_URL . 'js/zotpress.widget.ckeditor.js', array('jquery'));
+    //    //wp_enqueue_script('zotpress.widget.ckeditor.js');
     //}
-    //
+    
     //function Zotpress_admin_ckeditor_css()
     //{
-    //    wp_register_style('zotpress.ckeditor.css', ZOTPRESS_PLUGIN_URL . 'zotpress.ckeditor.css');
+    //    wp_register_style('zotpress.ckeditor.css', ZOTPRESS_PLUGIN_URL . 'css/zotpress.ckeditor.css');
     //    wp_enqueue_style('zotpress.ckeditor.css');
     //}
     
@@ -213,6 +217,9 @@
         
         wp_register_style('jquery.qtip.min.css', ZOTPRESS_PLUGIN_URL . 'css/jquery.qtip.min.css');
         wp_enqueue_style('jquery.qtip.min.css');
+        
+        wp_register_style('Monda.css', 'http://fonts.googleapis.com/css?family=Droid+Serif:400,400italic,700italic|Oswald:400,300');
+        wp_enqueue_style('Monda.css');
     }
     
     function Zotpress_admin_post_styles()
@@ -246,6 +253,7 @@
     function Zotpress_import_session_end()
     {
         //session_destroy(); // just in case there's more than one session
+        if (!session_id()) { session_start(); }
         unset($_SESSION['zp_session']);
     }
     
@@ -275,14 +283,14 @@
         )
     {
         add_action('admin_print_scripts', 'Zotpress_admin_metabox_scripts');
-        //add_action('admin_footer', 'Zotpress_admin_ckeditor_scripts');
+        //add_action('admin_footer', 'Zotpress_admin_editor_scripts');
         add_action('admin_print_styles', 'Zotpress_admin_post_styles');
         //add_action('admin_print_styles', 'Zotpress_admin_ckeditor_css');
     }
     
     add_action('admin_menu', 'Zotpress_admin_menu');
     
-    // Enqueue jQuery if it isn't already enqueued
+    // Enqueue jQuery in theme if it isn't already enqueued
     if (!isset( $GLOBALS['wp_scripts']->registered[ "jquery" ] ))
         wp_enqueue_script("jquery");
 

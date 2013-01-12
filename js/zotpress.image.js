@@ -25,7 +25,6 @@ jQuery(document).ready(function() {
         
         // Set up uri
         var xmlUri = jQuery('input[name=ZOTPRESS_PLUGIN_URL]').val() + 'lib/actions/actions.php?'+data;
-        //alert(xmlUri);
         
         // AJAX
         jQuery.get(xmlUri, {}, function(xml)
@@ -133,7 +132,6 @@ jQuery(document).ready(function() {
             {
                 // Set up uri
                 var xmlUri = jQuery('span#ZOTPRESS_PLUGIN_URL').text() + $this.attr("rel");
-                //alert(xmlUri);
                 
                 // AJAX
                 jQuery.get(xmlUri, {}, function(xml)

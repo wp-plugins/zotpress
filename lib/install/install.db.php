@@ -14,7 +14,10 @@
         
         // ACCOUNTS TABLE
         
-        if (!get_option("Zotpress_main_db_version") || get_option("Zotpress_main_db_version") != $Zotpress_main_db_version)
+        if (!get_option("Zotpress_main_db_version")
+                || get_option("Zotpress_main_db_version") != $Zotpress_main_db_version
+                || $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress'") != $wpdb->prefix."zotpress"
+                )
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress (
                 id INT(9) NOT NULL AUTO_INCREMENT,
@@ -28,16 +31,16 @@
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($structure);
             
-            if (!get_option("Zotpress_main_db_version"))
-                add_option("Zotpress_main_db_version", $Zotpress_main_db_version);
-            else if (get_option("Zotpress_main_db_version") != $Zotpress_main_db_version)
-                update_option("Zotpress_main_db_version", $Zotpress_main_db_version);
+            update_option("Zotpress_main_db_version", $Zotpress_main_db_version);
         }
         
         
         // OAUTH CACHE TABLE
         
-        if (!get_option("Zotpress_oauth_db_version") || get_option("Zotpress_oauth_db_version") != $Zotpress_oauth_db_version)
+        if (!get_option("Zotpress_oauth_db_version")
+                || get_option("Zotpress_oauth_db_version") != $Zotpress_oauth_db_version
+                || $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_oauth'") != $wpdb->prefix."zotpress_oauth"
+                )
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_oauth (
                 id INT(9) NOT NULL AUTO_INCREMENT,
@@ -48,19 +51,20 @@
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($structure);
             
-            if (!get_option("Zotpress_oauth_db_version"))
-                add_option("Zotpress_oauth_db_version", $Zotpress_oauth_db_version);
-            else if (get_option("Zotpress_oauth_db_version") != $Zotpress_oauth_db_version)
-                update_option("Zotpress_oauth_db_version", $Zotpress_oauth_db_version);
+            update_option("Zotpress_oauth_db_version", $Zotpress_oauth_db_version);
             
             // Initial populate
-            $wpdb->query("INSERT INTO ".$wpdb->prefix."zotpress_oauth (cache) VALUES ('empty')");
+            if ($wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."zotpress_oauth;") == 0)
+                $wpdb->query("INSERT INTO ".$wpdb->prefix."zotpress_oauth (cache) VALUES ('empty')");
         }
         
         
         // ZOTERO ITEMS TABLE
         
-        if (!get_option("Zotpress_zoteroItems_db_version") || get_option("Zotpress_zoteroItems_db_version") != $Zotpress_zoteroItems_db_version)
+        if (!get_option("Zotpress_zoteroItems_db_version")
+                || get_option("Zotpress_zoteroItems_db_version") != $Zotpress_zoteroItems_db_version
+                || $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_zoteroItems'") != $wpdb->prefix."zotpress_zoteroItems"
+                )
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_zoteroItems (
                 id INT(9) NOT NULL AUTO_INCREMENT,
@@ -86,16 +90,16 @@
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($structure);
             
-            if (!get_option("Zotpress_zoteroItems_db_version"))
-                add_option("Zotpress_zoteroItems_db_version", $Zotpress_zoteroItems_db_version);
-            else if (get_option("Zotpress_zoteroItems_db_version") != $Zotpress_zoteroItems_db_version)
-                update_option("Zotpress_zoteroItems_db_version", $Zotpress_zoteroItems_db_version);
+            update_option("Zotpress_zoteroItems_db_version", $Zotpress_zoteroItems_db_version);
         }
         
         
         // ZOTERO COLLECTIONS TABLE
         
-        if (!get_option("Zotpress_zoteroCollections_db_version") || get_option("Zotpress_zoteroCollections_db_version") != $Zotpress_zoteroCollections_db_version)
+        if (!get_option("Zotpress_zoteroCollections_db_version")
+                || get_option("Zotpress_zoteroCollections_db_version") != $Zotpress_zoteroCollections_db_version
+                || $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_zoteroCollections'") != $wpdb->prefix."zotpress_zoteroCollections"
+                )
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_zoteroCollections (
                 id INT(9) NOT NULL AUTO_INCREMENT,
@@ -114,16 +118,16 @@
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($structure);
             
-            if (!get_option("Zotpress_zoteroCollections_db_version"))
-                add_option("Zotpress_zoteroCollections_db_version", $Zotpress_zoteroCollections_db_version);
-            else if (get_option("Zotpress_zoteroCollections_db_version") != $Zotpress_zoteroCollections_db_version)
-                update_option("Zotpress_zoteroCollections_db_version", $Zotpress_zoteroCollections_db_version);
+            update_option("Zotpress_zoteroCollections_db_version", $Zotpress_zoteroCollections_db_version);
         }
         
         
         // ZOTERO TAGS TABLE
         
-        if (!get_option("Zotpress_zoteroTags_db_version") || get_option("Zotpress_zoteroTags_db_version") != $Zotpress_zoteroTags_db_version)
+        if (!get_option("Zotpress_zoteroTags_db_version")
+                || get_option("Zotpress_zoteroTags_db_version") != $Zotpress_zoteroTags_db_version
+                || $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_zoteroTags'") != $wpdb->prefix."zotpress_zoteroTags"
+                )
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_zoteroTags (
                 id INT(9) NOT NULL AUTO_INCREMENT,
@@ -139,33 +143,33 @@
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($structure);
             
-            if (!get_option("Zotpress_zoteroTags_db_version"))
-                add_option("Zotpress_zoteroTags_db_version", $Zotpress_zoteroTags_db_version);
-            else if (get_option("Zotpress_zoteroTags_db_version") != $Zotpress_zoteroTags_db_version)
-                update_option("Zotpress_zoteroTags_db_version", $Zotpress_zoteroTags_db_version);
+            update_option("Zotpress_zoteroTags_db_version", $Zotpress_zoteroTags_db_version);
         }
     }
 
-    register_activation_hook(__FILE__, 'Zotpress_install');
+    register_activation_hook(ZOTPRESS_PLUGIN_FILE, 'Zotpress_install');
 
 // INSTALL -----------------------------------------------------------------------------------------
 
 
 
-// INITIALIZE --------------------------------------------------------------------------------------
+// UNINSTALL --------------------------------------------------------------------------------------
 
-    //if ( !get_option('Zotpress_initialized') && !$wpcom_api_key && !isset($_POST['submit']) && !isset($_GET['setup']) && strpos(strtolower($_SERVER['REQUEST_URI']), 'zotpress') === false )
-    //{
-    //    function Zotpress_initialize_msg()
-    //    {
-    //        
-    //        echo "<div id='akismet-warning' class='updated fade'><p><strong>Zotpress is almost ready.</strong> You must <a href='admin.php?page=Zotpress&setup=true'>sync your Zotero account</a> to get started.</p></div>";
-    //    }
-    //    
-    //    add_action('admin_notices', 'Zotpress_initialize_msg');
-    //}
+    function Zotpress_deactivate()
+    {
+        global $wpdb;
+        
+        // Drop all tables except accounts/main
+	$wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_oauth;");
+	$wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroItems;");
+	$wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroCollections;");
+	$wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroTags;");
+    }
+    
+    //register_deactivation_hook(ZOTPRESS_PLUGIN_FILE, 'Zotpress_deactivate');
+    register_uninstall_hook(ZOTPRESS_PLUGIN_FILE, 'Zotpress_deactivate');
 
-// INITIALIZE ---------------------------------------------------------------------------------------
+// UNINSTALL ---------------------------------------------------------------------------------------
 
 
 // UPDATE ------------------------------------------------------------------------------------------

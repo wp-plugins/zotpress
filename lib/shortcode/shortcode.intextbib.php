@@ -176,7 +176,6 @@
         $GLOBALS['zp_is_shortcode_displayed'] = true;
         
         return $zp_output;
-        
     }
 
 ?>

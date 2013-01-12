@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.0.4
 Tested up to: 3.5
-Stable tag: 5.0.3
+Stable tag: 5.0.4
 License: Apache2.0
 
 Zotpress displays your Zotero citations on Wordpress.
@@ -64,7 +64,15 @@ The F.A.Q. can be found on the "Help" page of every Zotpress installation. If yo
 
 == Changelog ==
 
+= 5.0.4 =
+
+* Fixed table install, update and uninstall issues.
+* New import and sync scripts for large libraries.
+* Zotpress admin now accessible to Editors.
+* Styles updated and Help page shortcode documentation redesigned.
+
 = 5.0.3 =
+
 * Fixed import and sync for large libraries.
 * Removed autoupdate feature. Please use the sync feature for the time being.
 * Fixed metabox widget error.
@@ -422,7 +430,15 @@ Fixed "downloadable" bug. Updated Help page.
 * Long URLs in citations will now wrap.
 
 = 5.0.3 =
+
 * Fixed import and sync for large libraries.
 * Removed autoupdate feature. Please use the sync feature for the time being.
 * Fixed metabox widget error.
 * Minor bug fixes.
+
+= 5.0.4 =
+
+* Fixed table install, update and uninstall issues.
+* New import and sync scripts for large libraries.
+* Zotpress admin now accessible to Editors.
+* Styles updated and Help page shortcode documentation redesigned.

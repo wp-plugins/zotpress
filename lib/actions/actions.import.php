@@ -105,7 +105,17 @@
                 
                 if ($zp_continue === true)
                 {
-                    $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
+                    if ($start % 200 == 0) // Save, then continue
+                    {
+                        global $wpdb;
+                        zp_save_items ($wpdb, $api_user_id, true);
+                        
+                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
+                    }
+                    else // just continue
+                    {
+                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
+                    }
                 }
                 else // Execute import query, then move on
                 {
@@ -125,7 +135,17 @@
                 
                 if ($zp_continue === true)
                 {
-                    $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
+                    if ($start % 200 == 0) // Save, then continue
+                    {
+                        global $wpdb;
+                        zp_save_collections ($wpdb, $api_user_id, true);
+                        
+                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
+                    }
+                    else // just continue
+                    {
+                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
+                    }
                 }
                 else // Execute import query, then move on
                 {
@@ -145,7 +165,17 @@
                 
                 if ($zp_continue === true)
                 {
-                    $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
+                    if ($start % 200 == 0) // Save, then continue
+                    {
+                        global $wpdb;
+                        zp_save_tags ($wpdb, $api_user_id, true);
+                        
+                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
+                    }
+                    else // just continue
+                    {
+                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
+                    }
                 }
                 else // Execute import query, then move on
                 {
