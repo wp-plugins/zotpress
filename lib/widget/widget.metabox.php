@@ -143,6 +143,15 @@
                 
                 <hr />
                 
+                Abstract?
+                <label for="zp-ZotpressMetaBox-Biblio-Options-Abstract-Yes">Yes</label>
+                <input type="radio" id="zp-ZotpressMetaBox-Biblio-Options-Abstract-Yes" name="abstract" value="yes" />
+                
+                <label for="zp-ZotpressMetaBox-Biblio-Options-Abstract-No">No</label>
+                <input type="radio" id="zp-ZotpressMetaBox-Biblio-Options-Abstract-No" name="abstract" value="no" checked="checked" />
+                
+                <hr />
+                
                 Notes?
                 <label for="zp-ZotpressMetaBox-Biblio-Options-Notes-Yes">Yes</label>
                 <input type="radio" id="zp-ZotpressMetaBox-Biblio-Options-Notes-Yes" name="notes" value="yes" />
@@ -311,6 +320,15 @@
                 
                 <label for="zp-ZotpressMetaBox-InTextCreator-Options-Download-No">No</label>
                 <input type="radio" id="zp-ZotpressMetaBox-InTextCreator-Options-Download-No" name="download" value="no" checked="checked" />
+                
+                <hr />
+                
+                Abstract?
+                <label for="zp-ZotpressMetaBox-InTextCreator-Options-Abstract-Yes">Yes</label>
+                <input type="radio" id="zp-ZotpressMetaBox-InTextCreator-Options-Abstract-Yes" name="abstract" value="yes" />
+                
+                <label for="zp-ZotpressMetaBox-InTextCreator-Options-Abstract-No">No</label>
+                <input type="radio" id="zp-ZotpressMetaBox-InTextCreator-Options-Abstract-No" name="abstract" value="no" checked="checked" />
                 
                 <hr />
                 

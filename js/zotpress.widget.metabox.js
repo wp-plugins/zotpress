@@ -18,7 +18,7 @@ jQuery(document).ready(function()
      *
      ****************************************************************************************/
     
-    var zpBiblio = { "author": false, "year": false, "style": false, "sortby": false, "sort": false, "image": false, "download": false, "notes": false, "cite": false, "title": false, "limit": false, "items": [] };
+    var zpBiblio = { "author": false, "year": false, "style": false, "sortby": false, "sort": false, "image": false, "download": false, "notes": false, "zpabstract": false, "cite": false, "title": false, "limit": false, "items": [] };
     
     jQuery("input#zp-ZotpressMetaBox-Biblio-Citations-Search")
         .bind( "keydown", function( event ) {
@@ -177,41 +177,67 @@ jQuery(document).ready(function()
             if (jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Image-Yes").is(':checked') === true)
                 zpBiblio.image = "yes";
             else
-                zpBiblio.image = "no";
+                zpBiblio.image = "";
             
             // Grab the title option
             if (jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Title-Yes").is(':checked') === true)
                 zpBiblio.title = "yes";
             else
-                zpBiblio.title = "no";
+                zpBiblio.title = "";
             
             // Grab the download option
             if (jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Download-Yes").is(':checked') === true)
                 zpBiblio.download = "yes";
             else
-                zpBiblio.download = "no";
+                zpBiblio.download = "";
+            
+            // Grab the abstract option
+            if (jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Abstract-Yes").is(':checked') === true)
+                zpBiblio.zpabstract = "yes";
+            else
+                zpBiblio.zpabstract = "";
             
             // Grab the notes option
             if (jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Notes-Yes").is(':checked') === true)
                 zpBiblio.notes = "yes";
             else
-                zpBiblio.notes = "no";
+                zpBiblio.notes = "";
             
             // Grab the cite option
             if (jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Cite-Yes").is(':checked') === true)
                 zpBiblio.cite = "yes";
             else
-                zpBiblio.cite = "no";
+                zpBiblio.cite = "";
             
             // Generate bibliography shortcode
-            var zpBiblioShortcode = "[zotpress ";
+            var zpBiblioShortcode = "[zotpress";
             
             if (zpBiblio.author != "")
-                zpBiblioShortcode += "author=\"" + zpBiblio.author + "\"";
-            if (zpBiblio.year == "")
-                zpBiblioShortcode += "year=\"" + zpBiblio.year + "\"";
+                zpBiblioShortcode += " author=\"" + zpBiblio.author + "\"";
+            if (zpBiblio.year != "")
+                zpBiblioShortcode += " year=\"" + zpBiblio.year + "\"";
+            if (zpBiblio.style != "")
+                zpBiblioShortcode += " style=\"" + zpBiblio.style + "\"";
+            if (zpBiblio.sortby != "")
+                zpBiblioShortcode += " sortby=\"" + zpBiblio.sortby + "\"";
+            if (zpBiblio.sort != "")
+                zpBiblioShortcode += " sort=\"" + zpBiblio.sort + "\"";
+            if (zpBiblio.image != "")
+                zpBiblioShortcode += " showimage=\"" + zpBiblio.image + "\"";
+            if (zpBiblio.download != "")
+                zpBiblioShortcode += " download=\"" + zpBiblio.download + "\"";
+            if (zpBiblio.zpabstract != "")
+                zpBiblioShortcode += " abstract=\"" + zpBiblio.zpabstract + "\"";
+            if (zpBiblio.notes != "")
+                zpBiblioShortcode += " notes=\"" + zpBiblio.notes + "\"";
+            if (zpBiblio.cite != "")
+                zpBiblioShortcode += " cite=\"" + zpBiblio.cite + "\"";
+            if (zpBiblio.title != "")
+                zpBiblioShortcode += " title=\"" + zpBiblio.title + "\"";
+            if (zpBiblio.limit != "")
+                zpBiblioShortcode += " limit=\"" + zpBiblio.limit + "\"";
             
-            zpBiblioShortcode += " style=\"" + zpBiblio.style + "\" sortby=\"" + zpBiblio.sortby + "\" sort=\"" + zpBiblio.sort + "\" showimage=\"" + zpBiblio.image + "\" download=\"" + zpBiblio.download + "\" notes=\"" + zpBiblio.notes + "\" cite=\"" + zpBiblio.cite + "\" title=\"" + zpBiblio.title + "\ limit=\"" + zpBiblio.limit + "\"]";
+            zpBiblioShortcode += "]";
             
             jQuery("#zp-ZotpressMetaBox-Biblio-Shortcode-Text").text(zpBiblioShortcode);
             
@@ -235,6 +261,7 @@ jQuery(document).ready(function()
             zpBiblio.image = false;
             zpBiblio.download = false;
             zpBiblio.notes = false;
+            zpBiblio.zpabstract = false;
             zpBiblio.cite = false;
             zpBiblio.title = false;
             zpBiblio.limit = false;
@@ -270,6 +297,9 @@ jQuery(document).ready(function()
             jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Download-Yes").removeAttr('checked');
             jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Download-No").attr('checked', 'checked');
             
+            jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Abstract-Yes").removeAttr('checked');
+            jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Abstract-No").attr('checked', 'checked');
+            
             jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Notes-Yes").removeAttr('checked');
             jQuery("input#zp-ZotpressMetaBox-Biblio-Options-Notes-No").attr('checked', 'checked');
             
@@ -290,7 +320,7 @@ jQuery(document).ready(function()
      *
      ****************************************************************************************/
     
-    var zpInText = { "format": false, "style": false, "sortby": false, "sort": false, "image": false, "download": false, "notes": false, "cite": false, "title": false, "items": [] };
+    var zpInText = { "format": false, "style": false, "sortby": false, "sort": false, "image": false, "download": false, "notes": false, "zpabstract": false, "cite": false, "title": false, "items": [] };
     
     jQuery("input#zp-ZotpressMetaBox-Citations-Search")
         .bind( "keydown", function( event ) {
@@ -459,31 +489,37 @@ jQuery(document).ready(function()
             if (jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Image-Yes").is(':checked') === true)
                 zpInText.image = "yes";
             else
-                zpInText.image = "no";
+                zpInText.image = "";
             
             // Grab the title option
             if (jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Title-Yes").is(':checked') === true)
                 zpInText.title = "yes";
             else
-                zpInText.title = "no";
+                zpInText.title = "";
             
             // Grab the download option
             if (jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Download-Yes").is(':checked') === true)
                 zpInText.download = "yes";
             else
-                zpInText.download = "no";
+                zpInText.download = "";
+            
+            // Grab the abstract option
+            if (jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Abstract-Yes").is(':checked') === true)
+                zpInText.zpabstract = "yes";
+            else
+                zpInText.zpabstract = "";
             
             // Grab the notes option
             if (jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Notes-Yes").is(':checked') === true)
                 zpInText.notes = "yes";
             else
-                zpInText.notes = "no";
+                zpInText.notes = "";
             
             // Grab the cite option
             if (jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Cite-Yes").is(':checked') === true)
                 zpInText.cite = "yes";
             else
-                zpInText.cite = "no";
+                zpInText.cite = "";
             
             // Generate in-text shortcode
             var zpIntTextVal = "[zotpressInText item=\"";
@@ -493,12 +529,39 @@ jQuery(document).ready(function()
                     zpIntTextVal += "," + item.pages;
                 zpIntTextVal += "},";
             });
-            zpIntTextVal = zpIntTextVal.substring(0, zpIntTextVal.length - 1); // get rid of last comma
-            zpIntTextVal += "\" format=\"" + zpInText.format +"\"]";
+            zpIntTextVal = zpIntTextVal.substring(0, zpIntTextVal.length - 1) + "\""; // get rid of last comma
+            
+            if (zpInText.format != "" && zpInText.format != "(%a%, %d%, %p%)")
+                zpIntTextVal += " format=\"" + zpInText.format + "\"";
+            
+            zpIntTextVal += "]";
             jQuery("#zp-ZotpressMetaBox-InTextCreator-InText").val(zpIntTextVal);
             
             // Generate in-text bibliography shortcode
-            jQuery("#zp-ZotpressMetaBox-InTextCreator-Text-Bib").val("[zotpressInTextBib style=\"" + zpInText.style + "\" sortby=\"" + zpInText.sortby + "\" sort=\"" + zpInText.sort + "\" showimage=\"" + zpInText.image + "\" download=\"" + zpInText.download + "\" notes=\"" + zpInText.notes + "\" cite=\"" + zpInText.cite + "\" title=\"" + zpInText.title + "\"]");
+            var zpInTextShortcode = "[zotpressInTextBib";
+            
+            if (zpInText.style != "")
+                zpInTextShortcode += " style=\"" + zpInText.style + "\"";
+            if (zpInText.sortby != "")
+                zpInTextShortcode += " sortby=\"" + zpInText.sortby + "\"";
+            if (zpInText.sort != "")
+                zpInTextShortcode += " sort=\"" + zpInText.sort + "\"";
+            if (zpInText.image != "")
+                zpInTextShortcode += " showimage=\"" + zpInText.image + "\"";
+            if (zpInText.download != "")
+                zpInTextShortcode += " download=\"" + zpInText.download + "\"";
+            if (zpInText.zpabstract != "")
+                zpInTextShortcode += " abstract=\"" + zpInText.zpabstract + "\"";
+            if (zpInText.notes != "")
+                zpInTextShortcode += " notes=\"" + zpInText.notes + "\"";
+            if (zpInText.cite != "")
+                zpInTextShortcode += " cite=\"" + zpInText.cite + "\"";
+            if (zpInText.title != "")
+                zpInTextShortcode += " title=\"" + zpInText.title + "\"";
+            
+            zpInTextShortcode += "]";
+            
+            jQuery("#zp-ZotpressMetaBox-InTextCreator-Text-Bib").val(zpInTextShortcode);
             
             // Reveal shortcode
             jQuery("#zp-ZotpressMetaBox-InTextCreator-Shortcode-Inner").show('fast');
@@ -518,6 +581,7 @@ jQuery(document).ready(function()
             zpInText.sort = false;
             zpInText.image = false;
             zpInText.download = false;
+            zpInText.zpabstract = false;
             zpInText.notes = false;
             zpInText.cite = false;
             zpInText.title = false;
@@ -550,6 +614,9 @@ jQuery(document).ready(function()
             
             jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Download-Yes").removeAttr('checked');
             jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Download-No").attr('checked', 'checked');
+            
+            jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Abstract-Yes").removeAttr('checked');
+            jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Abstract-No").attr('checked', 'checked');
             
             jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Notes-Yes").removeAttr('checked');
             jQuery("input#zp-ZotpressMetaBox-InTextCreator-Options-Notes-No").attr('checked', 'checked');

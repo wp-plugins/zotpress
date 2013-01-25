@@ -24,6 +24,7 @@
         ), $atts));
         
         
+        
         // PREPARE ATTRIBUTES
         
         if ($items)
@@ -140,8 +141,8 @@
                 if ($GLOBALS['zp_shortcode_instances'][$item->item_key] && count(explode(",", $item->author)) > 3)
                     $item->author = substr($item->author, 0, strpos($item->author, ",")) . " <em>et al.</em>";
                 
-                // Fill in author and date
-                $citation = str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate), $format));
+                // Fill in author, date and number
+                $citation = str_replace("%num%", ($id+1), str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate), $format)));
                 
                 // Deal with pages
                 if ($pages)

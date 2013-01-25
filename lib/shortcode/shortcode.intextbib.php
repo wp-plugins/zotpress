@@ -19,6 +19,8 @@
             'download' => "no",
             'downloadable' => false,
             'notes' => false,
+            'abstract' => false,
+            'abstracts' => false,
             'cite' => false
         ), $atts));
         
@@ -41,6 +43,12 @@
             $download = str_replace('"','',html_entity_decode($downloadable));
         
         $notes = str_replace('"','',html_entity_decode($notes));
+        
+        if ($abstracts)
+            $abstracts = str_replace('"','',html_entity_decode($abstracts));
+        else if ($abstract)
+            $abstracts = str_replace('"','',html_entity_decode($abstract));
+        
         $cite = str_replace('"','',html_entity_decode($cite));
         
         
@@ -56,6 +64,7 @@
         // DISPLAY IN-TEXT BIBLIOGRAPHY
         
         $current_title =  "";
+        $citation_abstract = "";
         $citation_notes = "";
         $zp_notes_num = 1;
         
@@ -87,6 +96,15 @@
                 $citation_image .= "<img src='".$zp_citation["image"]."' alt='image' />";
                 $citation_image .= "</div>\n";
                 $has_citation_image = " zp-HasImage";
+            }
+            
+            // ABSTRACT
+            if ($abstracts)
+            {
+                if (isset($zp_this_meta->abstractNote) && strlen(trim($zp_this_meta->abstractNote)) > 0)
+                {
+                    $citation_abstract = "<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " . $zp_this_meta->abstractNote . "</p>\n";
+                }
             }
             
             // NOTES
@@ -162,7 +180,7 @@
             // OUTPUT
             
             $zp_output .= "<div class='zp-Entry".$has_citation_image."' rel='".$zp_citation["item_key"]."'>\n";
-            $zp_output .= $citation_image . $zp_citation['citation'] . "\n";
+            $zp_output .= $citation_image . $zp_citation['citation'] . $citation_abstract . "\n";
             $zp_output .= "</div><!--Entry-->\n\n";
         }
         

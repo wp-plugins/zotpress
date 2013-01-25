@@ -143,14 +143,14 @@
                     <td class="example"><p><code>[zotpress author="Carl Sagan" inclusive="yes"]</code></p></td>
                 </tr>
                 <tr class="zebra">
-                    <td class="code">order</td>
+                    <td class="code">sortby</td>
                     <td><p>Sort multiple citations using meta data as attributes. <strong>Options: title, author, date, default (latest added) [default].</strong></p></td>
                     <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="year"]</code></p></td>
                 </tr>
                 <tr class="zebra">
-                    <td class="code">sortby</td>
+                    <td class="code">order</td>
                     <td><p>Alternative: <code>sort</code>. Order of the sortby attribute. <strong>Options: asc [default], desc.</strong></p></td>
-                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="year"]</code></p></td>
+                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="year" order="desc"]</code></p></td>
                 </tr>
                 <tr class="zebra">
                     <td class="code">title</td>
@@ -164,9 +164,9 @@
                 </tr>
                 
                 <tr>
-                    <td rowspan="5" class="category last">Display</td>
+                    <td rowspan="6" class="category last">Display</td>
                     
-                    <td rowspan="5" class="type last">Settings</td>
+                    <td rowspan="6" class="type last">Settings</td>
                     
                     <td class="code">style</td>
                     <td><p>Citation style. <strong>Options: apsa, apa [default], asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, mla, nlm, nature, vancouver.</strong> Note: Support for more styles is coming; see <a title="Zotero Style Repository" href="http://www.zotero.org/styles">Zotero Style Repository</a> for details.</p></td>
@@ -181,6 +181,11 @@
                     <td class="code">download</td>
                     <td><p>Alternative: <code>downloadable</code> Whether or not to display the citation's download URL, if one exists. <strong>Enable this option only if you are legally able to provide your files for download.</strong> Options: yes, no [default].</p></td>
                     <td class="example"><p><code>[zotpress collection="GMGCJU34" download="yes"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">abstract</td>
+                    <td><p>Alternative: <code>abstracts</code> Whether or not to display the citation's abstract, if one exists. Options: yes, no [default].</p></td>
+                    <td class="example"><p><code>[zotpress collection="GMGCJU34" abstracts="yes"]</code></p></td>
                 </tr>
                 <tr>
                     <td class="code">notes</td>

@@ -215,6 +215,7 @@
             $json_content_decoded = json_decode($json_content);
             
             $author = "";
+            $author_other = "";
             $date = "";
             $year = "";
             $title = "";
@@ -226,9 +227,16 @@
                 foreach ($json_content_decoded->creators as $creator)
                     if ($creator->creatorType == "author")
                         $author .= $creator->lastName . ", ";
+                    else
+                        $author_other .= $creator->lastName . ", ";
             else
                 $author .= $creator->creators["lastName"];
             
+            // Determine if we use author or other author type
+            if (trim($author) == "")
+                $author = $author_other;
+            
+            // Remove last comma
             $author = preg_replace('~(.*)' . preg_quote(', ', '~') . '~', '$1' . '', $author, 1);
             
             $date = $json_content_decoded->date;

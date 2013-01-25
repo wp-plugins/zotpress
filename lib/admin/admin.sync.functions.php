@@ -76,6 +76,7 @@
         if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
             $zp_import_url .= "key=".$zp_account[0]->public_key."&";
         $zp_import_url .= "format=atom&content=json,bib&style=".$zp_default_style."&limit=50&start=".$zp_start;
+        //var_dump($zp_import_url);
         
         // Read the external data
         if (in_array ('curl', get_loaded_extensions()))
@@ -120,7 +121,6 @@
         {
             $item_key = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue;
             $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
-            //$_SESSION['zp_session'][$api_user_id]['items']['zp_current_local_count']++;
             
             // Check to see if item key exists in local
             if (array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'] ))
@@ -165,6 +165,7 @@
             $json_content_decoded = json_decode($json_content);
             
             $author = "";
+            $author_other = "";
             $date = "";
             $year = "";
             $title = "";
@@ -176,9 +177,16 @@
                 foreach ( $json_content_decoded->creators as $creator )
                     if ($creator->creatorType == "author")
                         $author .= $creator->lastName . ", ";
+                    else
+                        $author_other .= $creator->lastName . ", ";
             else
                 $author .= $creator->creators["lastName"];
             
+            // Determine if we use author or other author type
+            if (trim($author) == "")
+                $author = $author_other;
+            
+            // Remove last comma
             $author = preg_replace('~(.*)' . preg_quote(', ', '~') . '~', '$1' . '', $author, 1);
             
             $date = $json_content_decoded->date;
