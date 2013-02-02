@@ -2,29 +2,64 @@
     
     /* START OF AUTOCOMPLETE CSS */
     
-    .ui-autocomplete {
+    .ui-autocomplete.zp-autocomplete {
+        background: none;
+        background-color: #F6F6F6;
+        border: 1px solid #ddd;
+        margin: 0;
+        padding: 0;
         max-height: 200px;
         width: 245px !important;
         overflow-y: auto;
-        /* prevent horizontal scrollbar */
-        overflow-x: hidden;
+        overflow-x: hidden; /* prevent horizontal scrollbar */
+    }
+    .ui-autocomplete.zp-autocomplete-wide {
+        width: 775px !important;
     }
     
-    .ui-autocomplete li {
-        border-bottom: 1px solid #ddd;
-        font-size: 10px;
-        line-height: 12px;
+    .ui-autocomplete.zp-autocomplete li {
+        background: none;
+        border: none;
+        font: normal 11px/14px "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
         white-space: normal;
         width: 245px;
     }
+    .ui-autocomplete.zp-autocomplete-wide li {
+        width: 775px;
+    }
     
-    .ui-autocomplete li a.ui-state-hover {
+    .ui-autocomplete.zp-autocomplete li a {
+        background: none;
+        border: none;
+        border-top: 1px solid #fff;
+        border-bottom: 1px solid #ddd;
+        color: #666;
+        font: normal 11px/14px "Arial", sans-serif;
+        margin: 0;
+        padding: 4px 25px 4px 10px;
+    }
+    .ui-autocomplete.zp-autocomplete li a.ui-state-focus,
+    .ui-autocomplete.zp-autocomplete li a.ui-state-hover {
+        background: none;
         background-color: #8ec5fb;
+        border: none;
+        border-top: 1px solid #7ba5d7;
+        border-bottom: 1px solid #a4b0bf;
         color: #fff;
+        font: normal 11px/14px "Arial", sans-serif;
+        margin: 0;
+        padding: 4px 25px 4px 10px;
+        text-shadow: 1px 1px #7bbbfb;
         
         border-radius: 0;
         -moz-border-radius: 0;
         -webkit-border-radius: 0;
+    }
+    .ui-autocomplete.zp-autocomplete li.first a.ui-state-focus,
+    .ui-autocomplete.zp-autocomplete li.first a.ui-state-hover {
+        border-top: 1px solid #8ec5fb;
     }
     
     .ui-tabs .ui-tabs-nav li a,
@@ -139,12 +174,12 @@
     div#zp-ZotpressMetaBox-Biblio-Citations-List div.item,
     div#zp-ZotpressMetaBox-Citations-List div.item {
         position: relative;
-        background-color: #d9f5ff;
+        background-color: #deeefe; /* d9f5ff */
         border: 1px solid #8ec5fb;
-        color: #4a7bc6;
+        color: #5486bc; /* 4a7bc6 */
         cursor: default;
         float: left;
-        font: normal 0.8em/1em "Arial", sans-serif;
+        font: normal 0.8em/1.2em "Arial", sans-serif;
         margin: 2px;
         padding: 3px 5px;
         
@@ -175,24 +210,24 @@
     }
     div#zp-ZotpressMetaBox-Biblio-Citations-List div.item .toggle,
     div#zp-ZotpressMetaBox-Citations-List div.item .toggle {
-        top: 1px;
+        top: 2px;
         right: 19px;
         background: #F0FBFF url('../images/sprite.png') no-repeat 3px -468px;
     }
     div#zp-ZotpressMetaBox-Biblio-Citations-List div.item .toggle.active,
     div#zp-ZotpressMetaBox-Citations-List div.item .toggle.active {
-        background-color: #b8defe;
+        background-color: #b9dbfd;
     }
     div#zp-ZotpressMetaBox-Biblio-Citations-List div.item .delete,
     div#zp-ZotpressMetaBox-Citations-List div.item .delete {
-        top: 1px;
+        top: 2px;
         right: 3px;
         background: #F0FBFF url('../images/sprite.png') no-repeat -54px -469px;
     }
     
     div#zp-ZotpressMetaBox-Biblio-Citations-List div.item div.options,
     div#zp-ZotpressMetaBox-Citations-List div.item div.options {
-        background-color: #b8defe;
+        background-color: #b9dbfd; /* b8defe */
         display: none;
         margin: 4px 0 2px;
         padding: 3px;
@@ -205,7 +240,7 @@
     div#zp-ZotpressMetaBox-Biblio-Citations-List div.item div.options .id,
     div#zp-ZotpressMetaBox-Citations-List div.item div.options .id {
         cursor: text;
-        padding: 5px 5px 3px;
+        padding: 3px 5px;
     }
     
     div#ZotpressMetaBox div#zp-ZotpressMetaBox-Biblio-Citations-List div.item div.options label,

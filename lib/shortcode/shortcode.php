@@ -52,6 +52,7 @@
             'note' => false,
             'notes' => "no",
             
+            'abstract' => false,
             'abstracts' => "no",
             
             'cite' => "no"
@@ -184,10 +185,10 @@
             $notes = false;
         
         // Show abstracts
-        if ($abstracts)
-            $abstracts = str_replace('"','',html_entity_decode($abstracts));
-        else if ($abstract)
+        if ($abstract)
             $abstracts = str_replace('"','',html_entity_decode($abstract));
+        else
+            $abstracts = str_replace('"','',html_entity_decode($abstracts));
         
         if ($abstracts == "yes" || $abstracts == "true" || $abstracts === true)
             $abstracts = true;

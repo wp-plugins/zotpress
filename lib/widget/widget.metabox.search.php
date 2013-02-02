@@ -15,7 +15,7 @@
     }
     else
     {
-        $zp_account = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1");
+        $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1", OBJECT);
         $zp_api_user_id = $zp_account->api_user_id;
     }
 

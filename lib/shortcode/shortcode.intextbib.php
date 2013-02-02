@@ -5,7 +5,7 @@
         /*
         *   RELIES ON THESE GLOBAL VARIABLES:
         *
-        *   $GLOBALS['zp_shortcode_instances'] {instantiated previously}
+        *   $GLOBALS['zp_shortcode_instances'][get_the_ID()] {instantiated previously}
         *   
         */
         
@@ -23,6 +23,7 @@
             'abstracts' => false,
             'cite' => false
         ), $atts));
+        
         
         
         // FORMAT PARAMETERS
@@ -54,11 +55,11 @@
         
         // SORT BY AND SORT ORDER
         if ($sortby != "default")
-            $GLOBALS['zp_shortcode_instances'] = subval_sort( $GLOBALS['zp_shortcode_instances'], $sortby, $order );
+            $GLOBALS['zp_shortcode_instances'][get_the_ID()] = subval_sort( $GLOBALS['zp_shortcode_instances'][get_the_ID()], $sortby, $order );
         
         // TITLE: Sort by date and add headings
         if (strtolower($title) == "yes" || strtolower($title) == "true")
-            $GLOBALS['zp_shortcode_instances'] = subval_sort( $GLOBALS['zp_shortcode_instances'], "date", $order );
+            $GLOBALS['zp_shortcode_instances'][get_the_ID()] = subval_sort( $GLOBALS['zp_shortcode_instances'][get_the_ID()], "date", $order );
         
         
         // DISPLAY IN-TEXT BIBLIOGRAPHY
@@ -77,7 +78,7 @@
         if ($style)
             $zp_output .= "<span class=\"zp-Zotpress-Style\" style=\"display:none;\">".$style."</span>\n\n";
         
-        foreach ($GLOBALS['zp_shortcode_instances'] as $item => $zp_citation)
+        foreach ($GLOBALS['zp_shortcode_instances'][get_the_ID()] as $item => $zp_citation)
         {
             $citation_image = false;
             $has_citation_image = false;
@@ -134,8 +135,9 @@
             }
             
             // Hyperlink URL: Working? Has to go before Download
-            if (isset($zp_this_meta->url) && strlen($zp_this_meta->url) > 0)
-                $zp_citation['citation'] = str_replace($zp_this_meta->url, "<a title='".$zp_this_meta->title."' rel='external' href='".$zp_this_meta->url."'>".$zp_this_meta->url."</a>", $zp_citation['citation']);
+            if (isset($zp_this_meta->url) && strlen($zp_this_meta->url) > 0) {
+                $zp_citation['citation'] = str_replace(htmlentities($zp_this_meta->url), "<a title='".$zp_this_meta->title."' rel='external' href='".htmlentities($zp_this_meta->url)."'>".htmlentities($zp_this_meta->url)."</a>", $zp_citation['citation']);
+            }
             
             // DOWNLOAD
             if ($download == "yes" || $download == "true" || $download === true)
@@ -179,7 +181,7 @@
             
             // OUTPUT
             
-            $zp_output .= "<div class='zp-Entry".$has_citation_image."' rel='".$zp_citation["item_key"]."'>\n";
+            $zp_output .= "<a title='Reference to citation for `".$zp_citation["title"]."`' id='zp-".get_the_ID()."-".$zp_citation["item_key"]."'></a><div class='zp-Entry".$has_citation_image."' rel='".$zp_citation["item_key"]."'>\n";
             $zp_output .= $citation_image . $zp_citation['citation'] . $citation_abstract . "\n";
             $zp_output .= "</div><!--Entry-->\n\n";
         }

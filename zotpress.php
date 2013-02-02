@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bring Zotero and scholarly blogging to your Wordpress site.
     Author: Katie Seaborn
-    Version: 5.0.5
+    Version: 5.0.6
     Author URI: http://katieseaborn.com
     
 */
@@ -39,19 +39,10 @@
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
-    //global $Zotpress_main_db_version;
     $Zotpress_main_db_version = "5.0.4";
-    
-    //global $Zotpress_oauth_db_version;
     $Zotpress_oauth_db_version = "5.0.4";
-    
-    //global $Zotpress_zoteroItems_db_version;
     $Zotpress_zoteroItems_db_version = "5.0.4";
-    
-    //global $Zotpress_zoteroCollections_db_version;
     $Zotpress_zoteroCollections_db_version = "5.0.4";
-    
-    //global $Zotpress_zoteroTags_db_version;
     $Zotpress_zoteroTags_db_version = "5.0.4";
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
@@ -127,30 +118,10 @@
     
     function Zotpress_admin_metabox_scripts()
     {
-        //wp_register_script('jquery.ui.core.min.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.ui.core.min.js', array('jquery'));
-        //wp_enqueue_script('jquery.ui.core.min.js');
-        //
-        //wp_register_script('jquery.ui.widget.min.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.ui.widget.min.js', array('jquery'));
-        //wp_enqueue_script('jquery.ui.widget.min.js');
-        //
-        //wp_register_script('jquery.ui.position.min.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.ui.position.min.js', array('jquery'));
-        //wp_enqueue_script('jquery.ui.position.min.js');
-        //
-        //wp_register_script('jquery.ui.autocomplete.min.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.ui.autocomplete.min.js', array('jquery'));
-        //wp_enqueue_script('jquery.ui.autocomplete.min.js');
-        //
-        //wp_register_script('jquery.ui.tabs.min.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.ui.tabs.min.js', array('jquery'));
-        //wp_enqueue_script('jquery.ui.tabs.min.js');
+        // Requires ui core, widget, position, autocomplete, tabs
+        $zp_jquery_dependencies = array('jquery', 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-position', 'jquery-ui-tabs', 'jquery-ui-autocomplete');
         
-        if ( get_bloginfo('version') >= 3.5 ) {
-            wp_register_script('jquery.ui.1.9.2.min.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.ui.1.9.2.min.js', array('jquery'));
-            wp_enqueue_script('jquery.ui.1.9.2.min.js');
-        } else {
-            wp_register_script('jquery.ui.min.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.ui.min.js', array('jquery'));
-            wp_enqueue_script('jquery.ui.min.js');
-        }
-        
-        wp_register_script('jquery.livequery.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.livequery.js', array('jquery'));
+        wp_register_script('jquery.livequery.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.livequery.js', $zp_jquery_dependencies);
         wp_enqueue_script('jquery.livequery.js');
         
         wp_register_script('jquery.dotimeout.min.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.dotimeout.min.js', array('jquery'));

@@ -55,6 +55,16 @@ jQuery(document).ready(function()
                 // prevent value inserted on focus
                 return false;
             },
+            open: function () {
+                jQuery(this).data("autocomplete").menu.element.addClass("zp-autocomplete");
+                jQuery(".zp-autocomplete .ui-menu-item:first").addClass("first");
+                
+                // Change width of autocomplete dropdown based on input size
+                if ( jQuery("#ZotpressMetaBox").parent().attr("id") == "normal-sortables" )
+                    jQuery(this).data("autocomplete").menu.element.addClass("zp-autocomplete-wide");
+                else
+                    jQuery(this).data("autocomplete").menu.element.removeClass("zp-autocomplete-wide");
+            },
             select: function( event, ui )
             {
                 // Check if item is already in the list
@@ -356,6 +366,16 @@ jQuery(document).ready(function()
             focus: function() {
                 // prevent value inserted on focus
                 return false;
+            },
+            open: function () {
+                jQuery(this).data("autocomplete").menu.element.addClass("zp-autocomplete");
+                jQuery(".zp-autocomplete .ui-menu-item:first").addClass("first");
+                
+                // Change width of autocomplete dropdown based on input size
+                if ( jQuery("#ZotpressMetaBox").parent().attr("id") == "normal-sortables" )
+                    jQuery(this).data("autocomplete").menu.element.addClass("zp-autocomplete-wide");
+                else
+                    jQuery(this).data("autocomplete").menu.element.removeClass("zp-autocomplete-wide");
             },
             select: function( event, ui )
             {

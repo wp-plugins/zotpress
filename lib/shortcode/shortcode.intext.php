@@ -138,11 +138,11 @@
             foreach ($zp_results as $id => $item)
             {
                 // Shorten author if repeated
-                if ($GLOBALS['zp_shortcode_instances'][$item->item_key] && count(explode(",", $item->author)) > 3)
+                if ($GLOBALS['zp_shortcode_instances'][get_the_ID()][$item->item_key] && count(explode(",", $item->author)) > 3)
                     $item->author = substr($item->author, 0, strpos($item->author, ",")) . " <em>et al.</em>";
                 
                 // Fill in author, date and number
-                $citation = str_replace("%num%", ($id+1), str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate), $format)));
+                $citation = str_replace("%num%", (count($GLOBALS['zp_shortcode_instances'][get_the_ID()])+1), str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate), $format)));
                 
                 // Deal with pages
                 if ($pages)
@@ -174,7 +174,7 @@
                 $zp_intext_citation .= $citation;
                 
                 // SET BIBLIOGRAPHY CITATIONS: Per item
-                $GLOBALS['zp_shortcode_instances'][$api_user_id.",".$item->item_key] = array(
+                $GLOBALS['zp_shortcode_instances'][get_the_ID()][$api_user_id.",".$item->item_key] = array(
                         "instance_id" => $zp_instance_id,
                         "userid" => $api_user_id,
                         "account_type" => $zp_account->account_type,
@@ -191,7 +191,7 @@
                     );
             }
             
-            return "<span id='.$zp_instance_id.' class='zp-ZotpressInText'>" . str_replace(")(", "; ", str_replace("][", ", ", $zp_intext_citation)) . "</span>";
+            return "<a title='Anchor to citation for `".$item->title."`' id='.$zp_instance_id.' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item->item_key."'>" . str_replace(")(", "; ", str_replace("][", ", ", $zp_intext_citation)) . "</a>";
             
             unset($zp_query);
             unset($zp_results);
