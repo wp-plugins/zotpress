@@ -118,12 +118,17 @@
                         $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
                     }
                 }
-                else // Execute import query, then move on
+                else if ($zp_continue === false)  // Execute import query, then move on
                 {
                     global $wpdb;
                     zp_save_synced_items ($wpdb, $api_user_id);
                     
                     $xml = "<result success=\"next\" next=\"collections\" />\n";
+                }
+                else // error
+                {
+                    $xml = "<result success=\"false\" />\n";
+                    $xml = "<errors>". $zp_continue ."</errors>\n";
                 }
             }
             

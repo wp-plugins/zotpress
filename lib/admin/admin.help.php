@@ -164,9 +164,9 @@
                 </tr>
                 
                 <tr>
-                    <td rowspan="6" class="category last">Display</td>
+                    <td rowspan="7" class="category last">Display</td>
                     
-                    <td rowspan="6" class="type last">Settings</td>
+                    <td rowspan="7" class="type last">Settings</td>
                     
                     <td class="code">style</td>
                     <td><p>Citation style. <strong>Options: apsa, apa [default], asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, mla, nlm, nature, vancouver.</strong> Note: Support for more styles is coming; see <a title="Zotero Style Repository" href="http://www.zotero.org/styles">Zotero Style Repository</a> for details.</p></td>
@@ -192,10 +192,15 @@
                     <td><p>Alternative: <code>downloadable</code> Whether or not to display the citation's notes, if one exists. <strong>Must have notes made public via the private key settings on Zotero.</strong> Options: yes, no [default].</p></td>
                     <td class="example"><p><code>[zotpress collection="GMGCJU34" notes="yes"]</code></p></td>
                 </tr>
-                <tr class="last">
+                <tr>
                     <td class="code">cite</td>
                     <td><p>Make the displayed citations citable by generating RIS links. <strong>Options: yes, no [default].</strong></p></td>
                     <td class="example"><p><code>[zotpress collection="GMGCJU34" cite="yes"]</code></p></td>
+                </tr>
+                <tr class="last">
+                    <td class="code">link</td>
+                    <td><p>Link tag and collection list items to page that displays their associated citation items. <strong>Options: yes, no [default].</strong></p></td>
+                    <td class="example"><p><code>[zotpress datatype="tags" link="yes"]</code></p></td>
                 </tr>
                 
             </table>
@@ -261,13 +266,24 @@
                 </tr>
                 
                 <tr class="zebra last">
-                    <td rowspan="1" class="category last">Display</td>
+                    <td rowspan="2" class="category last">Display</td>
                     
-                    <td rowspan="1" class="type last">Settings</td>
+                    <td rowspan="2" class="type last">Settings</td>
                     
                     <td class="code">format</td>
-                    <td><p>How the in-text citation should be presented. Use these placeholders: %a% for author, %d% for date, %p% for page, %num% for list number.</p></td>
-                    <td class="example"><p><code>[zotpressInText item="NCXAA92F" format="%a% (%d%, %p%)"]</code>, which will display as: <span style="padding-left: 0.5em; font-family: monospace;">author (date, pages)</span></p></td>
+                    <td>
+                        <p>How the in-text citation should be presented. Use these placeholders: %a% for author, %d% for date, %p% for page, %num% for list number.</p>
+                        <p class="break"><strong>Hint:</strong> In WordPress shortcodes, the bracket characters <strong>[</strong> and <strong>]</strong> are special characters. To use in-text brackets, see the example on the right.</p>
+                    </td>
+                    <td class="example">
+                        <p><code>[zotpressInText item="NCXAA92F" format="%a% (%d%, %p%)"]</code>, which will display as: <span style="padding-left: 0.5em; font-family: monospace;">author (date, pages)</span></p>
+                        <p class="break"><code>[zotpressInText item="NCXAA92F" format="&amp;#91;%num%&amp;#93;"]</code>, which will display as: <span style="padding-left: 0.5em; font-family: monospace;">[1]</span></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="code">etal</td>
+                    <td><p>How "et al." is applied to the list of authors (if displayed and if more than three instances exist). Default is full author list for first instance and "et al." for every other instance. <strong>Options:</strong> yes, no, default [default]</p></td>
+                    <td class="example"><p><code>[zotpressInText item="NCXAA92F" etal="yes"]</code></p></td>
                 </tr>
                 
             </table>
@@ -300,7 +316,12 @@
             <hr />
             
             <a name="faq"></a>
-            <h3 class="zp-HeaderGroup">F.A.Q.</h3>
+            <h3>F.A.Q.</h3>
+            
+            <p>
+                Check out the answered questions below. If you can't find what you're looking for, feel free to post your question at the
+                <a title="Zotpress Forums" href="http://wordpress.org/support/plugin/zotpress">Zotpress Support Forums</a>.
+            </p>
             
             <h4>How can I sync or re-import my local library in Zotpress?</h4>
             

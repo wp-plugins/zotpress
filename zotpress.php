@@ -4,9 +4,9 @@
  
     Plugin Name: Zotpress
     Plugin URI: http://katieseaborn.com/plugins
-    Description: Bring Zotero and scholarly blogging to your Wordpress site.
+    Description: Bring Zotero and scholarly blogging to your WordPress site.
     Author: Katie Seaborn
-    Version: 5.0.6
+    Version: 5.0.7
     Author URI: http://katieseaborn.com
     
 */
@@ -36,6 +36,7 @@
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
     define('ZOTPRESS_PLUGIN_FILE',  __FILE__ );
     
+    //$GLOBALS['zp_requirements_met'] = false;
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
@@ -115,6 +116,22 @@
 
 
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
+
+    // ADMIN MESSAGES
+    
+    function Zotpress_admin_notice_curl_fgc_disabled()
+    {
+        $screen = get_current_screen();
+        
+	if ( $screen->parent_base == 'plugins' || $screen->parent_base == "Zotpress" )
+        {
+            echo '<div class="error">
+               <p>Zotpress requires either <strong>cURL</strong> or <strong>file_get_contents</strong> enabled on your server. Ask your server admin to do this for you.</p>
+            </div>';
+        }
+    }
+
+    // METABOX SCRIPTS
     
     function Zotpress_admin_metabox_scripts()
     {
@@ -189,8 +206,8 @@
         wp_register_style('jquery.qtip.min.css', ZOTPRESS_PLUGIN_URL . 'css/jquery.qtip.min.css');
         wp_enqueue_style('jquery.qtip.min.css');
         
-        wp_register_style('Monda.css', 'http://fonts.googleapis.com/css?family=Droid+Serif:400,400italic,700italic|Oswald:400,300');
-        wp_enqueue_style('Monda.css');
+        wp_register_style('ZotpressGoogleFonts.css', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,600|Droid+Serif:400,400italic,700italic|Oswald:300,400');
+        wp_enqueue_style('ZotpressGoogleFonts.css');
     }
     
     function Zotpress_admin_post_styles()
@@ -228,11 +245,24 @@
         unset($_SESSION['zp_session']);
     }
     
-    /*
-     
-        ADD ACTIONS
-        
-    */
+    function Zotpress_change_timeout($time) {
+	$time = 25;
+	return $time;
+    }
+    
+// REGISTER ACTIONS ---------------------------------------------------------------------------------
+
+
+
+// ADD ACTIONS ----------------------------------------------------------------------------------------
+
+    // Make sure either cURL or file_get_contents is enabled
+    
+    //if (function_exists('curl_version')) { $GLOBALS['zp_requirements_met'] = true; }
+    //if (function_exists('file_get_contents')) { $GLOBALS['zp_requirements_met'] = true; }
+    //if ($GLOBALS['zp_requirements_met'] === false) { add_action('admin_notices', 'Zotpress_admin_notice_curl_fgc_disabled'); }
+    
+    // Basic setup
     
     if (isset($_GET['page']) && $_GET['page'] == 'Zotpress')
     {
@@ -286,7 +316,8 @@
             wp_enqueue_script('zotpress.autoupdate.js');
         }
     }
-
+    
+    add_filter( 'http_request_timeout', 'Zotpress_change_timeout');
     add_action('wp_footer', 'Zotpress_theme_conditional_scripts_footer');
     add_action('wp_print_styles', 'Zotpress_theme_includes');
     

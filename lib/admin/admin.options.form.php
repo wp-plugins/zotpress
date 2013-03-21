@@ -82,6 +82,8 @@
                     <div class="zp-Success">Success!</div>
                     <div class="zp-Errors">Errors!</div>
                     
+                    <h4 class="clear" />
+                    
                 </div>
                 <!-- END OF ACCOUNT -->
                 
@@ -212,6 +214,8 @@
                     <div class="zp-Loading">loading</div>
                     <div class="zp-Success">Success!</div>
                     <div class="zp-Errors">Errors!</div>
+                    
+                    <h4 class="clear" />
                     
                 </div>
                 <!-- END OF STYLE -->

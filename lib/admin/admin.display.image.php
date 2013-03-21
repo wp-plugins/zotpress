@@ -27,7 +27,7 @@
             <div class="zp-Citation"><?php echo do_shortcode("[zotpress userid=".$zp_api_user_id." item=".$zp_citation_id."]"); ?></div>
             
             
-            <h3>Upload Image</h3>
+            <h4>Upload an Image</h4>
             
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="zp-Image" id="zp-Image">
             

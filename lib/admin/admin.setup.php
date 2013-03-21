@@ -2,13 +2,17 @@
 
     <div id="zp-Setup">
         
-        <h1>Zotpress Setup</h1>
+        <div id="zp-Zotpress-Navigation">
         
-        <div id="zp-Setup-ProcessBar">
-            <div id="step-1" class="current">Step 1: Sync Account</div>
-            <div id="step-2">Step 2: Default Options</div>
-            <div id="step-3">Step 3: Import</div>
-        </div>
+            <div id="zp-Icon" title="Zotero + WordPress = Zotpress"><br /></div>
+            
+            <div class="nav">
+                <div id="step-1" class="nav-item nav-tab-active"><strong>1:</strong> Sync Account</div>
+                <div id="step-2" class="nav-item"><strong>2:</strong> Default Options</div>
+                <div id="step-3" class="nav-item"><strong>3:</strong> Import</div>
+            </div>
+        
+        </div><!-- #zp-Zotpress-Navigation -->
         
         <div id="zp-Setup-Step">
             
@@ -16,7 +20,7 @@
                 <?php include('admin.accounts.addform.php'); ?>
             </div>
             
-            <h3>Where do I get a private key?</h3>
+            <h4>Where do I get a private key?</h4>
             
             <p>
                You can generate a private key manually through the <a href="http://www.zotero.org/">Zotero</a> website. Go to <strong>Settings > Feeds/API</strong> and choose "Create new private key."
@@ -32,15 +36,21 @@
 
     <div id="zp-Setup">
         
-        <h1>Zotpress Setup</h1>
+        <div id="zp-Zotpress-Navigation">
         
-        <div id="zp-Setup-ProcessBar">
-            <div id="step-1">Step 1: Sync Account</div>
-            <div id="step-2" class="current">Step 2: Default Options</div>
-            <div id="step-3">Step 3: Import</div>
-        </div>
+            <div id="zp-Icon" title="Zotero + WordPress = Zotpress"><br /></div>
+            
+            <div class="nav">
+                <div id="step-1" class="nav-item"><strong>1:</strong> Sync Account</div>
+                <div id="step-2" class="nav-item nav-tab-active"><strong>2:</strong> Default Options</div>
+                <div id="step-3" class="nav-item"><strong>3:</strong> Import</div>
+            </div>
+        
+        </div><!-- #zp-Zotpress-Navigation -->
         
         <div id="zp-Setup-Step">
+            
+            <h3>Set Default Options</h3>
             
             <?php include("admin.options.form.php"); ?>
             
@@ -76,23 +86,38 @@
 
     <div id="zp-Setup">
         
-        <h1>Zotpress Setup<?php if ($api_user_id) { echo ": ". $api_user_id; } ?></h1>
+        <div id="zp-Zotpress-Navigation">
         
-        <div id="zp-Setup-ProcessBar">
-            <div id="step-1">Step 1: Sync Account</div>
-            <div id="step-2">Step 2: Default Options</div>
-            <div id="step-3" class="current">Step 3: Import</div>
-        </div>
+            <div id="zp-Icon" title="Zotero + WordPress = Zotpress"><br /></div>
+            
+            <div class="nav">
+                <div id="step-1" class="nav-item"><strong>1:</strong> Sync Account</div>
+                <div id="step-2" class="nav-item"><strong>2:</strong> Default Options</div>
+                <div id="step-3" class="nav-item nav-tab-active"><strong>3:</strong> Import</div>
+            </div>
+        
+        </div><!-- #zp-Zotpress-Navigation -->
         
         <div id="zp-Setup-Step">
             
+            <?php if ($api_user_id) {
+                global $wpdb;
+                $temp = $wpdb->get_row("SELECT nickname FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'", OBJECT);
+            ?>
+            <h3>Re-Import <?php if (strlen($temp->nickname) > 0) { echo $temp->nickname; } else { echo $api_user_id; }?>'s Library</h3>
+            <?php } else { ?>
             <h3>Import Zotero Library</h3>
+            <?php } ?>
             
-            <p>The importing process might take a few minutes, depending on the size of your Zotero library. Don't worry&mdash;you'll only have to do this once.</p>
+            <p>
+                The importing process might take a few minutes, depending on the size of your Zotero library.
+                Don't worry&mdash;you should only have to do this once. You'll be automatically forwarded to
+                the "Browse" screen when it's done.
+            </p>
             
             <input id="zp-Zotpress-Setup-Import" type="button"  disabled="disabled" class="button-primary" value="Start Import" />
             <div class="zp-Loading-Initial zp-Loading-Import"></div>
-            <span id="zp-Import-Messages">Importing items 1-50 ...</span>
+            <div id="zp-Import-Messages">Importing items 1-50 ...</div>
             
             <hr class="clear" />
             

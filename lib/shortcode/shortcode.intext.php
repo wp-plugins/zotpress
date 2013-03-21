@@ -16,6 +16,7 @@
             
             'pages' => false,
             'format' => "(%a%, %d%, %p%)",
+            'etal' => false, // default (false), yes, no
             
             'userid' => false,
             'api_user_id' => false,
@@ -34,6 +35,8 @@
         
         $pages = str_replace('"','',html_entity_decode($pages));
         $format = str_replace('"','',html_entity_decode($format));
+        $etal = str_replace('"','',html_entity_decode($etal));
+        if ($etal == "default") { $etal = false; }
         
         if ($userid) { $api_user_id = str_replace('"','',html_entity_decode($userid)); }
         if ($nickname) { $nickname = str_replace('"','',html_entity_decode($nickname)); }
@@ -137,9 +140,18 @@
             
             foreach ($zp_results as $id => $item)
             {
-                // Shorten author if repeated
-                if ($GLOBALS['zp_shortcode_instances'][get_the_ID()][$item->item_key] && count(explode(",", $item->author)) > 3)
-                    $item->author = substr($item->author, 0, strpos($item->author, ",")) . " <em>et al.</em>";
+                // Shorten author ...
+                if ($etal)
+                {
+                    if ($etal == "yes")
+                        $item->author = substr($item->author, 0, strpos($item->author, ",")) . " <em>et al.</em>";
+                }
+                else // default
+                {
+                    if ($GLOBALS['zp_shortcode_instances'][get_the_ID()][$api_user_id.",".$item->item_key] && count(explode(",", $item->author)) > 3) {
+                        $item->author = substr($item->author, 0, strpos($item->author, ",")) . " <em>et al.</em>";
+                    }
+                }
                 
                 // Fill in author, date and number
                 $citation = str_replace("%num%", (count($GLOBALS['zp_shortcode_instances'][get_the_ID()])+1), str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate), $format)));

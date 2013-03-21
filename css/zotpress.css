@@ -24,11 +24,10 @@
         text-decoration: none;
     }
     
+    div#zp-Setup h3,
     div#zp-Zotpress h3 {
         clear: both;
-        /*font: italic 21px/24px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
-        /*margin-bottom: 5px;*/
-        font: 400 26px/32px "Oswald", "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+        font: 400 27px/32px "Oswald", "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
         margin: 0;
         padding: 9px 15px 4px 0;
         text-transform: uppercase;
@@ -37,23 +36,16 @@
         margin-bottom: -0.5em;
     }
     
-    div#zp-Setup h3,
     div#zp-Setup h4,
     div#zp-Zotpress h4 {
-        /*font: italic 17px/21px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
         font: italic 400 17px/21px "Droid Serif", "Georgia", serif;
         margin: 1.5em 0 1em;
     }
-    div#zp-Setup h3,
     div#zp-Setup h4 {
         font: italic 400 16px/21px "Droid Serif", "Georgia", serif;
     }
-    div#zp-Zotpress h4.short {
-        margin-bottom: -15px;
-    }
     
     div#zp-Zotpress h5 {
-        /*font: italic 12px/28px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
         font: 300 11px/30px "Droid Serif", serif;
         margin-bottom: -15px;
         text-transform: uppercase;
@@ -64,7 +56,7 @@
         border-top: 1px solid #ddd;
         border-bottom: 1px solid #fff;
         clear: both;
-        margin: 2em 0 1em;
+        margin: 3.3em 0 0.7em;
         height: 1px;
     }
     div#zp-Setup hr.clear,
@@ -104,53 +96,25 @@
     /* START OF SETUP CSS */
     
     div#zp-Setup {
-        margin-top: 20px;
         margin-right: 1.5em;
-        /*width: 830px;*/
         width: auto;
         min-width: 549px;
     }
     
     div#zp-Setup h1 {
-        background: url("../images/sprite.png") no-repeat scroll 3px -318px transparent;
+        /*background: url("../images/sprite.png") no-repeat scroll 3px -318px transparent;*/
         /*font: italic 21px/30px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
         /*font: normal 23px/29px "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;*/
-        font: 400 26px/32px "Oswald", "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
-        padding-left: 44px;
-        text-transform: uppercase;
-    }
-    
-    div#zp-Setup-ProcessBar {
-        background: #333;
-        color: #999;
-        text-shadow: 0 1px 0 #000;
-        overflow: hidden;
-        width: auto;
-        /*height: 45px;*/
-        height: 40px;
-    }
-    
-    div#zp-Setup-ProcessBar div {
-        cursor: default;
-        float: left;
-        font-size: 1.5em;
-        /*font: 300 1.85em/1em "Oswald", sans-serif;*/
-        padding: 0.6em 0.75em;
-        /*padding: 0.45em 0.75em;*/
+        /*font: 400 26px/32px "Oswald", "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;*/
+        /*padding-left: 44px;*/
         /*text-transform: uppercase;*/
-        height: 40px;
     }
-    div#zp-Setup-ProcessBar div.current {
-        background: #ad1836;
-        color: #fff;
-        text-shadow: 0 1px 0 #400000;
-        /*text-shadow: none;*/
-    }
+    
     
     div#zp-Setup-Step {
-        background-color: #fafafa;
-        border-bottom: 1px solid #eee;
-        padding: 5px 15px 15px 30px;
+        /*background-color: #fafafa;*/
+        /*border-bottom: 1px solid #eee;*/
+        /*padding: 5px 15px 15px 30px;*/
     }
     
     div#zp-Setup-Step hr {
@@ -179,6 +143,10 @@
         margin: -10px 0 10px 0;
     }
     
+    div#zp-Setup div.zp-Zotpress-Options {
+        margin-bottom: 2em;
+    }
+    
     div#zp-Zotpress-Setup-Buttons {
         clear: both;
         border-top: 1px solid #eee;
@@ -195,19 +163,8 @@
     input#zp-Zotpress-Setup-Import {
         clear: both;
         float: left;
-        margin: 0 0 10px 0;
+        margin: 20px 0 10px 0;
         display: block;
-    }
-    
-    div#zp-Setup div.zp-Zotpress-Options {
-        margin-bottom: 0;
-        padding: 0;
-        overflow: hidden;
-        height: 85px;
-    }
-    
-    div#zp-Setup div.zp-Zotpress-Options label {
-        display: none;
     }
     
     div#zp-Setup div.zp-Zotpress-Options div.zp-Success,
@@ -245,12 +202,14 @@
         background-position: 0 6px;
         display: none;
         float: left;
-        margin: 0 0 0 10px;
+        margin: 21px 0 0 10px;
     }
-    span#zp-Import-Messages {
+    div#zp-Import-Messages {
         color: #999;
         font: italic 9px/30px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
         display: none;
+        float: left;
+        margin-top: 21px;
     }
     
     /* END OF SETUP CSS */
@@ -290,13 +249,77 @@
     
     /* START TABS */
     
-    div#zp-Zotpress #icon-themes {
-        background: transparent url('../images/sprite.png') no-repeat 3px -316px;
+    div#zp-Zotpress-Navigation {
+        border-bottom: 1px solid #eee;
+        margin: 10px 0 20px;
+        overflow: visible;
+        height: 47px;
     }
-    div#zp-Zotpress .nav-tab-wrapper {
-        border-bottom: 1px solid #CCCCCC;
-        margin-bottom: 20px;
-        padding-bottom: 0;
+    
+    div#zp-Zotpress-Navigation h1 {
+        /*font: 700 18px/24px "Source Sans Pro", sans-serif;*/
+        font: 600 18px/24px "Source Sans Pro", sans-serif;
+        float: left;
+        margin: 0;
+        padding: 0.45em 5em 1em 0;
+        text-transform: uppercase;
+    }
+    div#zp-Zotpress-Navigation h1 em {
+        color: #c23d35;
+        font-style: normal;
+    }
+    
+    /* Nav Items */
+    
+    div#zp-Zotpress-Navigation .nav-item,
+    div#zp-Zotpress-Navigation :visited.nav-item {
+        color: #000;
+        display: block;
+        float: left;
+        font: 300 15px/24px "Source Sans Pro", sans-serif;
+        padding: 0.75em 1.5em;
+        outline: none;
+        text-transform: uppercase;
+        text-decoration: none;
+    }
+    div#zp-Setup div#zp-Zotpress-Navigation .nav-item,
+    div#zp-Setup div#zp-Zotpress-Navigation :visited.nav-item {
+        color: #bbb;
+    }
+    
+    div#zp-Zotpress-Navigation :hover.nav-item {
+        border-bottom: 0.25em solid #000;
+    }
+    div#zp-Setup div#zp-Zotpress-Navigation :hover.nav-item {
+        border-bottom: none;
+    }
+    
+    div#zp-Zotpress-Navigation :active.nav-item,
+    div#zp-Zotpress-Navigation .active.nav-item {
+        border-bottom: 0.25em solid #000;
+        background-color: #fafafa;
+    }
+    
+    div#zp-Zotpress-Navigation .nav-item.nav-tab-active,
+    div#zp-Setup div#zp-Zotpress-Navigation .nav-item.nav-tab-active,
+    div#zp-Setup div#zp-Zotpress-Navigation .nav-item.nav-tab-active:hover,
+    div#zp-Setup div#zp-Zotpress-Navigation .nav-item.nav-tab-active:active {
+        border-bottom: 0.25em solid #ff5900;
+        background-color: transparent;
+        color: #000;
+    }
+    
+    div#zp-Zotpress-Navigation .nav-item.nav-tab-active strong {
+        font-weight: bold;
+        margin-right: 0.25em;
+    }
+    
+    div#zp-Icon {
+        background: transparent url('../images/sprite.png') no-repeat -4px -310px;
+        float: left;
+        margin-right: 1em;
+        width: 33px;
+        height: 46px;
     }
     
     /* END TABS */
@@ -305,54 +328,54 @@
     
     /* START FILTER */
     
-    div#zp-Zotpress div#zp-Filter,
-    div#zp-Zotpress div#zp-Pagination {
-        background: #eee;
-        background: -moz-linear-gradient(center bottom , #DDDDDD, #f1f1f1) repeat scroll 0 0 transparent;
-        border-radius: 5px 5px 0 0;
-        -moz-border-radius: 5px 5px 0 0;
-        -webkit-border-radius: 5px 5px 0 0;
-        margin: 0;
+    div#zp-Zotpress div#zp-Browse {
+        background-color: #FCFCFC;
+        border: 1px solid #DFDFDF;
+        border-radius: 3px 3px 3px 3px;
+        margin: 18px 0;
+        padding: 0;
         width: 100%;
         min-width: 780px;
-        min-height: 45px;
+    }
+    
+    div#zp-Zotpress div#zp-Filter,
+    div#zp-Zotpress div#zp-Pagination {
+        background-color: #F1F1F1;
+        background-image: -moz-linear-gradient(center top , #F9F9F9, #ECECEC);
+        border-bottom-color: #DFDFDF;
+        border-top-color: #FFFFFF;
+        border-top: 0;
+        min-height: 3em;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
     }
     div#zp-Zotpress div#zp-Filter {
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid #ddd;
     }
     div#zp-Zotpress div#zp-Pagination {
-        border-radius: 0 0 5px 5px;
-        -moz-border-radius: 0 0 5px 5px;
-        -webkit-border-radius: 0 0 5px 5px;
+        border-top: 1px solid #eee;
+        margin-top: 3px;
     }
-    div#zp-Zotpress div#zp-FilterInner {
-        padding: 0 15px;
-    }
-    div#zp-Zotpress div#zp-PaginationInner {
-        padding: 13px 0 0 15px;
-    }
+    
+    /* Filter Sections */
+    
     div#zp-Zotpress div#zp-Filter div.section {
-        position: relative;
         float: left;
-        padding: 10px 0;
+        padding: 0.5em 1em;
+        border-left: 1px solid #FCFCFC;
+        border-right: 1px solid #DFDFDF;
     }
-    div#zp-Zotpress div#zp-Filter div.section span.divider {
-        border-left: 1px solid #ccc;
-        border-right: 1px solid #fafafa;
-        margin: 0 15px;
-        display: block;
-        float: left;
-        width: 0;
-        height: 25px;
+    div#zp-Zotpress div#zp-Filter div.section.first {
+        border-left: 0;
     }
+    div#zp-Zotpress div#zp-Filter div.section.last {
+        border-right: 0;
+    }
+    
     div#zp-Zotpress div#zp-Filter label {
         display: block;
         float: left;
-        font-size: 11px;
-        font-family: "Droid Serif", serif;
-        padding: 5px 5px 0 0;
-        vertical-align: baseline;
-        text-shadow: 0 1px 0 #fafafa;
+        font: 400 1em/1em "Droid Serif","Georgia",serif;
+        padding: 0.55em 1em 0.55em 0;
     }
     div#zp-Zotpress div#zp-Filter select#zp-FilterByTag,
     div#zp-Zotpress div#zp-Filter select#zp-FilterByAccount {
@@ -363,58 +386,10 @@
     
     div#zp-Pagination span {
         display: block;
-        float: left;
-        font-size: 11px;
+        font-size: 12px;
         font-family: "Droid Serif", serif;
+        padding: 1em;
         text-shadow: 0 1px 0 #FAFAFA;
-    }
-    
-    a.zp-Pagination-All,
-    a:link.zp-Pagination-All,
-    a:visited.zp-Pagination-All {
-        background: #f3f3f3; /* Old browsers */
-        /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2YzZjNmMyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlZGVkZWQiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-        background: -moz-linear-gradient(top,  #f3f3f3 0%, #ededed 100%); /* FF3.6+ */
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f3f3f3), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
-        background: -webkit-linear-gradient(top,  #f3f3f3 0%,#ededed 100%); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(top,  #f3f3f3 0%,#ededed 100%); /* Opera 11.10+ */
-        background: -ms-linear-gradient(top,  #f3f3f3 0%,#ededed 100%); /* IE10+ */
-        background: linear-gradient(top,  #f3f3f3 0%,#ededed 100%); /* W3C */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f3f3f3', endColorstr='#ededed',GradientType=0 ); /* IE6-8 */
-        border-radius: 8px;
-        -moz-border-radius: 8px;
-        -webkit-border-radius: 8px;
-        border: 1px solid #ccc;
-        color: #aaa;
-        display: block;
-        float: left;
-        font-size: 10px;
-        margin: 0 10px;
-        padding: 0 4px;
-        text-decoration: none;
-        text-transform: uppercase;
-        text-shadow: 0 1px 0 #fcfcfc;
-    }
-    a:hover.zp-Pagination-All {
-        background: #fff;
-        color: #ccc;
-        text-shadow: 0 1px 0 #fff;
-    }
-    a:active.zp-Pagination-All {
-        background: #a4a9ad; /* Old browsers */
-        /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2E0YTlhZCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM4Nzk0OTYiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-        background: -moz-linear-gradient(top,  #a4a9ad 0%, #879496 100%); /* FF3.6+ */
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a4a9ad), color-stop(100%,#879496)); /* Chrome,Safari4+ */
-        background: -webkit-linear-gradient(top,  #a4a9ad 0%,#879496 100%); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(top,  #a4a9ad 0%,#879496 100%); /* Opera 11.10+ */
-        background: -ms-linear-gradient(top,  #a4a9ad 0%,#879496 100%); /* IE10+ */
-        background: linear-gradient(top,  #a4a9ad 0%,#879496 100%); /* W3C */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a4a9ad', endColorstr='#879496',GradientType=0 ); /* IE6-8 */
-        border: 1px solid #545d5e;
-        color: #333;
-        text-shadow: 0 1px 0 #a4a9ad;
     }
     
     /* END FILTER */
@@ -425,50 +400,52 @@
     
     div#zp-Zotpress div#zp-List h3 {
         display: block;
-        background: #959aa5; /* Old browsers */
-        /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzk1OWFhNSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM4ODhjOTYiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-        background: -moz-linear-gradient(top,  #959aa5 0%, #888c96 100%); /* FF3.6+ */
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#959aa5), color-stop(100%,#888c96)); /* Chrome,Safari4+ */
-        background: -webkit-linear-gradient(top,  #959aa5 0%,#888c96 100%); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(top,  #959aa5 0%,#888c96 100%); /* Opera 11.10+ */
-        background: -ms-linear-gradient(top,  #959aa5 0%,#888c96 100%); /* IE10+ */
-        background: linear-gradient(top,  #959aa5 0%,#888c96 100%); /* W3C */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#959aa5', endColorstr='#888c96',GradientType=0 ); /* IE6-8 */
-        color: #fff;
-        /*font: italic 17px/24px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
+        color: #bbb;
+        background: #333;
         font: 400 19px/24px "Oswald","Times New Roman","Bitstream Charter",Times,serif;
-        margin: -3px 0 3px;
+        margin: -3px 0 0;
         padding: 10px 15px;
-        text-shadow: 0 1px 0 #888;
+    }
+    div#zp-Zotpress div#zp-List h3 em {
+        color: #fff;
+        font-style: normal;
+    }
+    
+    div#zp-Zotpress div#zp-List p {
+        margin: 1em;
     }
     
     div#zp-Zotpress div#zp-List a,
     div#zp-Zotpress div#zp-List a:visited
     {
-        color: #bae1fe;
+        color: #FF5900; /* bae1fe */
         text-decoration: none;
-        text-shadow: 0 1px 0 #777;
+        /*text-shadow: 0 1px 0 #777;*/
     }
-    div#zp-Zotpress div#zp-List a:hover,
-    div#zp-Zotpress div#zp-List a:active
-    {
-        color: #eee;
+    div#zp-Zotpress div#zp-List h3 a {
+        float: right;
+    }
+    div#zp-Zotpress div#zp-List a:hover {
+        color: #fff;
+    }
+    div#zp-Zotpress div#zp-List a:active {
+        color: #999;
     }
     
-    div#zp-List-Subcollection
-    {
-        /*border-bottom: 1px solid #d0d2d7;*/
-        margin-bottom: 0.25em;
+    /* Subcollection Folders */
+    
+    div#zp-List-Subcollection {
+        clear: both;
+        margin-bottom: 0;
     }
     div#zp-Zotpress div#zp-List a.zp-List-Subcollection,
     div#zp-Zotpress div#zp-List a.zp-List-Subcollection:visited
     {
-        background: #f1f4f7 url('../images/sprite.png') no-repeat 16px -551px;
+        background: #f1f4f7 url('../images/sprite.png') no-repeat 10px -551px;
         border-bottom: 1px solid #e7e9ec;
         color: #5f5f5f;
         display: block;
-        padding: 0.5em 1em 0.5em 3.5em;
+        padding: 0.5em 1em 0.5em 3.1em;
         font-size: 9pt;
         text-decoration: none;
         text-shadow: 0 1px 0 #f9fafb;
@@ -493,10 +470,10 @@
     
     div#zp-Zotpress div#zp-List div.zp-Entry {
         min-height: 100px;
-        margin-bottom: 3px;
+        margin: 3px 3px 0;
     }
     div#zp-Zotpress div#zp-List div.zp-Entry.odd {
-        background-color: #fafafa;
+        background-color: #fff;
     }
     
     div#zp-Zotpress div#zp-List div.zp-Entry-Image {
@@ -717,7 +694,7 @@
     
     div#zp-Accounts {
         clear: both;
-        padding: 1em 0;
+        padding: 1.5em 0;
     }
     div#zp-Accounts-Inner {
         background-color: #FCFCFC;
@@ -1015,8 +992,8 @@
         -webkit-border-radius: 5px;
     }
     a.zp-AddAccountButton:hover {
-        background: #AD1836;
-        text-shadow: 0 1px 0 #92142e;
+        background: #ccc;
+        text-shadow: 0 1px 0 #aaa;
     }
     a.zp-AddAccountButton:active {
         background: #777;
@@ -1120,11 +1097,12 @@
         border-bottom: none;
         color: #fff;
         font: 400 1.5em/1.5em "Oswald", sans-serif;
+        text-transform: uppercase;
     }
     
     .zp-Documentation .category,
     .zp-Documentation .type {
-        font: 300 1.15em/1.25em "Oswald", sans-serif;
+        font: 400 1.25em/1.25em "Source Sans Pro", sans-serif;
         text-transform: uppercase;
     }
     
@@ -1163,6 +1141,10 @@
         margin-bottom: 0.25em;
     }
     
+    .zp-Documentation p.break {
+        margin-top: 1em;
+    }
+    
     .zp-Documentation tr.last td,
     .zp-Documentation td.last {
         border-bottom: none;
@@ -1178,7 +1160,7 @@
         background: transparent url('../images/message.gif') no-repeat top left;
         display: block;
         float: right;
-        margin-top: -20px;
+        margin-top: -30px;
         overflow: hidden;
         width: 320px;
         height: 85px;
@@ -1211,8 +1193,9 @@
     /* START OF OPTIONS PAGE CSS */
     
     div.zp-Zotpress-Options {
-        margin-bottom: 50px;
-        padding: 1em;
+        border-left: 0.35em solid #000;
+        margin: 20px 0 50px;
+        padding: 0.6em 1em;
     }
     
     div#zp-Zotpress div.zp-Column-1 {
@@ -1226,6 +1209,12 @@
         width: 400px;
     }
     
+    div.zp-Zotpress-Options label {
+        font: 300 0.9em/1em "Droid Serif", sans-serif;
+        margin: 0 0 0.5em 0;
+        text-transform: uppercase;
+    }
+    
     div.zp-Zotpress-Options label,
     div.zp-Zotpress-Options select {
         display: block;
@@ -1236,23 +1225,23 @@
     
     div.zp-Zotpress-Options input.button-secondary {
         float: left;
+        margin-top: 10px;
     }
     
     div#zp-Zotpress div.zp-Zotpress-Options div.zp-Loading {
         display: none;
-        margin: -0.25em 0 0 0.25em;
+        margin: 0.6em 0 0 0.25em;
     }
     div#zp-Zotpress div.zp-Zotpress-Options div.zp-Success,
     div#zp-Zotpress div.zp-Zotpress-Options div.zp-Errors {
-        margin-left: 0;
+        margin: 0.6em 0 0;
         padding: 5px 0 5px 32px;
         float: left;
     }
     
-    div#zp-Zotpress-Options-Style-New-Container
-    {
+    div#zp-Zotpress-Options-Style-New-Container {
         display: none;
-        margin-bottom: 0.5em;
+        margin: 1.5em 0 0.5em;
     }
     select#zp-Zotpress-Options-Style option#new {
         border-top: 1px dotted #CCCCCC;

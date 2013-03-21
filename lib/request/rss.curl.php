@@ -8,7 +8,6 @@
         This library is a basic implementation of CURL capabilities.
 */
 
-
 if (!class_exists('CURL'))
 {
         class CURL
@@ -29,7 +28,7 @@ if (!class_exists('CURL'))
                 
                 
                 // DO REQUEST
-                function doRequest( $xml_url, $use_get_file_get_contents )
+                function doRequest( $xml_url, $use_get_file_get_contents ) // won't need the second param anymore ...
                 {
                         global $wpdb;
                         
@@ -83,34 +82,56 @@ if (!class_exists('CURL'))
                 
                 function getXmlData( $url )
                 {
-                        // Use file_get_contents (not recommended)
-                        if (isset($use_get_file_get_contents) && $use_get_file_get_contents === true)
+                        $response = wp_remote_get( $url );
+                        
+                        if ( is_wp_error($response) || ! isset($response['body']) )
                         {
-                                $data = file_get_contents($url);
+                                $this->curl_error = $response->get_error_message();
+                                
+                                if ($response->get_error_code() == "http_request_failed")
+                                {
+                                        // Try again with less restrictions
+                                        add_filter('https_ssl_verify', '__return_false'); //add_filter('https_local_ssl_verify', '__return_false');
+                                        
+                                        $response = wp_remote_get( $url );
+                                        
+                                        if ( is_wp_error($response) || ! isset($response['body']) )
+                                                $this->curl_error = $response->get_error_message();
+                                        else // no errors this time
+                                                $this->curl_error = false;
+                                }
                         }
                         
-                        // Use cURL (recommended)
-                        else
-                        {
-                                ini_set('max_execution_time', $this->timeout); // Avoid timeout error
-                                
-                                $ch = curl_init();
-                                curl_setopt($ch, CURLOPT_URL, $url);
-                                curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout); // Five minutes
-                                curl_setopt ($ch, CURLOPT_HEADER, 0);
-                                curl_setopt ($ch, CURLOPT_USERAGENT, sprintf("Mozilla/%d.0",rand(4,5)));
-                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                                curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                                
-                                $data = curl_exec($ch);
-                                
-                                //$http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE); // For when If-Modified-Since header 304 implemented
-                                
-                                if ($data === false)
-                                        $this->curl_error = curl_error($ch);
-                                
-                                curl_close($ch);
-                        }
+                        $data = wp_remote_retrieve_body( $response ); // Thanks to Trainsmart.com developer!
+                        
+                        // Use file_get_contents (not recommended)
+                        //if (isset($use_get_file_get_contents) && $use_get_file_get_contents === true)
+                        //{
+                        //        $data = file_get_contents($url);
+                        //}
+                        //
+                        //// Use cURL (recommended)
+                        //else
+                        //{
+                        //        ini_set('max_execution_time', $this->timeout); // Avoid timeout error
+                        //        
+                        //        $ch = curl_init();
+                        //        curl_setopt($ch, CURLOPT_URL, $url);
+                        //        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout); // Five minutes
+                        //        curl_setopt ($ch, CURLOPT_HEADER, 0);
+                        //        curl_setopt ($ch, CURLOPT_USERAGENT, sprintf("Mozilla/%d.0",rand(4,5)));
+                        //        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        //        curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                        //        
+                        //        $data = curl_exec($ch);
+                        //        
+                        //        //$http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE); // For when If-Modified-Since header 304 implemented
+                        //        
+                        //        if ($data === false)
+                        //                $this->curl_error = curl_error($ch);
+                        //        
+                        //        curl_close($ch);
+                        //}
                         
                         // Make sure tags didn't return an error -- redo if so
                         if ($data == "Tag not found")

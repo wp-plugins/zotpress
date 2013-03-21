@@ -150,6 +150,12 @@
         else // Use the old way:
             $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
         
+        
+        // Stop in our tracks if there's a request error
+        if ($zp_import_curl->curl_error)
+            return $zp_import_curl->curl_error;
+        
+        
         // Make it DOM-traversable 
         $doc_citations = new DOMDocument();
         $doc_citations->loadXML($zp_xml);

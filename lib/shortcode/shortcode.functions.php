@@ -113,7 +113,7 @@
     
     
     
-    function zp_get_subcollections ($wpdb, $api_user_id, $parent, $sortby, $order)
+    function zp_get_subcollections ($wpdb, $api_user_id, $parent, $sortby, $order, $link=false)
     {
 	$zp_query = "SELECT ".$wpdb->prefix."zotpress_zoteroCollections.* FROM ".$wpdb->prefix."zotpress_zoteroCollections";
 	$zp_query .= " WHERE api_user_id='".$api_user_id."' AND parent = '".$parent."' ";
@@ -135,10 +135,19 @@
 	
 	foreach ($zp_results as $zp_collection)
 	{
-	    $zp_output .= "<li rel=\"" . $zp_collection->item_key . "\">" . $zp_collection->title . "</li>\n";
+	    $zp_output .= "<li rel=\"" . $zp_collection->item_key . "\">";
+	    if ($link == "yes")
+	    {
+		$zp_output .= "<a class='zp-CollectionLink' title='" . $zp_collection->title . "' rel='" . $zp_collection->item_key . "' href='" . $_SERVER["REQUEST_URI"];
+		if ( strpos($_SERVER["REQUEST_URI"], "?") === false ) { $zp_output .= "?"; } else { $zp_output .= "&"; }
+		$zp_output .= "zpcollection=" . $zp_collection->item_key . "'>";
+	    }
+	    $zp_output .= $zp_collection->title;
+	    if ($link == "yes") { $zp_output .= "</a>"; }
+	    $zp_output .= "</li>\n";
 	    
 	    if ($zp_collection->numCollections > 0)
-		$zp_output .= zp_get_subcollections($wpdb, $api_user_id, $zp_collection->item_key, $sortby, $order);
+		$zp_output .= zp_get_subcollections($wpdb, $api_user_id, $zp_collection->item_key, $sortby, $order, $link);
 	}
 	
 	$zp_output .= "</ul>\n";

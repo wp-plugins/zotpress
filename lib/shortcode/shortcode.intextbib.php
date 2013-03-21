@@ -134,9 +134,9 @@
                 unset($zp_notes);
             }
             
-            // Hyperlink URL: Working? Has to go before Download
+            // Hyperlink URL: Has to go before Download
             if (isset($zp_this_meta->url) && strlen($zp_this_meta->url) > 0) {
-                $zp_citation['citation'] = str_replace(htmlentities($zp_this_meta->url), "<a title='".$zp_this_meta->title."' rel='external' href='".htmlentities($zp_this_meta->url)."'>".htmlentities($zp_this_meta->url)."</a>", $zp_citation['citation']);
+                $zp_citation['citation'] = str_replace(htmlentities($zp_this_meta->url), "<a title='".$zp_this_meta->title."' rel='external' href='".urldecode(urlencode(htmlentities($zp_this_meta->url)))."'>".urldecode(urlencode(htmlentities($zp_this_meta->url)))."</a>", $zp_citation['citation']);
             }
             
             // DOWNLOAD

@@ -55,7 +55,8 @@
             'abstract' => false,
             'abstracts' => "no",
             
-            'cite' => "no"
+            'cite' => "no",
+            'link' => "no"
             
         ), $atts));
         
@@ -101,6 +102,8 @@
             $collection_id = str_replace('"','',html_entity_decode($collection));
         if (strpos($collection_id, ",") > 0)
             $collection_id = explode(",", $collection_id);
+        if ($data_type == "collections" && isset($_GET['zpcollection']) )
+            $collection_id = htmlentities( urldecode( $_GET['zpcollection'] ) );
         
         // Filter by tag
         if ($tag_name)
@@ -112,6 +115,8 @@
         $tag_name = str_replace("+", "", $tag_name);
         if (strpos($tag_name, ",") > 0)
             $tag_name = explode(",", $tag_name);
+        if ($data_type == "tags" && isset($_GET['zptag']) )
+            $tag_name = htmlentities( urldecode( $_GET['zptag'] ) );
         
         // Filter by itemkey
         if ($item_key)
@@ -147,9 +152,7 @@
             $sortby = "year";
             $order= "DESC";
         }
-        else {
-            $title = false;
-        }
+        else { $title = false; }
         
         // Show image
         if ($showimage)
@@ -196,6 +199,7 @@
             $abstracts = false;
         
         $cite = str_replace('"','',html_entity_decode($cite));
+        $link = str_replace('"','',html_entity_decode($link));
         
         
         
@@ -243,9 +247,9 @@
             
             // ITEMS
             
-            if ($data_type == "items")
+            if ($data_type == "items" || ($data_type == "tags" && isset($_GET['zptag']) ) || ($data_type == "collections" && isset($_GET['zpcollection']) ))
             {
-                $zp_query = "SELECT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroItems";
+                $zp_query = "SELECT DISTINCT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroItems";
                 
                 // Filter by collection or tag
                 if ($collection_id || $tag_name)
@@ -519,109 +523,125 @@
                 // Add style, if set
                 if ($style) { $zp_output .= "<span class=\"zp-Zotpress-Style\" style=\"display:none;\">".$style."</span>\n\n"; }
                 
-                foreach ($zp_results as $zp_citation)
+                // TAG OR COLLECTION TITLE
+                if ( $data_type == "collections" && isset($_GET['zpcollection']) ) {
+                    $collection_title = $wpdb->get_row("SELECT title FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE item_key='".$collection_id."'");
+                    $zp_output .= "<h2>" . $collection_title->title . " / <a title='Back' class='zp-BackLink' href='javascript:window.history.back();'>Back</a></h2>\n\n";
+                }
+                if ( $data_type == "tags" && isset($_GET['zptag']) ) { $zp_output .= "<h2>" . $tag_name . " / <a title='Back' class='zp-BackLink' href='javascript:window.history.back();'>Back</a></h2>\n\n"; }
+                
+                if ( count($zp_results) > 0 )
                 {
-                    $citation_image = false;
-                    $has_citation_image = false;
-                    $zp_this_meta = json_decode( $zp_citation["json"] );
-                    $zp_output .= "<span class=\"zp-Zotpress-Userid\" style=\"display:none;\">".$zp_citation['api_user_id']."</span>\n\n";
-                    //$zp_output .= "<span class=\"ZOTPRESS_AUTOUPDATE_KEY\" style=\"display:none;\">" . $_SESSION['zp_session'][$zp_citation['api_user_id']]['key'] . "</span>\n\n";
-                    
-                    // IMAGE
-                    if ($showimage && !is_null($zp_citation["image"]) && $zp_citation["image"] != "")
+                    foreach ($zp_results as $zp_citation)
                     {
-                        $citation_image = "<div id='zp-Citation-".$zp_citation["item_key"]."' class='zp-Entry-Image' rel='".$zp_citation["item_key"]."'>";
-                        $citation_image .= "<img src='".$zp_citation["image"]."' alt='image' />";
-                        $citation_image .= "</div>\n";
-                        $has_citation_image = " zp-HasImage";
-                    }
-                    
-                    // ABSTRACT
-                    if ($abstracts)
-                    {
-                        if (isset($zp_this_meta->abstractNote) && strlen(trim($zp_this_meta->abstractNote)) > 0)
-                        {
-                            $citation_abstract = "<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " . $zp_this_meta->abstractNote . "</p>\n";
-                        }
-                    }
-                    
-                    // NOTES
-                    if ($notes)
-                    {
-                        $zp_notes = $wpdb->get_results("SELECT json FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['api_user_id']."'
-                                AND parent = '".$zp_citation["item_key"]."' AND itemType = 'note';", OBJECT);
+                        $citation_image = false;
+                        $has_citation_image = false;
+                        $zp_this_meta = json_decode( $zp_citation["json"] );
+                        $zp_output .= "<span class=\"zp-Zotpress-Userid\" style=\"display:none;\">".$zp_citation['api_user_id']."</span>\n\n";
+                        //$zp_output .= "<span class=\"ZOTPRESS_AUTOUPDATE_KEY\" style=\"display:none;\">" . $_SESSION['zp_session'][$zp_citation['api_user_id']]['key'] . "</span>\n\n";
                         
-                        if (count($zp_notes) > 0)
+                        // IMAGE
+                        if ($showimage && !is_null($zp_citation["image"]) && $zp_citation["image"] != "")
                         {
-                            $citation_notes .= "<li>\n<ul class='zp-Citation-Item-Notes'>\n";
-                            
-                            foreach ($zp_notes as $note) {
-                                $note_json = json_decode($note->json);
-                                $citation_notes .= "<li class='zp-Citation-note'>" . $note_json->note . "\n</li>\n";
-                            }
-                            
-                            $citation_notes .= "\n</ul>\n</li>\n\n";
-                            
-                            // Add note reference
-                            $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"zp-Notes-Reference\">".$zp_notes_num."</sup> </div>" . '$2', $zp_citation['citation'], 1);
-                            $zp_notes_num++;
+                            $citation_image = "<div id='zp-Citation-".$zp_citation["item_key"]."' class='zp-Entry-Image' rel='".$zp_citation["item_key"]."'>";
+                            $citation_image .= "<img src='".$zp_citation["image"]."' alt='image' />";
+                            $citation_image .= "</div>\n";
+                            $has_citation_image = " zp-HasImage";
                         }
-                        unset($zp_notes);
-                    }
-                    
-                    // Hyperlink URL: Working? Has to go before Download
-                    if (isset($zp_this_meta->url) && strlen($zp_this_meta->url) > 0)
-                        $zp_citation['citation'] = str_replace($zp_this_meta->url, "<a title='".$zp_this_meta->title."' rel='external' href='".$zp_this_meta->url."'>".$zp_this_meta->url."</a>", $zp_citation['citation']);
-                    
-                    // DOWNLOAD
-                    if ($download)
-                    {
-                        $zp_download_url = $wpdb->get_row("SELECT item_key, citation, json, linkMode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['api_user_id']."'
-                                AND parent = '".$zp_citation["item_key"]."' AND linkMode IN ( 'imported_file', 'linked_url' ) ORDER BY linkMode ASC LIMIT 1;", OBJECT);
                         
-                        if (!is_null($zp_download_url))
+                        // ABSTRACT
+                        if ($abstracts)
                         {
-                            if ($zp_download_url->linkMode == "imported_file") {
-                                $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['api_user_id']."&download=".$zp_download_url->item_key."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1); // Thanks to http://ideone.com/vR073
-                            }
-                            else {
-                                $zp_download_meta = json_decode($zp_download_url->json);
-                                $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_meta->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
+                            if (isset($zp_this_meta->abstractNote) && strlen(trim($zp_this_meta->abstractNote)) > 0)
+                            {
+                                $citation_abstract = "<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " . $zp_this_meta->abstractNote . "</p>\n";
                             }
                         }
-                        unset($zp_download_url);
-                    }
-                    
-                    // CITE LINK
-                    if ($cite == "yes" || $cite == "true" || $cite === true)
-                    {
-                        $cite_url = "https://api.zotero.org/".$zp_account->account_type."/".$zp_account->api_user_id."/items/".$zp_citation["item_key"]."?format=ris";
-                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>(Cite)</a> </div>" . '$2', $zp_citation['citation'], 1);
-                    }
-                    
-                    // TITLE
-                    if ($title)
-                    {
-                        if ($current_title == "" || (strlen($current_title) > 0 && $current_title != $zp_citation["year"]))
+                        
+                        // NOTES
+                        if ($notes)
                         {
-                            $current_title = $zp_citation["year"];
-                            $zp_output .= "<h3>".$current_title."</h3>\n";
+                            $zp_notes = $wpdb->get_results("SELECT json FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['api_user_id']."'
+                                    AND parent = '".$zp_citation["item_key"]."' AND itemType = 'note';", OBJECT);
+                            
+                            if (count($zp_notes) > 0)
+                            {
+                                $citation_notes .= "<li>\n<ul class='zp-Citation-Item-Notes'>\n";
+                                
+                                foreach ($zp_notes as $note) {
+                                    $note_json = json_decode($note->json);
+                                    $citation_notes .= "<li class='zp-Citation-note'>" . $note_json->note . "\n</li>\n";
+                                }
+                                
+                                $citation_notes .= "\n</ul>\n</li>\n\n";
+                                
+                                // Add note reference
+                                $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"zp-Notes-Reference\">".$zp_notes_num."</sup> </div>" . '$2', $zp_citation['citation'], 1);
+                                $zp_notes_num++;
+                            }
+                            unset($zp_notes);
                         }
+                        
+                        // Hyperlink URL: Has to go before Download
+                        if (isset($zp_this_meta->url) && strlen($zp_this_meta->url) > 0)
+                            $zp_citation['citation'] = str_replace($zp_this_meta->url, "<a title='".$zp_this_meta->title."' rel='external' href='".urldecode(urlencode($zp_this_meta->url))."'>".urldecode(urlencode($zp_this_meta->url))."</a>", $zp_citation['citation']);
+                        
+                        // DOWNLOAD
+                        if ($download)
+                        {
+                            $zp_download_url = $wpdb->get_row("SELECT item_key, citation, json, linkMode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['api_user_id']."'
+                                    AND parent = '".$zp_citation["item_key"]."' AND linkMode IN ( 'imported_file', 'linked_url' ) ORDER BY linkMode ASC LIMIT 1;", OBJECT);
+                            
+                            if (!is_null($zp_download_url))
+                            {
+                                if ($zp_download_url->linkMode == "imported_file") {
+                                    $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['api_user_id']."&download=".$zp_download_url->item_key."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1); // Thanks to http://ideone.com/vR073
+                                }
+                                else {
+                                    $zp_download_meta = json_decode($zp_download_url->json);
+                                    $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_meta->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
+                                }
+                            }
+                            unset($zp_download_url);
+                        }
+                        
+                        // CITE LINK
+                        if ($cite == "yes" || $cite == "true" || $cite === true)
+                        {
+                            $cite_url = "https://api.zotero.org/".$zp_account->account_type."/".$zp_account->api_user_id."/items/".$zp_citation["item_key"]."?format=ris";
+                            $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>(Cite)</a> </div>" . '$2', $zp_citation['citation'], 1);
+                        }
+                        
+                        // TITLE
+                        if ($title)
+                        {
+                            if ($current_title == "" || (strlen($current_title) > 0 && $current_title != $zp_citation["year"]))
+                            {
+                                $current_title = $zp_citation["year"];
+                                $zp_output .= "<h3>".$current_title."</h3>\n";
+                            }
+                        }
+                        
+                        // SHOW CURRENT STYLE AS REL
+                        $zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );
+                        
+                        // OUTPUT
+                        
+                        $zp_output .= "<div class='zp-Entry".$has_citation_image."' rel='".$zp_citation["item_key"]."'>\n";
+                        $zp_output .= $citation_image . $zp_citation['citation'] . $citation_abstract . "\n";
+                        $zp_output .= "</div><!--Entry-->\n\n";
                     }
                     
-                    // SHOW CURRENT STYLE AS REL
-                    $zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );
-                    
-                    // OUTPUT
-                    
-                    $zp_output .= "<div class='zp-Entry".$has_citation_image."' rel='".$zp_citation["item_key"]."'>\n";
-                    $zp_output .= $citation_image . $zp_citation['citation'] . $citation_abstract . "\n";
-                    $zp_output .= "</div><!--Entry-->\n\n";
+                    // DISPLAY NOTES, if exist
+                    if (strlen($citation_notes) > 0)
+                        $zp_output .= "<div class='zp-Citation-Notes'>\n<h4>Notes</h4>\n<ol>\n" . $citation_notes . "</ol>\n</div><!-- .zp-Citation-Notes -->\n\n";
                 }
                 
-                // DISPLAY NOTES, if exist
-                if (strlen($citation_notes) > 0)
-                    $zp_output .= "<div class='zp-Citation-Notes'>\n<h4>Notes</h4>\n<ol>\n" . $citation_notes . "</ol>\n</div><!-- .zp-Citation-Notes -->\n\n";
+                // No items to display
+                else
+                {
+                    $zp_output .= "<p>Sorry, there's no items to display.</p>\n";
+                }
                 
                 $zp_output .= "</div><!--.zp-Zotpress-->\n\n";
             }
@@ -630,7 +650,7 @@
             
             // COLLECTIONS
             
-            else if ($data_type == "collections")
+            else if ($data_type == "collections" && !isset($_GET['zpcollection']))
             {
                 $zp_query = "SELECT ".$wpdb->prefix."zotpress_zoteroCollections.* FROM ".$wpdb->prefix."zotpress_zoteroCollections ";
                 $zp_query .= "WHERE api_user_id='".$api_user_id."' AND parent = '' ";
@@ -661,10 +681,19 @@
                 
                 foreach ($zp_results as $zp_collection)
                 {
-                    $zp_output .= "<li rel=\"" . $zp_collection->item_key . "\">" . $zp_collection->title . "</li>\n";
+                    $zp_output .= "<li rel=\"" . $zp_collection->item_key . "\">";
+                    if ($link == "yes")
+                    {
+                        $zp_output .= "<a class='zp-CollectionLink' title='" . $zp_collection->title . "' rel='" . $zp_collection->item_key . "' href='" . $_SERVER["REQUEST_URI"];
+                        if ( strpos($_SERVER["REQUEST_URI"], "?") === false ) { $zp_output .= "?"; } else { $zp_output .= "&"; }
+                        $zp_output .= "zpcollection=" . $zp_collection->item_key . "'>";
+                    }
+                    $zp_output .= $zp_collection->title;
+                    if ($link == "yes") { $zp_output .= "</a>"; }
+                    $zp_output .= "</li>\n";
                     
                     if ($zp_collection->numCollections > 0)
-                        $zp_output .= zp_get_subcollections($wpdb, $api_user_id, $zp_collection->item_key, $sortby, $order);
+                        $zp_output .= zp_get_subcollections($wpdb, $api_user_id, $zp_collection->item_key, $sortby, $order, $link);
                 }
                 
                 $zp_output .= "</ul>\n";
@@ -675,7 +704,7 @@
             
             // TAGS
             
-            else if ($data_type == "tags")
+            else if ($data_type == "tags" && !isset($_GET['zptag']))
             {
                 $zp_query = "SELECT * FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$api_user_id."' ";
                 
@@ -705,7 +734,16 @@
                 
                 foreach ($zp_results as $zp_tag)
                 {
-                    $zp_output .= "<li rel=\"" . $zp_tag->title . "\">" . $zp_tag->title . " <span class=\"zp-numItems\">(" . $zp_tag->numItems . " items)</span></li>\n";
+                    $zp_output .= "<li rel=\"" . $zp_tag->title . "\">";
+                    if ($link == "yes")
+                    {
+                        $zp_output .= "<a class='zp-TagLink' title='" . $zp_tag->title . "' rel='" . $zp_tag->title . "' href='" . $_SERVER["REQUEST_URI"];
+                        if ( strpos($_SERVER["REQUEST_URI"], "?") === false ) { $zp_output .= "?"; } else { $zp_output .= "&"; }
+                        $zp_output .= "zptag=" . urlencode($zp_tag->title) . "'>";
+                    }
+                    $zp_output .= $zp_tag->title . " <span class=\"zp-numItems\">(" . $zp_tag->numItems . " items)</span>";
+                    if ($link == "yes") { $zp_output .= "</a>"; }
+                    $zp_output .= "</li>\n";
                 }
                 
                 $zp_output .="</ul>\n";
