@@ -4,6 +4,9 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
+    // Prevent access to non-logged in users
+    if ( !is_user_logged_in() ) { exit("Access denied."); }
+    
     // Ignore user abort
     ignore_user_abort(true);
     set_time_limit(60*10); // ten minutes

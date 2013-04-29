@@ -5,10 +5,12 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
-    
+    // Prevent access to non-logged in users
+    if ( !is_user_logged_in() ) { exit("Access denied."); }
 
     // Set up XML document
     $xml = "";
+    
     
     if (isset($_GET['submit']))
     {
@@ -17,6 +19,8 @@
                                 "account_format"=>array(0,"<strong>Account</strong> was incorrectly formatted."),
                                 "style_empty"=>array(0,"<strong>Style</strong> was left blank."),
                                 "style_format"=>array(0,"<strong>Style</strong> was incorrectly formatted."),
+                                "reset_empty"=>array(0,"<strong>Reset</strong> was left blank."),
+                                "reset_format"=>array(0,"<strong>Reset</strong> was incorrect."),
                                 "autoupdate_empty"=>array(0,"<strong>Autoupdate</strong> was left blank."),
                                 "autoupdate_format"=>array(0,"<strong>Autoupdate</strong> was incorrectly formatted."),
                                 "post_empty"=>array(0,"<strong>Post ID</strong> was left blank."),
@@ -69,7 +73,7 @@
             
         */
         
-        if (isset($_GET['autoupdate']))
+        else if (isset($_GET['autoupdate']))
         {
             
             // Check the post variables and record errors
@@ -98,7 +102,66 @@
                 update_option("Zotpress_DefaultAutoUpdate", strtolower($autoupdate));
                 $xml .= "<result success='true' autoupdate='".strtolower($autoupdate)."' />\n";
             }
-        } // default autoupdate
+        } // autoupdate
+        
+        
+        
+        /*
+         
+            SET RESET
+            
+        */
+        
+        else if (isset($_GET['reset']))
+        {
+            
+            // Check the post variables and record errors
+            if (trim($_GET['reset']) != '')
+                if (get_option('ZOTPRESS_PASSCODE') == $_GET['reset'])
+                    $reset = $_GET['reset'];
+                else
+                    $errors['reset_format'][0] = 1;
+            else
+                $errors['reset_empty'][0] = 1;
+            
+            
+            // CHECK ERRORS
+            $errorCheck = false;
+            foreach ($errors as $field => $error) {
+                if ($error[0] == 1) {
+                    $errorCheck = true;
+                    break;
+                }
+            }
+            
+            
+            // SET DEFAULT STYLE
+            if ($errorCheck == false)
+            {
+                global $wpdb;
+                
+                // Drop all tables except accounts/main
+                $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress;");
+                $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_oauth;");
+                $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroItems;");
+                $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroCollections;");
+                $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroTags;");
+                
+                delete_option( 'ZOTPRESS_PASSCODE' );
+                delete_option( 'Zotpress_DefaultAccount' );
+                delete_option( 'Zotpress_LastAutoUpdate' );
+                delete_option( 'Zotpress_DefaultStyle' );
+                delete_option( 'Zotpress_StyleList' );
+                delete_option( 'Zotpress_DefaultAutoUpdate' );
+                delete_option( 'Zotpress_main_db_version' );
+                delete_option( 'Zotpress_oauth_db_version' );
+                delete_option( 'Zotpress_zoteroItems_db_version' );
+                delete_option( 'Zotpress_zoteroCollections_db_version' );
+                delete_option( 'Zotpress_zoteroTags_db_version' );
+                
+                $xml .= "<result success='true' reset='complete' />\n";
+            }
+        } // reset
         
         
         
@@ -108,7 +171,7 @@
             
         */
         
-        if (isset($_GET['style']))
+        else if (isset($_GET['style']))
         {
             
             // Check the post variables and record errors

@@ -4,6 +4,9 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
     
+    // Prevent access to non-logged in users
+    if ( !is_user_logged_in() ) { exit("Access denied."); }
+    
     global $wpdb;
     
     header('Content-type: text/html; charset=utf-8');

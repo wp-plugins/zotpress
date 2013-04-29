@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bring Zotero and scholarly blogging to your WordPress site.
     Author: Katie Seaborn
-    Version: 5.0.7
+    Version: 5.0.8
     Author URI: http://katieseaborn.com
     
 */
@@ -33,10 +33,11 @@
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
+    add_option( 'ZOTPRESS_PASSCODE', substr(number_format(time() * rand(),0,'',''),0,10) ); /* Thanks to http://elementdesignllc.com/2011/06/generate-random-10-digit-number-in-php/ */
+    
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
     define('ZOTPRESS_PLUGIN_FILE',  __FILE__ );
     
-    //$GLOBALS['zp_requirements_met'] = false;
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
@@ -230,21 +231,6 @@
         wp_enqueue_style('zotpress.shortcode.css');
     }
     
-    // SESSION HANDLING
-    // Thanks to http://devondev.com/2012/02/03/using-the-php-session-in-wordpress/
-    
-    function Zotpress_import_session()
-    {
-        if (!session_id()) { session_start(); }
-    }
-    
-    function Zotpress_import_session_end()
-    {
-        //session_destroy(); // just in case there's more than one session
-        if (!session_id()) { session_start(); }
-        unset($_SESSION['zp_session']);
-    }
-    
     function Zotpress_change_timeout($time) {
 	$time = 25;
 	return $time;
@@ -266,15 +252,10 @@
     
     if (isset($_GET['page']) && $_GET['page'] == 'Zotpress')
     {
-        add_action('init', 'Zotpress_import_session');
-        
         add_action('admin_print_scripts', 'Zotpress_admin_scripts');
         add_action('admin_print_styles', 'Zotpress_admin_styles');
         add_action('admin_footer', 'Zotpress_admin_footer');
     }
-    
-    add_action('wp_logout', 'Zotpress_import_session_end');
-    add_action('wp_login', 'Zotpress_import_session_end');
     
     // For post and page editing and CKEDITOR only
     if (

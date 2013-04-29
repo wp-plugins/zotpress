@@ -14,12 +14,12 @@
                     </div>
                 
                     <div>
-                        <label for="api_user_id" class="zp-Help required" title="Your User ID is listed on the Zotero 'Feeds/API' page under 'Settings', right under the 'Feeds/API Settings' heading. Group IDs are found in the group's URL, after &quot;groups&quot;. Both should be a number 1-6+ digits in length."><span id="zp-ID-Label">User ID</span></label>
+                        <label for="api_user_id" class="zp-Help required" title="Your User ID is listed on the <strong>Zotero 'Feeds/API' page under 'Settings', right under the 'Feeds/API Settings' heading</strong>. Group IDs are found in the group's URL, after &quot;groups&quot;. Both should be a number 1-6+ digits in length."><span id="zp-ID-Label">User ID</span></label>
                         <input id="api_user_id" name="api_user_id" type="text" />
                     </div>
                 
                     <div class="zp-public_key">
-                        <label for="public_key" class="zp-Help<?php if ($oauth_is_not_installed){ echo " required"; } ?>" title="<?php if (!$oauth_is_not_installed){ ?><strong>You can create a key using OAuth <u>after</u> you've added your account.</strong><?php } else { ?><strong>You are rquired to create a private key to use Zotpress. You can create one on the Zotero website.</strong><?php } ?><br />If you've already created a key, you can find it at 'Settings > Feeds/API' on the Zotero website. Make sure that 'Allow third party access' is checked."><span>Private Key</span></label>
+                        <label for="public_key" class="zp-Help<?php if ($oauth_is_not_installed){ echo " required"; } ?>" title="<?php if (!$oauth_is_not_installed){ ?><strong>You can create a key using OAuth <u>after</u> you've added your account.</strong><?php } else { ?><strong>You are rquired to create a private key to use Zotpress. You can create one on the Zotero website.</strong><?php } ?> If you've already created a key, you can find it at 'Settings > Feeds/API' on the Zotero website. Make sure that 'Allow third party access' is checked."><span>Private Key</span></label>
                         <input id="public_key" name="public_key" type="text" />
                     </div>
                 

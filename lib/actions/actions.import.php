@@ -1,19 +1,17 @@
 <?php
 
-
     // Include WordPress
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
-
+    
+    // Prevent access to non-logged in users
+    if ( !is_user_logged_in() ) { exit("Access denied."); }
     
     // Include Special cURL
     require("../request/rss.curl.php");
     
     // Include Import and Sync Functions
     require("../admin/admin.import.functions.php");
-    
-    // Get session ready
-    if (!session_id()) { session_start(); }
     
 
     // Set up XML document
@@ -97,29 +95,42 @@
         
         if ($errorCheck == false)
         {
+            // Setup
+            
+            $GLOBALS['zp_session'][$api_user_id]['items']['query_params'] = array();
+            $GLOBALS['zp_session'][$api_user_id]['items']['query_total_entries'] = 0;
+            
+            $GLOBALS['zp_session'][$api_user_id]['collections']['query_params'] = array();
+            $GLOBALS['zp_session'][$api_user_id]['collections']['query_total_entries'] = 0;
+            
+            $GLOBALS['zp_session'][$api_user_id]['tags']['query_params'] = array();
+            $GLOBALS['zp_session'][$api_user_id]['tags']['query_total_entries'] = 0;
+            
+            
             // ITEMS
             
             if ( isset($_GET['step']) && $_GET['step'] == "items")
             {
-                $zp_continue = zp_get_items ($api_user_id, $start);
+                global $wpdb;
+                $zp_continue = zp_get_items ($wpdb, $api_user_id, $start);
                 
                 if ($zp_continue === true)
                 {
-                    if ($start % 200 == 0) // Save, then continue
-                    {
-                        global $wpdb;
+                    //if ($start % 200 == 0) // Save, then continue
+                    //{
+                        //global $wpdb;
                         zp_save_items ($wpdb, $api_user_id, true);
                         
                         $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
-                    }
-                    else // just continue
-                    {
-                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
-                    }
+                    //}
+                    //else // just continue
+                    //{
+                    //    $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
+                    //}
                 }
                 else if ($zp_continue === false)  // Execute import query, then move on
                 {
-                    global $wpdb;
+                    //global $wpdb;
                     zp_save_items ($wpdb, $api_user_id);
                     
                     $xml = "<result success=\"next\" next=\"collections\" />\n";
@@ -136,25 +147,26 @@
             
             else if ( isset($_GET['step']) && $_GET['step'] == "collections")
             {
-                $zp_continue = zp_get_collections ($api_user_id, $start);
+                global $wpdb;
+                $zp_continue = zp_get_collections ($wpdb, $api_user_id, $start);
                 
                 if ($zp_continue === true)
                 {
-                    if ($start % 200 == 0) // Save, then continue
-                    {
-                        global $wpdb;
+                    //if ($start % 200 == 0) // Save, then continue
+                    //{
+                    //    //global $wpdb;
                         zp_save_collections ($wpdb, $api_user_id, true);
                         
                         $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
-                    }
-                    else // just continue
-                    {
-                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
-                    }
+                    //}
+                    //else // just continue
+                    //{
+                    //    $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
+                    //}
                 }
                 else // Execute import query, then move on
                 {
-                    global $wpdb;
+                    //global $wpdb;
                     zp_save_collections ($wpdb, $api_user_id);
                     
                     $xml = "<result success=\"next\" next=\"tags\" />\n";
@@ -166,25 +178,26 @@
             
             else if ( isset($_GET['step']) && $_GET['step'] == "tags")
             {
-                $zp_continue = zp_get_tags ($api_user_id, $start);
+                global $wpdb;
+                $zp_continue = zp_get_tags ($wpdb, $api_user_id, $start);
                 
                 if ($zp_continue === true)
                 {
-                    if ($start % 200 == 0) // Save, then continue
-                    {
-                        global $wpdb;
+                    //if ($start % 200 == 0) // Save, then continue
+                    //{
+                    //    //global $wpdb;
                         zp_save_tags ($wpdb, $api_user_id, true);
                         
                         $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
-                    }
-                    else // just continue
-                    {
-                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
-                    }
+                    //}
+                    //else // just continue
+                    //{
+                    //    $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
+                    //}
                 }
                 else // Execute import query, then move on
                 {
-                    global $wpdb;
+                    //global $wpdb;
                     zp_save_tags ($wpdb, $api_user_id);
                     
                     $xml = "<result success=\"next\" next=\"complete\" />\n";

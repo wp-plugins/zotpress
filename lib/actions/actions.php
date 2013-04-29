@@ -5,7 +5,8 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
-    
+    // Prevent access to non-logged in users
+    if ( !is_user_logged_in() ) { exit("Access denied."); }
 
     // Set up XML document
     $xml = "";

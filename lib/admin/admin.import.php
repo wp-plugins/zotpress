@@ -23,6 +23,9 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
+    // Prevent access to non-logged in users
+    if ( !is_user_logged_in() ) { exit("Access denied."); }
+    
     // Access Wordpress db
     global $wpdb;
     
@@ -35,10 +38,6 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
     
     // Include Import Functions
     require("admin.import.functions.php");
-    
-    // Get session ready
-    if (!session_id()) { session_start(); }
-    
     
     
 ?><!DOCTYPE html 
@@ -62,29 +61,26 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
     {
         $api_user_id = zp_get_api_user_id();
         
-        if (isset($_SESSION['zp_session'][$api_user_id]['key']) && isset($_GET['key']) && $_SESSION['zp_session'][$api_user_id]['key'] == $_GET['key'])
+        if (get_option('ZOTPRESS_PASSCODE') && isset($_GET['key']) && get_option('ZOTPRESS_PASSCODE') == $_GET['key'])
         {
-            // Get account
-            $_SESSION['zp_session'][$api_user_id]['zp_account'] = zp_get_account($wpdb, $api_user_id);
-            
             // Set current import time
             zp_set_update_time( date('Y-m-d') );
             
             // Clear last import
             zp_clear_last_import ($wpdb, $api_user_id, $_GET['step']);
             
-            // Set up session item query vars
-            $_SESSION['zp_session'][$api_user_id]['items']['query_params'] = array();
-            $_SESSION['zp_session'][$api_user_id]['items']['query_total_entries'] = 0;
-            
             // IMPORT ITEMS
             ?><script type="text/javascript">
             
             jQuery(document).ready(function()
             {
+                //var zpTimeout = 0;
+                jQuery.ajaxSetup({timeout: 30000});
+                
                 function zp_get_items (zp_plugin_url, api_user_id, zp_key, zp_start)
                 {
                     var zpXMLurl = zp_plugin_url + "lib/actions/actions.import.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=items&start=" + zp_start;
+                    //alert(zpXMLurl);
                     
                     jQuery.get( zpXMLurl, {}, function(xml)
                     {
@@ -97,8 +93,15 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                         }
                         else if ($result.attr("success") == "next")
                         {
+                            <?php if (isset($_GET["singlestep"])) { ?>
+                            jQuery('#zp-Import-Messages', window.parent.document).text("Import of items complete!");
+                            jQuery("input[type=button]", window.parent.document).removeAttr('disabled');
+                            jQuery("#zp-Zotpress-Setup-Buttons", window.parent.document).removeAttr("style");
+                            jQuery(".zp-Loading-Initial", window.parent.document).hide();
+                            <?php } else { ?>
                             jQuery('#zp-Import-Messages', window.parent.document).text("Importing collections 1-50 ...");
                             jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src', jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src').replace("step=items", "step=collections"));
+                            <?php } ?>
                         }
                         else // Show errors
                         {
@@ -107,13 +110,13 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                     });
                 }
                 
-                zp_get_items( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . $_SESSION['zp_session'][$api_user_id]['key']; ?>', 0);
+                zp_get_items( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . get_option('ZOTPRESS_PASSCODE'); ?>', 0);
                 
             });
             
             </script><?php
         }
-        else /* key fails */ { exit ("key incorrect "); }
+        else /* key fails */ { exit ("ITEMS key incorrect "); }
     }
     
     
@@ -123,20 +126,18 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
     {
         $api_user_id = zp_get_api_user_id();
         
-        if (isset($_SESSION['zp_session'][$api_user_id]['key']) && isset($_GET['key']) && $_SESSION['zp_session'][$api_user_id]['key'] == $_GET['key'])
+        if (get_option('ZOTPRESS_PASSCODE') && isset($_GET['key']) && get_option('ZOTPRESS_PASSCODE') == $_GET['key'])
         {
             // Clear last import
             zp_clear_last_import ($wpdb, $api_user_id, "collections");
-            
-            // Set up session item query vars
-            $_SESSION['zp_session'][$api_user_id]['collections']['query_params'] = array();
-            $_SESSION['zp_session'][$api_user_id]['collections']['query_total_entries'] = 0;
             
             // IMPORT COLLECTIONS
             ?><script type="text/javascript">
             
             jQuery(document).ready(function()
             {
+                jQuery.ajaxSetup({timeout: 30000});
+                
                 function zp_get_collections (zp_plugin_url, api_user_id, zp_key, zp_start)
                 {
                     var zpXMLurl = zp_plugin_url + "lib/actions/actions.import.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=collections&start=" + zp_start;
@@ -152,23 +153,34 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                         }
                         else if ($result.attr("success") == "next")
                         {
+                            <?php if (isset($_GET["singlestep"])) { ?>
+                            jQuery('#zp-Import-Messages', window.parent.document).text("Import of collections complete!");
+                            jQuery("input[type=button]", window.parent.document).removeAttr('disabled');
+                            jQuery("#zp-Zotpress-Setup-Buttons", window.parent.document).removeAttr("style");
+                            jQuery(".zp-Loading-Initial", window.parent.document).hide();
+                            <?php } else { ?>
                             jQuery('#zp-Import-Messages', window.parent.document).text("Importing tags 1-50 ...");
                             jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src', jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src').replace("step=collections", "step=tags"));
+                            <?php } ?>
                         }
                         else // Show errors
                         {
                             alert( "Sorry, but there was a problem importing collections: " + jQuery("errors", xml).text() );
                         }
                     });
+                    //.fail( function() {
+                    //    alert("fail collections");
+                    //    zp_get_collections (zp_plugin_url, api_user_id, zp_key, (zp_start));
+                    //});
                 }
                 
-                zp_get_collections( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . $_SESSION['zp_session'][$api_user_id]['key']; ?>', 0);
+                zp_get_collections( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . get_option('ZOTPRESS_PASSCODE'); ?>', 0);
                 
             });
             
             </script><?php
         }
-        else /* key fails */ { exit ("key incorrect "); }
+        else /* key fails */ { exit ("COLLECTIONS key incorrect "); }
     }
     
     
@@ -178,20 +190,19 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
     {
         $api_user_id = zp_get_api_user_id();
         
-        if (isset($_SESSION['zp_session'][$api_user_id]['key']) && isset($_GET['key']) && $_SESSION['zp_session'][$api_user_id]['key'] == $_GET['key'])
+        if (get_option('ZOTPRESS_PASSCODE') && isset($_GET['key']) && get_option('ZOTPRESS_PASSCODE') == $_GET['key'])
         {
             // Clear last import
             zp_clear_last_import ($wpdb, $api_user_id, "tags");
-            
-            // Set up session item query vars
-            $_SESSION['zp_session'][$api_user_id]['tags']['query_params'] = array();
-            $_SESSION['zp_session'][$api_user_id]['tags']['query_total_entries'] = 0;
             
             // IMPORT TAGS
             ?><script type="text/javascript">
             
             jQuery(document).ready(function()
             {
+                //var zpTimeout = 0;
+                jQuery.ajaxSetup({timeout: 30000});
+                
                 function zp_get_tags (zp_plugin_url, api_user_id, zp_key, zp_start)
                 {
                     var zpXMLurl = zp_plugin_url + "lib/actions/actions.import.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=tags&start=" + zp_start;
@@ -207,8 +218,15 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                         }
                         else if ($result.attr("success") == "next")
                         {
+                            <?php if (isset($_GET["singlestep"])) { ?>
+                            jQuery('#zp-Import-Messages', window.parent.document).text("Import of tags complete!");
+                            jQuery("input[type=button]", window.parent.document).removeAttr('disabled');
+                            jQuery("#zp-Zotpress-Setup-Buttons", window.parent.document).removeAttr("style");
+                            jQuery(".zp-Loading-Initial", window.parent.document).hide();
+                            <?php } else { ?>
                             jQuery('#zp-Import-Messages', window.parent.document).text("Import complete!");
-                            window.parent.location = "<?php echo ZOTPRESS_PLUGIN_URL; ?>../../../wp-admin/admin.php?page=Zotpress&account_id=<?php echo $_SESSION['zp_session'][$api_user_id]['zp_account'][0]->id; ?>";
+                            window.parent.location = "<?php echo ZOTPRESS_PLUGIN_URL; ?>../../../wp-admin/admin.php?page=Zotpress&account_id=" + api_user_id;
+                            <?php } ?>
                         }
                         else // Show errors
                         {
@@ -217,13 +235,13 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                     });
                 }
                 
-                zp_get_tags( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . $_SESSION['zp_session'][$api_user_id]['key']; ?>', 0);
+                zp_get_tags( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . get_option('ZOTPRESS_PASSCODE'); ?>', 0);
                 
             });
             
             </script><?php
-        }
-        else /* key fails */ { exit ("key incorrect "); }
+        }   
+        else /* key fails */ { exit ("TAG key incorrect "); }
         
     } // step
     

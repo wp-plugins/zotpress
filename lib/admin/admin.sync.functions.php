@@ -1,5 +1,7 @@
 <?php
     
+    // Prevent access to non-logged in users
+    if ( !is_user_logged_in() ) { exit("Access denied."); }
     
     
     /****************************************************************************************
@@ -60,10 +62,11 @@
     
     
     
-    function zp_get_server_items ($api_user_id, $zp_start)
+    function zp_get_server_items ($wpdb, $api_user_id, $zp_start)
     {
         $zp_import_curl = new CURL();
-        $zp_account = $_SESSION['zp_session'][$api_user_id]['zp_account'];
+        $zp_account = zp_get_account($wpdb, $api_user_id);
+        //$zp_account = $GLOBALS['zp_session'][$api_user_id]['zp_account'];
         
         
         // See if default exists
@@ -79,10 +82,10 @@
         //var_dump($zp_import_url);
         
         // Read the external data
-        if (in_array ('curl', get_loaded_extensions()))
+        //if (in_array ('curl', get_loaded_extensions()))
             $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-        else // Use the old way:
-            $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+        //else // Use the old way:
+        //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
         
         // Stop in our tracks if there's a request error
         if ($zp_import_curl->curl_error)
@@ -93,7 +96,7 @@
         $doc_citations->loadXML($zp_xml);
         
         // Get last set
-        if (!isset($_SESSION['zp_session'][$api_user_id]['items']['last_set']))
+        if (!isset($GLOBALS['zp_session'][$api_user_id]['items']['last_set']))
         {
             $last_set = "";
             $links = $doc_citations->getElementsByTagName("link");
@@ -105,11 +108,11 @@
                     if (stripos($link->getAttribute('href'), "start=") !== false)
                     {
                         $last_set = explode("start=", $link->getAttribute('href'));
-                        $_SESSION['zp_session'][$api_user_id]['items']['last_set'] = intval($last_set[1]);
+                        $GLOBALS['zp_session'][$api_user_id]['items']['last_set'] = intval($last_set[1]);
                     }
                     else
                     {
-                        $_SESSION['zp_session'][$api_user_id]['items']['last_set'] = 0;
+                        $GLOBALS['zp_session'][$api_user_id]['items']['last_set'] = 0;
                     }
                 }
             }
@@ -127,17 +130,19 @@
             $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
             
             // Check to see if item key exists in local
-            if (array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'] ))
+            if (array_key_exists( $item_key, $GLOBALS['zp_session'][$api_user_id]['items']['zp_local_items'] ))
             {
                 // Check to see if it needs updating
-                if ($retrieved != $_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]->retrieved)
+                if ($retrieved != $GLOBALS['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]->retrieved)
                 {
-                    $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'][$item_key] = $_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]->id;
-                    unset($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]); // Leave only the local ones that should be deleted
+                    $GLOBALS['zp_session'][$api_user_id]['items']['zp_items_to_update'][$item_key] = $GLOBALS['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]->id;
+                    //unset($GLOBALS['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]); // Leave only the local ones that should be deleted
+                    update_option('ZOTPRESS_DELETE_'.$api_user_id, get_option('ZOTPRESS_DELETE_'.$api_user_id) . "," . $item_key);
                 }
                 else // ignore
                 {
-                    unset($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]); // Leave only the local ones that should be deleted
+                    //unset($GLOBALS['zp_session'][$api_user_id]['items']['zp_local_items'][$item_key]); // Leave only the local ones that should be deleted
+                    update_option('ZOTPRESS_DELETE_'.$api_user_id, get_option('ZOTPRESS_DELETE_'.$api_user_id) . "," . $item_key);
                     continue;
                 }
             }
@@ -227,9 +232,9 @@
             
             
             // If item key needs updating
-            if (array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'] ))
+            if (array_key_exists( $item_key, $GLOBALS['zp_session'][$api_user_id]['items']['zp_items_to_update'] ))
             {
-                $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'][$item_key] = array (
+                $GLOBALS['zp_session'][$api_user_id]['items']['zp_items_to_update'][$item_key] = array (
                         "api_user_id" => $zp_account[0]->api_user_id,
                         "item_key" => $item_key,
                         "retrieved" => zp_db_prep($retrieved),
@@ -246,9 +251,9 @@
                         "parent" => $parent);
             }
             // If item key isn't in local, add it
-            else if (!array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'] ))
+            else if (!array_key_exists( $item_key, $GLOBALS['zp_session'][$api_user_id]['items']['zp_local_items'] ))
             {
-                array_push($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add'],
+                array_push($GLOBALS['zp_session'][$api_user_id]['items']['zp_items_to_add'],
                         $zp_account[0]->api_user_id,
                         $item_key,
                         zp_db_prep($retrieved),
@@ -264,14 +269,13 @@
                         $numchildren,
                         $parent);
                 
-                $_SESSION['zp_session'][$api_user_id]['items']['query_total_items_to_add']++;
+                $GLOBALS['zp_session'][$api_user_id]['items']['query_total_items_to_add']++;
             }
             
         } // foreach entry
         
-        
         // LAST ITEM
-        if ($_SESSION['zp_session'][$api_user_id]['items']['last_set'] == $zp_start)
+        if ($GLOBALS['zp_session'][$api_user_id]['items']['last_set'] == $zp_start)
         {
             return false;
         }
@@ -294,9 +298,9 @@
     {
         // RUN QUERIES: UPDATE
         
-        if (count($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update']) > 0)
+        if (count($GLOBALS['zp_session'][$api_user_id]['items']['zp_items_to_update']) > 0)
         {
-            foreach ($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'] as $item_params)
+            foreach ($GLOBALS['zp_session'][$api_user_id]['items']['zp_items_to_update'] as $item_params)
             {
                 $wpdb->update( 
                     $wpdb->prefix.'zotpress_zoteroItems', 
@@ -311,15 +315,14 @@
         }
         
         // ADD
-        
-        if (count($_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add']) > 0)
+        if (count($GLOBALS['zp_session'][$api_user_id]['items']['zp_items_to_add']) > 0)
         {
             $wpdb->query( $wpdb->prepare(
                     "
                     INSERT INTO ".$wpdb->prefix."zotpress_zoteroItems 
                     ( api_user_id, item_key, retrieved, json, author, zpdate, year, title, itemType, linkMode, citation, style, numchildren, parent )
-                    VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )".str_repeat(", ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )", $_SESSION['zp_session'][$api_user_id]['items']['query_total_items_to_add']-1), 
-                $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add']
+                    VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )".str_repeat(", ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )", $GLOBALS['zp_session'][$api_user_id]['items']['query_total_items_to_add']-1), 
+                $GLOBALS['zp_session'][$api_user_id]['items']['zp_items_to_add']
             ) );
             
             $wpdb->flush();
@@ -327,9 +330,12 @@
         
         // REMOVE: Only at the last set
         
-        if ($done && count($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items']) > 0)
+        if ($done && count($GLOBALS['zp_session'][$api_user_id]['items']['zp_local_items']) > 0)
         {
-            foreach ($_SESSION['zp_session'][$api_user_id]['items']['zp_local_items'] as $item_params)
+            $zp_delete_items = explode(",", get_option('ZOTPRESS_DELETE_'.$api_user_id));
+            
+            foreach ($zp_delete_items as $item_params)
+            //foreach ($GLOBALS['zp_session'][$api_user_id]['items']['zp_local_items'] as $item_params)
             {
                 $wpdb->query( $wpdb->prepare( 
                         "
@@ -346,13 +352,13 @@
         
         if ($done) // unset everything
         {
-            unset($_SESSION['zp_session'][$api_user_id]['items']);
+            unset($GLOBALS['zp_session'][$api_user_id]['items']);
         }
         else // reset add and update
         {
-            $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_add'] = array();
-            $_SESSION['zp_session'][$api_user_id]['items']['zp_items_to_update'] = array();
-            $_SESSION['zp_session'][$api_user_id]['items']['query_total_items_to_add'] = 0;
+            $GLOBALS['zp_session'][$api_user_id]['items']['zp_items_to_add'] = array();
+            $GLOBALS['zp_session'][$api_user_id]['items']['zp_items_to_update'] = array();
+            $GLOBALS['zp_session'][$api_user_id]['items']['query_total_items_to_add'] = 0;
         }
         
     } // FUNCTION: zp_save_synced_items
@@ -384,19 +390,20 @@
     
     
     
-    function zp_get_server_collections ($api_user_id, $zp_start)
+    function zp_get_server_collections ($wpdb, $api_user_id, $zp_start)
     {
         $zp_import_curl = new CURL();
-        $zp_account = $_SESSION['zp_session'][$api_user_id]['zp_account'];
+        $zp_account = zp_get_account($wpdb, $api_user_id);
+        //$zp_account = $GLOBALS['zp_session'][$api_user_id]['zp_account'];
         
         $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections?limit=50&start=".$zp_start;
         if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
             $zp_import_url .= "&key=".$zp_account[0]->public_key;
         
-        if (in_array ('curl', get_loaded_extensions()))
+        //if (in_array ('curl', get_loaded_extensions()))
             $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-        else // Use the old way:
-            $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+        //else // Use the old way:
+        //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
         
         
         // Make it DOM-traversable 
@@ -404,7 +411,7 @@
         $doc_citations->loadXML($zp_xml);
         
         // Get last set
-        if (!isset($_SESSION['zp_session'][$api_user_id]['collections']['last_set']))
+        if (!isset($GLOBALS['zp_session'][$api_user_id]['collections']['last_set']))
         {
             $last_set = "";
             $links = $doc_citations->getElementsByTagName("link");
@@ -416,11 +423,11 @@
                     if (stripos($link->getAttribute('href'), "start=") !== false)
                     {
                         $last_set = explode("start=", $link->getAttribute('href'));
-                        $_SESSION['zp_session'][$api_user_id]['collections']['last_set'] = intval($last_set[1]);
+                        $GLOBALS['zp_session'][$api_user_id]['collections']['last_set'] = intval($last_set[1]);
                     }
                     else
                     {
-                        $_SESSION['zp_session'][$api_user_id]['collections']['last_set'] = 0;
+                        $GLOBALS['zp_session'][$api_user_id]['collections']['last_set'] = 0;
                     }
                 }
             }
@@ -437,17 +444,19 @@
             $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
             
             // Check to see if item key exists in local
-            if (array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'] ))
+            if (array_key_exists( $item_key, $GLOBALS['zp_session'][$api_user_id]['collections']['zp_local_collections'] ))
             {
                 // Check to see if it needs updating
-                if ($retrieved != $_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]->retrieved)
+                if ($retrieved != $GLOBALS['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]->retrieved)
                 {
-                    $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'][$item_key] = $_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]->id;
-                    unset($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]); // Leave only the local ones that should be deleted
+                    $GLOBALS['zp_session'][$api_user_id]['collections']['zp_collections_to_update'][$item_key] = $GLOBALS['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]->id;
+                    //unset($GLOBALS['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]); // Leave only the local ones that should be deleted
+                    update_option('ZOTPRESS_DELETE_'.$api_user_id, get_option('ZOTPRESS_DELETE_'.$api_user_id) . "," . $item_key);
                 }
                 else // ignore
                 {
-                    unset($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]); // Leave only the local ones that should be deleted
+                    //unset($GLOBALS['zp_session'][$api_user_id]['collections']['zp_local_collections'][$item_key]); // Leave only the local ones that should be deleted
+                    update_option('ZOTPRESS_DELETE_'.$api_user_id, get_option('ZOTPRESS_DELETE_'.$api_user_id) . "," . $item_key);
                     continue;
                 }
             }
@@ -482,19 +491,19 @@
                 $zp_import_url .= "&key=".$zp_account[0]->public_key;
             
             // Import depending on method: cURL or file_get_contents
-            if (in_array ('curl', get_loaded_extensions()))
+            //if (in_array ('curl', get_loaded_extensions()))
                 $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-            else // Use the old way:
-                $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+            //else // Use the old way:
+            //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
             
             $zp_collection_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
             
             
             
             // If item key needs updating
-            if (array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'] ))
+            if (array_key_exists( $item_key, $GLOBALS['zp_session'][$api_user_id]['collections']['zp_collections_to_update'] ))
             {
-                $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'][$item_key] = array (
+                $GLOBALS['zp_session'][$api_user_id]['collections']['zp_collections_to_update'][$item_key] = array (
                         "api_user_id" => $zp_account[0]->api_user_id,
                         "title" => zp_db_prep($title),
                         "retrieved" => zp_db_prep($retrieved),
@@ -506,9 +515,9 @@
                         );
             }
             // If item key isn't in local, add it
-            else if (!array_key_exists( $item_key, $_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'] ))
+            else if (!array_key_exists( $item_key, $GLOBALS['zp_session'][$api_user_id]['collections']['zp_local_collections'] ))
             {
-                array_push($_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_add'],
+                array_push($GLOBALS['zp_session'][$api_user_id]['collections']['zp_collections_to_add'],
                     $zp_account[0]->api_user_id,
                     zp_db_prep($title),
                     zp_db_prep($retrieved),
@@ -518,7 +527,7 @@
                     $numItems,
                     zp_db_prep($zp_collection_itemkeys)
                     );
-                $_SESSION['zp_session'][$api_user_id]['collections']['query_total_collections_to_add']++;
+                $GLOBALS['zp_session'][$api_user_id]['collections']['query_total_collections_to_add']++;
             }
             
             unset($title);
@@ -533,7 +542,7 @@
         
         
         // LAST SET
-        if ($_SESSION['zp_session'][$api_user_id]['collections']['last_set'] == $zp_start)
+        if ($GLOBALS['zp_session'][$api_user_id]['collections']['last_set'] == $zp_start)
         {
             return false;
         }
@@ -556,9 +565,9 @@
     {
         // RUN QUERIES: UPDATE
         
-        if (count($_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update']) > 0)
+        if (count($GLOBALS['zp_session'][$api_user_id]['collections']['zp_collections_to_update']) > 0)
         {
-            foreach ($_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'] as $item_params)
+            foreach ($GLOBALS['zp_session'][$api_user_id]['collections']['zp_collections_to_update'] as $item_params)
             {
                 $wpdb->update( 
                     $wpdb->prefix.'zotpress_zoteroCollections', 
@@ -574,14 +583,14 @@
         
         // ADD
         
-        if (count($_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_add']) > 0)
+        if (count($GLOBALS['zp_session'][$api_user_id]['collections']['zp_collections_to_add']) > 0)
         {
             $wpdb->query( $wpdb->prepare(
                     "
                         INSERT INTO ".$wpdb->prefix."zotpress_zoteroCollections
                         ( api_user_id, title, retrieved, parent, item_key, numCollections, numItems, listItems )
-                        VALUES ( %s, %s, %s, %s, %s, %d, %d, %s )".str_repeat(", ( %s, %s, %s, %s, %s, %d, %d, %s )", $_SESSION['zp_session'][$api_user_id]['collections']['query_total_collections_to_add']-1), 
-                $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_add']
+                        VALUES ( %s, %s, %s, %s, %s, %d, %d, %s )".str_repeat(", ( %s, %s, %s, %s, %s, %d, %d, %s )", $GLOBALS['zp_session'][$api_user_id]['collections']['query_total_collections_to_add']-1), 
+                $GLOBALS['zp_session'][$api_user_id]['collections']['zp_collections_to_add']
             ) );
             
             $wpdb->flush();
@@ -589,9 +598,12 @@
         
         // REMOVE
         
-        if ($done && count($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections']) > 0)
+        if ($done && count($GLOBALS['zp_session'][$api_user_id]['collections']['zp_local_collections']) > 0)
         {
-            foreach ($_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'] as $item_params)
+            $zp_delete_items = explode(",", get_option('ZOTPRESS_DELETE_'.$api_user_id));
+            
+            foreach ($zp_delete_items as $item_params)
+            //foreach ($GLOBALS['zp_session'][$api_user_id]['collections']['zp_local_collections'] as $item_params)
             {
                 $wpdb->query( $wpdb->prepare( 
                         "
@@ -608,13 +620,13 @@
         
         if ($done) // unset everything
         {
-            unset($_SESSION['zp_session'][$api_user_id]['collections']);
+            unset($GLOBALS['zp_session'][$api_user_id]['collections']);
         }
         else // reset add and update
         {
-            $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_update'] = array();
-            $_SESSION['zp_session'][$api_user_id]['collections']['zp_collections_to_add'] = array();
-            $_SESSION['zp_session'][$api_user_id]['collections']['query_total_collections_to_add'] = 0;
+            $GLOBALS['zp_session'][$api_user_id]['collections']['zp_collections_to_update'] = array();
+            $GLOBALS['zp_session'][$api_user_id]['collections']['zp_collections_to_add'] = array();
+            $GLOBALS['zp_session'][$api_user_id]['collections']['query_total_collections_to_add'] = 0;
         }
         
     } // FUNCTION: zp_save_synced_collections
@@ -646,27 +658,28 @@
     
     
     
-    function zp_get_server_tags ($api_user_id, $zp_start)
+    function zp_get_server_tags ($wpdb, $api_user_id, $zp_start)
     {
         $zp_import_curl = new CURL();
-        $zp_account = $_SESSION['zp_session'][$api_user_id]['zp_account'];
+        $zp_account = zp_get_account($wpdb, $api_user_id);
+        //$zp_account = $GLOBALS['zp_session'][$api_user_id]['zp_account'];
         
         // Build request URL
         $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags?limit=50&start=".$zp_start;
         if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
             $zp_import_url .= "&key=".$zp_account[0]->public_key;
         
-        if (in_array ('curl', get_loaded_extensions()))
+        //if (in_array ('curl', get_loaded_extensions()))
             $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-        else // Use the old way:
-            $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+        //else // Use the old way:
+        //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
         
         // Make it DOM-traversable 
         $doc_citations = new DOMDocument();
         $doc_citations->loadXML($zp_xml);
         
         // Get last set
-        if (!isset($_SESSION['zp_session'][$api_user_id]['tags']['last_set']))
+        if (!isset($GLOBALS['zp_session'][$api_user_id]['tags']['last_set']))
         {
             $last_set = "";
             $links = $doc_citations->getElementsByTagName("link");
@@ -678,11 +691,11 @@
                     if (stripos($link->getAttribute('href'), "start=") !== false)
                     {
                         $last_set = explode("start=", $link->getAttribute('href'));
-                        $_SESSION['zp_session'][$api_user_id]['tags']['last_set'] = intval($last_set[1]);
+                        $GLOBALS['zp_session'][$api_user_id]['tags']['last_set'] = intval($last_set[1]);
                     }
                     else
                     {
-                        $_SESSION['zp_session'][$api_user_id]['tags']['last_set'] = 0;
+                        $GLOBALS['zp_session'][$api_user_id]['tags']['last_set'] = 0;
                     }
                 }
             }
@@ -696,17 +709,19 @@
             $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
             
             // Check to see if tags exists in local
-            if (array_key_exists( trim($title), $_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'] ))
+            if (array_key_exists( trim($title), $GLOBALS['zp_session'][$api_user_id]['tags']['zp_local_tags'] ))
             {
                 // Check to see if it needs updating
-                if ($retrieved != $_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]->retrieved)
+                if ($retrieved != $GLOBALS['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]->retrieved)
                 {
-                    $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'][trim($title)] = $_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]->id;
-                    unset($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]); // Leave only the local ones that should be deleted
+                    $GLOBALS['zp_session'][$api_user_id]['tags']['zp_tags_to_update'][trim($title)] = $GLOBALS['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]->id;
+                    //unset($GLOBALS['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]); // Leave only the local ones that should be deleted
+                    update_option('ZOTPRESS_DELETE_'.$api_user_id, get_option('ZOTPRESS_DELETE_'.$api_user_id) . "," . $item_key);
                 }
                 else // ignore
                 {
-                    unset($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]); // Leave only the local ones that should be deleted
+                    //unset($GLOBALS['zp_session'][$api_user_id]['tags']['zp_local_tags'][trim($title)]); // Leave only the local ones that should be deleted
+                    update_option('ZOTPRESS_DELETE_'.$api_user_id, get_option('ZOTPRESS_DELETE_'.$api_user_id) . "," . $item_key);
                     continue;
                 }
             }
@@ -727,19 +742,19 @@
                 $zp_import_url .= "&key=".$zp_account[0]->public_key;
             
             // Import depending on method: cURL or file_get_contents
-            if (in_array ('curl', get_loaded_extensions()))
+            //if (in_array ('curl', get_loaded_extensions()))
                 $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-            else // Use the old way:
-                $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+            //else // Use the old way:
+            //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
             
             $zp_tag_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
             
             
             
             // If item key needs updating
-            if (array_key_exists( trim($title), $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'] ))
+            if (array_key_exists( trim($title), $GLOBALS['zp_session'][$api_user_id]['tags']['zp_tags_to_update'] ))
             {
-                $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'][trim($title)] = array (
+                $GLOBALS['zp_session'][$api_user_id]['tags']['zp_tags_to_update'][trim($title)] = array (
                         "api_user_id" => $zp_account[0]->api_user_id,
                         "title" => zp_db_prep($title),
                         "retrieved" => zp_db_prep($retrieved),
@@ -748,16 +763,16 @@
                         );
             }
             // If item key isn't in local, add it
-            else if (!array_key_exists( trim($title), $_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'] ))
+            else if (!array_key_exists( trim($title), $GLOBALS['zp_session'][$api_user_id]['tags']['zp_local_tags'] ))
             {
-                array_push($_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_add'],
+                array_push($GLOBALS['zp_session'][$api_user_id]['tags']['zp_tags_to_add'],
                     $zp_account[0]->api_user_id,
                     zp_db_prep($title),
                     zp_db_prep($retrieved),
                     $numItems,
                     zp_db_prep($zp_tag_itemkeys)
                     );
-                $_SESSION['zp_session'][$api_user_id]['tags']['query_total_tags_to_add']++;
+                $GLOBALS['zp_session'][$api_user_id]['tags']['query_total_tags_to_add']++;
             }
             
             unset($title);
@@ -769,7 +784,7 @@
         
         
         // LAST SET
-        if ($_SESSION['zp_session'][$api_user_id]['tags']['last_set'] == $zp_start)
+        if ($GLOBALS['zp_session'][$api_user_id]['tags']['last_set'] == $zp_start)
         {
             return false;
         }
@@ -792,9 +807,9 @@
     {
         // RUN QUERIES: UPDATE
         
-        if (count($_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update']) > 0)
+        if (count($GLOBALS['zp_session'][$api_user_id]['tags']['zp_tags_to_update']) > 0)
         {
-            foreach ($_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'] as $item_params)
+            foreach ($GLOBALS['zp_session'][$api_user_id]['tags']['zp_tags_to_update'] as $item_params)
             {
                 $wpdb->update( 
                     $wpdb->prefix.'zotpress_zoteroTags', 
@@ -810,14 +825,14 @@
         
         // ADD
         
-        if (count($_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_add']) > 0)
+        if (count($GLOBALS['zp_session'][$api_user_id]['tags']['zp_tags_to_add']) > 0)
         {
             $wpdb->query( $wpdb->prepare(
                     "
                         INSERT INTO ".$wpdb->prefix."zotpress_zoteroTags
                         ( api_user_id, title, retrieved, numItems, listItems )
-                        VALUES ( %s, %s, %s, %d, %s )".str_repeat(", ( %s, %s, %s, %d, %s )", $_SESSION['zp_session'][$api_user_id]['tags']['query_total_tags_to_add']-1), 
-                $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_add']
+                        VALUES ( %s, %s, %s, %d, %s )".str_repeat(", ( %s, %s, %s, %d, %s )", $GLOBALS['zp_session'][$api_user_id]['tags']['query_total_tags_to_add']-1), 
+                $GLOBALS['zp_session'][$api_user_id]['tags']['zp_tags_to_add']
             ) );
             
             $wpdb->flush();
@@ -825,9 +840,12 @@
         
         // REMOVE
         
-        if ($done && count($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags']) > 0)
+        if ($done && count($GLOBALS['zp_session'][$api_user_id]['tags']['zp_local_tags']) > 0)
         {
-            foreach ($_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'] as $item_params)
+            $zp_delete_items = explode(",", get_option('ZOTPRESS_DELETE_'.$api_user_id));
+            
+            foreach ($zp_delete_items as $item_params)
+            //foreach ($GLOBALS['zp_session'][$api_user_id]['tags']['zp_local_tags'] as $item_params)
             {
                 $wpdb->query( $wpdb->prepare( 
                         "
@@ -844,13 +862,13 @@
         
         if ($done) // unset everything
         {
-            unset($_SESSION['zp_session'][$api_user_id]['tags']);
+            unset($GLOBALS['zp_session'][$api_user_id]['tags']);
         }
         else // reset add and update
         {
-            $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_update'] = array();
-            $_SESSION['zp_session'][$api_user_id]['tags']['zp_tags_to_add'] = array();
-            $_SESSION['zp_session'][$api_user_id]['tags']['query_total_tags_to_add'] = 0;
+            $GLOBALS['zp_session'][$api_user_id]['tags']['zp_tags_to_update'] = array();
+            $GLOBALS['zp_session'][$api_user_id]['tags']['zp_tags_to_add'] = array();
+            $GLOBALS['zp_session'][$api_user_id]['tags']['query_total_tags_to_add'] = 0;
         }
         
     } // FUNCTION: zp_save_synced_tags

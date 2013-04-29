@@ -346,22 +346,20 @@
     
     <div id="zp-Zotpress" class="wrap">
         
-        <h3>Loading setup ...</h3>
-        
-        <div class="zp-Loading-Initial"></div>
+        <div id="zp-Zotpress-LoadingSetup">
+            <h3>Loading setup ...</h3>
+            <div class="zp-Loading-Initial"></div>
+        </div>
         
         <script type="text/javascript">
         
             jQuery(document).ready(function()
             {
-                // LOAD SETUP
-                
                 jQuery(window).load(function () {
                     window.parent.location = "admin.php?page=Zotpress&setup=true";
                 });
-                
             });
-            
+        
         </script>
         
     </div>

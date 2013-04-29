@@ -5,7 +5,6 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
-    
     // Access Wordpress db
     global $wpdb;
     
@@ -112,10 +111,10 @@
                 $zp_import_url .= "format=atom&content=bib&style=".$style."&itemKey=".$items;
                 
                 // Read the external data
-                if (in_array ('curl', get_loaded_extensions()))
+                //if (in_array ('curl', get_loaded_extensions()))
                     $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-                else // Use the old way:
-                    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+                //else // Use the old way:
+                //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
                 
                 // Make it DOM-traversable 
                 $doc_citations = new DOMDocument();

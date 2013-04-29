@@ -7,7 +7,12 @@
     function zp_get_year($date)
     {
 	preg_match_all( '/(\d{4})/', $date, $matches );
-	return $matches[0][0];
+	
+	if (is_null($matches[0][0]))
+	    return "";
+	else
+	    return $matches[0][0];
+	//return $matches[0][0];
     }
     
     

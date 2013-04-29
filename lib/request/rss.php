@@ -268,10 +268,10 @@
 				
 				$curl = new CURL();
 				
-				if (in_array ('curl', get_loaded_extensions()))
+				//if (in_array ('curl', get_loaded_extensions()))
 					$zp_xml = $curl->get_curl_contents( $zp_url, $mzr_force_recache );
-				else // Use the old way:
-					$zp_xml = $curl->get_file_get_contents( $zp_url, $mzr_force_recache );
+				//else // Use the old way:
+				//	$zp_xml = $curl->get_file_get_contents( $zp_url, $mzr_force_recache );
 			}
 			
 			return $zp_xml;

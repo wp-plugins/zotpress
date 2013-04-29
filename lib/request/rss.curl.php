@@ -82,6 +82,7 @@ if (!class_exists('CURL'))
                 
                 function getXmlData( $url )
                 {
+                        //header( 'Zotero-API-Version: 2' );
                         $response = wp_remote_get( $url );
                         
                         if ( is_wp_error($response) || ! isset($response['body']) )
@@ -103,35 +104,6 @@ if (!class_exists('CURL'))
                         }
                         
                         $data = wp_remote_retrieve_body( $response ); // Thanks to Trainsmart.com developer!
-                        
-                        // Use file_get_contents (not recommended)
-                        //if (isset($use_get_file_get_contents) && $use_get_file_get_contents === true)
-                        //{
-                        //        $data = file_get_contents($url);
-                        //}
-                        //
-                        //// Use cURL (recommended)
-                        //else
-                        //{
-                        //        ini_set('max_execution_time', $this->timeout); // Avoid timeout error
-                        //        
-                        //        $ch = curl_init();
-                        //        curl_setopt($ch, CURLOPT_URL, $url);
-                        //        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout); // Five minutes
-                        //        curl_setopt ($ch, CURLOPT_HEADER, 0);
-                        //        curl_setopt ($ch, CURLOPT_USERAGENT, sprintf("Mozilla/%d.0",rand(4,5)));
-                        //        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                        //        curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                        //        
-                        //        $data = curl_exec($ch);
-                        //        
-                        //        //$http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE); // For when If-Modified-Since header 304 implemented
-                        //        
-                        //        if ($data === false)
-                        //                $this->curl_error = curl_error($ch);
-                        //        
-                        //        curl_close($ch);
-                        //}
                         
                         // Make sure tags didn't return an error -- redo if so
                         if ($data == "Tag not found")

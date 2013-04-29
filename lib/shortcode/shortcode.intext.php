@@ -203,7 +203,7 @@
                     );
             }
             
-            return "<a title='Anchor to citation for `".$item->title."`' id='.$zp_instance_id.' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item->item_key."'>" . str_replace(")(", "; ", str_replace("][", ", ", $zp_intext_citation)) . "</a>";
+            return "<a title='Anchor to citation for `".$item->title."`' id='".$zp_instance_id."' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item->item_key."'>" . str_replace(")(", "; ", str_replace("][", ", ", $zp_intext_citation)) . "</a>";
             
             unset($zp_query);
             unset($zp_results);
