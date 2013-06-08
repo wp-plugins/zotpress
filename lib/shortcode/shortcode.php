@@ -9,12 +9,15 @@
     {
         extract(shortcode_atts(array(
             
-            'user_id' => false, // depbrecated
+            'user_id' => false, // deprecated
             'userid' => false,
             'nickname' => false,
+            'nick' => false,
             
             'author' => false,
+            'authors' => false,
             'year' => false,
+            'years' => false,
             
             'data_type' => false, // deprecated
             'datatype' => "items",
@@ -72,18 +75,18 @@
         else
             $api_user_id = false;
             
-        if ($nickname)
-            $nickname = str_replace('"','',html_entity_decode($nickname));
+        if ($nickname) $nickname = str_replace('"','',html_entity_decode($nickname));
+        if ($nick) $nickname = str_replace('"','',html_entity_decode($nick));
         
         // Filter by author
         $author = str_replace('"','',html_entity_decode($author));
-        if (strpos($author, ",") > 0)
-            $author = explode(",", $author);
+        if ($authors) $author = str_replace('"','',html_entity_decode($authors));
+        if (strpos($author, ",") > 0) $author = explode(",", $author);
         
         // Filter by year
         $year = str_replace('"','',html_entity_decode($year));
-        if (strpos($year, ",") > 0)
-            $year = explode(",", $year);
+        if ($years) $year = str_replace('"','',html_entity_decode($years));
+        if (strpos($year, ",") > 0) $year = explode(",", $year);
         
         // Format with datatype and content
         if ($data_type)
@@ -188,10 +191,8 @@
             $notes = false;
         
         // Show abstracts
-        if ($abstract)
-            $abstracts = str_replace('"','',html_entity_decode($abstract));
-        else
-            $abstracts = str_replace('"','',html_entity_decode($abstracts));
+        if ($abstracts) $abstracts = str_replace('"','',html_entity_decode($abstracts));
+        if ($abstract) $abstracts = str_replace('"','',html_entity_decode($abstract));
         
         if ($abstracts == "yes" || $abstracts == "true" || $abstracts === true)
             $abstracts = true;
@@ -442,17 +443,23 @@
                     }
                 }
                 
-                // Filter by year
+                // Filter by year: zpdate or year
                 if ($year)
                 {
                     if (is_array($year))
                     {
-                        foreach ($year as $zp_year)
-                            $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.zpdate LIKE '%".$zp_year."%' OR ";
+                        $zp_query .= " AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroItems.year, '".implode(",", $year)."')";
+                        //foreach ($year as $i => $zp_year)
+                        //{
+                        //    if ($i == 0)
+                        //        $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.year LIKE '%".$zp_year."%'";
+                        //    else
+                        //        $zp_query .= " OR ".$wpdb->prefix."zotpress_zoteroItems.year LIKE '%".$zp_year."%' ";
+                        //}
                     }
                     else // single
                     {
-                        $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.zpdate LIKE '%".$year."%'";
+                        $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.year LIKE '%".$year."%'";
                     }
                 }
                 
@@ -490,6 +497,7 @@
                 
                 if ($item_key || $tag_name || $collection_id) {
                     $zp_query = str_replace("AND  AND", "AND", $zp_query);
+                    //$zp_query = str_replace("OR  AND", "AND", $zp_query);
                 }
                 else if ($author || $year) {
                     $zp_query = str_replace("OR ORDER BY", "ORDER BY", str_replace("OR AND", "OR", str_replace("  ", " ", $zp_query)));
@@ -501,7 +509,7 @@
                 
                 //return $zp_query . "<br /><br />";
                 $zp_results = $wpdb->get_results($zp_query, ARRAY_A); unset($zp_query);
-                //var_dump($zp_results);
+                //var_dump( count($zp_results) );
                 
                 
                 
@@ -512,7 +520,6 @@
                 */
                 
                 $current_title =  "";
-                $citation_abstract = "";
                 $citation_notes = "";
                 $zp_notes_num = 1;
                 
@@ -535,6 +542,7 @@
                     foreach ($zp_results as $zp_citation)
                     {
                         $citation_image = false;
+                        $citation_abstract = "";
                         $has_citation_image = false;
                         $zp_this_meta = json_decode( $zp_citation["json"] );
                         $zp_output .= "<span class=\"zp-Zotpress-Userid\" style=\"display:none;\">".$zp_citation['api_user_id']."</span>\n\n";
@@ -550,12 +558,10 @@
                         }
                         
                         // ABSTRACT
-                        if ($abstracts)
+                        if ($abstracts && isset($zp_this_meta->abstractNote) && strlen(trim($zp_this_meta->abstractNote)) > 0)
                         {
-                            if (isset($zp_this_meta->abstractNote) && strlen(trim($zp_this_meta->abstractNote)) > 0)
-                            {
-                                $citation_abstract = "<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " . $zp_this_meta->abstractNote . "</p>\n";
-                            }
+                            //var_dump("yes ");
+                            $citation_abstract = "<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " . $zp_this_meta->abstractNote . "</p>\n";
                         }
                         
                         // NOTES

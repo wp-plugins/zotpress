@@ -99,11 +99,13 @@
         // See if default style exists
         $zp_default_style = "apa";
         if (get_option("Zotpress_DefaultStyle"))
-            $zp_default_style = get_option("Zotpress_DefaultStyle");
+            $zp_default_style = strtolower( get_option("Zotpress_DefaultStyle") );
         
         // Build request URL
         $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/items?";
-        if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "") { $zp_import_url .= "key=".$zp_account[0]->public_key."&"; }
+        if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "") {
+            $zp_import_url .= "key=".$zp_account[0]->public_key."&";
+        }
         $zp_import_url .= "format=atom&content=json,bib&style=".$zp_default_style."&limit=50&start=".$zp_start;
         
         //if (in_array ('curl', get_loaded_extensions()))

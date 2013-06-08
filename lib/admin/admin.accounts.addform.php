@@ -14,7 +14,7 @@
                     </div>
                 
                     <div>
-                        <label for="api_user_id" class="zp-Help required" title="Your User ID is listed on the <strong>Zotero 'Feeds/API' page under 'Settings', right under the 'Feeds/API Settings' heading</strong>. Group IDs are found in the group's URL, after &quot;groups&quot;. Both should be a number 1-6+ digits in length."><span id="zp-ID-Label">User ID</span></label>
+                        <label for="api_user_id" class="zp-Help required" title="Your User ID is listed on the <strong>Zotero 'Feeds/API' page under 'Settings', right under the 'Feeds/API Settings' heading</strong>. There are two ways to find the Group ID. Older Zotero groups will have theirs listed in the Zotero URL: a number 1-6+ digits in length after 'groups'. The Group ID of new Zotero groups can be found in the RSS Feed URL. "><span id="zp-ID-Label">User ID</span></label>
                         <input id="api_user_id" name="api_user_id" type="text" />
                     </div>
                 

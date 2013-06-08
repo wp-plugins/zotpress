@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bring Zotero and scholarly blogging to your WordPress site.
     Author: Katie Seaborn
-    Version: 5.0.8
+    Version: 5.0.9
     Author URI: http://katieseaborn.com
     
 */

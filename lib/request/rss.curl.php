@@ -102,6 +102,10 @@ if (!class_exists('CURL'))
                                                 $this->curl_error = false;
                                 }
                         }
+                        else if ( $response == "An error occurred" )
+                        {
+                                $this->curl_error = "An error occurred: WordPress was unable to import from Zotero using this request URL.";
+                        }
                         
                         $data = wp_remote_retrieve_body( $response ); // Thanks to Trainsmart.com developer!
                         
