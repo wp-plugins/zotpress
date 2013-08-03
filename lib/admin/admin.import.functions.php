@@ -92,7 +92,7 @@
     
     function zp_get_items ($wpdb, $api_user_id, $zp_start)
     {
-        $zp_import_curl = new CURL();
+        $zp_import_contents = new ZotpressRequest();
         $zp_account = zp_get_account($wpdb, $api_user_id);
         
         
@@ -108,15 +108,12 @@
         }
         $zp_import_url .= "format=atom&content=json,bib&style=".$zp_default_style."&limit=50&start=".$zp_start;
         
-        //if (in_array ('curl', get_loaded_extensions()))
-            $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-        //else // Use the old way:
-        //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+	$zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
         
         
         // Stop in our tracks if there's a request error
-        if ($zp_import_curl->curl_error)
-            return $zp_import_curl->curl_error;
+        if ($zp_import_contents->request_error)
+            return $zp_import_contents->request_error;
         
         
         // Make it DOM-traversable 
@@ -274,7 +271,7 @@
             return true;
         }
         
-        unset($zp_import_curl);
+        unset($zp_import_contents);
         unset($zp_import_url);
         unset($zp_xml);
         unset($doc_citations);
@@ -320,7 +317,7 @@
     
     function zp_get_collections ($wpdb, $api_user_id, $zp_start)
     {
-        $zp_import_curl = new CURL();
+        $zp_import_contents = new ZotpressRequest();
         $zp_account = zp_get_account($wpdb, $api_user_id);
         
         // Build request URL
@@ -331,10 +328,7 @@
         $zp_import_url .= "limit=50&start=".$zp_start;
         
         // Grab contents
-        //if (in_array ('curl', get_loaded_extensions()))
-            $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-        //else // Use the old way:
-        //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+	$zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
         
         // Make it DOM-traversable 
         $doc_citations = new DOMDocument();
@@ -389,28 +383,25 @@
             $numCollections = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numCollections")->item(0)->nodeValue;
             $numItems = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numItems")->item(0)->nodeValue;
             
-            unset($zp_import_curl);
+            unset($zp_import_contents);
             unset($zp_import_url);
             unset($zp_xml);
             
             
             
             // GET LIST OF ITEM KEYS
-            $zp_import_curl = new CURL();
+            $zp_import_contents = new ZotpressRequest();
             
             // Build request URL
             $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections/".$item_key."/items?format=keys";
             if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "") { $zp_import_url .= "&key=".$zp_account[0]->public_key; }
             
-            // Import depending on method: cURL or file_get_contents
-            //if (in_array ('curl', get_loaded_extensions()))
-                $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-            //else // Use the old way:
-            //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+            // Import item keys
+	    $zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
             
             $zp_collection_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
             
-            unset($zp_import_curl);
+            unset($zp_import_contents);
             unset($zp_import_url);
             unset($zp_xml);
             
@@ -493,7 +484,7 @@
     
     function zp_get_tags ($wpdb, $api_user_id, $zp_start)
     {
-        $zp_import_curl = new CURL();
+        $zp_import_contents = new ZotpressRequest();
         $zp_account = zp_get_account($wpdb, $api_user_id);
         
         // Get import url
@@ -502,10 +493,7 @@
             $zp_import_url .= "&key=".$zp_account[0]->public_key;
         
         // Import content
-        //if (in_array ('curl', get_loaded_extensions()))
-            $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-        //else // Use the old way:
-        //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+	$zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
         
         // Make it DOM-traversable 
         $doc_citations = new DOMDocument();
@@ -546,27 +534,24 @@
             $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
             $numItems = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numItems")->item(0)->nodeValue;
             
-            unset($zp_import_curl);
+            unset($zp_import_contents);
             unset($zp_import_url);
             unset($zp_xml);
             
             
             // GET LIST OF ITEM KEYS
-            $zp_import_curl = new CURL();
+            $zp_import_contents = new ZotpressRequest();
             
             $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags/".urlencode($title)."/items?format=keys";
             if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
                 $zp_import_url .= "&key=".$zp_account[0]->public_key;
             
-            // Import depending on method: cURL or file_get_contents
-            //if (in_array ('curl', get_loaded_extensions()))
-                $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-            //else // Use the old way:
-            //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+            // Import content
+	    $zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
             
             $zp_tag_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
             
-            unset($zp_import_curl);
+            unset($zp_import_contents);
             unset($zp_import_url);
             unset($zp_xml);
             

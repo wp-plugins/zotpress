@@ -1105,6 +1105,21 @@
     
     /* START OF DOCUMENTATION CSS */
     
+    div#zp-Intext-Example {
+        background-color: #F6F6F6;
+        -moz-box-shadow: 0 0 5px #888;
+        -webkit-box-shadow: 0 0 5px#888;
+        box-shadow: 0 0 5px #888;
+        float: right;
+        font: italic 400 12px/18px "Droid Serif","Georgia",serif;
+        margin: 1em 0 0 2em;
+        padding: 2em;
+        width: 24%;
+    }
+    div#zp-Intext-Example .title {
+        font-weight: 600;
+    }
+    
     div#zp-Zotpress code {
         background: #eaeaea;
         border-radius: 3px;

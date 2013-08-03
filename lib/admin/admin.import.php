@@ -33,8 +33,8 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
     ignore_user_abort(true);
     set_time_limit(60*10); // ten minutes
     
-    // Include Special cURL
-    require("../request/rss.curl.php");
+    // Include Request Functionality
+    require("../request/rss.request.php");
     
     // Include Import Functions
     require("admin.import.functions.php");

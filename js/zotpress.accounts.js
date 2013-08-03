@@ -85,7 +85,7 @@ jQuery(document).ready(function() {
             {
                 jQuery('div.zp-Errors').hide();
                 jQuery('.zp-Loading').hide();
-                jQuery('div.zp-Success').html("<p><strong>Success!</strong> You're now connected to Zotero.</p>\n");
+                jQuery('div.zp-Success').html("<p><strong>Success!</strong> Your Zotero account has been validated.</p>\n");
                 
                 jQuery('div.zp-Success').show();
                 

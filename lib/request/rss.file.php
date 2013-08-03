@@ -4,8 +4,8 @@
 	require('../../../../../wp-load.php');
 	define('WP_USE_THEMES', false);
 
-	// Include Special cURL
-	require('rss.curl.php');
+	// Include Request Functionality
+	require('rss.request.php');
 	
 	// Content prep
 	$zp_xml = false;

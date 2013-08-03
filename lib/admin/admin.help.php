@@ -194,7 +194,7 @@
                 </tr>
                 <tr>
                     <td class="code">cite</td>
-                    <td><p>Make the displayed citations citable by generating RIS links. <strong>Options: yes, no [default].</strong></p></td>
+                    <td><p>Alternative: <code>citeable</code>Make the displayed citations citable by generating RIS links. <strong>Options: yes, no [default].</strong></p></td>
                     <td class="example"><p><code>[zotpress collection="GMGCJU34" cite="yes"]</code></p></td>
                 </tr>
                 <tr class="last">
@@ -213,25 +213,41 @@
             <a name="intext"></a>
             <h3>Displaying Citations Using the Zotpress In-Text Shortcodes</h3>
             
+            <div id="zp-Intext-Example">
+                <span class="title">Zotpress In-Text Example</span>
+                
+                <p>This is an example of a Zotpress in-text citation as it would appear in your rich text editor [zotpressInText item="{NCXAA92F,36}"]. Let's wrap up this short note with a bibliography.</p>
+                
+                <span class="title">Bibliography:</span>
+                <p>[zotpressInTextBib]</p>
+            </div>
+            
             <p>
-                Use one or more <code>[zotpressInText]</code> shortcodes in your blog entry to create in-text citations. Place the <code>[zotpressInTextBib]</code> somewhere in your entry to auto-generate the in-text citations bibliography. Here's an example:
+                Use one or more <code>[zotpressInText]</code> shortcodes in your blog entry to create in-text citations.
+            </p>
+            <p>
+                Here's what an in-text citation might look like in your rich text editor:
             </p>
             
             <p class="example">
                 Katie said, "Zotpress is cooler than your shoes" <code>[zotpressInText item="{NCXAA92F,36}"]</code>.
             </p>
             
-            <p>Which will display on your blog as:</p>
+            <p>And this is what it might look like on your blog:</p>
             
             <p class="example">
                 Katie said, "Zotpress is cooler than your shoes" (Seaborn, 2012, p. 36).
             </p>
             
             <p>
-                ... with an auto-generated bibliography wherever you've placed the <code>[zotpressInTextBib]</code>, of course.
+                To display the auto-generated bibliography, place the <code>[zotpressInTextBib]</code> shortcode somewhere in your entry after the in-text citation shortcodes.
             </p>
             
-            <h4>In-Text Shortcode Attributes</h4>
+            <p>
+                <strong>Note:</strong> In-text citations, unlike the bibliography, are not automatically styled. Use the "format" attribute to manually style in-text citations. Support for automatically styled in-text citations is in the works.
+            </p>
+            
+            <h4 style="clear:both;">In-Text Shortcode Attributes</h4>
             
             <table class="zp-Documentation" border="0" cellpadding="0" cellspacing="0">
                 
@@ -250,12 +266,12 @@
                     
                     <td class="code">userid</td>
                     <td><p>Display a list of citations from a particular user or group. <strong>REQUIRED if you have multiple accounts and are not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</p></td>
-                    <td class="example"><p><code>[zotpress userid="000000"]</code></p></td>
+                    <td class="example"><p><code>[zotpressInText userid="000000"]</code></p></td>
                 </tr>
                 <tr>
                     <td class="code">nickname</td>
                     <td><p>Display a list of citations by a particular Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a title="Accounts" href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</p></td>
-                    <td class="example"><p><code>[zotpress nickname="Katie"]</code></p></td>
+                    <td class="example"><p><code>[zotpressInText nickname="Katie"]</code></p></td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="type">Meta</td>
@@ -361,5 +377,9 @@
             <h4>I don't want collection names to display above my citations. How do I get rid of them?</h4>
             
             <p>In your stylesheet, add the following line: <code>h3.zp-Collection-Header { display: none; }</code> By the way, almost every Zotpress element has either an ID or class (or both) that can be selectively styled with CSS.</p>
+            
+            <h4>Zotpress won't import my library, or only imports some of my library.</h4>
+            
+            <p>First, check with your web host or server admin to make sure that one of cURL, fopen with Streams (PHP 5), or fsockopen is enabled. If so, check to see if your server has any restrictions on timeouts (Zotpress sometimes needs more than 30 seconds to process a request to the Zotero servers).</p>
             
         </div>

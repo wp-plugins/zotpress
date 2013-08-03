@@ -59,6 +59,8 @@
             'abstracts' => "no",
             
             'cite' => "no",
+            'citeable' => false,
+            
             'link' => "no"
             
         ), $atts));
@@ -199,7 +201,15 @@
         else
             $abstracts = false;
         
-        $cite = str_replace('"','',html_entity_decode($cite));
+        // Show cite link
+        if ($cite) $cite = str_replace('"','',html_entity_decode($cite));
+        if ($citeable) $cite = str_replace('"','',html_entity_decode($citeable));
+        
+        if ($cite == "yes" || $cite == "true" || $cite === true)
+            $cite = true;
+        else
+            $cite = false;
+        
         $link = str_replace('"','',html_entity_decode($link));
         
         

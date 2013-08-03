@@ -8,8 +8,8 @@
     // Access Wordpress db
     global $wpdb;
     
-    // Include Special cURL
-    require("../request/rss.curl.php");
+    // Include Request Functionality
+    require("../request/rss.request.php");
     
     // Include Import and Sync Functions
     require("../admin/admin.import.functions.php");
@@ -96,7 +96,7 @@
             
             if ($zp_items_current_style_proceed)
             {
-                $zp_import_curl = new CURL();
+                $zp_import_contents = new ZotpressRequest();
                 
                 // Get account
                 $zp_account = zp_get_account ($wpdb, $api_user_id);
@@ -111,10 +111,7 @@
                 $zp_import_url .= "format=atom&content=bib&style=".$style."&itemKey=".$items;
                 
                 // Read the external data
-                //if (in_array ('curl', get_loaded_extensions()))
-                    $zp_xml = $zp_import_curl->get_curl_contents( $zp_import_url, false );
-                //else // Use the old way:
-                //    $zp_xml = $zp_import_curl->get_file_get_contents( $zp_import_url, false );
+                $zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
                 
                 // Make it DOM-traversable 
                 $doc_citations = new DOMDocument();
@@ -150,7 +147,7 @@
                     
                 } // entry
                 
-                unset($zp_import_curl);
+                unset($zp_import_contents);
                 unset($zp_import_url);
                 unset($zp_xml);
                 unset($doc_citations);

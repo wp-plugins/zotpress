@@ -28,8 +28,8 @@
 		// Access Wordpress db
 		global $wpdb;
 		
-		// Include Special cURL
-		require('rss.curl.php');
+		// Include Request Functionality
+		require('rss.request.php');
 		
 		// Set up vars
 		$zp_xml = "";
@@ -266,12 +266,8 @@
 				
 				// GET & DISPLAY CITATIONS
 				
-				$curl = new CURL();
-				
-				//if (in_array ('curl', get_loaded_extensions()))
-					$zp_xml = $curl->get_curl_contents( $zp_url, $mzr_force_recache );
-				//else // Use the old way:
-				//	$zp_xml = $curl->get_file_get_contents( $zp_url, $mzr_force_recache );
+				$zp_request = new ZotpressRequest();
+				$zp_xml = $zp_request->get_request_contents( $zp_url, $mzr_force_recache );
 			}
 			
 			return $zp_xml;

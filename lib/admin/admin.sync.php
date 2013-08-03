@@ -14,8 +14,8 @@
     // Access Wordpress db
     global $wpdb;
     
-    // Include Special cURL
-    require("../request/rss.curl.php");
+    // Include Request Functionality
+    require("../request/rss.request.php");
     
     // Include Import and Sync Functions
     require("admin.import.functions.php");

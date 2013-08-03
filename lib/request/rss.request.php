@@ -1,36 +1,27 @@
 <?php
 
 /*
-        Sean Huber CURL library
-        Session-based caching added by Mike Purvis
-        Caching, get_file_get_contents option, and timed sessions by Katie Seaborn
-        
-        This library is a basic implementation of CURL capabilities.
+        Zotpress Request
+        Based on Sean Huber's CURL library with additions by Mike Purvis.
 */
 
-if (!class_exists('CURL'))
+if (!class_exists('ZotpressRequest'))
 {
-        class CURL
+        class ZotpressRequest
         {
                 // TIME: 300 seconds = 5 minutes; 3600 seconds = 60 minutes
-                var $update = false, $curl_error = false, $timelimit = 3600, $timeout = 300;
+                var $update = false, $request_error = false, $timelimit = 3600, $timeout = 300;
                 
                 
-                function get_curl_contents( $url, $update ) {
+                function get_request_contents( $url, $update ) {
                         $this->update = $update;
-                        return $this->doRequest( $url, false );
+                        return $this->doRequest( $url );
                 }
-                
-                function get_file_get_contents( $url, $update ) {
-                        $this->update = $update;
-                        return $this->doRequest( $url, true );
-                }
-                
                 
                 // DO REQUEST
-                function doRequest( $xml_url, $use_get_file_get_contents ) // won't need the second param anymore ...
+                function doRequest( $xml_url )
                 {
-                        global $wpdb;
+                        //global $wpdb;
                         
                         // NOTE: When If-Modified-Since header 304 implemented, this needs to change ...
                         
@@ -47,12 +38,12 @@ if (!class_exists('CURL'))
                         //        exit();
                         //}
                         
-                        // Get the data using CURL or file_get_contents
+                        // Get the data
                         $data = $this->getXmlData( $xml_url );
                         
-                        // Check for CURL errors
-                        if ($this->curl_error !== false) {
-                                return $this->curl_error;
+                        // Check for request errors
+                        if ($this->request_error !== false) {
+                                return $this->request_error;
                                 exit();
                         }
                         
@@ -83,11 +74,12 @@ if (!class_exists('CURL'))
                 function getXmlData( $url )
                 {
                         //header( 'Zotero-API-Version: 2' );
-                        $response = wp_remote_get( $url );
+                        //$response = wp_remote_get( $url );
+                        $response = wp_remote_get( $url, array( 'headers' => array("Zotero-API-Version: 1") ) );
                         
                         if ( is_wp_error($response) || ! isset($response['body']) )
                         {
-                                $this->curl_error = $response->get_error_message();
+                                $this->request_error = $response->get_error_message();
                                 
                                 if ($response->get_error_code() == "http_request_failed")
                                 {
@@ -97,14 +89,14 @@ if (!class_exists('CURL'))
                                         $response = wp_remote_get( $url );
                                         
                                         if ( is_wp_error($response) || ! isset($response['body']) )
-                                                $this->curl_error = $response->get_error_message();
+                                                $this->request_error = $response->get_error_message();
                                         else // no errors this time
-                                                $this->curl_error = false;
+                                                $this->request_error = false;
                                 }
                         }
                         else if ( $response == "An error occurred" )
                         {
-                                $this->curl_error = "An error occurred: WordPress was unable to import from Zotero using this request URL.";
+                                $this->request_error = "An error occurred: WordPress was unable to import from Zotero using this request URL.";
                         }
                         
                         $data = wp_remote_retrieve_body( $response ); // Thanks to Trainsmart.com developer!

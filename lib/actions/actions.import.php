@@ -7,8 +7,8 @@
     // Prevent access to non-logged in users
     if ( !is_user_logged_in() ) { exit("Access denied."); }
     
-    // Include Special cURL
-    require("../request/rss.curl.php");
+    // Include Request Functionality
+    require("../request/rss.request.php");
     
     // Include Import and Sync Functions
     require("../admin/admin.import.functions.php");

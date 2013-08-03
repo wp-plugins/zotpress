@@ -21,7 +21,8 @@
             'notes' => false,
             'abstract' => false,
             'abstracts' => false,
-            'cite' => false
+            'cite' => false,
+            'citeable' => false
         ), $atts));
         
         
@@ -50,7 +51,10 @@
         else if ($abstract)
             $abstracts = str_replace('"','',html_entity_decode($abstract));
         
-        $cite = str_replace('"','',html_entity_decode($cite));
+        if ($cite)
+            $cite = str_replace('"','',html_entity_decode($cite));
+        else if ($citeable)
+            $cite = str_replace('"','',html_entity_decode($citeable));
         
         
         // SORT BY AND SORT ORDER

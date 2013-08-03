@@ -148,13 +148,37 @@
                 }
                 else // default
                 {
-                    if ($GLOBALS['zp_shortcode_instances'][get_the_ID()][$api_user_id.",".$item->item_key] && count(explode(",", $item->author)) > 3) {
+                    if (isset($GLOBALS['zp_shortcode_instances'][get_the_ID()][$api_user_id.",".$item->item_key]) && count(explode(",", $item->author)) > 3) {
                         $item->author = substr($item->author, 0, strpos($item->author, ",")) . " <em>et al.</em>";
                     }
                 }
                 
+                // Determine %num%
+                // Determine if this citation has already been referenced
+                $num = false;
+                if (isset($GLOBALS['zp_shortcode_instances'][get_the_ID()]) && count($zp_results) >= 1)
+                {
+                    $numloop = 1;
+                    foreach ($GLOBALS['zp_shortcode_instances'][get_the_ID()] as $position => $instance)
+                    {
+                        if ($position == $api_user_id.",".$item->item_key)
+                        {
+                            $num = $numloop;
+                            break;
+                        }
+                        $numloop++;
+                    }
+                }
+                
+                // Determine what %num% is if not already referenced
+                if ($num === false)
+                    if (isset($GLOBALS['zp_shortcode_instances'][get_the_ID()]))
+                        $num = count($GLOBALS['zp_shortcode_instances'][get_the_ID()])+1;
+                    else
+                        $num = 1;
+                
                 // Fill in author, date and number
-                $citation = str_replace("%num%", (count($GLOBALS['zp_shortcode_instances'][get_the_ID()])+1), str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate), $format)));
+                $citation = str_replace("%num%", $num, str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate), $format)));
                 
                 // Deal with pages
                 if ($pages)
@@ -171,7 +195,7 @@
                         }
                         else // Multiple citations
                         {
-                            if ($items[$id][1])
+                            if (isset($items[$id][1]))
                                 $citation =  str_replace("%p%", $items[$id][1], $citation);
                             else
                                 $citation = str_replace("%p%", "", str_replace(" %p%", "", str_replace(", %p%", "", $citation)));
@@ -183,7 +207,28 @@
                     }
                 }
                 
-                $zp_intext_citation .= $citation;
+                // Format for multiple (only expected characters)
+                if (count($zp_results) > 1)
+                {
+                    if ($id == 0)
+                    {
+                        $citation = str_replace("&#93;", "", str_replace(")", "", $citation));
+                    }
+                    else if ($id == (count($zp_results)-1))
+                    {
+                        $citation = str_replace("&#91;", "", str_replace("(", " ", $citation));
+                    }
+                    else
+                    {
+                        $citation = str_replace("&#93;", "", str_replace("&#91;", "", str_replace(")", "", str_replace("(", " ", $citation))));
+                    }
+                }
+                
+                // Format with a link
+                $zp_intext_citation .= "<a title='".$item->author.". (".$item->zpdate."). ".$item->title.".' id='".$zp_instance_id."' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item->item_key."'>" . $citation . "</a>";
+                
+                // Add comma for multiple
+                if (count($zp_results) > 1 && $id != (count($zp_results)-1)) $zp_intext_citation .= ",";
                 
                 // SET BIBLIOGRAPHY CITATIONS: Per item
                 $GLOBALS['zp_shortcode_instances'][get_the_ID()][$api_user_id.",".$item->item_key] = array(
@@ -195,7 +240,7 @@
                         "author" => $item->author,
                         "title" => $item->title,
                         "date" => zp_get_year($item->zpdate),
-                        "download" => $item->download,
+                        //"download" => $item->download,
                         "image" => $item->image,
                         "json" => $item->json,
                         "citation" => $item->citation,
@@ -203,7 +248,9 @@
                     );
             }
             
-            return "<a title='Anchor to citation for `".$item->title."`' id='".$zp_instance_id."' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item->item_key."'>" . str_replace(")(", "; ", str_replace("][", ", ", $zp_intext_citation)) . "</a>";
+            //return "<a title='Anchor to citation for `".$item->title."`' id='".$zp_instance_id."' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item->item_key."'>" . str_replace(")(", "; ", str_replace("][", ", ", $zp_intext_citation)) . "</a>";
+            //return str_replace(")(", "; ", str_replace("][", ", ", $zp_intext_citation));
+            return $zp_intext_citation;
             
             unset($zp_query);
             unset($zp_results);
