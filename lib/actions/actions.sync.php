@@ -4,8 +4,8 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
-    // Prevent access to non-logged in users
-    if ( !is_user_logged_in() ) { exit("Access denied."); }
+    // Prevent access to users who are not editors
+    if ( !current_user_can('edit_others_posts') && !is_admin() ) wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
     
     // Include Request Functionality
     require("../request/rss.request.php");
@@ -26,13 +26,13 @@
         
     */
 
-    if (isset($_GET['key']))
+    if (isset($_GET['step']))
     {
         // Set up error array
         $errors = array("api_user_id_blank"=>array(0,"<strong>User ID</strong> was left blank."),
                         "api_user_id_format"=>array(0,"<strong>User ID</strong> was formatted incorrectly."),
-                        "key_blank"=>array(0,"<strong>Key</strong> was not set."),
-                        "key_format"=>array(0,"<strong>Key</strong> was not formatted correctly."),
+                        //"key_blank"=>array(0,"<strong>Key</strong> was not set."),
+                        //"key_format"=>array(0,"<strong>Key</strong> was not formatted correctly."),
                         "step_blank"=>array(0,"<strong>Step</strong> was not set."),
                         "step_format"=>array(0,"<strong>Step</strong> was not formatted correctly."),
                         "start_blank"=>array(0,"<strong>Start</strong> were not set."),
@@ -52,13 +52,13 @@
         
         // CHECK KEY
         
-        if ($_GET['key'] != "")
-            if (preg_match("/^[0-9]+$/", $_GET['key']) == 1)
-                $passkey = htmlentities($_GET['key']);
-            else
-                $errors['key_format'][0] = 1;
-        else
-            $errors['key_blank'][0] = 1;
+        //if ($_GET['key'] != "")
+        //    if (preg_match("/^[0-9]+$/", $_GET['key']) == 1)
+        //        $passkey = htmlentities($_GET['key']);
+        //    else
+        //        $errors['key_format'][0] = 1;
+        //else
+        //    $errors['key_blank'][0] = 1;
         
         // CHECK STEP
         

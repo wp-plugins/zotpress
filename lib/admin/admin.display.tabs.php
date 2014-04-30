@@ -1,10 +1,10 @@
 <?php
 
-    if (isset($_GET['accounts']) && $_GET['accounts'] == "true")
+    if ( (isset($_GET['accounts']) && $_GET['accounts'] == "true") || (isset($_GET['selective']) && $_GET['selective'] == "true") )
         $tagpage = "accounts";
-    else if (isset($_GET['options']) && $_GET['options'] == "true")
+    else if ( isset($_GET['options']) && $_GET['options'] == "true" )
         $tagpage = "options";
-    else if (isset($_GET['help']) && $_GET['help'] == "true")
+    else if ( isset($_GET['help']) && $_GET['help'] == "true" )
         $tagpage = "help";
     else
         $tagpage = "default";

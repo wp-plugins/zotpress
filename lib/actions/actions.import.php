@@ -4,8 +4,8 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
     
-    // Prevent access to non-logged in users
-    if ( !is_user_logged_in() ) { exit("Access denied."); }
+    // Prevent access to users who are not editors
+    if ( !current_user_can('edit_others_posts') && !is_admin() ) wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
     
     // Include Request Functionality
     require("../request/rss.request.php");
@@ -25,13 +25,13 @@
         
     */
 
-    if (isset($_GET['key']))
+    if (isset($_GET['step']))
     {
         // Set up error array
         $errors = array("api_user_id_blank"=>array(0,"<strong>User ID</strong> was left blank."),
                         "api_user_id_format"=>array(0,"<strong>User ID</strong> was formatted incorrectly."),
-                        "key_blank"=>array(0,"<strong>Key</strong> was not set."),
-                        "key_format"=>array(0,"<strong>Key</strong> was not formatted correctly."),
+                        //"key_blank"=>array(0,"<strong>Key</strong> was not set."),
+                        //"key_format"=>array(0,"<strong>Key</strong> was not formatted correctly."),
                         "step_blank"=>array(0,"<strong>Step</strong> was not set."),
                         "step_format"=>array(0,"<strong>Step</strong> was not formatted correctly."),
                         "start_blank"=>array(0,"<strong>Start</strong> were not set."),
@@ -49,16 +49,18 @@
         else
             $errors['api_user_id_blank'][0] = 1;
         
+		
         // CHECK KEY
         
-        if ($_GET['key'] != "")
-            if (preg_match("/^[0-9]+$/", $_GET['key']) == 1)
-                $passkey = htmlentities($_GET['key']);
-            else
-                $errors['key_format'][0] = 1;
-        else
-            $errors['key_blank'][0] = 1;
+        //if ($_GET['key'] != "")
+        //    if (preg_match("/^[0-9]+$/", $_GET['key']) == 1)
+        //        $passkey = htmlentities($_GET['key']);
+        //    else
+        //        $errors['key_format'][0] = 1;
+        //else
+        //    $errors['key_blank'][0] = 1;
         
+		
         // CHECK STEP
         
         if ($_GET['step'] != "")
@@ -69,11 +71,15 @@
         else
             $errors['step_blank'][0] = 1;
         
+		
         // CHECK START
         
         if ($_GET['start'] != "")
-            if (preg_match("/^[0-9,]+$/", $_GET['start']) == 1)
-                $start = intval(htmlentities($_GET['start']));
+            if (preg_match("/^[a-zA-Z0-9,]+$/", $_GET['start']) == 1)
+				if ( $step == "selective")
+	                $start = htmlentities($_GET['start']);
+				else
+	                $start = intval(htmlentities($_GET['start']));
             else
                 $errors['start_format'][0] = 1;
         else
@@ -112,26 +118,21 @@
             if ( isset($_GET['step']) && $_GET['step'] == "items")
             {
                 global $wpdb;
-                $zp_continue = zp_get_items ($wpdb, $api_user_id, $start);
+				
+				$zp_selective = false;
+				if ( isset($_GET['selective']) && preg_match("/^[a-zA-Z0-9,]+$/", $_GET['selective']) ) $zp_selective = $_GET['selective'];
+				
+                $zp_continue = zp_get_items ($wpdb, $api_user_id, $start, $zp_selective);
                 
                 if ($zp_continue === true)
                 {
-                    //if ($start % 200 == 0) // Save, then continue
-                    //{
-                        //global $wpdb;
-                        zp_save_items ($wpdb, $api_user_id, true);
-                        
-                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
-                    //}
-                    //else // just continue
-                    //{
-                    //    $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
-                    //}
+					zp_save_items ($wpdb, $api_user_id, true);
+					
+					$xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
                 }
                 else if ($zp_continue === false)  // Execute import query, then move on
                 {
-                    //global $wpdb;
-                    zp_save_items ($wpdb, $api_user_id);
+                    zp_save_items ($wpdb, $api_user_id, false);
                     
                     $xml = "<result success=\"next\" next=\"collections\" />\n";
                 }
@@ -148,28 +149,28 @@
             else if ( isset($_GET['step']) && $_GET['step'] == "collections")
             {
                 global $wpdb;
-                $zp_continue = zp_get_collections ($wpdb, $api_user_id, $start);
+				
+				$zp_selective = false;
+				if ( isset($_GET['selective']) && preg_match("/^[a-zA-Z0-9,]+$/", $_GET['selective']) ) $zp_selective = $_GET['selective'];
+				
+                $zp_continue = zp_get_collections ($wpdb, $api_user_id, $start, false, $zp_selective);
                 
-                if ($zp_continue === true)
+                if ($zp_continue["continue"] === true)
                 {
-                    //if ($start % 200 == 0) // Save, then continue
-                    //{
-                    //    //global $wpdb;
-                        zp_save_collections ($wpdb, $api_user_id, true);
-                        
-                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
-                    //}
-                    //else // just continue
-                    //{
-                    //    $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
-                    //}
+					zp_save_collections ($wpdb, $api_user_id, true);
+					
+					$xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
+					
+					if ( isset($_GET['selective']) ) $xml .= "<subcollections>" . $zp_continue["collections"] . "</subcollections>\n";
                 }
                 else // Execute import query, then move on
                 {
-                    //global $wpdb;
-                    zp_save_collections ($wpdb, $api_user_id);
+                    zp_save_collections ($wpdb, $api_user_id, false);
+					//zp_link_collections ($wpdb, $api_user_id); for wp custom types
                     
                     $xml = "<result success=\"next\" next=\"tags\" />\n";
+					
+					if ( isset($_GET['selective']) ) $xml .= "<subcollections>" . $zp_continue["collections"] . "</subcollections>\n";
                 }
             }
             
@@ -179,30 +180,47 @@
             else if ( isset($_GET['step']) && $_GET['step'] == "tags")
             {
                 global $wpdb;
-                $zp_continue = zp_get_tags ($wpdb, $api_user_id, $start);
+				
+				$zp_selective = false;
+				if ( isset($_GET['selective']) && preg_match("/^[a-zA-Z0-9,]+$/", $_GET['selective']) ) $zp_selective = $_GET['selective'];
+				
+                $zp_continue = zp_get_tags ($wpdb, $api_user_id, $start, $zp_selective);
                 
                 if ($zp_continue === true)
                 {
-                    //if ($start % 200 == 0) // Save, then continue
-                    //{
-                    //    //global $wpdb;
-                        zp_save_tags ($wpdb, $api_user_id, true);
-                        
-                        $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
-                    //}
-                    //else // just continue
-                    //{
-                    //    $xml = "<result success=\"true\" next=\"" . ($start+50) . "\" />\n";
-                    //}
+					zp_save_tags ($wpdb, $api_user_id, true);
+					
+					$xml = "<result success=\"true\" next=\"" . ($start+50) . "\" saved=\"true\" />\n";
                 }
                 else // Execute import query, then move on
                 {
-                    //global $wpdb;
-                    zp_save_tags ($wpdb, $api_user_id);
+                    zp_save_tags ($wpdb, $api_user_id, false);
                     
                     $xml = "<result success=\"next\" next=\"complete\" />\n";
                 }
             }
+            
+            
+            // SELECTIVE
+            
+//            else if ( isset($_GET['selective']) && $_GET['step'] == "selective")
+//            {
+//                global $wpdb;
+//                $zp_continue = zp_get_selective ($wpdb, $api_user_id, $start);
+//                
+//                if ($zp_continue === true)
+//                {
+//					//zp_save_tags ($wpdb, $api_user_id, true);
+//					
+//					$xml = "<result success=\"true\" />\n";
+//                }
+//                //else // Execute import query, then move on
+//                //{
+//                //    //zp_save_tags ($wpdb, $api_user_id);
+//                //    
+//                //    $xml = "<result success=\"true\" />\n";
+//                //}
+//            }
         }
         
         

@@ -12,11 +12,12 @@
         global $Zotpress_zoteroTags_db_version;
         
         
-        // ACCOUNTS TABLE
+        // ZOTERO ACCOUNTS TABLE
         
         if (!get_option("Zotpress_main_db_version")
                 || get_option("Zotpress_main_db_version") != $Zotpress_main_db_version
-                || $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress'") != $wpdb->prefix."zotpress"
+                //|| $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress'") != $wpdb->prefix."zotpress"
+                || is_null($wpdb->get_var("SELECT COUNT(*) FROM '".$wpdb->prefix."zotpress'"))
                 )
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress (
@@ -39,7 +40,8 @@
         
         if (!get_option("Zotpress_oauth_db_version")
                 || get_option("Zotpress_oauth_db_version") != $Zotpress_oauth_db_version
-                || $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_oauth'") != $wpdb->prefix."zotpress_oauth"
+                //|| $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_oauth'") != $wpdb->prefix."zotpress_oauth"
+                || is_null($wpdb->get_var("SELECT COUNT(*) FROM '".$wpdb->prefix."zotpress_oauth'"))
                 )
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_oauth (
@@ -63,7 +65,8 @@
         
         if (!get_option("Zotpress_zoteroItems_db_version")
                 || get_option("Zotpress_zoteroItems_db_version") != $Zotpress_zoteroItems_db_version
-                || $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_zoteroItems'") != $wpdb->prefix."zotpress_zoteroItems"
+                //|| $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_zoteroItems'") != $wpdb->prefix."zotpress_zoteroItems"
+                || is_null($wpdb->get_var("SELECT COUNT(*) FROM '".$wpdb->prefix."zotpress_zoteroItems'"))
                 )
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_zoteroItems (
@@ -98,7 +101,8 @@
         
         if (!get_option("Zotpress_zoteroCollections_db_version")
                 || get_option("Zotpress_zoteroCollections_db_version") != $Zotpress_zoteroCollections_db_version
-                || $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_zoteroCollections'") != $wpdb->prefix."zotpress_zoteroCollections"
+                //|| $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_zoteroCollections'") != $wpdb->prefix."zotpress_zoteroCollections"
+                || is_null($wpdb->get_var("SELECT COUNT(*) FROM '".$wpdb->prefix."zotpress_zoteroCollections'"))
                 )
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_zoteroCollections (
@@ -126,18 +130,19 @@
         
         if (!get_option("Zotpress_zoteroTags_db_version")
                 || get_option("Zotpress_zoteroTags_db_version") != $Zotpress_zoteroTags_db_version
-                || $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_zoteroTags'") != $wpdb->prefix."zotpress_zoteroTags"
+                //|| $wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."zotpress_zoteroTags'") != $wpdb->prefix."zotpress_zoteroTags"
+                || is_null($wpdb->get_var("SELECT COUNT(*) FROM '".$wpdb->prefix."zotpress_zoteroTags'"))
                 )
         {
             $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_zoteroTags (
-                id INT(9) NOT NULL AUTO_INCREMENT,
+                id INT(9) NOT NULL UNIQUE AUTO_INCREMENT,
                 api_user_id VARCHAR(50),
-                title TEXT,
+                title VARCHAR(128) BINARY NOT NULL UNIQUE,
                 retrieved VARCHAR(100),
                 numItems INT(9),
                 listItems TEXT,
                 updated INT(1) DEFAULT 1,
-                UNIQUE KEY id (id)
+                PRIMARY KEY (api_user_id, title)
             );";
             
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -146,8 +151,60 @@
             update_option("Zotpress_zoteroTags_db_version", $Zotpress_zoteroTags_db_version);
         }
     }
+    
+    /*
+    add_action( 'after_setup_theme', 'zp_enable_thumbnails');
+    function zp_enable_thumbnails() {
+        add_theme_support( 'post-thumbnails', array( 'zp_entry' ) );
+    }
+    
+    if ( !post_type_exists( 'zp_entry' ) ) add_action( 'init', 'zp_create_post_type' );
+    function zp_create_post_type()
+    {
+        register_post_type( 'zp_entry',
+            array(
+                'label' => __( 'Zotpress Entries' ),
+                'labels' => array(
+                    'name' => __( 'Zotpress Entries' ),
+                    'singular_name' => __( 'Zotpress Entry' )
+                ),
+                'description' => 'A generic content type for all Zotero items.',
+                'menu_position' => 21,
+                'menu_icon' => ZOTPRESS_PLUGIN_URL.'images/icon-type.png',
+                'supports' => array( 'title', 'editor', 'thumbnail', 'custom-fields' ),
+                'public' => true,
+                'has_archive' => true
+            )
+        );
+        
+        register_taxonomy( 'zp_collections', 'zp_entry',
+            array(
+                'label' => 'Zotpress Collections',
+                'labels' => array(
+                    'name' => __( 'Zotpress Collections' ),
+                    'singular_name' => __( 'Zotpress Collection' )
+                ),
+                'hierarchical' => true,
+                'public' => true
+            )
+        );
+        register_taxonomy_for_object_type( 'zp_collections', 'zp_entry' );
+        
+        register_taxonomy( 'zp_tags', 'zp_entry',
+            array(
+                'label' => 'Zotpress Tags',
+                'labels' => array(
+                    'name' => __( 'Zotpress Tags' ),
+                    'singular_name' => __( 'Zotpress Tag' )
+                ),
+                'public' => true
+            )
+        );
+        register_taxonomy_for_object_type( 'zp_tags', 'zp_entry' );
+    }
+    */
 
-    register_activation_hook(ZOTPRESS_PLUGIN_FILE, 'Zotpress_install');
+    register_activation_hook( ZOTPRESS_PLUGIN_FILE, 'Zotpress_install' );
 
 // INSTALL -----------------------------------------------------------------------------------------
 
@@ -159,42 +216,41 @@
     {
         global $wpdb;
         
-        // Drop all tables except accounts/main
-	$wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_oauth;");
-	$wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroItems;");
-	$wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroCollections;");
-	$wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroTags;");
+        // Drop all tables -- originally not including accounts/main, but not sure why
+        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress;");
+        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_oauth;");
+        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroItems;");
+        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroCollections;");
+        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroTags;");
+        
+        // Delete options
+        delete_option( 'Zotpress_DefaultCPT' );
+        delete_option( 'Zotpress_DefaultAccount' );
+        delete_option( 'Zotpress_LastAutoUpdate' );
+        delete_option( 'Zotpress_DefaultStyle' );
+        delete_option( 'Zotpress_StyleList' );
+        delete_option( 'Zotpress_DefaultAutoUpdate' );
+        delete_option( 'Zotpress_update_version' );
+        delete_option( 'Zotpress_main_db_version' );
+        delete_option( 'Zotpress_oauth_db_version' );
+        delete_option( 'Zotpress_zoteroItems_db_version' );
+        delete_option( 'Zotpress_zoteroCollections_db_version' );
+        delete_option( 'Zotpress_zoteroTags_db_version' );
     }
     
-    //register_deactivation_hook(ZOTPRESS_PLUGIN_FILE, 'Zotpress_deactivate');
-    register_uninstall_hook(ZOTPRESS_PLUGIN_FILE, 'Zotpress_deactivate');
+    register_uninstall_hook( ZOTPRESS_PLUGIN_FILE, 'Zotpress_deactivate' );
 
 // UNINSTALL ---------------------------------------------------------------------------------------
 
 
 // UPDATE ------------------------------------------------------------------------------------------
-    
-    function Zotpress_update()
+
+    if ( !get_option("Zotpress_update_version") || get_option("Zotpress_update_version") != $Zotpress_update_version )
     {
-        global $Zotpress_main_db_version;
-        global $Zotpress_oauth_db_version;
-        global $Zotpress_zoteroItems_db_version;
-        global $Zotpress_zoteroCollections_db_version;
-        global $Zotpress_zoteroTags_db_version;
+        Zotpress_install();
         
-        if (
-            get_option("Zotpress_main_db_version") != $Zotpress_main_db_version
-            || get_option("Zotpress_oauth_db_version") != $Zotpress_oauth_db_version
-            || get_option("Zotpress_zoteroItems_db_version") != $Zotpress_zoteroItems_db_version
-            || get_option("Zotpress_zoteroCollections_db_version") != $Zotpress_zoteroCollections_db_version
-            || get_option("Zotpress_zoteroTags_db_version") != $Zotpress_zoteroTags_db_version
-            )
-        {
-            Zotpress_install();
-        }
+        if ( !get_option("Zotpress_update_version") ) add_option( "Zotpress_update_version", $Zotpress_update_version, "", "no" );
     }
-    
-    add_action('plugins_loaded', 'Zotpress_update');
     
 // UPDATE ------------------------------------------------------------------------------------------
 

@@ -3,7 +3,7 @@
     /* START OF BASIC SHORTCODE CSS */
     
     div.zp-Zotpress {
-        margin: 0 0 1.71429rem;
+        margin: 0 0 1em;
     }
     
     /* Thanks to http://css-tricks.com/snippets/css/prevent-long-urls-from-breaking-out-of-container/ */
@@ -66,3 +66,12 @@
     div.zp-Zotpress p.zp-NoCitations {
         margin: 0;
     }
+	
+	
+	/* In-Text Citations */
+	
+	.zp-ZotpressShortcode.cite .summary,
+	.zp-ZotpressShortcode.bib .summary {
+		display: none;
+	}
+	

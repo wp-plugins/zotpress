@@ -5,9 +5,11 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
-    // Prevent access to non-logged in users
-    if ( !is_user_logged_in() ) { exit("Access denied."); }
-
+    // Prevent access to users who are not editors
+    if ( !current_user_can('edit_others_posts') && !is_admin() ) wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
+    
+    require("../admin/admin.import.functions.php");
+    
     // Set up XML document
     $xml = "";
     
@@ -22,12 +24,14 @@
     if (isset($_GET['connect'])) // Delete slide
     {
         // Set up error array
-        $errors = array("api_user_id_blank"=>array(0,"<strong>User ID</strong> was left blank."),
-                        "api_user_id_format"=>array(0,"<strong>User ID</strong> was formatted incorrectly."),
-                        "public_key_blank"=>array(0,"<strong>Public Key</strong> was left blank."),
-                        "public_key_format"=>array(0,"<strong>Public Key</strong> was formatted incorrectly."),
-                        "nickname_format"=>array(0,"<strong>Nickname</strong> was formatted incorrectly.")
-                        );
+        $errors =
+            array(
+                "api_user_id_blank"=>array(0,"<strong>User ID</strong> was left blank."),
+                "api_user_id_format"=>array(0,"<strong>User ID</strong> was formatted incorrectly."),
+                "public_key_blank"=>array(0,"<strong>Public Key</strong> was left blank."),
+                "public_key_format"=>array(0,"<strong>Public Key</strong> was formatted incorrectly."),
+                "nickname_format"=>array(0,"<strong>Nickname</strong> was formatted incorrectly.")
+            );
         
         
         // Check the post variables and record errors
@@ -53,6 +57,7 @@
             $errors['api_user_id_blank'][0] = 1;
         
         // PUBLIC KEY
+        
         if ($_GET['public_key'] != "")
             if (preg_match("/^[0-9a-zA-Z]+$/", $_GET['public_key']) == 1)
                 $public_key = htmlentities(trim($_GET['public_key']));
@@ -66,8 +71,8 @@
         // NICKNAME 
         
         if (isset($_GET['nickname']) && trim($_GET['nickname']) != '')
-            if (preg_match('/^[\'0-9a-zA-Z ]+$/', stripslashes($_GET['nickname'])) == 1)
-                $nickname = str_replace("'","",str_replace(" ","",trim(urldecode($_GET['nickname']))));
+            if (preg_match('/^[\'0-9a-zA-Z -_]+$/', stripslashes($_GET['nickname'])) == 1)
+                $nickname = str_replace("'", "", str_replace(" ", "", trim(urldecode($_GET['nickname']))));
             else
                 $errors['nickname_format'][0] = 1;
         
@@ -76,10 +81,10 @@
         
         $errorCheck = false;
         foreach ($errors as $field => $error) {
-                if ($error[0] == 1) {
-                        $errorCheck = true;
-                        break;
-                }
+            if ($error[0] == 1) {
+                $errorCheck = true;
+                break;
+            }
         }
         
         
@@ -88,12 +93,10 @@
         if ($errorCheck == false)
         {
             $query = "INSERT INTO ".$wpdb->prefix."zotpress (account_type, api_user_id, public_key";
-            if ($nickname)
-                $query .= ", nickname";
+            if ($nickname) $query .= ", nickname";
             $query .= ") ";
             $query .= "VALUES ('$account_type', '$api_user_id', '$public_key'";
-            if ($nickname)
-                $query .= ", '$nickname'";
+            if ($nickname) $query .= ", '$nickname'";
             $query .= ")";
             
             // Insert new list item into the list:
@@ -112,8 +115,8 @@
             $xml .= "<citation>\n";
             $xml .= "<errors>\n";
             foreach ($errors as $field => $error)
-                    if ($error[0] == 1)
-                            $xml .= $error[1]."\n";
+                if ($error[0] == 1)
+                    $xml .= $error[1]."\n";
             $xml .= "</errors>\n";
             $xml .= "</citation>\n";
         }
@@ -123,7 +126,7 @@
     
     /*
      
-        DELETE ACCOUNT
+        REMOVE ACCOUNT
         
     */
 
@@ -132,19 +135,28 @@
         if (preg_match("/^[0-9]+$/", $_GET['delete']))
         {
             // Get api_user_id
-            $api_user_id = $wpdb->get_var("SELECT api_user_id FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['delete']."'");
+            $api_user_id = $wpdb->get_var( "SELECT api_user_id FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['delete']."'" );
             
             // Delete account and items
             $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['delete']."'");
-            $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."'");
-            $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$api_user_id."'");
-            $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$api_user_id."'");
+            //$wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."'");
+            //$wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$api_user_id."'");
+            //$wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$api_user_id."'");
+            zp_clear_last_import ($wpdb, $api_user_id, "items");
+            zp_clear_last_import ($wpdb, $api_user_id, "collections");
+            zp_clear_last_import ($wpdb, $api_user_id, "tags");
+            
+            // Check if default account
+            if ( get_option("Zotpress_DefaultAccount") && get_option("Zotpress_DefaultAccount") == $api_user_id )
+                delete_option( 'Zotpress_DefaultAccount' );
             
             $wpdb->flush();
             unset($api_user_id);
             
+            $total_accounts = $wpdb->get_var( "SELECT COUNT(*) FROM ".$wpdb->prefix."zotpress;" );
+            
             // Display success XML
-            $xml .= "<result success='true' />\n";
+            $xml .= "<result success='true' total_accounts='".$total_accounts."' />\n";
             $xml .= "<account id='".str_replace("#","",$_GET['delete'])."' type='delete' />\n";
         }
         else // die
@@ -161,35 +173,25 @@
         
     */
 
-    else if (isset($_GET['image']))
+    else if ( isset($_GET['image']) && $_GET['image'] == "true" )
     {
         // Set up error array
-        $errors = array("upload_image_blank"=>array(0,"<strong>Image</strong> was left blank."),
-                                "upload_image_format"=>array(0,"<strong>Image</strong> was formatted incorrectly."));
+        $errors = array("entry_id_blank"=>array(0,"<strong>Entry ID</strong> was left blank or formatted incorrectly."),
+                                "image_id_blank"=>array(0,"<strong>Image ID</strong> was left blank or formatted incorrectly."));
         
         
         // BASIC VARS
-        $citation_id = false;
-        if (preg_match("/^[0-9a-zA-Z]+$/", $_GET['citation_id']))
-            $citation_id = htmlentities(trim($_GET['citation_id']));
+        $entry_id = false;
+        if (preg_match("/^[0-9]+$/", $_GET['entry_id']))
+            $entry_id = htmlentities(trim($_GET['entry_id']));
         else
-            $errorCheck = true;
+            $errors['entry_id_blank'][0] = 1;
         
-        $api_user_id = false;
-        if (preg_match("/^[0-9]+$/", $_GET['api_user_id']))
-            $api_user_id = htmlentities(trim($_GET['api_user_id']));
+        $image_id = false;
+        if (preg_match("/^[0-9]+$/", $_GET['image_id']))
+            $image_id = htmlentities(trim($_GET['image_id']));
         else
-            $errorCheck = true;
-        
-        
-       // UPLOAD IMAGE
-        if ($_GET['upload_image'] != "")
-            if (preg_match('/^http:\/\/[^&"\'\s]+$/', $_GET['upload_image']) == 1)
-                $image = htmlentities(trim($_GET['upload_image']));
-            else
-                $errors['upload_image_blank'][0] = 1;
-        else
-            $errors['upload_image_blank'][0] = 1;
+            $errors['image_id_blank'][0] = 1;
         
         
         // CHECK ERRORS
@@ -202,18 +204,31 @@
         }
         
         
-        // ADD IMAGE
+        // SET FEATURED IMAGE
         
         if ($errorCheck == false)
         {
-            $query = "UPDATE ".$wpdb->prefix."zotpress_zoteroItems ";
-            $query .= "SET image='$image' WHERE api_user_id='".$api_user_id."' AND item_key='".$citation_id."';";
+            //$zp_set_entry_image = update_post_meta( $entry_id, '_thumbnail_id', $image_id );
+            //$query = "UPDATE ".$wpdb->prefix."zotpress_zoteroItems ";
+            //$query .= "SET image='$image' WHERE api_user_id='".$api_user_id."' AND id='".$entry_id."';";
             
             // Insert new list item into the list:
-            $wpdb->query($query);
+            //$wpdb->query($query);
+            $wpdb->query( 
+                $wpdb->prepare( 
+                    "
+                    UPDATE ".$wpdb->prefix."zotpress_zoteroItems
+                    SET image=%s
+                    WHERE id=%s
+                    ",
+                    $image_id, $entry_id
+                )
+            );
             
-            // Display success XML
-            $xml .= "<result success='true' citation_id='".$citation_id."' />\n";
+            //if ( $zp_set_entry_image !== false )
+                $xml .= "<result success='true' citation_id='".$entry_id."' />\n";
+            //else
+                //$xml .= "<result success='false' />\n";
         }
         
         
@@ -240,34 +255,65 @@
         
     */
 
-    else if (isset($_GET['remove']))
+    else if ( isset($_GET['remove']) && $_GET['remove'] == "image" )
     {
+        // Set up error array
+        $errors = array("entry_id_blank"=>array(0,"<strong>Entry ID</strong> was left blank or formatted incorrectly."));
+        
+        
+        // BASIC VARS
+        $entry_id = false;
+        if (preg_match("/^[0-9]+$/", $_GET['entry_id']))
+            $entry_id = htmlentities(trim($_GET['entry_id']));
+        else
+            $errors['entry_id_blank'][0] = 1;
+        
+        
         // CHECK ERRORS
         $errorCheck = false;
+        foreach ($errors as $field => $error) {
+            if ($error[0] == 1) {
+                $errorCheck = true;
+                break;
+            }
+        }
         
-        $citation_id = false;
-        if (preg_match("/^[0-9a-zA-Z]+$/", $_GET['remove']))
-            $citation_id = htmlentities(trim($_GET['remove']));
-        else
-            $errorCheck = true;
         
-        $api_user_id = false;
-        if (preg_match("/^[0-9]+$/", $_GET['api_user_id']))
-            $api_user_id = htmlentities(trim($_GET['api_user_id']));
-        else
-            $errorCheck = true;
-        
+        // REMOVE FEATURED IMAGE
         
         if ($errorCheck == false)
         {
-            $query = "UPDATE ".$wpdb->prefix."zotpress_zoteroItems ";
-            $query .= "SET image='' WHERE api_user_id='".$api_user_id."' AND item_key='".$citation_id."';";
+            //$zp_set_entry_image = update_post_meta( $entry_id, '_thumbnail_id', NULL );
             
-            // Update db
-            $wpdb->query($query);
+            $wpdb->query( 
+                $wpdb->prepare( 
+                    "
+                    UPDATE ".$wpdb->prefix."zotpress_zoteroItems
+                    SET image=NULL
+                    WHERE id=%s
+                    ",
+                    $entry_id
+                )
+            );
             
-            // Display success XML
-            $xml .= "<result success='true' citation_id='".$citation_id."' />\n";
+            //if ( $zp_set_entry_image !== false )
+                $xml .= "<result success='true' citation_id='".$entry_id."' />\n";
+            //else
+                //$xml .= "<result success='false' />\n";
+        }
+        
+        // DISPLAY ERRORS
+        
+        else
+        {
+            $xml .= "<result success='false' />\n";
+            $xml .= "<citation>\n";
+            $xml .= "<errors>\n";
+            foreach ($errors as $field => $error)
+                if ($error[0] == 1)
+                    $xml .= $error[1]."\n";
+            $xml .= "</errors>\n";
+            $xml .= "</citation>\n";
         }
     }
     

@@ -1,5 +1,7 @@
  <?php
-  /** Note that this example uses the php OAuth extension http://php.net/manual/en/book.oauth.php
+ 
+/** Code provided by and adapted from: http://www.zotero.org/support/dev/server_api/v2/oauth
+	* Note that this example uses the php OAuth extension http://php.net/manual/en/book.oauth.php
     * but there are various php libraries that provide similar functionality.
     * OAuth acts over multiple pages, so we save variables we need to remember in $state in a temp file
     * 
@@ -54,17 +56,17 @@
     
     //Functions to save state to temp file between requests, DB should replace this functionality
     function read_state(){
-      global $wpdb;
-      $oa_cache = $wpdb->get_results("SELECT cache FROM ".$wpdb->prefix."zotpress_oauth");
-      return unserialize( $oa_cache[0]->cache );
+		global $wpdb;
+		$oa_cache = $wpdb->get_results("SELECT cache FROM ".$wpdb->prefix."zotpress_oauth");
+		return unserialize( $oa_cache[0]->cache );
     }
     function write_state($state)
     {
-      global $wpdb;
-      $oa_cache = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_oauth");
-      $query = "UPDATE ".$wpdb->prefix."zotpress_oauth ";
-      $query .= "SET cache='".serialize($state)."' WHERE id='".$oa_cache[0]->id."';";
-      $wpdb->query($query);
+		global $wpdb;
+		$oa_cache = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_oauth");
+		$query = "UPDATE ".$wpdb->prefix."zotpress_oauth ";
+		$query .= "SET cache='".serialize($state)."' WHERE id='".$oa_cache[0]->id."';";
+		$wpdb->query($query);
     }
     function save_request_token($request_token_info, $state){
         // Make sure the request token has all the information we need
@@ -200,7 +202,7 @@
         // ADD PRIVATE KEY TO THE USER'S ACCOUNT IN ZOTPRESS
         global $wpdb;
         $query = "UPDATE ".$wpdb->prefix."zotpress ";
-        $query .= "SET public_key='".$access_token_info['oauth_token_secret']."' WHERE api_user_id='".$access_token_info['userID']."';";
+        $query .= "SET public_key='".$access_token_info['oauth_token_secret']."' WHERE api_user_id='".$_GET['oauth_user']."';";
         $wpdb->query($query);
         
         // EMPTY THE CACHE

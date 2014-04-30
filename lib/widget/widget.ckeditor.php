@@ -231,7 +231,7 @@
                 <select id="zp-ZotpressMetaBox-ShortcodeCreator-5-Style">
                     <?php
                     
-                    $zp_styles = "apa, apsa, asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, mla, nlm, nature, vancouver";
+                    $zp_styles = "apa, apsa, asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, modern-language-association, nlm, nature, vancouver";
                     $zp_styles = explode(", ", $zp_styles);
                     
                     foreach($zp_styles as $zp_style)

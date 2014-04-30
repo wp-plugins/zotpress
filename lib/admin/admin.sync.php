@@ -4,8 +4,8 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
-    // Prevent access to non-logged in users
-    if ( !is_user_logged_in() ) { exit("Access denied."); }
+    // Prevent access to users who are not editors
+    if ( !current_user_can('edit_others_posts') && !is_admin() ) wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
     
     // Ignore user abort
     ignore_user_abort(true);
@@ -44,8 +44,8 @@
     {
         $api_user_id = zp_get_api_user_id();
         
-        if (get_option('ZOTPRESS_PASSCODE') && isset($_GET['key']) && get_option('ZOTPRESS_PASSCODE') == $_GET['key'])
-        {
+        //if (get_option('ZOTPRESS_PASSCODE') && isset($_GET['key']) && get_option('ZOTPRESS_PASSCODE') == $_GET['key'])
+        //{
             // Get account
             //$_SESSION['zp_session'][$api_user_id]['zp_account'] = zp_get_account($wpdb, $api_user_id);
             
@@ -68,9 +68,9 @@
             
             jQuery(document).ready(function()
             {
-                function zp_get_items (zp_plugin_url, api_user_id, zp_key, zp_start)
+                function zp_get_items (zp_plugin_url, api_user_id, zp_start)
                 {
-                    var zpXMLurl = zp_plugin_url + "lib/actions/actions.sync.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=items&start=" + zp_start;
+                    var zpXMLurl = zp_plugin_url + "lib/actions/actions.sync.php?api_user_id=" + api_user_id + "&step=items&start=" + zp_start;
                     //alert(zpXMLurl); // DEBUG
                     
                     jQuery.get( zpXMLurl, {}, function(xml)
@@ -80,7 +80,7 @@
                         if ($result.attr("success") == "true") // Move on to the next 50
                         {
                             jQuery('div#zp-Account-<?php echo $api_user_id; ?> span.delete .zp-Sync-Messages', window.parent.document).text("Syncing items " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
-                            zp_get_items (zp_plugin_url, api_user_id, zp_key, $result.attr("next"));
+                            zp_get_items (zp_plugin_url, api_user_id, $result.attr("next"));
                         }
                         else if ($result.attr("success") == "next")
                         {
@@ -94,14 +94,14 @@
                     });
                 }
                 
-                zp_get_items( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . get_option('ZOTPRESS_PASSCODE'); ?>', 0);
+                zp_get_items( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', 0);
                 
             });
             
             </script><?php
-        }
-        
-        else /* key fails */ { exit ("key incorrect "); }
+        //}
+        //
+        //else /* key fails */ { exit ("key incorrect "); }
         
     }
     
@@ -112,8 +112,8 @@
     {
         $api_user_id = zp_get_api_user_id();
         
-        if (get_option('ZOTPRESS_PASSCODE') && isset($_GET['key']) && get_option('ZOTPRESS_PASSCODE') == $_GET['key'])
-        {
+        //if (get_option('ZOTPRESS_PASSCODE') && isset($_GET['key']) && get_option('ZOTPRESS_PASSCODE') == $_GET['key'])
+        //{
             // GET LOCAL COLLECTIONS
             //$_SESSION['zp_session'][$api_user_id]['collections']['zp_local_collections'] = zp_get_local_collections ($wpdb, $api_user_id);
             //
@@ -130,9 +130,9 @@
             
             jQuery(document).ready(function()
             {
-                function zp_get_collections (zp_plugin_url, api_user_id, zp_key, zp_start)
+                function zp_get_collections (zp_plugin_url, api_user_id, zp_start)
                 {
-                    var zpXMLurl = zp_plugin_url + "lib/actions/actions.sync.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=collections&start=" + zp_start;
+                    var zpXMLurl = zp_plugin_url + "lib/actions/actions.sync.php?api_user_id=" + api_user_id + "&step=collections&start=" + zp_start;
                     //alert(zpXMLurl); // DEBUG
                     
                     jQuery.get( zpXMLurl, {}, function(xml)
@@ -142,7 +142,7 @@
                         if ($result.attr("success") == "true") // Move on to the next 50
                         {
                             jQuery('div#zp-Account-<?php echo $api_user_id; ?> span.delete .zp-Sync-Messages', window.parent.document).text("Syncing collections " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
-                            zp_get_collections (zp_plugin_url, api_user_id, zp_key, $result.attr("next"));
+                            zp_get_collections (zp_plugin_url, api_user_id, $result.attr("next"));
                         }
                         else if ($result.attr("success") == "next")
                         {
@@ -156,13 +156,13 @@
                     });
                 }
                 
-                zp_get_collections( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . get_option('ZOTPRESS_PASSCODE'); ?>', 0);
+                zp_get_collections( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', 0);
                 
             });
             
             </script><?php
-        }
-        else /* key fails */ { exit ("key incorrect "); }
+        //}
+        //else /* key fails */ { exit ("key incorrect "); }
     }
     
     
@@ -172,8 +172,8 @@
     {
         $api_user_id = zp_get_api_user_id();
         
-        if (get_option('ZOTPRESS_PASSCODE') && isset($_GET['key']) && get_option('ZOTPRESS_PASSCODE') == $_GET['key'])
-        {
+        //if (get_option('ZOTPRESS_PASSCODE') && isset($_GET['key']) && get_option('ZOTPRESS_PASSCODE') == $_GET['key'])
+        //{
             // GET LOCAL TAGS
             //$_SESSION['zp_session'][$api_user_id]['tags']['zp_local_tags'] = zp_get_local_tags ($wpdb, $api_user_id);
             //
@@ -190,9 +190,9 @@
             
             jQuery(document).ready(function()
             {
-                function zp_get_tags (zp_plugin_url, api_user_id, zp_key, zp_start)
+                function zp_get_tags (zp_plugin_url, api_user_id, zp_start)
                 {
-                    var zpXMLurl = zp_plugin_url + "lib/actions/actions.sync.php?api_user_id=" + api_user_id + "&key=" + zp_key + "&step=tags&start=" + zp_start;
+                    var zpXMLurl = zp_plugin_url + "lib/actions/actions.sync.php?api_user_id=" + api_user_id + "&step=tags&start=" + zp_start;
                     //alert(zpXMLurl); // DEBUG
                     
                     jQuery.get( zpXMLurl, {}, function(xml)
@@ -202,7 +202,7 @@
                         if ($result.attr("success") == "true") // Move on to the next 50
                         {
                             jQuery('div#zp-Account-<?php echo $api_user_id; ?> span.delete .zp-Sync-Messages', window.parent.document).text("Syncing tags " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
-                            zp_get_tags (zp_plugin_url, api_user_id, zp_key, $result.attr("next"));
+                            zp_get_tags (zp_plugin_url, api_user_id, $result.attr("next"));
                         }
                         else if ($result.attr("success") == "next")
                         {
@@ -216,14 +216,14 @@
                     });
                 }
                 
-                zp_get_tags( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id . "', '" . get_option('ZOTPRESS_PASSCODE'); ?>', 0);
+                zp_get_tags( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', 0);
                 
             });
             
             </script><?php
-        }
-        
-        else /* key fails */ { exit ("key incorrect "); }
+        //}
+        //
+        //else /* key fails */ { exit ("key incorrect "); }
         
     } ?>
 

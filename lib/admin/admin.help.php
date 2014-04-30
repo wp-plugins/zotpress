@@ -100,7 +100,7 @@
                 </tr>
                 
                 <tr class="zebra">
-                    <td rowspan="2" class="type">Meta</td>
+                    <td rowspan="2" class="type">Data</td>
                     
                     <td class="code">authors</td>
                     <td><p>Alternative: <code>author</code>. Display a list of citations from a particular author or authors. <strong>Note:</strong> "Carl Sagan","C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Sagan".</p></td>
@@ -164,18 +164,23 @@
                 </tr>
                 
                 <tr>
-                    <td rowspan="7" class="category last">Display</td>
+                    <td rowspan="9" class="category last">Display</td>
                     
-                    <td rowspan="7" class="type last">Settings</td>
+                    <td rowspan="9" class="type last">Settings</td>
                     
                     <td class="code">style</td>
-                    <td><p>Citation style. <strong>Options: apsa, apa [default], asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, mla, nlm, nature, vancouver.</strong> Note: Support for more styles is coming; see <a title="Zotero Style Repository" href="http://www.zotero.org/styles">Zotero Style Repository</a> for details.</p></td>
+                    <td><p>Citation style. <strong>Options: apsa, apa [default], asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, modern-language-association, nlm, nature, vancouver.</strong> Note: Support for more styles is coming; see <a title="Zotero Style Repository" href="http://www.zotero.org/styles">Zotero Style Repository</a> for details.</p></td>
                     <td class="example"><p><code>[zotpress collection="GMGCJU34" style="apa"]</code></p></td>
                 </tr>
                 <tr>
                     <td class="code">showimage</td>
                     <td><p>Whether or not to display the citation's image, if one exists. <strong>Options: yes, no [default]</strong></p></td>
                     <td class="example"><p><code>[zotpress collection="GMGCJU34" showimage="yes"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">showtags</td>
+                    <td><p>Whether or not to display the citation's tags, if one or more exists. <strong>Options: yes, no [default]</strong></p></td>
+                    <td class="example"><p><code>[zotpress collection="GMGCJU34" showtags="yes"]</code></p></td>
                 </tr>
                 <tr>
                     <td class="code">download</td>
@@ -189,18 +194,23 @@
                 </tr>
                 <tr>
                     <td class="code">notes</td>
-                    <td><p>Alternative: <code>downloadable</code> Whether or not to display the citation's notes, if one exists. <strong>Must have notes made public via the private key settings on Zotero.</strong> Options: yes, no [default].</p></td>
+                    <td><p>Alternative: <code>note</code> Whether or not to display the citation's notes, if one exists. <strong>Must have notes made public via the private key settings on Zotero.</strong> Options: yes, no [default].</p></td>
                     <td class="example"><p><code>[zotpress collection="GMGCJU34" notes="yes"]</code></p></td>
                 </tr>
                 <tr>
                     <td class="code">cite</td>
-                    <td><p>Alternative: <code>citeable</code>Make the displayed citations citable by generating RIS links. <strong>Options: yes, no [default].</strong></p></td>
+                    <td><p>Alternative: <code>citeable</code> Make the displayed citations citable by generating RIS links. <strong>Options: yes, no [default].</strong></p></td>
                     <td class="example"><p><code>[zotpress collection="GMGCJU34" cite="yes"]</code></p></td>
                 </tr>
+                <tr>
+                    <td class="code">linkedlist</td>
+                    <td><p><strong>Requires:</strong> <code>datatype="collections"</code> or <code>datatype="tags"</code> Alternative: <code>link</code> List all tags or all collections and link each to a page that displays their associated citation items. <strong>Options: yes, no [default].</strong></p></td>
+                    <td class="example"><p><code>[zotpress datatype="tags" linkedlist="yes"]</code></p></td>
+                </tr>
                 <tr class="last">
-                    <td class="code">link</td>
-                    <td><p>Link tag and collection list items to page that displays their associated citation items. <strong>Options: yes, no [default].</strong></p></td>
-                    <td class="example"><p><code>[zotpress datatype="tags" link="yes"]</code></p></td>
+                    <td class="code last">target</td>
+                    <td><p>Links open up in a new window or tab. Applies to citation links, e.g. "retrieved from." Compliant with HTML5 but not XHTML Strict. <strong>Options: new, no [default].</strong></p></td>
+                    <td class="example"><p><code>[zotpress collection="GMGCJU34" target="new"]</code></p></td>
                 </tr>
                 
             </table>
@@ -273,18 +283,18 @@
                     <td><p>Display a list of citations by a particular Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a title="Accounts" href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</p></td>
                     <td class="example"><p><code>[zotpressInText nickname="Katie"]</code></p></td>
                 </tr>
-                <tr>
-                    <td rowspan="1" class="type">Meta</td>
+                <tr class="zebra">
+                    <td rowspan="1" class="type">Data</td>
                     
                     <td class="code">items</td>
                     <td><p>Alternative: <code>item</code> Item keys and page number pairs formatted like so: <code>ITEMKEY</code> or <code>{ITEMKEY,PAGES}</code> or <code>{ITEMKEY1,PAGES},{ITEMKEY2,PAGES},...</code>.</p></td>
                     <td class="example"><p><code>[zotpressInText item="NCXAA92F"]</code></p><p><code>[zotpressInText item="{NCXAA92F,10-15}"]</code></p><p><code>[zotpressInText items="{NCXAA92F,10-15},{55MKF89B,1578},{3ITTIXHP}"]</code></p></td>
                 </tr>
                 
-                <tr class="zebra last">
-                    <td rowspan="2" class="category last">Display</td>
+                <tr class="last">
+                    <td rowspan="4" class="category last">Display</td>
                     
-                    <td rowspan="2" class="type last">Settings</td>
+                    <td rowspan="4" class="type last">Settings</td>
                     
                     <td class="code">format</td>
                     <td>
@@ -298,8 +308,18 @@
                 </tr>
                 <tr>
                     <td class="code">etal</td>
-                    <td><p>How "et al." is applied to the list of authors (if displayed and if more than three instances exist). Default is full author list for first instance and "et al." for every other instance. <strong>Options:</strong> yes, no, default [default]</p></td>
+                    <td><p>How "et al." is applied to multiple instances of a citation if it has three or more authors. Default is full author list for first instance and "et al." for every other instance. <strong>Options:</strong> yes, no, default [default]</p></td>
                     <td class="example"><p><code>[zotpressInText item="NCXAA92F" etal="yes"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">separator</td>
+                    <td><p>How a list of two or more citations is delineated. Default is with a comma. <strong>Options:</strong> comma, semicolon [default]</p></td>
+                    <td class="example"><p><code>[zotpressInText item="NCXAA92F" separator="semicolon"]</code>, which will display as: <span style="padding-left: 0.5em; font-family: monospace;">(Sagan 2013; Hawkings 2014)</span></p></td>
+                </tr>
+                <tr>
+                    <td class="code last">and</td>
+                    <td><p>Whether some form of "and" is applied to citations with two or more authors. Default is "and". <strong>Options:</strong> and, comma-and, comma [default]</p></td>
+                    <td class="example"><p><code>[zotpressInText item="NCXAA92F" and="comma-and"]</code>, which will display as: <span style="padding-left: 0.5em; font-family: monospace;">(Sagan, and Hawkings 2014)</span></p></td>
                 </tr>
                 
             </table>
@@ -343,8 +363,14 @@
             
             <p>
                 You can use the buttons found on the <a title="Accounts" href="admin.php?page=Zotpress&amp;accounts=true">Accounts</a>
-                page next to the account for which you'd like to sync or re-import items. <!--Accounts will auto-update depending on your
-                <a title="Options" href="admin.php?page=Zotpress&amp;options=true">settings</a>.-->
+                page next to the account for which you'd like to selectively import or re-import items.
+            </p>
+            
+            <h4>Will Zotpress auto-sync my library?</h4>
+            
+            <p>
+                Unfortunately, not yet. This feature is in the works. For now, you have to manually sync your library
+                by selectively importing collections (and their items and subcollections) or re-importing your library.
             </p>
             
             <h4>How can I edit a Zotero account listed on the Accounts page?</h4>
@@ -363,12 +389,13 @@
             <h4>I've added a group to Zotpress, but it's not displaying citations. How do I display a group's citations?</h4>
             
             <p>
-                You can list any group on Zotpress as long as you have the correct private key. If you're not the group owner, you can try sending the owner a request for one.
+                You can list any group on Zotpress as long as you have the correct private key.
+                If you're not the group owner, you can try sending the owner a request for one.
             </p>
             
             <h4>How do I find a collection ID?</h4>
             
-            <p>It's displayed next to the collection name in the filter dropdown on the <a title="Browse" href="admin.php?page=Zotpress">Browse</a> page.</p>
+            <p>It's displayed next to the collection name on the <a title="Browse" href="admin.php?page=Zotpress">Browse</a> page.</p>
             
             <h4>How do I find an item key (citation ID)?</h4>
             

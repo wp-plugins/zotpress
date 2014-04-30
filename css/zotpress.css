@@ -2,8 +2,8 @@
 
     /* START OF BASIC ZOTPRESS CSS */
 
-    div#zp-Zotpress {
-        margin-bottom: 40px;
+    div#zp-Zotpress select {
+        cursor: pointer;
     }
     
     div#zp-Zotpress div.zp-Col-1 {
@@ -33,7 +33,11 @@
         text-transform: uppercase;
     }
     div#zp-Zotpress h3.zp-HeaderGroup {
-        margin-bottom: -0.5em;
+        /*margin-bottom: -0.5em;*/
+    }
+    div#zp-Setup h3.pair {
+        border-bottom: 0;
+        padding: 15px 30px 0;
     }
     
     div#zp-Setup h4,
@@ -43,6 +47,11 @@
     }
     div#zp-Setup h4 {
         font: italic 400 16px/21px "Droid Serif", "Georgia", serif;
+    }
+    div#zp-Setup h4.pair {
+        border-bottom: 1px solid #eee;
+        margin: 0;
+        padding: 10px 30px 25px;
     }
     
     div#zp-Zotpress h5 {
@@ -54,7 +63,6 @@
     div#zp-Zotpress hr {
         border: none;
         border-top: 1px solid #ddd;
-        border-bottom: 1px solid #fff;
         clear: both;
         margin: 3.3em 0 0.7em;
         height: 1px;
@@ -96,27 +104,39 @@
     /* START OF SETUP CSS */
     
     div#zp-Setup {
+        border-bottom: 1px solid #ccc;
         margin-right: 1.5em;
         width: auto;
         min-width: 549px;
     }
-    
-    div#zp-Setup h1 {
-        /*background: url("../images/sprite.png") no-repeat scroll 3px -318px transparent;*/
-        /*font: italic 21px/30px Georgia,"Times New Roman","Bitstream Charter",Times,serif;*/
-        /*font: normal 23px/29px "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;*/
-        /*font: 400 26px/32px "Oswald", "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;*/
-        /*padding-left: 44px;*/
-        /*text-transform: uppercase;*/
+    div#zp-Setup div#zp-Zotpress-Navigation {
+        z-index: 1;
+        position: relative;
+        margin-bottom: 0;
     }
-    
-    
+    div.zp-Setup-Step,
     div#zp-Setup-Step {
-        /*background-color: #fafafa;*/
-        /*border-bottom: 1px solid #eee;*/
-        /*padding: 5px 15px 15px 30px;*/
+        z-index: 0;
+        position: relative;
+        background-color: #fff;
+        padding: 1em 0 0.65em;
+    }
+    div.zp-Setup-Step.second {
+        border-top: 1px solid #eee;
+    }
+    div.zp-Setup-Step.second:before,
+    div.zp-Setup-Step.second:after {
+        display: table;
+        content: "";
+    }
+    div.zp-Setup-Step.second:after {
+        clear: both;
     }
     
+    div#zp-Setup h3 {
+        padding: 15px 30px 25px;
+        border-bottom: 1px solid #eee;
+    }
     div#zp-Setup-Step hr {
         clear: both;
         border: none;
@@ -126,18 +146,19 @@
         background: none;
         border-top: 1px solid #eee;
     }
+    div#zp-Setup-Step hr.clear {
+        margin: 0;
+    }
     
     div#zp-Setup div.zp-Column-1,
     div#zp-Setup div.zp-Column-2 {
         float: left;
+        margin-left: 30px;
         width: 400px;
-    }
-    div#zp-Setup div.zp-Column-1 {
-        margin: 0 10px 0 0;
     }
     
     div#zp-Setup p.note {
-        color: #999;
+        color: #666;
         font-size: 0.9em;
         font-style: italic;
         margin: -10px 0 10px 0;
@@ -150,35 +171,12 @@
     div#zp-Zotpress-Setup-Buttons {
         clear: both;
         border-top: 1px solid #eee;
-        padding-top: 15px;
     }
-    input#zp-Zotpress-Setup-Import,
-    input#zp-Zotpress-Setup-Options-Next,
-    input#zp-Zotpress-Setup-Options-Complete {
-        font-size: 1.4em !important;
-        line-height: 2em !important;
-        clear: both;
+    div#zp-Zotpress-Setup-Buttons input {
+        margin: 1em 2em 0.5em;
         float: right;
-        height: 2em !important;
     }
-    input#zp-Zotpress-Setup-Import {
-        /*clear: both;*/
-        float: left;
-        margin: 20px 0 10px 0;
-        /*display: block;*/
-    }
-    
-    div#zp-Zotpress-Setup-Import-Buttons {
-    }
-    
-    input.zp-Import-Button {
-        margin: 24px 0 10px 10px !important;
-        float: left !important;
-        /*display: block !important;*/
-        /*clear: both !important;*/
-        /*margin-bottom: 1em !important;*/
-    }
-    
+
     div#zp-Setup div.zp-Zotpress-Options div.zp-Success,
     div#zp-Setup div.zp-Zotpress-Options div.zp-Loading,
     div#zp-Setup div.zp-Zotpress-Options div.zp-Errors {
@@ -202,17 +200,46 @@
         margin-top: 6px;
     }
     
-    div#zp-Setup-Check {
-        font-weight: bold;
+    
+    div.zp-Step-Import,
+    div#zp-Step-Import {
+        padding: 10px 30px;
+    }
+    .second div.zp-Step-Import {
+        padding-top: 0;
+    }
+    div#zp-Zotpress-Setup-Import-Buttons {
+        margin-top: 2em;
+    }
+    input#zp-Zotpress-Setup-Import,
+    .wp-core-ui input.zp-Import-Button.button-secondary {
+        margin: 0 0.5em 1em 0;
+        float: left;
+    }
+    div#zp-Step-Import-Collection {
+        background-color: #f9f9f9;
+        clear: both;
+        margin-top: 1em;
+        width: 36.75em;
+        height: 13.5em;
+    }
+    div#zp-Step-Import-Collection.loading {
+        background: #f9f9f9 url('../images/loading_default.gif') no-repeat center;
+    }
+    div#zp-Step-Import-Collection iframe {
+        width: 100%;
+    }
+    #zp-Zotpress-Setup-Import-Selective {
+        float: left;
         margin: 1em 0;
     }
-    div#zp-Setup-Check strong {
-        color: red;
-    }
+    
     
     iframe.zp-Setup-Sync,
     iframe#zp-Setup-Import {
-        float: right;
+        position: absolute;
+        top: 0;
+        right: 0;
         margin: 0;
         padding: 0;
         
@@ -223,21 +250,191 @@
         
         /* DEBUGGING */
         /*border: 3px solid #eee;*/
-        /*width: 500px;*/
+        /*width: 350px;*/
         /*height: 200px;*/
     }
-    div.zp-Loading-Initial.zp-Loading-Import {
-        background-position: 0 6px;
-        display: none;
-        float: left;
-        margin: 20px -15px 0 10px;
+    
+    div.zp-Loading-Container {
+        clear: both;
+        padding-top: 0.75em;
     }
-    div#zp-Import-Messages {
-        color: #999;
-        font: italic 9px/30px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+    div.zp-Loading-Container:before,
+    div.zp-Loading-Container:after {
+        content: "";
+        display: table;
+    }
+    div.zp-Loading-Container:after {
+        clear: both;
+    }
+    div.zp-Loading-Container.selective {
+        clear: none;
+        padding-top: 0;
+    }
+    div.zp-Loading-Initial.zp-Loading-Import {
+        background: transparent url('../images/loading_import.gif') no-repeat 0 6px;
         display: none;
         float: left;
-        margin: 20px 0 0 20px;
+        margin: 0;
+        width: 70px;
+        height: 20px;
+    }
+    div.zp-Loading-Initial.zp-Loading-Import.selective {
+        margin-top: 1.35em;
+        margin-left: 1em;
+    }
+    div.zp-Import-Messages {
+        color: #999;
+        font: italic 9px/20px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+        display: none;
+        float: left;
+        margin: 0 0 0 1em;
+    }
+    div.zp-Import-Messages.selective {
+        margin-top: 1.95em;
+    }
+    
+    
+    
+    /* START OF SETUP CHECK */
+    
+    #zp-Setup-Check {
+        padding: 1.5em 30px;
+    }
+    #zp-Setup-Check-Message.error {
+        background: #fceae9;
+    }
+    #zp-Setup-Check-Message.updated {
+        background: #eef9e6;
+    }
+    div#zp-Setup-Check-Message.error strong em {
+        color: #E14D43;
+        font-style: normal;
+    }
+    div#zp-Setup-Check-Message.updated strong em {
+        color: #7AD03A;
+        font-style: normal;
+    }
+    
+    
+    
+    /* START OF ADD FORM CSS */
+    
+    form#zp-Add {
+        padding: 0;
+        margin: 0;
+    }
+    *:first-child+html form#zp-Add { /* IE7 hack */
+        /*width: 850px;*/
+    }
+    form#zp-Add fieldset {
+        background: transparent;
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+    form#zp-Add div.field {
+        clear: both;
+        padding: 2.2em 2.4em;
+    }
+    
+    form#zp-Add label,
+    form#zp-Add select,
+    form#zp-Add textarea,
+    form#zp-Add input,
+    form#zp-Add aside {
+        display: block;
+        float: left;
+    }
+    form#zp-Add select,
+    form#zp-Add textarea,
+    form#zp-Add input {
+        margin: -4px 0 0;
+    }
+    form#zp-Add input#public_key {
+        min-width: 18em;
+    }
+    form#zp-Add label {
+        font: italic 400 1.1em/1.25em "Droid Serif", serif;
+        width: 20%;
+    }
+    form#zp-Add label.required {
+        background: url('../images/sprite.png') no-repeat 0 -36px;
+        padding-left: 15px;
+        margin-left: -15px;
+    }
+    form#zp-Add aside {
+        float: right;
+        margin-top: -8px;
+        width: 40%;
+    }
+    form#zp-Add aside p {
+        font-size: 0.85em;
+        margin: 0 0 0 1em;
+    }
+    form#zp-Add .last aside p {
+        padding-bottom: 2em;
+    }
+    
+    form#zp-Add input#upload_image,
+    form#zp-Add input#upload_image_button {
+        display: inline;
+    }/* Remove once converted to WP types w/ post image? */
+
+    #zp-Setup div.proceed {
+        border-top: 1px solid #eee;
+        clear: both;
+        width: 100%;
+    }
+    #zp-Setup div.proceed input#zp-Connect {
+        margin: 1em 2em 0.5em;
+        float: right;
+    }
+    /* Thanks to http://nicolasgallagher.com/micro-clearfix-hack/ */
+	#zp-Setup div.proceed:before,
+	#zp-Setup div.proceed:after {
+		content: "";
+		display: table;
+	}
+	#zp-Setup div.proceed:after {
+		clear: both;
+	}
+    
+    form#zp-Add div.message {
+        position: absolute;
+        bottom: 1.1em;
+        right: 8.5em;
+        width: 100%;
+    }
+    div.zp-Loading {
+        background: transparent url('../images/loading_default.gif') no-repeat center;
+        display: none;
+        float: right;
+        letter-spacing: -1000px;
+        overflow: hidden;
+        text-indent: -5000px;
+        margin: 0 0 0;
+        width: 30px;
+        height: 30px;
+    }
+    div.zp-Errors,
+    div.zp-Success {
+        display: none;
+        float: right;
+        font-weight: bold;
+        margin: 0 0 0;
+        padding-left: 35px;
+    }
+    div.zp-Errors {
+        background: url('../images/sprite.png') no-repeat 0 -139px;
+        color: #990033;
+    }
+    div.zp-Success {
+        background: url('../images/sprite.png') no-repeat 0 -76px;
+        color: #009966;
+    }
+    div.zp-Errors p,
+    div.zp-Success p {
+        margin: 5px 0;
     }
     
     /* END OF SETUP CSS */
@@ -246,44 +443,18 @@
     
     /* START OF LOADING CSS */
     
-    div#zp-Zotpress-LoadingSetup {
-        border: 1px solid #eee;
-        border-radius: 0.5em;
-        -moz-border-radius: 0.5em;
-        -webkit-border-radius: 0.5em;
-        background-color: #fcfcfc;
-        margin: 6em auto;
-        padding: 3em;
-        text-align: center;
-        width: 300px;
-    }
-    div#zp-Zotpress-LoadingSetup div.zp-Loading-Initial {
-        margin: 0 auto;
-    }
-    
     div.zp-Loading-Initial {
         background: transparent url('../images/loading_initial.gif') no-repeat -3px 10px;
         margin: 0;
         padding: 0;
         width: 220px;
-        height: 30px;
+        height: 18px;
     }
     div.zp-Loading-Initial h2 {
         margin-bottom: -12px;
     }
     iframe#zp-Loading-Initial {
         visibility: hidden;
-    }
-    
-    div.zp-Loading {
-        background: transparent url('../images/loading_list.gif') no-repeat top left;
-        float: left;
-        letter-spacing: -1000px;
-        overflow: hidden;
-        text-indent: -5000px;
-        margin: -3px 0 0 0;
-        width: 32px;
-        height: 32px;
     }
     
     /* END OF LOADING CSS */
@@ -293,14 +464,14 @@
     /* START TABS */
     
     div#zp-Zotpress-Navigation {
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #ccc;
         margin: 10px 0 20px;
         overflow: visible;
-        height: 47px;
+        /*height: 47px;*/
+        height: 49px;
     }
     
     div#zp-Zotpress-Navigation h1 {
-        /*font: 700 18px/24px "Source Sans Pro", sans-serif;*/
         font: 600 18px/24px "Source Sans Pro", sans-serif;
         float: left;
         margin: 0;
@@ -325,29 +496,29 @@
         text-transform: uppercase;
         text-decoration: none;
     }
-    div#zp-Setup div#zp-Zotpress-Navigation .nav-item,
-    div#zp-Setup div#zp-Zotpress-Navigation :visited.nav-item {
+    div#zp-Setup:not(.zp-Step-Selective) div#zp-Zotpress-Navigation .nav-item,
+    div#zp-Setup:not(.zp-Step-Selective) div#zp-Zotpress-Navigation :visited.nav-item {
         color: #bbb;
     }
     
     div#zp-Zotpress-Navigation :hover.nav-item {
         border-bottom: 0.25em solid #000;
     }
-    div#zp-Setup div#zp-Zotpress-Navigation :hover.nav-item {
+    div#zp-Setup:not(.zp-Step-Selective) div#zp-Zotpress-Navigation :hover.nav-item {
         border-bottom: none;
     }
     
     div#zp-Zotpress-Navigation :active.nav-item,
     div#zp-Zotpress-Navigation .active.nav-item {
         border-bottom: 0.25em solid #000;
-        background-color: #fafafa;
+        background-color: #eaeaea;
     }
     
     div#zp-Zotpress-Navigation .nav-item.nav-tab-active,
     div#zp-Setup div#zp-Zotpress-Navigation .nav-item.nav-tab-active,
     div#zp-Setup div#zp-Zotpress-Navigation .nav-item.nav-tab-active:hover,
     div#zp-Setup div#zp-Zotpress-Navigation .nav-item.nav-tab-active:active {
-        border-bottom: 0.25em solid #ff5900;
+        border-bottom: 0.25em solid #E14D43;
         background-color: transparent;
         color: #000;
     }
@@ -362,84 +533,316 @@
         float: left;
         margin-right: 1em;
         width: 33px;
-        height: 46px;
+        height: 44px;
     }
     
     /* END TABS */
     
     
     
-    /* START FILTER */
+    /* START BROWSE */
     
-    div#zp-Zotpress div#zp-Browse {
-        background-color: #FCFCFC;
-        border: 1px solid #DFDFDF;
-        border-radius: 3px 3px 3px 3px;
-        margin: 18px 0;
+    div#zp-Options-Wrapper,
+    div#zp-Browse-Wrapper {
+        background-color: #fff;
+        border-bottom: 1px solid #ccc;
+        margin-top: -20px;
+        padding: 1em 0 0;
+    }
+	div#zp-Options-Wrapper:before,
+	div#zp-Options-Wrapper:after {
+		content: "";
+		display: table;
+	}
+	div#zp-Options-Wrapper:after {
+		clear: both;
+	}
+    div#zp-Options-Wrapper h3,
+    div#zp-Browse-Wrapper h3 {
+        padding: 15px 30px 25px;
+    }
+    div#zp-Options-Wrapper h3 {
+        border-bottom: 1px solid #eee;
+    }
+    
+    div#zp-Zotpress div#zp-Options-Wrapper hr {
+        border-color: #eee;
+        margin-bottom: 0;
+    }
+    div#zp-Zotpress div#zp-Options-Wrapper div.zp-Column-1,
+    div#zp-Zotpress div#zp-Options-Wrapper div.zp-Column-2 {
+        border-color: #eee;
+        margin-right: 0;
+        width: 49.5%;
+    }
+    div#zp-Zotpress div#zp-Options-Wrapper div.zp-Column-Inner {
+        padding: 0 25px;
+    }
+    
+    div#zp-Browse {
+        background-color: #F9F9F9;
+        margin: 0;
         padding: 0;
+        overflow: hidden;
         width: 100%;
-        min-width: 780px;
     }
-    
-    div#zp-Zotpress div#zp-Filter,
-    div#zp-Zotpress div#zp-Pagination {
-        background-color: #F1F1F1;
-        background-image: -moz-linear-gradient(center top , #F9F9F9, #ECECEC);
-        border-bottom-color: #DFDFDF;
-        border-top-color: #FFFFFF;
-        border-top: 0;
-        min-height: 3em;
-        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
-    }
-    div#zp-Zotpress div#zp-Filter {
-        border-bottom: 1px solid #ddd;
-    }
-    div#zp-Zotpress div#zp-Pagination {
-        border-top: 1px solid #eee;
-        margin-top: 3px;
-    }
-    
-    /* Filter Sections */
-    
-    div#zp-Zotpress div#zp-Filter div.section {
+    div#zp-Browse-Bar {
+        background-color: #ACBAD5;
         float: left;
-        padding: 0.5em 1em;
-        border-left: 1px solid #FCFCFC;
-        border-right: 1px solid #DFDFDF;
+        padding-bottom: 5000px;
+        margin-bottom: -5000px;
+        width: 25%;
     }
-    div#zp-Zotpress div#zp-Filter div.section.first {
-        border-left: 0;
-    }
-    div#zp-Zotpress div#zp-Filter div.section.last {
-        border-right: 0;
-    }
-    
-    div#zp-Zotpress div#zp-Filter label {
+    div#zp-Browse label,
+    div#zp-Browse-Accounts label {
+        /*font: normal 600 1em/1.5em "Open Sans", Helvetica, Arial, sans-serif;*/
+        font: normal 600 1em/1.75em "Droid Serif", serif;
+        color: #fff;
         display: block;
-        float: left;
-        font: 400 1em/1em "Droid Serif","Georgia",serif;
-        padding: 0.55em 1em 0.55em 0;
-    }
-    div#zp-Zotpress div#zp-Filter select#zp-FilterByTag,
-    div#zp-Zotpress div#zp-Filter select#zp-FilterByAccount {
-        display: block !important;
-        float: left;
-        width: 110px;
+        padding: 4% 0 0 6%;
+        text-transform: uppercase;
     }
     
+    
+    /* Accounts */
+    
+    div#zp-Browse-Accounts {
+        float: right;
+        margin-top: -4.4em;
+        margin-right: 30px;
+        text-align: right;
+        width: 50%;
+    }
+    div#zp-Browse-Accounts label {
+        color: #ccc;
+        display: inline;
+        font: normal 400 1em/1.75em "Droid Serif", serif;
+        margin-right: 5px;
+        padding: 0;
+    }
+    select#zp-FilterByAccount {
+        font-size: 0.9em;
+    }
+    
+    
+    /* Collection Folders */
+    
+    div#zp-Browse-Collections {
+        background-color: #ACBAD5;
+        width: 100%;
+    }
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection,
+    div#zp-Browse-Collections a.zp-List-Subcollection:visited
+    {
+        background-color: #7c8798;
+        border-bottom: 1px solid #687384;
+        color: #fff;
+        display: block;
+        font-size: 9pt;
+        line-height: 1.1;
+        padding: 4% 6% 4.5%;
+        outline: none;
+        text-decoration: none;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection:hover
+    {
+        background-color: #9aa3af;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection.selected,
+    div#zp-Browse-Collections a.zp-List-Subcollection.down,
+    div#zp-Browse-Collections a.zp-List-Subcollection:active
+    {
+        background-color: #6d798b;
+        color: #9aa3af;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection span.name {
+        display: block;
+        font-weight: 600;
+        padding-bottom: 4%;
+    }
+    
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel.selected {
+        background-color: #ACBAD5;
+        color: #fff;
+        font: normal 600 1em/1.75em "Droid Serif", serif;
+        padding: 3% 6%;
+        text-transform: uppercase;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel.down span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel.down:hover span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel:active span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel.selected span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel.selected:hover span {
+        background: transparent url('../images/sprite.png') no-repeat -250px -558px;
+        padding-left: 24px;
+    }
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection.child span.name,
+    div#zp-Browse-Collections a.zp-List-Subcollection.child:active span.name,
+    div#zp-Browse-Collections a.zp-List-Subcollection.child:hover span.name {
+        background: transparent url('../images/sprite.png') no-repeat 0 -730px;
+        padding-left: 10px;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection.child.down span.name,
+    div#zp-Browse-Collections a.zp-List-Subcollection.child.down:hover span.name {
+        background: transparent url('../images/sprite.png') no-repeat -490px -730px;
+        padding-left: 10px;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection.child span.item_key,
+    div#zp-Browse-Collections a.zp-List-Subcollection.child span.meta {
+        padding-left: 10px;
+    }
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection span.item_key,
+    div#zp-Browse-Collections a.zp-List-Subcollection span.meta {
+        display: block;
+        font-size: 0.75em;
+        text-transform: uppercase;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection span.item_key {
+        padding-bottom: 3px;
+    }
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection.back span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.back:hover span {
+        background: transparent url('../images/sprite.png') no-repeat 0 -812px;
+        padding-left: 15px;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection.back:active span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.back.down span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.back.down:hover span {
+        background: transparent url('../images/sprite.png') no-repeat -490px -812px;
+        padding-left: 15px;
+    }
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection.last {
+        border-bottom: none;
+    }
+    
+    div.zp-Collection-Title {
+        background-color: #fff;
+        border-bottom: 1px solid #eee;
+        color: #444;
+        font: normal 400 1em/1.75em "Droid Serif", serif;
+        padding: 0.9% 2%;
+        padding-right: 15px;
+        text-transform: uppercase;
+    }
+    div.zp-Collection-Title .item_key {
+        float: right;
+        color: #ccc;
+    }
+    div.zp-Collection-Title .item_key_inner {
+        float: right;
+    }
+    div.zp-Collection-Title .item_key_inner input,
+    div.zp-Collection-Title .item_key_inner span {
+        color: #444;
+        cursor: pointer;
+        display: block;
+        float: right;
+        text-align: right;
+        width: 6em;
+    }
+    div.zp-Collection-Title .item_key_inner input {
+        background: none;
+        border: none;
+        display: none;
+        font: normal 400 1em/1em "Droid Serif", serif;
+        margin: 0;
+        padding: 0;
+    }
+    div.zp-Collection-Title .item_key_inner input:focus {
+        border: none;
+        box-shadow: none;
+        margin-top: 0.3em;
+    }
+    
+    /* Browse Tags */
+    
+    div#zp-Browse-Tags {
+        background-color: #ACBAD5;
+        border-top: 1px solid #687384;
+        padding: 0.05em 0 5%;
+        width: 100%;
+    }
+	div#zp-Browse-Tags:before,
+	div#zp-Browse-Tags:after {
+		content: "";
+		display: table;
+	}
+	div#zp-Browse-Tags:after {
+		clear: both;
+	}
+    div#zp-Browse-Tags label span {
+        background: transparent url('../images/sprite.png') no-repeat -483px -556px;
+        padding-left: 22px;
+    }
+    select#zp-List-Tags {
+        background: #99abcc;
+        border: none;
+        border: 1px solid #8798b4;
+        box-shadow: 0 1px 2px #8798b4 inset;
+        color: #fff;
+        font-size: 0.9em;
+        margin: 4% 6%;
+        width: 88%;
+    }
+    select#zp-List-Tags.active {
+        background-color: #fff;
+        color: #7988a2;
+    }
+    select#zp-List-Tags:focus {
+        border: 1px solid #8798b4;
+        box-shadow: none;
+    }
+    select#zp-List-Tags:focus {
+        background: #8397b8;
+        border-color: #7185a6;
+        color: #fff;
+    }
+    select#zp-List-Tags option {
+        background: #fff;
+        border-bottom: 1px solid #eee;
+        color: #666;
+        padding: 0.5em 1em;
+    }
+    
+    
+    /* Pagination */
+    
+    div#zp-Zotpress div#zp-Pagination {
+        position: relative;
+        background-color: #fff;
+        /*border-top: 1px solid #eee;*/
+        clear: both;
+        min-height: 3em;
+    }
     div#zp-Pagination span {
         display: block;
         font-size: 12px;
         font-family: "Droid Serif", serif;
         padding: 1em;
+        text-align: right;
         text-shadow: 0 1px 0 #FAFAFA;
     }
     
-    /* END FILTER */
+    /* END BROWSE */
     
     
     
     /* START CITATION LISTS */
+    
+    div#zp-Zotpress div#zp-List {
+        float: right;
+        border-top: 1px solid #E5E5E5;
+        border-bottom: 1px solid #eee;
+        width: 75%;
+    }
     
     div#zp-Zotpress div#zp-List h3 {
         display: block;
@@ -461,9 +864,8 @@
     div#zp-Zotpress div#zp-List a,
     div#zp-Zotpress div#zp-List a:visited
     {
-        color: #FF5900; /* bae1fe */
+        color: #E14D43; /* bae1fe */
         text-decoration: none;
-        /*text-shadow: 0 1px 0 #777;*/
     }
     div#zp-Zotpress div#zp-List h3 a {
         float: right;
@@ -475,42 +877,6 @@
         color: #999;
     }
     
-    /* Subcollection Folders */
-    
-    div#zp-List-Subcollection {
-        clear: both;
-        margin-bottom: 0;
-    }
-    div#zp-Zotpress div#zp-List a.zp-List-Subcollection,
-    div#zp-Zotpress div#zp-List a.zp-List-Subcollection:visited
-    {
-        background: #eef5fb url('../images/sprite.png') no-repeat 10px -551px; /* f1f4f7 */
-        border-bottom: 1px solid #e7e9ec;
-        color: #5f5f5f;
-        display: block;
-        font-size: 9pt;
-        padding: 0.5em 1em 0.5em 3.1em;
-        outline: none;
-        text-decoration: none;
-        text-shadow: 0 1px 0 #f9fafb;
-    }
-    div#zp-Zotpress div#zp-List a.zp-List-Subcollection:hover
-    {
-        color: #aeb8bd;
-        background-color: #f4f8fb;
-        text-shadow: 0 1px 0 #fff;
-    }
-    div#zp-Zotpress div#zp-List a.zp-List-Subcollection:active
-    {
-        background-color: #deecf8;
-        color: #969fb1;
-        text-shadow: 0 1px 0 #ecf4fb;
-    }
-    
-    div#zp-Zotpress div#zp-List a.zp-List-Subcollection span.meta {
-        float: right;
-    }
-    
     /* END CITATION LISTS */
     
     
@@ -518,127 +884,124 @@
     /* START CITATIONS */
     
     div#zp-Zotpress div#zp-List div.zp-Entry {
-        min-height: 100px;
-        margin: 3px 3px 0;
-    }
-    div#zp-Zotpress div#zp-List div.zp-Entry.odd {
         background-color: #fff;
+        padding: 15px;
+    }
+	div#zp-Zotpress div#zp-List div.zp-Entry:before,
+	div#zp-Zotpress div#zp-List div.zp-Entry:after {
+		content: "";
+		display: table;
+	}
+	div#zp-Zotpress div#zp-List div.zp-Entry:after {
+		clear: both;
+	}
+    div#zp-Zotpress div#zp-List div.zp-Entry.odd {
+        background-color: transparent;
     }
     
     div#zp-Zotpress div#zp-List div.zp-Entry-Image {
         position: relative;
-        float: left;
+        float: right;
+        margin-left: 15px;
         overflow: hidden;
         text-align: center;
         width: 100px;
         height: 100px;
     }
-    div#zp-Zotpress div#zp-List div.zp-Entry-Image.hasImage a {
-        visibility: hidden;
-    }
     
-    div#zp-Zotpress div#zp-List div.zp-Entry-Image a,
-    div#zp-Zotpress div#zp-List div.zp-Entry-Image a:link,
-    div#zp-Zotpress div#zp-List div.zp-Entry-Image a:visited,
-    div#zp-Zotpress div#zp-List div.zp-Entry-Image a:active,
-    div#zp-Zotpress div#zp-List div.zp-Entry-Image a:hover
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload,
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload:link,
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload:visited,
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload:active
     {
-        z-index: 4;
+        z-index: 2;
         top: 0;
         left: 0;
-        background: none;
-        border: none;
-        color: #ccc;
         position: absolute;
+        background-color: #F6F6F6;
+        border: 2px dashed #eee;
+        color: #ccc;
         display: block;
+        font-size: 0.9em;
+        font-weight: bold;
+        line-height: 96px;
         text-decoration: none;
-        text-shadow: 0 1px 0 #FFFFFF;
+        width: 96px;
+        height: 96px;
+    }
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image.hasimage a.upload {
+        background: transparent;
+        border: none;
+        color: #fff;
+        opacity: 0;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+        -moz-opacity: 0;
+        -khtml-opacity: 0;
+        text-shadow: 0px 0px 3px rgba(0, 0, 0, 1.0);
         width: 100px;
         height: 100px;
     }
-    
-  div#zp-Zotpress div#zp-List div.zp-Entry-Image a.change,
-  div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload {
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload:hover {
+        background-color: #a8cf30;
+        border: 2px solid #a8cf30;
+        color: #fff;
+    }
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image.hasimage a.upload:hover {
+        background: transparent;
+        border: none;
+        opacity: 1;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+        filter: alpha(opacity=100);
+        -moz-opacity: 1;
+        -khtml-opacity: 1;
+        width: 100px;
+        height: 100px;
+    }
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.delete {
         position: absolute;
         z-index: 3;
-        color: #ccc;
-        display: block;
-        font-weight: bold;
-        padding-top: 40px;
-        overflow: hidden;
-        width: 100px;
-        height: 100px;
-    }
-  div#zp-Zotpress div#zp-List div.zp-Entry-Image a.delete {
-        position: absolute;
-        z-index: 4;
         top: 0;
         right: 0;
         left: auto;
-        background-color: #fe2701;
-        border: 1px solid #f57465;
-        border-radius: 0 0 0 10px;
-        -moz-border-radius: 0 0 0 10px;
-        box-shadow: -1px 1px 5px #7b8930;
-        -moz-box-shadow: -1px 1px 5px #7b8930;
-        -webkit-box-shadow: -1px 1px 5px #7b8930;
+        border: none;
+        background-color: #E14D43;
         color: #fff;
-        display: block;
+        display: none;
         font-size: 14pt;
         font-weight: bold;
-        padding: 3px 8px 5px 10px;
-        width: auto;
-        height: auto;
-        visibility: hidden;
+        line-height: 25px;
+        text-align: center;
+        width: 25px;
+        height: 25px;
     }
-    div#zp-Zotpress div#zp-List div.zp-Entry-Image.hover a {
-        color: #fff;
-        text-shadow: 0 1px 0 #999;
-        visibility: visible;
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image.hover.hasimage a.delete {
+        display: block;
     }
     
     div#zp-Zotpress div#zp-List div.zp-Entry-Image img {
-        z-index: 2;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100px;
-        height: 100px;
-    }
-    div#zp-Zotpress div#zp-List div.zp-Entry-Image.hover img {
-        opacity: 0.25;
-        filter: alpha(opacity = 25);
-    }
-    
-    div#zp-Zotpress div#zp-List div.zp-Entry-Image div.bg {
         z-index: 1;
         position: absolute;
         top: 0;
         left: 0;
-        background-color: #F6F6F6;
-        border: 2px dashed #eee;
-        width: 96px;
-        height: 96px;
-    }
-    div#zp-Zotpress div#zp-List div.zp-Entry-Image.hover div.bg {
-        background-color: #c7e078;
-        border: 2px solid #a8cf30;
+        width: 100px;
+        height: 100px;
     }
     
     div#zp-Zotpress div.zp-Entry div.csl-bib-body {
-        margin: 0 0 15px 115px;
+        font-size: 0.9em;
+        margin: 0 0 15px;
     }
     
     div#zp-Zotpress div.zp-Entry div.zp-Entry-ID {
-        border-top: 1px dashed #EEEEEE;
+        /*border-top: 1px dashed #EEEEEE;*/
         color: #999;
         font-size: 10px;
         display: block;
-        margin: -5px 0 0 140px;
+        margin: 0;
     }
     div#zp-Zotpress div.zp-Entry div.zp-Entry-ID span.title {
-        color: #ccc;
-        font-family: 'Droid Serif', 'Georgia', serif;
+        /*color: #ccc;*/
         text-transform: uppercase;
     }
     div#zp-Zotpress div.zp-Entry div.zp-Entry-ID div {
@@ -665,7 +1028,7 @@
     
     div#zp-Zotpress form#zp-Image {
         -moz-border-radius: 10px;
-        background-color: #f3f3f3;
+        background-color: #fafafa;
         margin: 0.75em 0 30px 0;
         width: 780px;
     }
@@ -741,347 +1104,119 @@
     
     /* START ACCOUNTS */
     
-    div#zp-Accounts {
+    div#zp-ManageAccounts {
         clear: both;
-        padding: 1.5em 0;
     }
-    div#zp-Accounts-Inner {
-        background-color: #FCFCFC;
-        border: 1px solid #DFDFDF;
-        margin: 0;
-        padding: 0;
-        
-        border-radius: 3px;
-        -moz-border-radius: 3px;
-        -webkit-border-radius: 3px;
+    div#zp-ManageAccounts h3 {
+        width: 50%;
     }
-
-    div#zp-AccountsHeader {
-        background-color: #F1F1F1;
-        background-image: -moz-linear-gradient(center top , #F9F9F9, #ECECEC);
-        border-bottom-color: #DFDFDF;
-        border-top-color: #FFFFFF;
-        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
-        min-height: 3em;
-    }
-
-    div#zp-AccountsHeader span {
-        border-left: 1px solid #FCFCFC;
-        border-right: 1px solid #DFDFDF;
-        display: block;
-        float: left;
-        padding: 1em;
-        /*font: normal 1em/1em "Georgia", serif;*/
-        font: 400 1em/1em "Droid Serif", "Georgia", serif;
-        width: 100px;
-    }
-    div#zp-AccountsHeader span.first {
-        border-left: none;
-    }
-    div#zp-AccountsHeader span.last {
-        border-right: none;
-    }
-    
-    div#zp-AccountsList {
-        float: none;
-        margin: 0;
-        min-height: 28px;
-    }
-
-    div#zp-AccountsList p {
-        margin: 0;
-        padding: 8px 0 7px 10px;
-    }
-    
-    div#zp-AccountsList div.zp-Account {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        min-height: 3em;
-    }
-    div#zp-AccountsList div.zp-Account.stripe {
-        background-color: #fff;
-    }
-    
-    div#zp-AccountsList div.zp-Account span {
-        border-left: 1px solid #eee;
-        border-right: 1px solid #fff;
-        display: block;
-        float: left;
-        padding: 1em;
-        width: 100px;
-    }
-    div#zp-AccountsList div.zp-Account span.zp-Sync-Messages {
-        border: none;
-        font-style: italic;
-        font-size: 0.8em;
-        color: #ccc;
-        padding: 0 0 0 0.5em;
-        width: auto;
-    }
-    div#zp-AccountsList div.zp-Account span.first {
-        border-left: none;
-    }
-    div#zp-AccountsList div.zp-Account span.last {
-        border-right: none;
-    }
-    div#zp-AccountsHeader span.account_type,
-    div#zp-AccountsList div.zp-Account span.account_type {
-        width: 40px;
-    }
-    div#zp-AccountsHeader span.api_user_id,
-    div#zp-AccountsList div.zp-Account span.api_user_id {
-        width: 60px;
-    }
-    div#zp-AccountsHeader span.public_key,
-    div#zp-AccountsList div.zp-Account span.public_key {
-        width: 200px;
-    }
-    div#zp-AccountsHeader span.nickname,
-    div#zp-AccountsList div.zp-Account span.nickname {
-        width: 100px;
-    }
-    div#zp-AccountsHeader span.delete,
-    div#zp-AccountsList div.zp-Account span.delete {
-        /*width: 70px;*/
-        width: auto;
-    }
-
-    div#zp-AccountsList div.zp-Account span.delete a {
-        display: block;
-        float: left;
-        text-indent: -5000px;
-        overflow: hidden;
-        outline: none;
-        margin: 0 3px 0 0;
-        width: 17px;
-        height: 17px;
-    }
-    div#zp-AccountsList div.zp-Account span.delete a:hover {
-        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-        filter: alpha(opacity=50);
-        -moz-opacity: 0.5;
-        -khtml-opacity: 0.5;
-        opacity: 0.5;
-    }
-    div#zp-AccountsList div.zp-Account span.delete a.sync {
-        background: url('../images/sprite.png') no-repeat -21px -425px;
-    }
-    div#zp-AccountsList div.zp-Account span.delete a.sync.syncing {
-        background: transparent url('../images/syncing.gif') no-repeat 0 0;
-    }
-    div#zp-AccountsList div.zp-Account span.delete a.sync.error {
-        background: url('../images/sprite.png') no-repeat -41px -425px;
-    }
-    div#zp-AccountsList div.zp-Account span.delete a.sync.success {
-        background: url('../images/sprite.png') no-repeat -61px -425px;
-    }
-    div#zp-AccountsList div.zp-Account span.delete a.import {
-        background: url('../images/sprite.png') no-repeat 0 -425px;
-    }
-    div#zp-AccountsList div.zp-Account span.delete a.delete {
-        background: url('../images/sprite.png') no-repeat -107px 0;
-    }
-    
-    /* END ACCOUNTS */
-    
-    
-    
-    /* START OF FORM CSS */
-    
-    form#zp-Add {
-        -moz-border-radius: 10px;
-        background-color: #f7f7f7;
-        margin: 0.75em 0 30px 0;
-        width: 780px;
-    }
-    *:first-child+html form#zp-Add { /* IE7 hack */
-        width: 850px;
-    }
-    form#zp-Add fieldset {
-        background: transparent;
-        border: none;
-        border-top: 1px solid #eaeaea;
-        margin: 0;
-        padding: 15px;
-        padding-right: 0;
-    }
-    
-    form#zp-Add div {
-        float: left;
-        margin-right: 20px;
-    }
-    form#zp-Add div.last {
-        margin: 0;
-    }
-    
-    form#zp-Add label,
-    form#zp-Add select,
-    form#zp-Add textarea,
-    form#zp-Add input {
-        display: block;
-        margin-left: 15px;
-    }
-    
-    form#zp-Add select[name="account_type"] {
-        clear: both;
-        width: 70px;
-    }
-    form#zp-Add input[name="api_user_id"] {
-        width: 100px;
-    }
-    form#zp-Add input[name="public_key"] {
-        width: 200px;
-    }
-    
-    form#zp-Add label {
-        float: left;
-        padding: 0 0 3px 0;
-    }
-    form#zp-Add label[for="account_type"] {
-        padding-right: 0;
-    }
-    form#zp-Add label.required {
-        background: url('../images/sprite.png') no-repeat 0 -36px;
-        padding-left: 15px;
-        margin-left: 0;
-    }
-    
-    form#zp-Add label span {
-        color: #666;
-        font-size: 11px;
-        font-style: italic;
-    }
-    form#zp-Add label.zp-Help span {
-        background: transparent url('../images/help.png') no-repeat right 2px;
-        cursor: help;
-        padding-right: 20px;
-        color: #333;
-        font-size: 13px;
-        font-style: normal;
-    }
-    
-    form#zp-Add label[for="account_type"] {
-        float: none;
-    }
-    
-    form#zp-Add input#upload_image,
-    form#zp-Add input#upload_image_button {
-        display: inline;
-    }
-    form#zp-Add input,
-    form#zp-Add textarea {
-        clear: both;
-        margin-bottom: 10px;
-    }
-
-
-    form#zp-Add input#zp-Connect {
-        margin-top: 20px;
-        margin-left: 0;
-    }
-    
-    form#zp-Add input#zp-Submit {
-        display: block;
-        clear: none;
-        float: left;
-    }
-    form#zp-Add .help {
-        color: #999;
-        display: block;
-        font: italic 10px/10px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
-        margin: -7px 0 10px 3px;
-    }
-    
-    form#zp-Add div.message {
-        clear: both;
-        margin-bottom: -10px;
-        width: 100%;
-    }
-    
-    div.zp-Loading {
-        display: none;
-        margin: 2px 0 0 10px;
-    }
-    
-    div.zp-Errors,
-    div.zp-Success {
-        display: none;
-        font-weight: bold;
-        margin: 0 0 5px 10px;
-        padding-left: 35px;
-    }
-    div.zp-Errors {
-        background: url('../images/sprite.png') no-repeat 0 -140px;
-        color: #990033;
-    }
-    div.zp-Success {
-        background: url('../images/sprite.png') no-repeat 0 -77px;
-        color: #009966;
-    }
-    
-    div.zp-Errors p,
-    div.zp-Success p {
-        margin: 7px 0 5px 0;
-    }
-    
-    
-    /* START OF ADD ACCOUNT CSS */
     
     a.zp-AddAccountButton,
     a.zp-AddAccountButton:link,
     a.zp-AddAccountButton:visited,
     a.zp-AddAccountButton:active,
     a.zp-AddAccountButton:hover {
-        background: #9dd53a;
-        color: #fff;
-        font: bold 1em/1em "Arial",sans-serif;
-        margin: 0 auto;
-        padding: 0.25em 0.5em;
-        text-align: center;
-        text-decoration: none;
-        text-shadow: 0 1px 0 #7aa824;
-        vertical-align: -1.45em;
-        
-        border-radius: 5px;
-        -moz-border-radius: 5px;
-        -webkit-border-radius: 5px;
+        float: right;
+        margin-top: -2.55em;
+        text-shadow: none;
+    }
+    a.zp-AddAccountButton span {
+        background: transparent url('../images/sprite.png') no-repeat 0 -351px;
+        padding: 0 2px 0 16px;
     }
     a.zp-AddAccountButton:hover {
         background: #ceec8a;
-        text-shadow: 0 1px 0 #9dd53a;
+    }
+    a.zp-AddAccountButton:hover span {
+        background-position: -161px -351px;
     }
     a.zp-AddAccountButton:active {
         background: #777;
         color: #000;
-        text-shadow: 0 1px 0 #888;
-    }
-
-    a.zp-AddAccountButton span {
-        background: transparent url('../images/sprite.png') no-repeat 0 -353px;
-        padding: 0 2px 0 16px;
     }
     a.zp-AddAccountButton:active span {
-        background-position: -161px -353px;
+        background-position: -161px -350px;
     }
     
-    div#zp-ManageAccounts {
-        clear: both;
+    #zp-Accounts {
+        margin: 1.55em 0;
     }
     
-    div#zp-ManageAccounts h3 {
-        float: left;
+    #zp-Accounts th {
+        /*font: 300 1.35em/1.35em "Oswald", sans-serif;*/
+        /*text-transform: uppercase;*/
+        font: 300 1.1em/1.1em "Droid Serif", sans-serif;
     }
     
-    div#zp-AddAccount-Form {
-        display: none;
+    #zp-Accounts .account_type {
+        width: 3em;
     }
-    div#zp-AddAccount-Form.visible {
+    #zp-Accounts .api_user_id {
+        width: 4em;
+    }
+    #zp-Accounts .public_key {
+        /*width: 11.5em;*/
+        width: 13.5em;
+    }
+    #zp-Accounts .actions {
+        /*width: 18em;*/
+        width: 22.5em;
+    }
+
+    #zp-AccountsList .actions a {
         display: block;
+        float: left;
+        outline: none;
+        margin: 0 1.25em 0.25em 0;
+        height: 21px;
+    }
+    #zp-AccountsList .actions a:before {
+        background-image: url('../images/sprite.png');
+        background-repeat: no-repeat;
+        padding: 0.15em 0 0.15em 2em;
+        vertical-align: middle;
+        
+        content: "";
+        width: 25px;
+        height: 25px;
+    }
+    #zp-AccountsList .actions a:hover:before {
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+        filter: alpha(opacity=50);
+        -moz-opacity: 0.5;
+        -khtml-opacity: 0.5;
+        opacity: 0.5;
+    }
+    #zp-AccountsList .actions a.sync span.icon {
+        background-position: -31px -422px;
+    }
+    #zp-AccountsList .actions a.sync.syncing span.icon {
+        background: transparent url('../images/syncing.gif') no-repeat 0 0;
+    }
+    #zp-AccountsList .actions a.sync.error span.icon {
+        background-position: -51px -422px;
+    }
+    #zp-AccountsList .actions a.sync.success span.icon {
+        background-position: -61px -422px;
+    }
+    #zp-AccountsList .actions a.selective:before {
+        background-position: -252px -422px;
+    }
+    #zp-AccountsList .actions a.import:before {
+        background-position: 0 -422px;
+    }
+    #zp-AccountsList .actions a.delete {
+        margin-right: 0;
+    }
+    #zp-AccountsList .actions a.delete:before {
+        background-position: -105px 0;
     }
     
-    /* END OF ADD ACCOUNT CSS */
+    /* END ACCOUNTS */
     
+    
+    
+
     
     
     /* START OF MODAL CSS */
@@ -1106,22 +1241,23 @@
     /* START OF DOCUMENTATION CSS */
     
     div#zp-Intext-Example {
-        background-color: #F6F6F6;
-        -moz-box-shadow: 0 0 5px #888;
-        -webkit-box-shadow: 0 0 5px#888;
-        box-shadow: 0 0 5px #888;
+        background-color: #fff;
+        -moz-box-shadow: 0 0 1px #aaa;
+        -webkit-box-shadow: 0 0 1px#aaa;
+        box-shadow: 0 0 1px #aaa;
         float: right;
-        font: italic 400 12px/18px "Droid Serif","Georgia",serif;
+        font: normal 400 12px/18px "Droid Serif","Georgia",serif;
         margin: 1em 0 0 2em;
         padding: 2em;
         width: 24%;
     }
     div#zp-Intext-Example .title {
         font-weight: 600;
+        font-style: italic;
     }
     
     div#zp-Zotpress code {
-        background: #eaeaea;
+        background: #ddd;
         border-radius: 3px;
         -moz-border-radius: 3px;
         -webkit-border-radius: 3px;
@@ -1131,7 +1267,7 @@
     
     .zp-Documentation {
         border: none;
-        background-color: #f6f6f6;
+        background-color: #fff;
         margin: 2em 0;
         padding: 0;
     }
@@ -1140,7 +1276,7 @@
         font-weight: bold;
     }
     div#zp-Zotpress .zp-Documentation code {
-        background: #e1e1e1;
+        background: #eaeaea;
     }
     
     .zp-Documentation tr,
@@ -1154,10 +1290,12 @@
         vertical-align: top;
     }
     .zp-Documentation td {
-        border-bottom: 1px solid #fff;
-    }
-    .zp-Documentation td {
+        border-bottom: 1px solid #f1f1f1;
         padding: 12px 16px;
+    }
+    .zp-Documentation .zebra td {
+        background-color: #f9f9f9;
+        border-bottom: 1px solid #eee;
     }
     .zp-Documentation p {
         margin: 0;
@@ -1186,23 +1324,20 @@
     
     .zp-Documentation .type {
         background-color: #ACBAD5;
-        border-bottom: 1px solid #d5dcea;
+        border-bottom: 1px solid #859ac2;
     }
     .zp-Documentation .zebra .type {
         background-color: #99abcc;
-        border-bottom: 1px solid #c1cde1;
+        border-bottom: 1px solid #859ac2;
     }
     
-    .zp-Documentation .zebra td {
-        background-color: #f1f1f1;
-    }
     .zp-Documentation .code {
         background-color: #ffcb15;
-        border-bottom: 1px solid #fff09d;
+        border-bottom: 1px solid #f9a93e;
     }
     .zp-Documentation .zebra .code {
         background-color: #ffb915;
-        border-bottom: 1px solid #ffe866;
+        border-bottom: 1px solid #f2aa00;
     }
     .zp-Documentation .example {
         min-width: 20em;
@@ -1216,7 +1351,7 @@
         margin-top: 1em;
     }
     
-    .zp-Documentation tr.last td,
+    /*.zp-Documentation tr.last td,*/
     .zp-Documentation td.last {
         border-bottom: none;
     }
@@ -1265,19 +1400,27 @@
     
     div.zp-Zotpress-Options {
         border-left: 0.35em solid #000;
-        margin: 20px 0 50px;
+        margin: 20px 0 30px;
         padding: 0.6em 1em;
+    }
+    div.zp-Zotpress-Options:before,
+    div.zp-Zotpress-Options:after {
+        content: "";
+        display: table;
+    }
+    div.zp-Zotpress-Options:after {
+        clear: both;
     }
     
     div#zp-Zotpress div.zp-Column-1 {
-        border-right: 1px solid #eee;
+        border-right: 1px solid #ddd;
         float: left;
-        margin-right: 40px;
-        width: 400px;
+        margin-right: 4%;
+        width: 47.5%
     }
     div#zp-Zotpress div.zp-Column-2 {
         float: left;
-        width: 400px;
+        width: 47.5%
     }
     
     div.zp-Zotpress-Options label {
@@ -1301,12 +1444,13 @@
     
     div#zp-Zotpress div.zp-Zotpress-Options div.zp-Loading {
         display: none;
+        float: left;
         margin: 0.6em 0 0 0.25em;
     }
     div#zp-Zotpress div.zp-Zotpress-Options div.zp-Success,
     div#zp-Zotpress div.zp-Zotpress-Options div.zp-Errors {
         margin: 0.6em 0 0;
-        padding: 5px 0 5px 32px;
+        padding: 6px 0 4px 32px;
         float: left;
     }
     
@@ -1321,12 +1465,25 @@
     }
     
     div#zp-Zotpress .zp-Column-1 p.note {
-        margin-right: 1em;
+        /*margin-right: 1em;*/
     }
     
     div#zp-Zotpress-Options-Reset {
         border-left: 0;
         padding: 0;
+    }
+    
+    div.zp-CPT-Checkbox {
+        float: left;
+        width: 50%;
+    }
+    div.zp-Zotpress-Options div.zp-CPT-Checkbox label {
+        display: inline;
+        line-height: 2em;
+        vertical-align: 0.05em;
+    }
+    div.zp-Zotpress-Options div.zp-CPT-Checkbox label.dis {
+        color: #ccc;
     }
     
     /* END OF OPTIONS PAGE CSS */

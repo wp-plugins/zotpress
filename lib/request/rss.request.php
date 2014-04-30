@@ -73,9 +73,7 @@ if (!class_exists('ZotpressRequest'))
                 
                 function getXmlData( $url )
                 {
-                        //header( 'Zotero-API-Version: 2' );
-                        //$response = wp_remote_get( $url );
-                        $response = wp_remote_get( $url, array( 'headers' => array("Zotero-API-Version: 1") ) );
+                        $response = wp_remote_get( $url, array( 'headers' => array("Zotero-API-Version: 2") ) );
                         
                         if ( is_wp_error($response) || ! isset($response['body']) )
                         {
@@ -85,18 +83,25 @@ if (!class_exists('ZotpressRequest'))
                                 {
                                         // Try again with less restrictions
                                         add_filter('https_ssl_verify', '__return_false'); //add_filter('https_local_ssl_verify', '__return_false');
-                                        
-                                        $response = wp_remote_get( $url );
+                                        $response = wp_remote_get( $url, array( 'headers' => array("Zotero-API-Version: 2") ) );
                                         
                                         if ( is_wp_error($response) || ! isset($response['body']) )
+                                        {
                                                 $this->request_error = $response->get_error_message();
+                                        }
+                                        else if ( $response == "An error occurred" || ( isset($response['body']) && $response['body'] == "An error occurred") )
+                                        {
+                                                $this->request_error = "WordPress was unable to import from Zotero. This is likely caused by an incorrect citation style name. For example, 'mla' is now 'modern-language-association'. Use the name found in the style's URL at the Zotero Style Repository.";
+                                        }
                                         else // no errors this time
+                                        {
                                                 $this->request_error = false;
+                                        }
                                 }
                         }
-                        else if ( $response == "An error occurred" )
+                        else if ( $response == "An error occurred" || ( isset($response['body']) && $response['body'] == "An error occurred") )
                         {
-                                $this->request_error = "An error occurred: WordPress was unable to import from Zotero using this request URL.";
+                                $this->request_error = "WordPress was unable to import from Zotero. This is likely caused by an incorrect citation style name. For example, 'mla' is now 'modern-language-association'. Use the name found in the style's URL at the Zotero Style Repository.";
                         }
                         
                         $data = wp_remote_retrieve_body( $response ); // Thanks to Trainsmart.com developer!

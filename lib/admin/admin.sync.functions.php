@@ -1,7 +1,7 @@
 <?php
     
-    // Prevent access to non-logged in users
-    if ( !is_user_logged_in() ) { exit("Access denied."); }
+    // Prevent access to users who are not editors
+    if ( !current_user_can('edit_others_posts') && !is_admin() ) wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
     
     
     /****************************************************************************************

@@ -15,6 +15,7 @@
             'sort' => false,
             'order' => "ASC",
             'showimage' => "no",
+            'showtags' => "no",
             'title' => "no",
             'download' => "no",
             'downloadable' => false,
@@ -22,7 +23,8 @@
             'abstract' => false,
             'abstracts' => false,
             'cite' => false,
-            'citeable' => false
+            'citeable' => false,
+            'target' => false
         ), $atts));
         
         
@@ -31,30 +33,31 @@
         $style = str_replace('"','',html_entity_decode($style));
         $sortby = str_replace('"','',html_entity_decode($sortby));
         
-        if ($order)
-            $order = str_replace('"','',html_entity_decode($order));
-        else if ($sort)
-            $order = str_replace('"','',html_entity_decode($sort));
+        if ($order) $order = str_replace('"','',html_entity_decode($order));
+        else if ($sort) $order = str_replace('"','',html_entity_decode($sort));
         
         $showimage = str_replace('"','',html_entity_decode($showimage));
+        
+        // Show tags
+        if ($showtags == "yes" || $showtags == "true" || $showtags === true) $showtags = true;
+        else $showtags = false;
+        
         $title = str_replace('"','',html_entity_decode($title));
         
-        if ($download)
-            $download = str_replace('"','',html_entity_decode($download));
-        else if ($downloadable)
-            $download = str_replace('"','',html_entity_decode($downloadable));
+        if ($download) $download = str_replace('"','',html_entity_decode($download));
+        else if ($downloadable) $download = str_replace('"','',html_entity_decode($downloadable));
+        if ($download == "yes" || $download == "true" || $download === true) $download = true; else $download = false;
         
         $notes = str_replace('"','',html_entity_decode($notes));
         
-        if ($abstracts)
-            $abstracts = str_replace('"','',html_entity_decode($abstracts));
-        else if ($abstract)
-            $abstracts = str_replace('"','',html_entity_decode($abstract));
+        if ($abstracts) $abstracts = str_replace('"','',html_entity_decode($abstracts));
+        else if ($abstract) $abstracts = str_replace('"','',html_entity_decode($abstract));
         
-        if ($cite)
-            $cite = str_replace('"','',html_entity_decode($cite));
-        else if ($citeable)
-            $cite = str_replace('"','',html_entity_decode($citeable));
+        if ($cite) $cite = str_replace('"','',html_entity_decode($cite));
+        else if ($citeable) $cite = str_replace('"','',html_entity_decode($citeable));
+        
+        if ($target == "new" || $target == "yes" || $target == "_blank" || $target == "true" || $target === true) $target = true;
+        else $target = false;
         
         
         // SORT BY AND SORT ORDER
@@ -70,6 +73,7 @@
         
         $current_title =  "";
         $citation_abstract = "";
+        $citation_tags = "";
         $citation_notes = "";
         $zp_notes_num = 1;
         
@@ -79,8 +83,7 @@
         //$zp_output .= "<span class=\"ZOTPRESS_UPDATE_NOTICE\">Checking ...</span>\n\n";
         
         // Add style, if set
-        if ($style)
-            $zp_output .= "<span class=\"zp-Zotpress-Style\" style=\"display:none;\">".$style."</span>\n\n";
+        if ($style) $zp_output .= "<span class=\"zp-Zotpress-Style\" style=\"display:none;\">".$style."</span>\n\n";
         
         foreach ($GLOBALS['zp_shortcode_instances'][get_the_ID()] as $item => $zp_citation)
         {
@@ -101,6 +104,28 @@
                 $citation_image .= "<img src='".$zp_citation["image"]."' alt='image' />";
                 $citation_image .= "</div>\n";
                 $has_citation_image = " zp-HasImage";
+            }
+            
+            // TAGS
+            // Grab tags associated with item
+            if ( $showtags )
+            {
+                global $wpdb;
+                
+                $zp_showtags_query = $wpdb->get_results("SELECT wp_zotpress_zoteroTags.title FROM wp_zotpress_zoteroTags WHERE FIND_IN_SET('".$zp_citation["item_key"]."', wp_zotpress_zoteroTags.listitems);", ARRAY_A);
+                
+                if ( count($zp_showtags_query) > 0)
+                {
+                    $citation_tags = "<p class='zp-Zotpress-ShowTags'><span class='title'>Tags:</span> ";
+                    
+                    foreach ($zp_showtags_query as $i => $zp_showtags_tag)
+                    {
+                        $citation_tags .= "<span class='tag'>" . $zp_showtags_tag["title"] . "</span>";
+                        if ( $i != (count($zp_showtags_query)-1) ) $citation_tags .= "<span class='separator'>,</span> ";
+                    }
+                    $citation_tags .= "</p>\n";
+                }
+                unset($zp_showtags_query);
             }
             
             // ABSTRACT
@@ -139,26 +164,38 @@
             }
             
             // Hyperlink URL: Has to go before Download
-            if (isset($zp_this_meta->url) && strlen($zp_this_meta->url) > 0) {
-                $zp_citation['citation'] = str_replace(htmlentities($zp_this_meta->url), "<a title='".$zp_this_meta->title."' rel='external' href='".urldecode(urlencode(htmlentities($zp_this_meta->url)))."'>".urldecode(urlencode(htmlentities($zp_this_meta->url)))."</a>", $zp_citation['citation']);
+            if (isset($zp_this_meta->url) && strlen($zp_this_meta->url) > 0)
+            {
+                $zp_url_replacement = "<a title='".$zp_this_meta->title."' rel='external' ";
+                if ( $target ) $zp_url_replacement .= "target='_blank' ";
+                $zp_url_replacement .= "href='".urldecode(urlencode(htmlentities($zp_this_meta->url)))."'>".urldecode(urlencode(htmlentities($zp_this_meta->url)))."</a>";
+                
+                // Replace ampersands
+                $zp_citation['citation'] = str_replace(htmlspecialchars($zp_this_meta->url), $zp_this_meta->url, $zp_citation['citation']);
+                
+                // Then replace with linked URL
+                $zp_citation['citation'] = str_replace($zp_this_meta->url, $zp_url_replacement, $zp_citation['citation']);
             }
             
             // DOWNLOAD
-            if ($download == "yes" || $download == "true" || $download === true)
+            if ( $download )
             {
-                global $wpdb;
+                //global $wpdb;
+                //
+                //$zp_download_url = $wpdb->get_row("SELECT item_key, citation, json, linkMode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['userid']."'
+                //        AND parent = '".$zp_citation["item_key"]."' AND linkMode IN ( 'imported_file', 'linked_url' ) ORDER BY linkMode ASC LIMIT 1;", OBJECT);
                 
-                $zp_download_url = $wpdb->get_row("SELECT item_key, citation, json, linkMode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['userid']."'
-                        AND parent = '".$zp_citation["item_key"]."' AND linkMode IN ( 'imported_file', 'linked_url' ) ORDER BY linkMode ASC LIMIT 1;", OBJECT);
+                $zp_download_url = json_decode($zp_citation["download"]);
                 
-                if (!is_null($zp_download_url))
+                if ( !is_null($zp_download_url) )
                 {
-                    if ($zp_download_url->linkMode == "imported_file") {
-                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['userid']."&download=".$zp_download_url->item_key."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
+                    if ($zp_download_url->linkMode == "imported_file")
+                    {
+                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['userid']."&download=".$zp_citation["download_key"]."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
                     }
-                    else {
-                        $zp_download_meta = json_decode($zp_download_url->json);
-                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_meta->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
+                    else
+                    {
+                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_url->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
                     }
                 }
             }
@@ -184,9 +221,8 @@
             $zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );
             
             // OUTPUT
-            
             $zp_output .= "<a title='Reference to citation for `".$zp_citation["title"]."`' id='zp-".get_the_ID()."-".$zp_citation["item_key"]."'></a><div class='zp-Entry".$has_citation_image."' rel='".$zp_citation["item_key"]."'>\n";
-            $zp_output .= $citation_image . $zp_citation['citation'] . $citation_abstract . "\n";
+            $zp_output .= $citation_image . $zp_citation['citation'] . $citation_abstract . $citation_tags . "\n";
             $zp_output .= "</div><!--Entry-->\n\n";
         }
         

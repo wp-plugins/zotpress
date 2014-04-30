@@ -5,9 +5,12 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
-    // Prevent access to non-logged in users
-    if ( !is_user_logged_in() ) { exit("Access denied."); }
+    // Prevent access to users who are not editors
+    if ( !current_user_can('edit_others_posts') && !is_admin() ) wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
 
+    // Include import functions
+    require_once("../admin/admin.import.functions.php");
+    
     // Set up XML document
     $xml = "";
     
@@ -17,10 +20,14 @@
         // Set up error array
         $errors = array("account_empty"=>array(0,"<strong>Account</strong> was left blank."),
                                 "account_format"=>array(0,"<strong>Account</strong> was incorrectly formatted."),
+                                "editor_empty"=>array(0,"<strong>Editor</strong> was left blank."),
+                                "editor_format"=>array(0,"<strong>Editor</strong> was incorrectly formatted."),
                                 "style_empty"=>array(0,"<strong>Style</strong> was left blank."),
                                 "style_format"=>array(0,"<strong>Style</strong> was incorrectly formatted."),
                                 "reset_empty"=>array(0,"<strong>Reset</strong> was left blank."),
                                 "reset_format"=>array(0,"<strong>Reset</strong> was incorrect."),
+                                "cpt_empty"=>array(0,"<strong>Reference Widget</strong> was left blank."),
+                                "cpt_format"=>array(0,"<strong>Reference Widget</strong> was incorrect."),
                                 "autoupdate_empty"=>array(0,"<strong>Autoupdate</strong> was left blank."),
                                 "autoupdate_format"=>array(0,"<strong>Autoupdate</strong> was incorrectly formatted."),
                                 "post_empty"=>array(0,"<strong>Post ID</strong> was left blank."),
@@ -64,6 +71,83 @@
                 $xml .= "<result success='true' account='".$account."' />\n";
             }
         } // default account
+        
+        
+        
+        /*
+         
+            SET REFERENCE WIDGET
+            
+        */
+        
+        else if (isset($_GET['cpt']))
+        {
+            // Check the post variables and record errors
+            if (trim($_GET['cpt']) != '')
+                if (preg_match('/^[\'0-9a-zA-Z -_,]+$/', stripslashes($_GET['cpt'])) == 1)
+                    $cpt = trim($_GET['cpt']);
+                else
+                    $errors['account_format'][0] = 1;
+            else
+                $errors['account_empty'][0] = 1;
+            
+            
+            // CHECK ERRORS
+            $errorCheck = false;
+            foreach ($errors as $field => $error) {
+                if ($error[0] == 1) {
+                    $errorCheck = true;
+                    break;
+                }
+            }
+            
+            
+            // SET DEFAULT STYLE
+            if ($errorCheck == false)
+            {
+                update_option("Zotpress_DefaultCPT", $cpt);
+                $xml .= "<result success='true' cpt='".$cpt."' />\n";
+            }
+        } // default reference widget
+        
+        
+        
+        /*
+         
+            SET DEFAULT FOR EDITOR FEATURES
+            
+        */
+        
+        else if (isset($_GET['editor']))
+        {
+            
+            // Check the post variables and record errors
+            if (trim($_GET['editor']) != '')
+                if (preg_match('/^[\'a-zA-Z _]+$/', stripslashes($_GET['editor'])) == 1)
+                    $editor = str_replace("'","",str_replace(" ","",trim(urldecode($_GET['editor']))));
+                else
+                    $errors['editor_format'][0] = 1;
+            else
+                $errors['editor_empty'][0] = 1;
+            
+            
+            // CHECK ERRORS
+            $errorCheck = false;
+            foreach ($errors as $field => $error) {
+                if ($error[0] == 1) {
+                    $errorCheck = true;
+                    break;
+                }
+            }
+            
+            
+            // SET DEFAULT STYLE
+            if ($errorCheck == false)
+            {
+                update_option("Zotpress_DefaultEditor", $editor);
+                $xml .= "<result success='true' editor='".$editor."' />\n";
+            }
+        } // default editor features
         
         
         
@@ -116,11 +200,8 @@
         {
             
             // Check the post variables and record errors
-            if (trim($_GET['reset']) != '')
-                if (get_option('ZOTPRESS_PASSCODE') == $_GET['reset'])
-                    $reset = $_GET['reset'];
-                else
-                    $errors['reset_format'][0] = 1;
+            if (trim($_GET['reset']) == 'true')
+                $reset = $_GET['reset'];
             else
                 $errors['reset_empty'][0] = 1;
             
@@ -147,12 +228,41 @@
                 $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroCollections;");
                 $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroTags;");
                 
-                delete_option( 'ZOTPRESS_PASSCODE' );
+                /*// Delete entries/items
+                $zp_entry_array = get_posts(
+					array(
+						'posts_per_page'   => -1,
+						'post_type' => 'zp_entry'
+					)
+				);
+				foreach ($zp_entry_array as $zp_entry) wp_delete_post( $zp_entry->ID, true );
+                
+                // Delete collections
+                $zp_collections_array = get_terms(
+					'zp_collections',
+					array(
+						'hide_empty' => false
+					)
+				);
+				foreach ($zp_collections_array as $zp_collection_term) zp_delete_collection ($zp_collection_term->term_id);
+                
+                // Delete tags
+				$zp_tags_array = get_terms(
+					'zp_tags',
+					array(
+						'hide_empty' => false
+					)
+				);
+				foreach ($zp_tags_array as $zp_tag_term) zp_delete_tag ($zp_tag_term->term_id);*/
+                
+                //delete_option( 'ZOTPRESS_PASSCODE' );
                 delete_option( 'Zotpress_DefaultAccount' );
+                delete_option( 'Zotpress_DefaultEditor' );
                 delete_option( 'Zotpress_LastAutoUpdate' );
                 delete_option( 'Zotpress_DefaultStyle' );
                 delete_option( 'Zotpress_StyleList' );
                 delete_option( 'Zotpress_DefaultAutoUpdate' );
+                delete_option( 'Zotpress_update_version' );
                 delete_option( 'Zotpress_main_db_version' );
                 delete_option( 'Zotpress_oauth_db_version' );
                 delete_option( 'Zotpress_zoteroItems_db_version' );

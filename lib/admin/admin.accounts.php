@@ -17,79 +17,79 @@ if (isset( $_GET['oauth'] )) { include("admin.accounts.oauth.php"); } else {
         <div id="zp-ManageAccounts">
             
             <h3>Synced Zotero Accounts</h3>
-            <?php if (!isset( $_GET['no_accounts'] ) || (isset( $_GET['no_accounts'] ) && $_GET['no_accounts'] != "true")) { ?><a title="Sync your Zotero account" class="zp-AddAccountButton" href="<?php echo admin_url("admin.php?page=Zotpress&setup=true"); ?>"><span>Add account</span></a><?php } ?>
+            <?php if (!isset( $_GET['no_accounts'] ) || (isset( $_GET['no_accounts'] ) && $_GET['no_accounts'] != "true")) { ?><a title="Sync your Zotero account" class="zp-AddAccountButton button button-secondary" href="<?php echo admin_url("admin.php?page=Zotpress&setup=true"); ?>"><span>Add account</span></a><?php } ?>
             
-            <div id="zp-Accounts">
-                <div id="zp-Accounts-Inner" class="widefat">
+            <table id="zp-Accounts" class="wp-list-table widefat fixed posts">
+				
+                <thead>
+					<tr>
+						<th class="account_type first manage-column" scope="col">Type</th>
+						<th class="api_user_id manage-column" scope="col">User ID</th>
+						<th class="public_key manage-column" scope="col">Private Key</th>
+						<th class="nickname manage-column" scope="col">Nickname</th>
+						<th class="actions last manage-column" scope="col">Actions</th>
+					</tr>
+				</thead>
                 
-                    <div id="zp-AccountsHeader">
-                        <span class="account_type first">Type</span>
-                        <span class="api_user_id">User ID</span>
-                        <span class="public_key">Private Key</span>
-                        <span class="nickname">Nickname</span>
-                        <span class="delete last">Actions</span>
-                    </div>
-                    
-                    <div id="zp-AccountsList">
-                        <?php
-                            
-                            global $wpdb;
-                            $accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress");
-                            
-                            foreach ($accounts as $num => $account)
-                            {
-                                $zebra = " stripe";
-                                
-                                if ($num % 2 == 0)
-                                    $zebra = "";
-                                    
-                                $code = "<div id='zp-Account-" . $account->api_user_id . "' class='zp-Account".$zebra."' rel='" . $account->api_user_id . "'>\n";
-                                
-                                // ACCOUNT TYPE
-                                $code .= "                          <span class='account_type first'>" . $account->account_type . "</span>\n";
-                                
-                                // API USER ID
-                                $code .= "                          <span class='api_user_id'>" . $account->api_user_id . "</span>\n";
-                                
-                                // PUBLIC KEY
-                                $code .= "                          <span class='public_key'>";
-                                if ($account->public_key) {
-                                    $code .= $account->public_key;
-                                }
-                                else {
-                                    if ($account->account_type == "users")
-                                        $code .= 'No private key entered. <a class="zp-OAuth-Button" href="'.get_bloginfo( 'url' ).'/wp-content/plugins/zotpress/lib/admin/admin.accounts.oauth.php?oauth_user='.$account->api_user_id.'&amp;return_uri='.get_bloginfo('url').'">Start OAuth?</a>';
-                                    else
-                                        $code .= '<del>N/A</del>';
-                                }
-                                $code .= "&nbsp;</span>\n";
-                                
-                                // NICKNAME
-                                $code .= "                          <span class='nickname'>";
-                                if ($account->nickname)
-                                    $code .= $account->nickname;
-                                $code .= "&nbsp;</span>\n";
-                                
-                                // ACTIONS
-                                $code .= "                          <span class='delete last'>\n";
-                                $code .= "                              <a title='Sync' class='sync' rel='".$account->api_user_id."' href='javascript:void(0);'>Sync</a>\n";
-                                $code .= "                              <a title='(Re)Import' class='import' href='admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=" . $account->api_user_id . "'>Import</a>\n";
-                                $code .= "                              <a title='Remove this account' class='delete' href='#" . $account->id . "'>Remove</a>\n";
-                                $code .= "                              <span class='zp-Sync-Messages'>&nbsp;</span>\n";
-                                $code .= "                          </span>\n";
-                                
-                                $code .= "                         </div>\n\n";
-                                
-                                echo $code;
-                            }
-                        ?>
-                    </div>
-                </div>
-            </div>
-        </div>
+				<tbody id="zp-AccountsList">
+					<?php
+						
+						global $wpdb;
+						$accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress");
+						$zebra = " alternate";
+						
+						foreach ($accounts as $num => $account)
+						{
+							if ($num % 2 == 0) { $zebra = " alternate"; } else { $zebra = ""; }
+							
+							$code = "<tr id='zp-Account-" . $account->api_user_id . "' class='zp-Account".$zebra."' rel='" . $account->api_user_id . "'>\n";
+							
+							// ACCOUNT TYPE
+							$code .= "                          <td class='account_type first'>" . substr($account->account_type, 0, -1) . "</td>\n";
+							
+							// API USER ID
+							$code .= "                          <td class='api_user_id'>" . $account->api_user_id . "</td>\n";
+							
+							// PUBLIC KEY
+							$code .= "                          <td class='public_key'>";
+							if ($account->public_key)
+							{
+								$code .= $account->public_key;
+							}
+							else
+							{
+								$code .= 'No private key entered. <a class="zp-OAuth-Button" href="'.get_bloginfo( 'url' ).'/wp-content/plugins/zotpress/lib/admin/admin.accounts.oauth.php?oauth_user='.$account->api_user_id.'&amp;return_uri='.get_bloginfo('url').'">Start OAuth?</a>';
+							}
+							$code .= "&nbsp;</td>\n";
+							
+							// NICKNAME
+							$code .= "                          <td class='nickname'>";
+							if ($account->nickname)
+								$code .= $account->nickname;
+							$code .= "&nbsp;</td>\n";
+							
+							// ACTIONS
+							$code .= "                          <td class='actions last'>\n";
+							//$code .= "                              <a title='Sync' class='sync' rel='".$account->api_user_id."' href='javascript:void(0);'><span class='icon'></span>Sync</a>\n";
+							$code .= "                              <a title='Selective Import' class='selective' rel='".$account->api_user_id."' href='admin.php?page=Zotpress&selective=true&api_user_id=" . $account->api_user_id . "'>Selective Import</a>\n";
+							$code .= "                              <a title='(Re)Import' class='import' href='admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=" . $account->api_user_id . "'>Import</a>\n";
+							$code .= "                              <a title='Remove this account' class='delete' href='#" . $account->id . "'>Remove</a>\n";
+							//$code .= "                              <span class='zp-Sync-Messages'>&nbsp;</span>\n";
+							$code .= "                          </td>\n";
+							
+							$code .= "                         </tr>\n\n";
+							
+							echo $code;
+						}
+					?>
+                </tbody>
+				
+			</table>
+			
+		</div>
         
         <span id="ZOTPRESS_PLUGIN_URL" style="display: none;"><?php echo ZOTPRESS_PLUGIN_URL; ?></span>
-        <span id="ZOTPRESS_PASSCODE" style="display: none;"><?php echo get_option('ZOTPRESS_PASSCODE'); ?></span>
+        <span id="ZOTPRESS_PASSCODE" style="display: none;"><?php /*echo get_option('ZOTPRESS_PASSCODE'); */ ?></span>
         
         <?php if (!$oauth_is_not_installed){ ?>
             <h3>What is OAuth?</h3>

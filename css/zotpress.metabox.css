@@ -9,7 +9,7 @@
         margin: 0;
         padding: 0;
         max-height: 200px;
-        width: 245px !important;
+        width: 253px !important;
         overflow-y: auto;
         overflow-x: hidden; /* prevent horizontal scrollbar */
     }
@@ -20,11 +20,13 @@
     .ui-autocomplete.zp-autocomplete li {
         background: none;
         border: none;
-        font: normal 11px/14px "Arial", sans-serif;
+        /*font: normal 11px/14px "Arial", sans-serif;*/
+        font-size: 0.85em;
+		line-height: 1.2;
         margin: 0;
         padding: 0;
         white-space: normal;
-        width: 245px;
+        width: 253px;
     }
     .ui-autocomplete.zp-autocomplete-wide li {
         width: 775px;
@@ -33,25 +35,25 @@
     .ui-autocomplete.zp-autocomplete li a {
         background: none;
         border: none;
-        border-top: 1px solid #fff;
+        /*border-top: 1px solid #fff;*/
         border-bottom: 1px solid #ddd;
         color: #666;
-        font: normal 11px/14px "Arial", sans-serif;
+        /*font: normal 11px/14px "Arial", sans-serif;*/
         margin: 0;
-        padding: 4px 25px 4px 10px;
+        padding: 6px 25px 6px 10px;
     }
     .ui-autocomplete.zp-autocomplete li a.ui-state-focus,
     .ui-autocomplete.zp-autocomplete li a.ui-state-hover {
         background: none;
         background-color: #8ec5fb;
         border: none;
-        border-top: 1px solid #7ba5d7;
+        /*border-top: 1px solid #7ba5d7;*/
         border-bottom: 1px solid #a4b0bf;
         color: #fff;
-        font: normal 11px/14px "Arial", sans-serif;
+        /*font: normal 11px/14px "Arial", sans-serif;*/
         margin: 0;
-        padding: 4px 25px 4px 10px;
-        text-shadow: 1px 1px #7bbbfb;
+        padding: 6px 25px 6px 10px;
+        /*text-shadow: 1px 1px #7bbbfb;*/
         
         border-radius: 0;
         -moz-border-radius: 0;
@@ -59,7 +61,7 @@
     }
     .ui-autocomplete.zp-autocomplete li.first a.ui-state-focus,
     .ui-autocomplete.zp-autocomplete li.first a.ui-state-hover {
-        border-top: 1px solid #8ec5fb;
+        /*border-top: 1px solid #8ec5fb;*/
     }
     
     .ui-tabs .ui-tabs-nav li a,
@@ -75,8 +77,8 @@
     
     div#zp-ZotpressMetaBox-Biblio-Citations,
     div#zp-ZotpressMetaBox-Citations {
-        border: 5px solid #c00000;
-        margin: 3px;
+        border: 5px solid #E14D43;
+        margin: 0.5em;
         
         border-radius: 5px;
         -moz-border-radius: 5px;
@@ -90,7 +92,7 @@
     input#zp-ZotpressMetaBox-Citations-Search {
         border: none;
         background: #fff;
-        font: normal 12px/30px 'Arial', sans-serif;
+		font-size: 1em;
         margin: 0;
         width: 100%;
     }
@@ -106,15 +108,15 @@
     
     div#zp-ZotpressMetaBox-Biblio-Shortcode,
     div#zp-ZotpressMetaBox-InTextCreator-Shortcode {
-        padding: 5px;
+        padding: 0.75em;
     }
     div#zp-ZotpressMetaBox-Biblio-Shortcode-Inner,
     div#zp-ZotpressMetaBox-InTextCreator-Shortcode-Inner {
-        background-color: #fafafa;
-        border: 1px solid #eee;
+        background-color: #f6f6f6;
+        /*border: 1px solid #eee;*/
         display: none;
-        margin: 0.5em 0 0 0;
-        padding: 3px 5px;
+        margin: 0.75em 0 0 0;
+        padding: 0.75em;
     }
     
     #ZotpressMetaBox .ui-widget-content a#zp-ZotpressMetaBox-Biblio-Generate-Button,
@@ -122,14 +124,14 @@
         color: #fff;
         float: right;
         line-height: 1.75em;
-        font-family: "Arial", sans-serif;
+        /*font-family: "Arial", sans-serif;*/
         height: auto;
     }
     #ZotpressMetaBox .ui-widget-content a#zp-ZotpressMetaBox-Biblio-Clear-Button,
     #ZotpressMetaBox .ui-widget-content a#zp-ZotpressMetaBox-InTextCreator-Clear-Button {
         float: left;
         line-height: 1.75em;
-        font-family: "Arial", sans-serif;
+        /*font-family: "Arial", sans-serif;*/
         height: auto;
     }
     
@@ -146,18 +148,24 @@
     div#ZotpressMetaBox div#zp-ZotpressMetaBox-Biblio-Shortcode label,
     div#ZotpressMetaBox div#zp-ZotpressMetaBox-InTextCreator-Shortcode label
     {
-        font-family: 'Georgia', serif;
-        font-size: 10px;
+        /*font-family: 'Georgia', serif;*/
+        font-size: 0.85em;
         display: block;
+		line-height: 1em;
+		margin-bottom: 0.5em;
+		padding: 0;
     }
     
     #zp-ZotpressMetaBox-Biblio-Shortcode-Text,
     #zp-ZotpressMetaBox-InTextCreator-Text-Bib,
     #zp-ZotpressMetaBox-InTextCreator-InText {
-        font-size: 10px;
-        width: 99%;
+        font-size: 0.85em;
+        width: 100%;
     }
     
+	div#zp-ZotpressMetaBox-InTextCreator-Text-Bib-Container {
+		margin-top: 0.75em;
+	}
     div#zp-ZotpressMetaBox-Biblio-Text-Bib-Container label span,
     div#zp-ZotpressMetaBox-InTextCreator-Text-Bib-Container label span {
         color: #999;
@@ -179,7 +187,9 @@
         color: #5486bc; /* 4a7bc6 */
         cursor: default;
         float: left;
-        font: normal 0.8em/1.2em "Arial", sans-serif;
+        /*font: normal 0.8em/1.2em "Arial", sans-serif;*/
+        font-size: 0.85em;
+		line-height: 1.2;
         margin: 2px;
         padding: 3px 5px;
         
@@ -245,7 +255,7 @@
     
     div#ZotpressMetaBox div#zp-ZotpressMetaBox-Biblio-Citations-List div.item div.options label,
     div#ZotpressMetaBox div#zp-ZotpressMetaBox-Citations-List div.item div.options label {
-        font: normal 1em/1em "Arial", sans-serif;
+        /*font: normal 1em/1em "Arial", sans-serif;*/
         margin: 0 0 0 4px;
         text-transform: capitalize;
     }
@@ -254,7 +264,7 @@
     div#zp-ZotpressMetaBox-Citations-List div.item div.options input {
         border: 1px solid #4A7BC6;
         color: #4A7BC6;
-        font: normal 1em/1em "Arial", sans-serif;
+        /*font: normal 1em/1em "Arial", sans-serif;*/
         padding: 1px 2px 0;
         vertical-align: middle;
         width: 50px;
@@ -275,11 +285,9 @@
     
     div#zp-ZotpressMetaBox-Biblio-Account,
     div#zp-ZotpressMetaBox-Account {
-        color: #999;
-        font-size: 10px;
-        line-height: 12px;
-        font-family: "Arial", sans-serif;
-        margin: 2px 8px 6px;
+		color: #999;
+        font-size: 0.85em;
+        margin: 0.5em 1em;
     }
 
     
@@ -287,49 +295,84 @@
     
     div#zp-ZotpressMetaBox-Biblio-Options,
     div#zp-ZotpressMetaBox-InTextCreator-Options {
-        background-color: #FAFAFA;
-        border: 1px solid #EEEEEE;
-        font-size: 11px;
-        margin: 3px;
-        padding: 3px 5px;
-        
-        border-radius: 3px;
-        -moz-border-radius: 3px;
-        -webkit-border-radius: 3px;
-    }
-    
-    div#zp-ZotpressMetaBox-Biblio-Options-Inner,
-    div#zp-ZotpressMetaBox-InTextCreator-Options-Inner {
-        display: none;
-        padding-top: 5px;
+        border-top: 1px solid #EEEEEE;
+        border-bottom: 1px solid #EEEEEE;
+        margin: 0;
     }
     
     div#ZotpressMetaBox div#zp-ZotpressMetaBox-Biblio-Options h4,
     div#ZotpressMetaBox div#zp-ZotpressMetaBox-InTextCreator-Options h4 {
-        margin: 0;
+        margin: 0.75em;
     }
+    
+    div#zp-ZotpressMetaBox-Biblio-Options-Inner,
+    div#zp-ZotpressMetaBox-InTextCreator-Options-Inner {
+		border-top: 1px solid #EEEEEE;
+        display: none;
+        padding: 0.25em 0;
+    }
+	div.zp-ZotpressMetaBox-Field {
+		font-size: 0.85em;
+		padding: 0.5em 1em;
+	}
+	div.zp-ZotpressMetaBox-Field-Radio {
+		font-size: 1.15em;
+		float: right;
+		margin-top: -0.2em;
+	}
+	div#ZotpressMetaBox div.zp-ZotpressMetaBox-Field-Radio label {
+		padding: 0;
+	}
+	div#zp-ZotpressMetaBox-Biblio-Options-Inner input,
+	div#zp-ZotpressMetaBox-Biblio-Options-Inner select,
+	div#zp-ZotpressMetaBox-InTextCreator-Options-Inner input,
+	div#zp-ZotpressMetaBox-InTextCreator-Options-Inner select {
+		font-size: 0.85em;
+		margin: 0.5em 1em 0.5em 0;
+		line-height: 1em;
+	}
+	div#zp-ZotpressMetaBox-Biblio-Options-Inner select,
+	div#zp-ZotpressMetaBox-InTextCreator-Options-Inner select {
+		height: auto;
+	}
+	
+	div#zp-ZotpressMetaBox-Biblio-Options div.right,
+	div#zp-ZotpressMetaBox-InTextCreator-Options div.right {
+		float: right;
+		line-height: 1;
+	}
     
     div#ZotpressMetaBox div#zp-ZotpressMetaBox-Biblio-Options h5,
     div#ZotpressMetaBox div#zp-ZotpressMetaBox-InTextCreator-Options h5 {
-        background-color: #f3f3f3;
-        border: 1px solid #eee;
+        background-color: #f9f9f9;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
         font-size: 1em;
         font-weight: normal;
-        margin: 0.25em -6px 0.5em;
-        padding: 0.25em 0.5em;
+        margin: 0.5em 0;
+        padding: 0.5em 0.75em;
     }
+    div#ZotpressMetaBox div#zp-ZotpressMetaBox-InTextCreator-Options h5.first {
+		margin-top: -0.3em;
+	}
     
     div#zp-ZotpressMetaBox-Biblio-Options h4 span.toggle,
     div#zp-ZotpressMetaBox-InTextCreator-Options h4 span.toggle {
-        background: #f7f7f7 url('../images/sprite.png') no-repeat -24px -467px;
+        background: #f7f7f7 url('../images/sprite.png') no-repeat -22px -466px;
         border: 1px solid #dadada;
-        margin-left: 3px;
-        padding: 0 7px 0 6px;
         cursor: pointer;
+		display: inline-block;
+		line-height: 1em;
+        margin-left: 0.35em;
+		padding: 0;
+        /*padding: 0 0.65em;*/
+        vertical-align: bottom;
+        width: 1.3em;
+		height: 1.3em;
         
-        border-radius: 10px;
-        -moz-border-radius: 10px;
-        -webkit-border-radius: 10px;
+        border-radius: 1em;
+        -moz-border-radius: 1em;
+        -webkit-border-radius: 1em;
     }
     div#zp-ZotpressMetaBox-Biblio-Options h4 span.toggle.active,
     div#zp-ZotpressMetaBox-InTextCreator-Options h4 span.toggle.active {
@@ -339,11 +382,11 @@
     div#zp-ZotpressMetaBox-Biblio-Options hr,
     div#zp-ZotpressMetaBox-InTextCreator-Options hr {
         border: none;
-        background-color: #eee;
-        border-bottom: 1px solid #fff;
-        margin: 0.5em 0 0.35em;
+        background-color: #fff;
+        border-bottom: 1px solid #f6f6f6;
+        margin: 0.25em 0;
         padding: 0;
-        height: 2px;
+        height: 1px;
     }
     
     input#zp-ZotpressMetaBox-Biblio-Options-Format,
@@ -354,13 +397,8 @@
     div#zp-ZotpressMetaBox-Biblio-Options p.note,
     div#zp-ZotpressMetaBox-InTextCreator-Options p.note {
         color: #999;
-        font: 9px/12px "Verdana", sans-serif;
-        margin: 0.5em 0 1em;
-    }
-    
-    input#zp-ZotpressMetaBox-Biblio-Options-Image-No,
-    input#zp-ZotpressMetaBox-InTextCreator-Options-Image-No {
-        margin-left: 4px;
+		font-size: 0.75em;
+        margin: 0 1em 0.75em;
     }
     
     /* END OF IN-TEXT CSS */
@@ -370,7 +408,9 @@
     /* START OF GENERIC METABOX CSS */
     
     div#ZotpressMetaBox.postbox div.inside {
-        padding: 0 6px;
+        /*padding: 0 6px;*/
+        margin: 0;
+        padding: 0;
     }
 
     div#ZotpressMetaBox h3.hndle span {
@@ -409,7 +449,7 @@
         height: 13px;
     }
     div.zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li a {
-        font: 9px/10px 'Arial', sans-serif;
+        /*font: 9px/10px 'Arial', sans-serif;*/
         letter-spacing: 1px;
         padding: 0 3px;
         text-decoration: none;
@@ -424,23 +464,18 @@
     }
     
     div#ZotpressMetaBox h4 {
-        font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
-        margin: 0 0 5px 0;
+		margin: 0;
         padding: 0;
     }
     
-    /*div#zp-ZotpressMetaBox-Output {*/
-    /*    display: none;*/
-    /*    padding-top: 5px;*/
-    /*}*/
     div#ZotpressMetaBox label {
-        font-family: "Arial", sans-serif;
-        font-size: 11px;
+        font-size: 0.85em;
         margin: 0;
+		padding: 0 1em;
         font-weight: bold;
     }
     div#ZotpressMetaBox div.zp-Tab label {
-        font-family: "Arial", sans-serif;
+        /*font-family: "Arial", sans-serif;*/
         font-size: 12px;
         display: block;
         margin: 0;
@@ -450,38 +485,12 @@
         width: 100%;
         height: 5em !important;
     }
-    /*div#ZotpressMetaBox div.zp-Tab select#zp-ZotpressMetaBox-Collection-Collections,*/
-    /*div#ZotpressMetaBox div.zp-Tab select#zp-ZotpressMetaBox-Collection-Items,*/
-    /*div#ZotpressMetaBox div.zp-Tab select#zp-ZotpressMetaBox-Tags-Tags,*/
-    /*div#ZotpressMetaBox div.zp-Tab select#zp-ZotpressMetaBox-Tags-Items {*/
-    /*    height: 10em !important;*/
-    /*}*/
-    /*div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-0 select,*/
-    /*div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-1 select,*/
-    /*div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-3 select,*/
-    /*div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-4 select,*/
-    /*div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-5 select,*/
-    /*div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-6 select,*/
-    /*div#ZotpressMetaBox div.zp-Tab#zp-ZotpressMetaBox-ShortcodeCreator-7 select*/
-    /*{*/
-    /*    height: auto !important;*/
-    /*}*/
-    /**/
-    /*div#zp-ZotpressMetaBox-Tabs div.zp-Loading {*/
-    /*    background: transparent url('images/loading_list.gif') no-repeat center;*/
-    /*    letter-spacing: -1000px;*/
-    /*    overflow: hidden;*/
-    /*    text-indent: -5000px;*/
-    /*    width: 100%;*/
-    /*    height: 50px;*/
-    /*}*/
     
     div.zp-Tab {
         background-color: #fff;
         padding: 0.6em !important;
     }
     p.zp-Note {
-    /*div.zp-ZotpressMetaBox-Tabs p.note {*/
         font-size: 9px !important;
         font-style: italic !important;
         color: #aaaaaa !important;
@@ -491,10 +500,6 @@
         font-size: 10px !important;
         color: #888 !important;
     }
-    /*div.zp-ZotpressMetaBox-Tabs div#zp-ZotpressMetaBox-ShortcodeCreator-Text-InTextBib-Container p.note {*/
-    /*    color: #999 !important;*/
-    /*    margin: 0 0 3px 5px !important;*/
-    /*}*/
     div.zp-Tab span.label {
         margin-top: 5px;
         font-weight: bold;
@@ -503,31 +508,7 @@
         font-style: normal;
         text-decoration: underline;
     }
-    /*div#zp-ZotpressMetaBox-ShortcodeCreator-Output {*/
-    /*    border-radius: 4px;*/
-    /*    -moz-border-radius: 4px;*/
-    /*    border: 1px solid #eee;*/
-    /*    background-color: #fafafa;*/
-    /*    margin: 0 5px 5px;*/
-    /*    padding: 4px;*/
-    /*}*/
-    /*div.zp-ZotpressMetaBox-RadioButtons {*/
-    /*    margin-bottom: 10px;*/
-    /*}*/
-    /*div.zp-ZotpressMetaBox-RadioButtons label {*/
-    /*    display: inline !important;*/
-    /*}*/
-    /*label#zp-ZotpressMetaBox-ShortcodeCreator-1-UserID {*/
-    /*    padding-left: 1em;*/
-    /*}*/
-    /*select.zp-ZotpressMetaBox-ShortcodeCreator-1-UserIDText {*/
-    /*    display: none;*/
-    /*}*/
-    /*#zp-ZotpressMetaBox-ShortcodeCreator-Text {*/
-    /*    margin-top: 3px;*/
-    /*    font-size: 9px;*/
-    /*    width: 100%;*/
-    /*}*/
+
     .postbox div.zp-Tab input[type="text"],
     div.zp-Tab select {
         margin-bottom: 10px;

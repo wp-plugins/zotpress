@@ -56,21 +56,21 @@
 
 /* Component containers
 ----------------------------------*/
-#ZotpressMetaBox .ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 1.1em; }
+#ZotpressMetaBox .ui-widget {  }
 #ZotpressMetaBox .ui-widget .ui-widget { font-size: 1em; }
 /*#ZotpressMetaBox .ui-widget input, #ZotpressMetaBox .ui-widget select, #ZotpressMetaBox .ui-widget textarea, #ZotpressMetaBox .ui-widget button { font-family: Verdana,Arial,sans-serif; font-size: 1em; }*/
-#ZotpressMetaBox .ui-widget-content { border: 1px solid #aaaaaa; background: #ffffff url(images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x; color: #222222; }
+#ZotpressMetaBox .ui-widget-content { border: none; background: transparent; color: #222222; }
 #ZotpressMetaBox .ui-widget-content a { color: #222222; }
-#ZotpressMetaBox .ui-widget-header { border: 0; height: 25px; background: #cccccc url(images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x; color: #222222; font-weight: normal; font-size: 10px !important; text-transform: uppercase; }
+#ZotpressMetaBox .ui-widget-header { border: 0; background: #F5F5F5; color: #222222; font-weight: normal; font-size: 0.85em !important; text-transform: uppercase; }
 #ZotpressMetaBox .ui-widget-header a { color: #222222; }
 
 /* Interaction states
 ----------------------------------*/
-#ZotpressMetaBox .ui-state-default, #ZotpressMetaBox .ui-widget-content .ui-state-default, #ZotpressMetaBox .ui-widget-header .ui-state-default { border: 1px solid #d3d3d3; background: #e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x; color: #555555; float:left; margin: 1px; border-bottom: 0; margin-bottom: 0; }
+#ZotpressMetaBox .ui-state-default, #ZotpressMetaBox .ui-widget-content .ui-state-default, #ZotpressMetaBox .ui-widget-header .ui-state-default { border: none; background: #e6e6e6; color: #666; float: left; margin: 0.35em 0 0 0.35em; }
 #ZotpressMetaBox .ui-state-default a, #ZotpressMetaBox .ui-state-default a:link, #ZotpressMetaBox .ui-state-default a:visited { color: #555555; text-decoration: none; }
-#ZotpressMetaBox .ui-state-hover, #ZotpressMetaBox .ui-widget-content .ui-state-hover, #ZotpressMetaBox .ui-widget-header .ui-state-hover, #ZotpressMetaBox .ui-state-focus, #ZotpressMetaBox .ui-widget-content .ui-state-focus, #ZotpressMetaBox .ui-widget-header .ui-state-focus { background: #f3f3f3; color: #212121; }
+#ZotpressMetaBox .ui-state-hover, #ZotpressMetaBox .ui-widget-content .ui-state-hover, #ZotpressMetaBox .ui-widget-header .ui-state-hover, #ZotpressMetaBox .ui-state-focus, #ZotpressMetaBox .ui-widget-content .ui-state-focus, #ZotpressMetaBox .ui-widget-header .ui-state-focus { background: #ccc; color: #000; }
 #ZotpressMetaBox .ui-state-hover a, #ZotpressMetaBox .ui-state-hover a:hover { color: #212121; text-decoration: none; }
-#ZotpressMetaBox .ui-state-active, #ZotpressMetaBox .ui-widget-content .ui-state-active, #ZotpressMetaBox .ui-widget-header .ui-state-active { border: 1px solid #aaaaaa; background: #ffffff url(images/ui-bg_glass_65_ffffff_1x400.png) 50% 50% repeat-x;color: #212121; border-bottom: none; }
+#ZotpressMetaBox .ui-state-active, #ZotpressMetaBox .ui-widget-content .ui-state-active, #ZotpressMetaBox .ui-widget-header .ui-state-active { border: none; background: #ffffff; color: #222; }
 #ZotpressMetaBox .ui-state-active a, #ZotpressMetaBox .ui-state-active a:link, #ZotpressMetaBox .ui-state-active a:visited { color: #212121; text-decoration: none; }
 #ZotpressMetaBox .ui-widget :active { outline: none; }
 
@@ -284,11 +284,11 @@
 #ZotpressMetaBox .ui-corner-tr { -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; border-top-right-radius: 4px; }
 #ZotpressMetaBox .ui-corner-bl { -moz-border-radius-bottomleft: 4px; -webkit-border-bottom-left-radius: 4px; border-bottom-left-radius: 4px; }
 #ZotpressMetaBox .ui-corner-br { -moz-border-radius-bottomright: 4px; -webkit-border-bottom-right-radius: 4px; border-bottom-right-radius: 4px; }
-#ZotpressMetaBox .ui-corner-top { -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; border-top-left-radius: 4px; -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; border-top-right-radius: 4px; }
+#ZotpressMetaBox .ui-corner-top {  }
 #ZotpressMetaBox .ui-corner-bottom { -moz-border-radius-bottomleft: 4px; -webkit-border-bottom-left-radius: 4px; border-bottom-left-radius: 4px; -moz-border-radius-bottomright: 4px; -webkit-border-bottom-right-radius: 4px; border-bottom-right-radius: 4px; }
 #ZotpressMetaBox .ui-corner-right {  -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; border-top-right-radius: 4px; -moz-border-radius-bottomright: 4px; -webkit-border-bottom-right-radius: 4px; border-bottom-right-radius: 4px; }
 #ZotpressMetaBox .ui-corner-left { -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; border-top-left-radius: 4px; -moz-border-radius-bottomleft: 4px; -webkit-border-bottom-left-radius: 4px; border-bottom-left-radius: 4px; }
-#ZotpressMetaBox .ui-corner-all { -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; }
+#ZotpressMetaBox .ui-corner-all {  }
 
 /* Overlays */
 #ZotpressMetaBox .ui-widget-overlay { background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .30;filter:Alpha(Opacity=30); }
@@ -308,7 +308,7 @@
 #ZotpressMetaBox .ui-tabs .ui-tabs-nav li.ui-tabs-selected { margin-bottom: 0; padding-bottom: 1px; }
 #ZotpressMetaBox .ui-tabs .ui-tabs-nav li.ui-tabs-selected a, #ZotpressMetaBox .ui-tabs .ui-tabs-nav li.ui-state-disabled a, #ZotpressMetaBox .ui-tabs .ui-tabs-nav li.ui-state-processing a { cursor: text; }
 #ZotpressMetaBox .ui-tabs .ui-tabs-nav li a, #ZotpressMetaBox .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: pointer; } /* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
-#ZotpressMetaBox .ui-tabs .ui-tabs-panel { display: block; border-width: 0; padding: 5px 1px 1px; background: none; }
+#ZotpressMetaBox .ui-tabs .ui-tabs-panel { display: block; border-width: 0; padding: 0; background: none; }
 #ZotpressMetaBox .ui-tabs .ui-tabs-hide { display: none !important; }
 /*
  * jQuery UI Datepicker 1.8.11

@@ -1,31 +1,5 @@
-jQuery(document).ready(function() {
-
-
-
-    /*
-     
-        QTIP HELP
-        
-    */
-
-    jQuery('label.zp-Help[title]').qtip({
-        style: {
-            classes: 'ui-tooltip-shadow ui-tooltip-tipsy',
-            width: 300
-        },
-        position: {
-            my: 'bottom center',
-            at: 'top center'
-        },
-        show : {
-            delay: 0,
-            effect: {
-                type: 'none',
-                length: 0
-            }
-        }
-    });
-    
+jQuery(document).ready( function()
+{
     
     
     /*
@@ -42,7 +16,10 @@ jQuery(document).ready(function() {
 
     jQuery("input#zp-Zotpress-Setup-Options-Complete").click(function()
     {
-        window.parent.location = "admin.php?page=Zotpress";
+        if ( jQuery(this).hasClass("import") )
+            window.parent.location = "admin.php?page=Zotpress";
+        else
+            window.parent.location = "admin.php?page=Zotpress&accounts=true";
         return false;
     });
     
@@ -89,14 +66,16 @@ jQuery(document).ready(function() {
                 
                 jQuery('div.zp-Success').show();
                 
-                // SETUP or regular
+                // SETUP
                 if (jQuery("div#zp-Setup").length > 0)
                 {
                     jQuery.doTimeout(1000,function() {
                         window.parent.location = "admin.php?page=Zotpress&setup=true&setupstep=two";
                     });
                 }
-                else // REGULAR
+                
+                // REGULAR
+                else 
                 {
                     jQuery.doTimeout(1000,function()
                     {
@@ -118,7 +97,6 @@ jQuery(document).ready(function() {
             }
         });
         
-        //cancel the submit button default behaviours
         return false;
     });
     
@@ -140,11 +118,11 @@ jQuery(document).ready(function() {
 
     /*
         
-        DELETE ACCOUNT
+        REMOVE ACCOUNT
         
     */
 
-    jQuery('#zp-Accounts').delegate("span.delete a.delete", "click", function () {
+    jQuery('#zp-Accounts').delegate(".actions a.delete", "click", function () {
         
         $this = jQuery(this);
         $thisProject = $this.parent().parent();
@@ -153,19 +131,21 @@ jQuery(document).ready(function() {
         
         if (confirmDelete==true)
         {
-            // Set up uri
             var xmlUri = jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/actions/actions.php?delete=' + $this.attr("href").replace("#", "");
             
-            // AJAX
             jQuery.get(xmlUri, {}, function(xml)
             {
-                var $result = jQuery('result', xml).attr('success');
-                
-                if ($result == "true")
-                    //DisplayAccounts();
-                    window.location.reload();
-                else // Show errors
-                    alert("Sorry - couldn't delete that account!");
+                if ( jQuery('result', xml).attr('success') == "true" )
+                {
+                    if ( jQuery('result', xml).attr('total_accounts') == 0 )
+                        window.location = 'admin.php?page=Zotpress';
+                    else
+                        window.location = 'admin.php?page=Zotpress&accounts=true';
+                }
+                else
+                {
+                    alert( "Sorry - couldn't delete that account." );
+                }
             });
         }
         
@@ -187,8 +167,8 @@ jQuery(document).ready(function() {
         // IMPORT ITEMS
         jQuery("input#zp-Zotpress-Setup-Import-Items").click(function()
         {
-            jQuery("div.zp-Loading-Initial").show();
-            jQuery("#zp-Import-Messages").show();
+            jQuery(".import .zp-Loading-Initial").show();
+            jQuery(".import .zp-Import-Messages").show();
             jQuery("input[type=button]").attr('disabled', 'true');
             
             jQuery("iframe#zp-Setup-Import").attr('src', jQuery("iframe#zp-Setup-Import").attr('src') + "&go=true&step=items&singlestep=true");
@@ -199,9 +179,8 @@ jQuery(document).ready(function() {
         // IMPORT COLLECTIONS
         jQuery("input#zp-Zotpress-Setup-Import-Collections").click(function()
         {
-            jQuery("div.zp-Loading-Initial").show();
-            jQuery("#zp-Import-Messages").text("Importing collections 1-50 ...").show();
-            //jQuery("#zp-Import-Messages").show();
+            jQuery(".import .zp-Loading-Initial").show();
+            jQuery(".import .zp-Import-Messages").text("Importing collections 1-50 ...").show();
             jQuery("input[type=button]").attr('disabled', 'true');
             
             jQuery("iframe#zp-Setup-Import").attr('src', jQuery("iframe#zp-Setup-Import").attr('src') + "&go=true&step=collections&singlestep=true");
@@ -212,9 +191,8 @@ jQuery(document).ready(function() {
         // IMPORT TAGS
         jQuery("input#zp-Zotpress-Setup-Import-Tags").click(function()
         {
-            jQuery("div.zp-Loading-Initial").show();
-            jQuery("#zp-Import-Messages").text("Importing tags 1-50 ...").show();
-            //jQuery("#zp-Import-Messages").show();
+            jQuery(".import .zp-Loading-Initial").show();
+            jQuery(".import .zp-Import-Messages").text("Importing tags 1-50 ...").show();
             jQuery("input[type=button]").attr('disabled', 'true');
             
             jQuery("iframe#zp-Setup-Import").attr('src', jQuery("iframe#zp-Setup-Import").attr('src') + "&go=true&step=tags&singlestep=true");
@@ -225,8 +203,8 @@ jQuery(document).ready(function() {
         // IMPORT EVERYTHING
         jQuery("input#zp-Zotpress-Setup-Import").click(function()
         {
-            jQuery("div.zp-Loading-Initial").show();
-            jQuery("#zp-Import-Messages").show();
+            jQuery(".import .zp-Loading-Initial").show();
+            jQuery(".import .zp-Import-Messages").show();
             jQuery("input[type=button]").attr('disabled', 'true');
             
             jQuery("iframe#zp-Setup-Import").attr('src', jQuery("iframe#zp-Setup-Import").attr('src') + "&go=true&step=items");
@@ -243,7 +221,7 @@ jQuery(document).ready(function() {
         
     */
 
-    jQuery('div#zp-AccountsList div.zp-Account span.delete a.sync').click(function(e)
+    jQuery('div#zp-AccountsList div.zp-Account .actions a.sync').click(function(e)
     {
         var $this = jQuery(this);
         
@@ -259,9 +237,10 @@ jQuery(document).ready(function() {
         if (jQuery("iframe#zp-Sync-" + jQuery("span", $this).text()).length == 0)
         {
             jQuery('<iframe/>', {
-                id: 'zp-Sync-' + jQuery("span.api_user_id", $this.parent().parent()).text(),
-                class: 'zp-Setup-Sync',
-                src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span#ZOTPRESS_PASSCODE").text() + '&step=items',
+                id: 'zp-Sync-' + jQuery('span.api_user_id', $this.parent().parent()).text(),
+                'class': 'zp-Setup-Sync', // IE ISSUE - needs quotations around class
+                //src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span#ZOTPRESS_PASSCODE").text() + '&step=items',
+                src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&step=items',
                 scrolling: 'yes'
             }).appendTo('#zp-ManageAccounts');
         }
@@ -274,6 +253,51 @@ jQuery(document).ready(function() {
         
         return false;
     });
+    
+    
+    
+    
+    /*
+        
+        SELECTIVE IMPORT BY COLLECTION
+        
+    */
+    
+    jQuery("iframe#zp-Step-Import-Collection-Frame").on("load", function()
+    {
+        jQuery("#zp-Step-Import-Collection").removeClass("loading");
+        jQuery("#zp-Step-Import-Collection, iframe#zp-Step-Import-Collection-Frame").animate({ height: jQuery("iframe#zp-Step-Import-Collection-Frame").contents().find(".zp-Collection-List").outerHeight() + "px"}, 0);
+        jQuery("input#zp-Zotpress-Setup-Import-Selective").removeAttr('disabled');
+    });
+    
+    jQuery("#zp-Zotpress-Setup-Import-Selective").click(function ()
+    {
+        if ( jQuery("#zp-Step-Import-Collection-Frame").contents().find(".zp-Collection.selected").length > 0 )
+        {
+            var zpSelectedCollections = "";
+            
+            jQuery("#zp-Step-Import-Collection-Frame").contents().find(".zp-Collection.selected").each( function()
+            {
+                zpSelectedCollections += jQuery(this).attr("rel") + ",";
+            });
+            
+            zpSelectedCollections = zpSelectedCollections.slice(0, - 1);
+            
+            jQuery(".selective.zp-Loading-Initial").show();
+            jQuery(".selective.zp-Import-Messages").text("Importing items 1-50 ....").show();
+            jQuery(this).attr('disabled', 'true');
+            
+            jQuery("iframe#zp-Setup-Import").attr('src', jQuery("iframe#zp-Setup-Import").attr('src') + "&go=true&step=selective&collections=" + zpSelectedCollections);
+            
+            return false;
+        }
+        else
+        {
+            alert ("Please select at least one collection to import."); return false;
+        }
+    });
+    
+    
 
 
 });
