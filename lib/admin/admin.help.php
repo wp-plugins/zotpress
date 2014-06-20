@@ -145,17 +145,17 @@
                 <tr class="zebra">
                     <td class="code">sortby</td>
                     <td><p>Sort multiple citations using meta data as attributes. <strong>Options: title, author, date, default (latest added) [default].</strong></p></td>
-                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="year"]</code></p></td>
+                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="date"]</code></p></td>
                 </tr>
                 <tr class="zebra">
                     <td class="code">order</td>
                     <td><p>Alternative: <code>sort</code>. Order of the sortby attribute. <strong>Options: asc [default], desc.</strong></p></td>
-                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="year" order="desc"]</code></p></td>
+                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="date" order="desc"]</code></p></td>
                 </tr>
                 <tr class="zebra">
                     <td class="code">title</td>
                     <td><p>Dispay a title by year. <strong>Options: yes, no [default].</strong></p></td>
-                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="year" title="yes"]</code></p></td>
+                    <td class="example"><p><code>[zotpress author="Carl Sagan" sortby="date" title="yes"]</code></p></td>
                 </tr>
                 <tr class="zebra">
                     <td class="code">limit</td>

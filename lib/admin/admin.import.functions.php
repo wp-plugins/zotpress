@@ -98,9 +98,12 @@
 		// First, items
 		$items = $wpdb->get_results(
 			"
-			SELECT item_key FROM ".$wpdb->prefix."zotpress_zoteroItems
-			WHERE api_user_id='".$api_user_id."' AND item_key IN ( '".str_replace( ",", "', '", $collection->listItems )."' )
-			"
+			SELECT ".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key
+			FROM ".$wpdb->prefix."zotpress_zoteroRelItemColl
+			WHERE api_user_id='".$api_user_id."'
+			AND ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key='".$collection."'
+			",
+			OBJECT
 		);
 		
 		if ( count($items) > 0 )
@@ -113,7 +116,8 @@
 				// Delete item's children
 				$wpdb->query(
 					"
-					DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."' AND parent='".$item->item_key."'
+					DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems
+					WHERE api_user_id='".$api_user_id."' AND parent='".$item->item_key."'
 					"
 				);
 			}
@@ -122,7 +126,15 @@
 		// Then delete items
 		$wpdb->query(
 			"
-			DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."' AND item_key IN ( '".str_replace( ",", "', '", $collection->listItems )."' )
+			DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems 
+			WHERE api_user_id='".$api_user_id."' AND item_key IN ( '".implode("','", $collection_item_list)."' )
+			"
+		);
+		// And their relationships with collections
+		$wpdb->query(
+			"
+			DELETE FROM ".$wpdb->prefix."zotpress_zoteroRelItemColl
+			WHERE api_user_id='".$api_user_id."' AND item_key IN ( '".implode("','", $collection_item_list)."' )
 			"
 		);
 		
@@ -131,13 +143,15 @@
 		// Next, subcollections
 		$subcollections = $wpdb->get_results(
 			"
-			SELECT item_key, listItems FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$api_user_id."' AND parent='".$collection->item_key."'
+			SELECT item_key FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$api_user_id."' AND parent='".$collection."'
 			"
 		);
 		
-		if ( count($subcollections) > 0 )
-			foreach ( $subcollections as $subcollection )
-				zp_selectively_delete_collection( $wpdb, $api_user_id, $subcollection );
+		if ( count($subcollections) > 0 ) {
+			foreach ( $subcollections as $subcollection ) {
+				zp_selectively_delete_collection( $wpdb, $api_user_id, $subcollection->item_key );
+			}
+		}
 		
 		unset( $subcollections );
 		
@@ -147,7 +161,7 @@
 				"
 				DELETE FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='%s' AND item_key='%s'
 				",
-				$api_user_id, $collection->item_key
+				$api_user_id, $collection
 			)
 		);
 		
@@ -162,6 +176,8 @@
         {
             case "items":
                 $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."'");
+                $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroRelItemColl WHERE api_user_id='".$api_user_id."'");
+                $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_zoteroRelItemTags WHERE api_user_id='".$api_user_id."'");
 				//$zp_entry_array = get_posts(
 				//	array(
 				//		'posts_per_page'   => -1,
@@ -203,20 +219,21 @@
 				if ( $collections !== false )
 				{
 					$collection_item_list = array(); // for tags
-					$collections = str_replace( ",", "', '", $collections );
+					//$collections = str_replace( ",", "', '", $collections );
 					//$collections = explode( ",", $collections );
 					//$all_top_level_collections = get_terms( 'zp_collections', array( 'hide_empty' => false, 'parent' => 0 ) );
-					$all_top_level_collections = $wpdb->get_results(
-						"
-						SELECT item_key, listItems FROM ".$wpdb->prefix."zotpress_zoteroCollections
-						WHERE api_user_id='".$api_user_id."' AND item_key IN ( '".$collections."' )
-						"
-					);
+					//$all_top_level_collections = $wpdb->get_results(
+					//	"
+					//	SELECT item_key FROM ".$wpdb->prefix."zotpress_zoteroCollections
+					//	WHERE api_user_id='".$api_user_id."' AND item_key IN ( '".$collections."' )
+					//	"
+					//);
+					$collections = explode(",", $collections);
 					
 					// Delete selected top level collection, items, subcollections and their items
-					if ( count($all_top_level_collections) > 0 )
+					if ( count($collections) > 0 )
 					{
-						foreach ( $all_top_level_collections as $top_level_collection )
+						foreach ( $collections as $top_level_collection )
 						{
 							$temp = zp_selectively_delete_collection( $wpdb, $api_user_id, $top_level_collection );
 							
@@ -233,8 +250,8 @@
 							// Get this item's tags
 							$item_tags = $wpdb->get_results(
 								"
-								SELECT id, title, listItems FROM ".$wpdb->prefix."zotpress_zoteroTags
-								WHERE api_user_id='".$api_user_id."' AND LOCATE('".$item_key."', listItems)
+								SELECT tag_title FROM ".$wpdb->prefix."zotpress_zoteroRelItemTags 
+								WHERE api_user_id='".$api_user_id."' AND item_key='".$item_key."'
 								"
 							);
 							
@@ -242,33 +259,61 @@
 							{
 								foreach ( $item_tags as $item_tag )
 								{
-									$tag_items = str_replace( $item_key.",", "", $item_tag->listItems."," );
+									// Delete relationship with item
+									$wpdb->query(
+										"
+										DELETE FROM ".$wpdb->prefix."zotpress_zoteroRelItemTags
+										WHERE api_user_id='".$api_user_id."'
+										AND (item_key = '".$item_key."' AND tag_title = '".$item_tag->tag_title."')
+										"
+									);
 									
-									// Update tag's item list
-									if ( strlen($tag_items) > 0 )
-									{
-										$wpdb->query( 
-											$wpdb->prepare( 
-												"
-												UPDATE ".$wpdb->prefix."zotpress_zoteroTags
-												SET listItems=%s
-												WHERE id=%d
-												",
-												rtrim( $tag_items, "," ), $item_tag->id
-											)
-										);
-									}
-									else // No items, so delete
+									// Delete tags if they don't have items
+									$tag_itemrel_count = $wpdb->get_results(
+										"
+										SELECT COUNT(*) AS itemrel_count FROM ".$wpdb->prefix."zotpress_zoteroRelItemTags 
+										WHERE api_user_id='".$api_user_id."' AND tag_title='".$item_tag->tag_title."'
+										"
+									);
+									
+									if ( $tag_itemrel_count[0]->itemrel_count < 1)
 									{
 										$wpdb->query(
-											$wpdb->prepare(
-												"
-												DELETE FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE id=%d
-												",
-												$item_tag->id
-											)
+											"
+											DELETE FROM ".$wpdb->prefix."zotpress_zoteroTags
+											WHERE api_user_id='".$api_user_id."'
+											AND title = '".$item_tag->tag_title."'
+											"
 										);
 									}
+									
+									//$tag_items = str_replace( $item_key.",", "", $item_tag->listItems."," );
+									//
+									//// Update tag's item list
+									//if ( strlen($tag_items) > 0 )
+									//{
+									//	$wpdb->query( 
+									//		$wpdb->prepare( 
+									//			"
+									//			UPDATE ".$wpdb->prefix."zotpress_zoteroTags
+									//			SET listItems=%s
+									//			WHERE id=%d
+									//			",
+									//			rtrim( $tag_items, "," ), $item_tag->id
+									//		)
+									//	);
+									//}
+									//else // No items, so delete
+									//{
+									//	$wpdb->query(
+									//		$wpdb->prepare(
+									//			"
+									//			DELETE FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE id=%d
+									//			",
+									//			$item_tag->id
+									//		)
+									//	);
+									//}
 								}
 							}
 							unset($item_tags);
@@ -443,21 +488,21 @@
         $zp_account = zp_get_account($wpdb, $api_user_id);
         
         
-        // See if default style exists
+        // Get default style
         $zp_default_style = "apa";
         if (get_option("Zotpress_DefaultStyle")) $zp_default_style = strtolower( get_option("Zotpress_DefaultStyle") );
         
         // Build request URL
 		if ( $zp_collection ) $zp_collection_url = '/collections/'.$zp_collection; else $zp_collection_url = '';
-		
 		$zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id.$zp_collection_url."/items?";
-		if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
+		if ( is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "" )
 			$zp_import_url .= "key=".$zp_account[0]->public_key."&";
 		$zp_import_url .= "format=atom&content=json,bib&style=".$zp_default_style."&limit=50&start=".$zp_start;
 		//var_dump($zp_import_url);
         
+		
+		// Make the request
 		$zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
-        
 		
         // Stop in our tracks if there's a request error
         if ($zp_import_contents->request_error) return $zp_import_contents->request_error;
@@ -526,7 +571,7 @@
             
             // Get basic metadata from JSON
             $json_content_decoded = json_decode($json_content);
-            
+			
             $author = "";
             $author_other = "";
             $date = "";
@@ -588,6 +633,7 @@
 			}
             
             
+            
             // Prep for insert into db
             array_push($GLOBALS['zp_session'][$api_user_id]['items']['query_params'],
                     $zp_account[0]->api_user_id,
@@ -634,11 +680,44 @@
     {
         if ($GLOBALS['zp_session'][$api_user_id]['items']['query_total_entries'] > 0)
         {
+			// Prepare query strings
+			$zp_relItemColl = "";
+			$zp_relItemTags = "";
+			
+			// Determine item-collection and item-tag relationships with JSON
+			for ( $i = 3; $i < count($GLOBALS['zp_session'][$api_user_id]['items']['query_params']); $i += 14 )
+			{
+				$i_json = json_decode($GLOBALS['zp_session'][$api_user_id]['items']['query_params'][$i]);
+				
+				if ( isset($i_json->collections) && count($i_json->collections) > 0 )
+					foreach ( $i_json->collections as $i_collection )
+						$zp_relItemColl .= "('" . $GLOBALS['zp_session'][$api_user_id]['items']['query_params'][$i-3] . "', '" . $i_json->itemKey . "', '" . htmlentities($i_collection) . "'), ";
+				
+				if ( isset($i_json->tags) && count($i_json->tags) > 0 )
+					foreach ( $i_json->tags as $i_tag )
+						if ( trim($i_tag->tag) != "" )
+							$zp_relItemTags .= "('" . $GLOBALS['zp_session'][$api_user_id]['items']['query_params'][$i-3] . "', '" . $i_json->itemKey . "', '" . htmlentities($i_tag->tag) . "'), ";
+			}
+			
+			// Prepare string: remove extra comma and space OR set to blank if nothing to add
+			if ( strlen($zp_relItemColl) > 0 )
+				$zp_relItemColl = "INSERT INTO ".$wpdb->prefix."zotpress_zoteroRelItemColl 
+					( api_user_id, item_key, collection_key ) VALUES " . substr( $zp_relItemColl, 0, -2 ) . "; ";
+			
+			if ( strlen($zp_relItemTags) > 0 )
+				$zp_relItemTags = "INSERT INTO ".$wpdb->prefix."zotpress_zoteroRelItemTags 
+					( api_user_id, item_key, tag_title ) VALUES " . substr( $zp_relItemTags, 0, -2 ) . "; ";
+			
+			//var_dump($zp_relItemColl);
+			//var_dump($zp_relItemTags); exit;
+			
+			// Execute queries
+			$wpdb->query( $zp_relItemColl );
+			$wpdb->query( $zp_relItemTags );
             $wpdb->query( $wpdb->prepare( 
-                "
-                    INSERT INTO ".$wpdb->prefix."zotpress_zoteroItems
+                "   INSERT INTO ".$wpdb->prefix."zotpress_zoteroItems
                     ( api_user_id, item_key, retrieved, json, author, zpdate, year, title, itemType, linkMode, citation, style, numchildren, parent )
-                    VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )".str_repeat(", ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )", $GLOBALS['zp_session'][$api_user_id]['items']['query_total_entries']-1), 
+                    VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )" . str_repeat(", ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )", $GLOBALS['zp_session'][$api_user_id]['items']['query_total_entries']-1) .";", 
                 $GLOBALS['zp_session'][$api_user_id]['items']['query_params']
             ) );
             
@@ -740,6 +819,7 @@
                 }
             }
         }
+		
         
         
         // GET COLLECTION META
@@ -772,21 +852,21 @@
             
             
             
-            // GET LIST OF ITEM KEYS
-            $zp_import_contents = new ZotpressRequest();
-            
-            // Build request URL
-            $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections/".$item_key."/items?format=keys";
-            if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "") $zp_import_url .= "&key=".$zp_account[0]->public_key;
-            
-            // Import item keys
-			$zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
-            
-            $zp_collection_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
-            
-            unset($zp_import_contents);
-            unset($zp_import_url);
-            unset($zp_xml);
+            // GET LIST OF ITEM KEYS - now dealt with in Items import
+//            $zp_import_contents = new ZotpressRequest();
+//            
+//            // Build request URL
+//            $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/collections/".$item_key."/items?format=keys";
+//            if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "") $zp_import_url .= "&key=".$zp_account[0]->public_key;
+//            
+//            // Import item keys
+//			$zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
+//            
+//            $zp_collection_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
+//            
+//            unset($zp_import_contents);
+//            unset($zp_import_url);
+//            unset($zp_xml);
             
             
             
@@ -798,8 +878,7 @@
 				zp_db_prep($parent),
 				$item_key,
 				$numCollections,
-				$numItems,
-				zp_db_prep($zp_collection_itemkeys)
+				$numItems
 			);
 			
 			$zp_collection_keys .= $item_key . ",";
@@ -812,7 +891,7 @@
             unset($item_key);
             unset($numCollections);
             unset($numItems);
-            unset($zp_collection_itemkeys);
+            //unset($zp_collection_itemkeys);
             
         } // entry
         
@@ -841,8 +920,8 @@
             $wpdb->query( $wpdb->prepare( 
                 "
                     INSERT INTO ".$wpdb->prefix."zotpress_zoteroCollections
-                    ( api_user_id, title, retrieved, parent, item_key, numCollections, numItems, listItems )
-                    VALUES ( %s, %s, %s, %s, %s, %d, %d, %s )".str_repeat(", ( %s, %s, %s, %s, %s, %d, %d, %s )", $GLOBALS['zp_session'][$api_user_id]['collections']['query_total_entries']-1), 
+                    ( api_user_id, title, retrieved, parent, item_key, numCollections, numItems )
+                    VALUES ( %s, %s, %s, %s, %s, %d, %d )".str_repeat(", ( %s, %s, %s, %s, %s, %d, %d )", $GLOBALS['zp_session'][$api_user_id]['collections']['query_total_entries']-1), 
                 $GLOBALS['zp_session'][$api_user_id]['collections']['query_params']
             ) );
             
@@ -999,21 +1078,21 @@
             unset($zp_xml);
             
             
-            // GET LIST OF ITEM KEYS
-            $zp_import_contents = new ZotpressRequest();
-            
-            $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags/".urlencode($title)."/items?format=keys";
-            if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
-                $zp_import_url .= "&key=".$zp_account[0]->public_key;
-            
-            // Import content
-			$zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
-            
-            $zp_tag_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
-            
-            unset($zp_import_contents);
-            unset($zp_import_url);
-            unset($zp_xml);
+            // GET LIST OF ITEM KEYS - now handled in Items import
+//            $zp_import_contents = new ZotpressRequest();
+//            
+//            $zp_import_url = "https://api.zotero.org/".$zp_account[0]->account_type."/".$zp_account[0]->api_user_id."/tags/".urlencode($title)."/items?format=keys";
+//            if (is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "")
+//                $zp_import_url .= "&key=".$zp_account[0]->public_key;
+//            
+//            // Import content
+//			$zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
+//            
+//            $zp_tag_itemkeys = rtrim(str_replace("\n", ",", $zp_xml), ",");
+//            
+//            unset($zp_import_contents);
+//            unset($zp_import_url);
+//            unset($zp_xml);
             
             
             // Prep for insert into db
@@ -1021,15 +1100,15 @@
                     $zp_account[0]->api_user_id,
                     zp_db_prep($title),
                     zp_db_prep($retrieved),
-                    $numItems,
-                    zp_db_prep($zp_tag_itemkeys));
+                    $numItems
+				);
             
             $GLOBALS['zp_session'][$api_user_id]['tags']['query_total_entries']++;
             
             unset($title);
             unset($retrieved);
             unset($numItems);
-            unset($zp_tag_itemkeys);
+            //unset($zp_tag_itemkeys);
             
         } // entry
         
@@ -1058,8 +1137,8 @@
             $wpdb->query( $wpdb->prepare( 
                 "
                     INSERT INTO ".$wpdb->prefix."zotpress_zoteroTags
-                    ( api_user_id, title, retrieved, numItems, listItems )
-                    VALUES ( %s, %s, %s, %d, %s )".str_repeat(", ( %s, %s, %s, %d, %s )", $GLOBALS['zp_session'][$api_user_id]['tags']['query_total_entries']-1) ."
+                    ( api_user_id, title, retrieved, numItems )
+                    VALUES ( %s, %s, %s, %d )".str_repeat(", ( %s, %s, %s, %d )", $GLOBALS['zp_session'][$api_user_id]['tags']['query_total_entries']-1) ."
 					ON DUPLICATE KEY UPDATE
 					api_user_id = VALUES(api_user_id),
 					title = VALUES(title),

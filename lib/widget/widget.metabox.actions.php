@@ -220,6 +220,7 @@
             if ($errorCheck == false)
             {
                 global $wpdb;
+                global $current_user;
                 
                 // Drop all tables except accounts/main
                 $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress;");
@@ -227,6 +228,8 @@
                 $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroItems;");
                 $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroCollections;");
                 $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroTags;");
+                $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroRelItemColl;");
+                $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroRelItemTags;");
                 
                 /*// Delete entries/items
                 $zp_entry_array = get_posts(
@@ -268,6 +271,10 @@
                 delete_option( 'Zotpress_zoteroItems_db_version' );
                 delete_option( 'Zotpress_zoteroCollections_db_version' );
                 delete_option( 'Zotpress_zoteroTags_db_version' );
+                delete_option( 'Zotpress_zoteroRelItemColl_db_version' );
+                delete_option( 'Zotpress_zoteroRelItemTags_db_version' );
+                
+                delete_user_meta( $current_user->ID, 'zotpress_5_2_ignore_notice' );
                 
                 $xml .= "<result success='true' reset='complete' />\n";
             }

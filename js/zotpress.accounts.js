@@ -221,38 +221,38 @@ jQuery(document).ready( function()
         
     */
 
-    jQuery('div#zp-AccountsList div.zp-Account .actions a.sync').click(function(e)
-    {
-        var $this = jQuery(this);
-        
-        // Disable sync link until done
-        e.preventDefault();
-        
-        // Prep and show loading sign
-        $this.removeClass("success");
-        $this.removeClass("error");
-        $this.addClass("syncing");
-        
-        // Add sync iframe to DOM
-        if (jQuery("iframe#zp-Sync-" + jQuery("span", $this).text()).length == 0)
-        {
-            jQuery('<iframe/>', {
-                id: 'zp-Sync-' + jQuery('span.api_user_id', $this.parent().parent()).text(),
-                'class': 'zp-Setup-Sync', // IE ISSUE - needs quotations around class
-                //src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span#ZOTPRESS_PASSCODE").text() + '&step=items',
-                src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&step=items',
-                scrolling: 'yes'
-            }).appendTo('#zp-ManageAccounts');
-        }
-        else
-        {
-            jQuery("iframe#zp-Sync-" + jQuery("span", $this).text()).attr("src", jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span", $this).text() + '&step=items');
-        }
-        
-        $this.parent().find('.zp-Sync-Messages').text("Syncing items 1-50 ...");
-        
-        return false;
-    });
+    //jQuery('div#zp-AccountsList div.zp-Account .actions a.sync').click(function(e)
+    //{
+    //    var $this = jQuery(this);
+    //    
+    //    // Disable sync link until done
+    //    e.preventDefault();
+    //    
+    //    // Prep and show loading sign
+    //    $this.removeClass("success");
+    //    $this.removeClass("error");
+    //    $this.addClass("syncing");
+    //    
+    //    // Add sync iframe to DOM
+    //    if (jQuery("iframe#zp-Sync-" + jQuery("span", $this).text()).length == 0)
+    //    {
+    //        jQuery('<iframe/>', {
+    //            id: 'zp-Sync-' + jQuery('span.api_user_id', $this.parent().parent()).text(),
+    //            'class': 'zp-Setup-Sync', // IE ISSUE - needs quotations around class
+    //            //src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span#ZOTPRESS_PASSCODE").text() + '&step=items',
+    //            src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&step=items',
+    //            scrolling: 'yes'
+    //        }).appendTo('#zp-ManageAccounts');
+    //    }
+    //    else
+    //    {
+    //        jQuery("iframe#zp-Sync-" + jQuery("span", $this).text()).attr("src", jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span", $this).text() + '&step=items');
+    //    }
+    //    
+    //    $this.parent().find('.zp-Sync-Messages').text("Syncing items 1-50 ...");
+    //    
+    //    return false;
+    //});
     
     
     

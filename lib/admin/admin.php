@@ -26,11 +26,16 @@
         
         
         
-        // SETUP ZOTPRESS
+        // SETUP AND IMPORT ZOTPRESS
         
         if (isset($_GET['setup']))
         {
             include('admin.setup.php');
+        }
+        
+        else if (isset($_GET['import']))
+        {
+            include('admin.import.php');
         }
         
         else if (isset($_GET['selective']))

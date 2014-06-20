@@ -23,7 +23,7 @@
     
     // Ignore user abort
     ignore_user_abort(true);
-    set_time_limit(60*10); // ten minutes
+    set_time_limit(60); // 1 minute (vs. 60*10)
     
     // Include Request Functionality
     require("../request/rss.request.php");
@@ -34,15 +34,13 @@
 	$GLOBALS['zp_session'][$api_user_id]['collections']['query_params'] = array();
 	$GLOBALS['zp_session'][$api_user_id]['collections']['query_total_entries'] = 0;
 	
-	$zp_continue = zp_get_collections ($wpdb, $api_user_id, 0, true);
-	//zp_save_collections ($wpdb, $api_user_id, true, true); // might be confusing to users because doesn't import items or subcollections
-	$zp_current_set = 1;
+	$zp_current_set = 0;
 	
 	while ( $zp_current_set <= $GLOBALS['zp_session'][$api_user_id]['collections']['last_set'] )
 	{
 		$zp_continue = zp_get_collections ($wpdb, $api_user_id, $zp_current_set, true);
 		//zp_save_collections ($wpdb, $api_user_id, true, true); // might be confusing to users because doesn't import items or subcollections
-		$zp_current_set++;
+		$zp_current_set += 50;
 	}
 	
 	$output = "<!DOCTYPE HTML>\n<html>\n<head>";
@@ -103,7 +101,7 @@
 		$output .= "<div class='zp-Collection-List'>\n";
 		for ($i = 0; $i <= ($GLOBALS['zp_session'][$api_user_id]['collections']['query_total_entries'] - 1); $i++ )
 		{
-			$mod = $i * 8;
+			$mod = $i * 7;
 			
 			$output .= "<div class='zp-Collection' rel='" . $GLOBALS['zp_session'][$api_user_id]['collections']['query_params'][4+$mod] . "'>";
 			$output .= "<span class='title'>" . $GLOBALS['zp_session'][$api_user_id]['collections']['query_params'][1+$mod] . "</span>";

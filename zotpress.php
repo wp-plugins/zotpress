@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bring Zotero and scholarly blogging to your WordPress site.
     Author: Katie Seaborn
-    Version: 5.1
+    Version: 5.2
     Author URI: http://katieseaborn.com
     
 */
@@ -43,12 +43,7 @@
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
-    $Zotpress_update_version = "5.1";
-    $Zotpress_main_db_version = "5.0.5";
-    $Zotpress_oauth_db_version = "5.0.5";
-    $Zotpress_zoteroItems_db_version = "5.0.5";
-    $Zotpress_zoteroCollections_db_version = "5.0.5";
-    $Zotpress_zoteroTags_db_version = "5.0.5";
+    $GLOBALS['Zotpress_update_version'] = "5.2";
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
@@ -141,7 +136,7 @@
             wp_enqueue_script( 'jquery.livequery.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.livequery.js', array( 'jquery' ) );
         }
         
-        if ( isset($_GET['accounts']) || isset($_GET['setup']) || isset($_GET['selective']) )
+        if ( isset($_GET['accounts']) || isset($_GET['setup']) || isset($_GET['import']) || isset($_GET['selective']) )
         {
             wp_register_script('zotpress.accounts.js', ZOTPRESS_PLUGIN_URL . 'js/zotpress.accounts.js', array('jquery','media-upload','thickbox'));
             wp_enqueue_script('zotpress.accounts.js');
@@ -158,7 +153,7 @@
     */
     function Zotpress_admin_menu()
     {
-        add_menu_page("Zotpress", "Zotpress", 3, "Zotpress", "Zotpress_options", ZOTPRESS_PLUGIN_URL."images/icon.png");
+        add_menu_page("Zotpress", "Zotpress", "edit_posts", "Zotpress", "Zotpress_options", ZOTPRESS_PLUGIN_URL."images/icon.png");
     }
     add_action( 'admin_menu', 'Zotpress_admin_menu' );
     
@@ -180,7 +175,7 @@
     */
     function Zotpress_change_timeout($time)
     {
-        return 30; // seconds
+        return 60; // seconds
     }
     add_filter('http_request_timeout', 'Zotpress_change_timeout');
     
@@ -251,7 +246,13 @@
     
     
     // Enqueue jQuery in theme if it isn't already enqueued
-    if (!isset( $GLOBALS['wp_scripts']->registered[ "jquery" ] )) wp_enqueue_script("jquery");
+    // Thanks to WordPress user "eceleste"
+    //if (!isset( $GLOBALS['wp_scripts']->registered[ "jquery" ] )) wp_enqueue_script("jquery");
+    function Zotpress_enqueue_scripts()
+    {
+        if (!isset( $GLOBALS['wp_scripts']->registered[ "jquery" ] )) wp_enqueue_script("jquery");
+    }
+    add_action( 'wp_enqueue_scripts' , 'Zotpress_enqueue_scripts' );
 
     // Add shortcodes and sidebar widget
     add_shortcode( 'zotpress', 'Zotpress_func' );
@@ -273,6 +274,41 @@
         }
     }
     add_action('wp_footer', 'Zotpress_theme_conditional_scripts_footer');
+    
+    
+    // 5.2 - Notice of required re-import
+    // Thanks to http://wptheming.com/2011/08/admin-notices-in-wordpress/
+    
+    function zotpress_5_2_admin_notice()
+    {
+        global $wpdb;
+        global $current_user;
+        
+        // See if any accounts are the old version
+        $temp_version_count =
+                $wpdb->get_var( "SELECT COUNT(version) FROM ".$wpdb->prefix."zotpress
+                                            WHERE version != '".$GLOBALS['Zotpress_update_version']."';" );
+        
+        if ( $temp_version_count > 0
+                && !get_user_meta($current_user->ID, 'zotpress_5_2_ignore_notice')
+                && ( current_user_can('edit_posts') || current_user_can('edit_pages') )
+                && ( !isset($_GET['setup']) && !isset($_GET['selective']) && !isset($_GET['import']) )
+            )
+        {
+            echo '<div class="error"><p>';
+            printf(__('<strong>URGENT:</strong> Due to major changes in Zotpress, your Zotero account(s) need to be <a href="admin.php?page=Zotpress&accounts=true">re-imported</a>. | <a href="%1$s">Hide Notice</a>'), 'admin.php?page=Zotpress&zotpress_5_2_ignore=0');
+            echo "</p></div>";
+        }
+    }
+    add_action( 'admin_notices', 'zotpress_5_2_admin_notice' );
+    
+    function zotpress_5_2_ignore()
+    {
+        global $current_user;
+        if ( isset($_GET['zotpress_5_2_ignore']) && $_GET['zotpress_5_2_ignore'] == '0' )
+            add_user_meta($current_user->ID, 'zotpress_5_2_ignore_notice', 'true', true);
+    }
+    add_action('admin_init', 'zotpress_5_2_ignore');
     
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 <?php
 
-    if ( (isset($_GET['accounts']) && $_GET['accounts'] == "true") || (isset($_GET['selective']) && $_GET['selective'] == "true") )
+    if ( (isset($_GET['accounts']) && $_GET['accounts'] == "true") || (isset($_GET['selective']) && $_GET['selective'] == "true") || (isset($_GET['import']) && $_GET['import'] == "true") )
         $tagpage = "accounts";
     else if ( isset($_GET['options']) && $_GET['options'] == "true" )
         $tagpage = "options";

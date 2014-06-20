@@ -73,7 +73,7 @@ if (!class_exists('ZotpressRequest'))
                 
                 function getXmlData( $url )
                 {
-                        $response = wp_remote_get( $url, array( 'headers' => array("Zotero-API-Version: 2") ) );
+                        $response = wp_remote_get( $url, array( 'headers' => array("Zotero-API-Version" => "2") ) );
                         
                         if ( is_wp_error($response) || ! isset($response['body']) )
                         {
@@ -83,7 +83,7 @@ if (!class_exists('ZotpressRequest'))
                                 {
                                         // Try again with less restrictions
                                         add_filter('https_ssl_verify', '__return_false'); //add_filter('https_local_ssl_verify', '__return_false');
-                                        $response = wp_remote_get( $url, array( 'headers' => array("Zotero-API-Version: 2") ) );
+                                        $response = wp_remote_get( $url, array( 'headers' => array("Zotero-API-Version" => "2") ) );
                                         
                                         if ( is_wp_error($response) || ! isset($response['body']) )
                                         {

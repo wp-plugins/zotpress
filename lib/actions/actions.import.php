@@ -120,7 +120,8 @@
                 global $wpdb;
 				
 				$zp_selective = false;
-				if ( isset($_GET['selective']) && preg_match("/^[a-zA-Z0-9,]+$/", $_GET['selective']) ) $zp_selective = $_GET['selective'];
+				if ( isset($_GET['selective']) && preg_match("/^[a-zA-Z0-9,]+$/", $_GET['selective']) )
+					$zp_selective = $_GET['selective'];
 				
                 $zp_continue = zp_get_items ($wpdb, $api_user_id, $start, $zp_selective);
                 
@@ -200,27 +201,6 @@
                 }
             }
             
-            
-            // SELECTIVE
-            
-//            else if ( isset($_GET['selective']) && $_GET['step'] == "selective")
-//            {
-//                global $wpdb;
-//                $zp_continue = zp_get_selective ($wpdb, $api_user_id, $start);
-//                
-//                if ($zp_continue === true)
-//                {
-//					//zp_save_tags ($wpdb, $api_user_id, true);
-//					
-//					$xml = "<result success=\"true\" />\n";
-//                }
-//                //else // Execute import query, then move on
-//                //{
-//                //    //zp_save_tags ($wpdb, $api_user_id);
-//                //    
-//                //    $xml = "<result success=\"true\" />\n";
-//                //}
-//            }
         }
         
         

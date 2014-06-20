@@ -27,6 +27,7 @@ if (isset( $_GET['oauth'] )) { include("admin.accounts.oauth.php"); } else {
 						<th class="api_user_id manage-column" scope="col">User ID</th>
 						<th class="public_key manage-column" scope="col">Private Key</th>
 						<th class="nickname manage-column" scope="col">Nickname</th>
+						<th class="status manage-column" scope="col">Status</th>
 						<th class="actions last manage-column" scope="col">Actions</th>
 					</tr>
 				</thead>
@@ -35,6 +36,8 @@ if (isset( $_GET['oauth'] )) { include("admin.accounts.oauth.php"); } else {
 					<?php
 						
 						global $wpdb;
+				        //global $Zotpress_update_version;
+						
 						$accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress");
 						$zebra = " alternate";
 						
@@ -60,19 +63,27 @@ if (isset( $_GET['oauth'] )) { include("admin.accounts.oauth.php"); } else {
 							{
 								$code .= 'No private key entered. <a class="zp-OAuth-Button" href="'.get_bloginfo( 'url' ).'/wp-content/plugins/zotpress/lib/admin/admin.accounts.oauth.php?oauth_user='.$account->api_user_id.'&amp;return_uri='.get_bloginfo('url').'">Start OAuth?</a>';
 							}
-							$code .= "&nbsp;</td>\n";
+							$code .= "</td>\n";
 							
 							// NICKNAME
 							$code .= "                          <td class='nickname'>";
 							if ($account->nickname)
 								$code .= $account->nickname;
-							$code .= "&nbsp;</td>\n";
+							$code .= "</td>\n";
+							
+							// STATUS
+							$code .= "                          <td class='status'>";
+							if ( $account->version != $GLOBALS['Zotpress_update_version'] )
+								$code .= "<span class='status_bad'>&#10007;</span>";
+							else
+								$code .= "<span class='status_good'>&#10004;</span>";
+							$code .= "</td>\n";
 							
 							// ACTIONS
 							$code .= "                          <td class='actions last'>\n";
 							//$code .= "                              <a title='Sync' class='sync' rel='".$account->api_user_id."' href='javascript:void(0);'><span class='icon'></span>Sync</a>\n";
 							$code .= "                              <a title='Selective Import' class='selective' rel='".$account->api_user_id."' href='admin.php?page=Zotpress&selective=true&api_user_id=" . $account->api_user_id . "'>Selective Import</a>\n";
-							$code .= "                              <a title='(Re)Import' class='import' href='admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=" . $account->api_user_id . "'>Import</a>\n";
+							$code .= "                              <a title='(Re)Import' class='import' href='admin.php?page=Zotpress&import=true&api_user_id=" . $account->api_user_id . "'>Import</a>\n";
 							$code .= "                              <a title='Remove this account' class='delete' href='#" . $account->id . "'>Remove</a>\n";
 							//$code .= "                              <span class='zp-Sync-Messages'>&nbsp;</span>\n";
 							$code .= "                          </td>\n";

@@ -170,7 +170,7 @@
                             if ( $account_id ) { echo "&amp;account_id=".$account_id; }
                             echo "'>";
                             echo "<span class='name'>".$zp_collection->title."</span>";
-                            //echo "<span class='item_key'>".$zp_collection->item_key."</span>";
+                            echo "<span class='item_key'>Collection Key: ".$zp_collection->item_key."</span>";
                             echo "<span class='meta'>".$zp_collection->numCollections." subcollections, ".$zp_collection->numItems." items</span>";
                             echo "</a>\n";
                         }
@@ -294,32 +294,49 @@
                     $zp_citations = get_posts( $zp_citation_attr );*/
                     
                     // By Collection ID
-                    if (isset($_GET['collection_id']) && preg_match("/^[a-zA-Z0-9]+$/", $_GET['collection_id']) == 1) {
-                        $zp_citations = $wpdb->get_results("SELECT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroCollections, ".$wpdb->prefix."zotpress_zoteroItems WHERE ".$wpdb->prefix."zotpress_zoteroCollections.id='".$_GET['collection_id']."' AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroItems.item_key, ".$wpdb->prefix."zotpress_zoteroCollections.listitems) AND itemType != 'note' AND itemType != 'attachment' ORDER BY author ASC");
-                    
+                    if (isset($_GET['collection_id']) && preg_match("/^[a-zA-Z0-9]+$/", $_GET['collection_id']) == 1)
+                    {
+                        $zp_citations = $wpdb->get_results(
+                            "
+                            SELECT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroItems 
+                            LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key 
+                            WHERE ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key = '".$zp_top_collection->item_key."' 
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment'
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$api_user_id."'
+                            ORDER BY author ASC
+                            "
+                        );
+                    }
                     // By Tag ID
-                    } else if (isset($_GET['tag_id']) && preg_match("/^[0-9]+$/", $_GET['tag_id']) == 1) {
-                        $zp_citations = $wpdb->get_results("SELECT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroTags, ".$wpdb->prefix."zotpress_zoteroItems WHERE ".$wpdb->prefix."zotpress_zoteroTags.id='".$_GET['tag_id']."' AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroItems.item_key, ".$wpdb->prefix."zotpress_zoteroTags.listitems) AND itemType != 'note' AND itemType != 'attachment' ORDER BY author ASC");
-                    
+                    else if (isset($_GET['tag_id']) && preg_match("/^[0-9]+$/", $_GET['tag_id']) == 1)
+                    {
+                        $zp_citations = $wpdb->get_results(
+                            "
+                            SELECT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroItems 
+                            LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemTags ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemTags.item_key 
+                            WHERE ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title = '".$tag_title->title."' 
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment'
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$api_user_id."'
+                            ORDER BY author ASC
+                            "
+                        );
+                    }
                     // Top-level
-                    } else {
-                        $zp_all_citations = $wpdb->get_col("SELECT item_key FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."' AND itemType != 'note' AND itemType != 'attachment'");
-                        $zp_all_collection_citations = $wpdb->get_results("SELECT listItems FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$api_user_id."'");
-                        
-                        if (count($zp_all_collection_citations) > 0)
-                        {
-                            $zp_all_collection_citations_arr = array();
-                            foreach ($zp_all_collection_citations as $list)
-                                foreach(explode(",", $list->listItems) as $list_item )
-                                    array_push($zp_all_collection_citations_arr, $list_item);
-                            
-                            $zp_toplevel_citations = array_diff( $zp_all_citations, $zp_all_collection_citations_arr );
-                            $zp_citations = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE item_key IN ('" . implode("','", $zp_toplevel_citations) . "') AND api_user_id='".$api_user_id."' ORDER BY author ASC");
-                        }
-                        else // no collections
-                        {
-                            $zp_citations = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$api_user_id."' AND itemType != 'note' AND itemType != 'attachment' LIMIT 99");
-                        }
+                    else
+                    {
+                        $zp_citations = $wpdb->get_results(
+                            "
+                            SELECT ".$wpdb->prefix."zotpress_zoteroItems.*, ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key FROM ".$wpdb->prefix."zotpress_zoteroItems 
+                            LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key 
+                            WHERE ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key IS NULL
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment'
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$api_user_id."'
+                            ORDER BY author ASC
+                            "
+                        );
                     }
                     
                     

@@ -1158,8 +1158,19 @@
         /*width: 11.5em;*/
         width: 13.5em;
     }
+    #zp-Accounts .status {
+        text-align: center;
+        width: 5em;
+    }
+    #zp-Accounts .status .status_good {
+        color: #008000;
+        font-weight: bold;
+    }
+    #zp-Accounts .status .status_bad {
+        color: #DD3D36;
+        font-weight: bold;
+    }
     #zp-Accounts .actions {
-        /*width: 18em;*/
         width: 22.5em;
     }
 
@@ -1167,8 +1178,19 @@
         display: block;
         float: left;
         outline: none;
-        margin: 0 1.25em 0.25em 0;
-        height: 21px;
+        margin: 0 1.25em 0 0;
+        height: 25px;
+    }
+    @media only screen and (max-width: 1080px) {
+        #zp-AccountsList .actions a {
+            margin-right: 0.25em;
+            width: 25px;
+            height: 25px;
+            overflow: hidden;
+        }
+        #zp-Accounts .actions {
+            width: 100px;
+        }
     }
     #zp-AccountsList .actions a:before {
         background-image: url('../images/sprite.png');
@@ -1200,10 +1222,10 @@
         background-position: -61px -422px;
     }
     #zp-AccountsList .actions a.selective:before {
-        background-position: -252px -422px;
+        background-position: -252px -423px;
     }
     #zp-AccountsList .actions a.import:before {
-        background-position: 0 -422px;
+        background-position: 0 -423px;
     }
     #zp-AccountsList .actions a.delete {
         margin-right: 0;

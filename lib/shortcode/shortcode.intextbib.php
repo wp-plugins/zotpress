@@ -112,19 +112,21 @@
             {
                 global $wpdb;
                 
-                $zp_showtags_query = $wpdb->get_results("SELECT wp_zotpress_zoteroTags.title FROM wp_zotpress_zoteroTags WHERE FIND_IN_SET('".$zp_citation["item_key"]."', wp_zotpress_zoteroTags.listitems);", ARRAY_A);
+                $zp_showtags_query = "SELECT DISTINCT ".$wpdb->prefix."zotpress_zoteroTags.title FROM ".$wpdb->prefix."zotpress_zoteroTags LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemTags ON ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title=".$wpdb->prefix."zotpress_zoteroTags.title WHERE ".$wpdb->prefix."zotpress_zoteroRelItemTags.item_key='".$zp_citation["item_key"]."' ORDER BY ".$wpdb->prefix."zotpress_zoteroTags.title ASC;";
+                $zp_showtags_results = $wpdb->get_results($zp_showtags_query, ARRAY_A);
                 
-                if ( count($zp_showtags_query) > 0)
+                if ( count($zp_showtags_results) > 0)
                 {
                     $citation_tags = "<p class='zp-Zotpress-ShowTags'><span class='title'>Tags:</span> ";
                     
-                    foreach ($zp_showtags_query as $i => $zp_showtags_tag)
+                    foreach ($zp_showtags_results as $i => $zp_showtags_tag)
                     {
                         $citation_tags .= "<span class='tag'>" . $zp_showtags_tag["title"] . "</span>";
-                        if ( $i != (count($zp_showtags_query)-1) ) $citation_tags .= "<span class='separator'>,</span> ";
+                        if ( $i != (count($zp_showtags_results)-1) ) $citation_tags .= "<span class='separator'>,</span> ";
                     }
                     $citation_tags .= "</p>\n";
                 }
+                unset($zp_showtags_results);
                 unset($zp_showtags_query);
             }
             

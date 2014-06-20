@@ -27,9 +27,21 @@
             if (get_option("Zotpress_DefaultAccount")) $zp_default_account = get_option("Zotpress_DefaultAccount");
             
             if ($zp_default_account !== false)
-                $zp_account = $wpdb->get_results( $wpdb->prepare( "SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress WHERE api_user_id = '".$zp_default_account."';" ) );
+            {
+                $zp_account = $wpdb->get_results(
+                    $wpdb->prepare(
+                        "
+                        SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress
+                        WHERE api_user_id = %s
+                        ",
+                        $zp_default_account
+                    )
+                );
+            }
             else
-                $zp_account = $wpdb->get_results( $wpdb->prepare( "SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress LIMIT 1;" ) );
+            {
+                $zp_account = $wpdb->get_results($wpdb->prepare( "SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress LIMIT 1;" ) );
+            }
             
             if (is_null($zp_account[0]->nickname) === false && $zp_account[0]->nickname != "")
                 $zp_default_account = $zp_account[0]->nickname . " (" . $zp_account[0]->api_user_id . ")";
@@ -240,9 +252,20 @@
                 $zp_default_account = get_option("Zotpress_DefaultAccount");
             
             if ($zp_default_account !== false)
-                $zp_account = $wpdb->get_results( $wpdb->prepare( "SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress WHERE api_user_id = '".$zp_default_account."';" ) );
+            {
+                $zp_account = $wpdb->get_results(
+                    $wpdb->prepare(
+                        "
+                        SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress
+                        WHERE api_user_id = %s",
+                        $zp_default_account
+                    )
+                );
+            }
             else
+            {
                 $zp_account = $wpdb->get_results( $wpdb->prepare( "SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress LIMIT 1;" ) );
+            }
             
             if (is_null($zp_account[0]->nickname) === false && $zp_account[0]->nickname != "")
                 $zp_default_account = $zp_account[0]->nickname . " (" . $zp_account[0]->api_user_id . ")";

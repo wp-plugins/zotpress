@@ -41,7 +41,7 @@
             'limit' => false,
             
             'sortby' => "default",
-            'order' => "ASC",
+            'order' => false,
             'sort' => false,
             
             'title' => "no",
@@ -70,8 +70,7 @@
             
             'target' => false
             
-        ), $atts));
-        
+        ), $atts, "zotpress"));
         
         
         // FORMAT PARAMETERS
@@ -136,6 +135,7 @@
         
         if ($order) $order = str_replace('"','',html_entity_decode($order));
         else if ($sort) $order = str_replace('"','',html_entity_decode($sort));
+        if ($order === false) $order = "ASC";
         
         // Show title
         $title = str_replace('"','',html_entity_decode($title));
@@ -242,222 +242,172 @@
                     || ($data_type == "tags" && isset($_GET['zptag']) )
                     || ($data_type == "collections" && isset($_GET['zpcollection'])) )
             {
-                //SELECT DISTINCT ".$wpdb->prefix."zotpress_zoteroItems.*, attachments.citation as attachment_content, attachments.json AS attachment_data FROM ".$wpdb->prefix."zotpress_zoteroItems LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItems AS attachments ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=attachments.parent WHERE ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment' AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note' AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id='237927' AND ".$wpdb->prefix."zotpress_zoteroItems.item_key IN('HDK4QZNR','RMJFDDDF','RNSHBXRF','G42FTSFZ') ORDER BY ".$wpdb->prefix."zotpress_zoteroItems.retrieved ASC
-                //SELECT DISTINCT ".$wpdb->prefix."zotpress_zoteroItems.*, attachments.citation AS attachment_content, attachments.json AS attachment_data, attachments.linkmode AS attachment_linkmode FROM ".$wpdb->prefix."zotpress_zoteroItems LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItems AS attachments ON (".$wpdb->prefix."zotpress_zoteroItems.item_key=attachments.parent AND attachments.linkmode IN ( 'imported_file', 'linked_url' )) WHERE ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment' AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note' AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id='237927' AND ".$wpdb->prefix."zotpress_zoteroItems.item_key IN('HDK4QZNR','RMJFDDDF','RNSHBXRF','G42FTSFZ') ORDER BY ".$wpdb->prefix."zotpress_zoteroItems.retrieved ASC
-                
                 $zp_query = "";
                 
-                if ($download) {
-                    //$zp_query = "CREATE TEMPORARY TABLE attachments SELECT ".$wpdb->prefix."zotpress_zoteroItems.parent, ".$wpdb->prefix."zotpress_zoteroItems.citation AS attachment_content, ".$wpdb->prefix."zotpress_zoteroItems.item_key AS attachment_key, ".$wpdb->prefix."zotpress_zoteroItems.json AS attachment_data, ".$wpdb->prefix."zotpress_zoteroItems.linkmode AS attachment_linkmode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE ".$wpdb->prefix."zotpress_zoteroItems.linkmode IN ( 'imported_file', 'linked_url' ); ";
-                    
-                    $wpdb->get_results("CREATE TEMPORARY TABLE attachments SELECT ".$wpdb->prefix."zotpress_zoteroItems.parent AS parent, ".$wpdb->prefix."zotpress_zoteroItems.citation AS content, ".$wpdb->prefix."zotpress_zoteroItems.item_key AS item_key, ".$wpdb->prefix."zotpress_zoteroItems.json AS data, ".$wpdb->prefix."zotpress_zoteroItems.linkmode AS linkmode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE ".$wpdb->prefix."zotpress_zoteroItems.linkmode IN ( 'imported_file', 'linked_url' );");
-                    //$temp = $wpdb->get_results("SELECT * FROM attachments;");
-                    //var_dump($temp);
-                }
+                if ($download)
+                    $wpdb->get_results("CREATE TEMPORARY TABLE attachments SELECT ".$wpdb->prefix."zotpress_zoteroItems.parent AS parent, ".$wpdb->prefix."zotpress_zoteroItems.citation AS content, ".$wpdb->prefix."zotpress_zoteroItems.item_key AS item_key, ".$wpdb->prefix."zotpress_zoteroItems.json AS data, ".$wpdb->prefix."zotpress_zoteroItems.linkmode AS linkmode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE ".$wpdb->prefix."zotpress_zoteroItems.linkmode IN ( 'imported_file', 'linked_url' ); ");
                 
                 $zp_query .= "SELECT DISTINCT ".$wpdb->prefix."zotpress_zoteroItems.*";
                 
-                //if ($download) $zp_query .= ", attachments.citation AS attachment_content, attachments.item_key AS attachment_key, attachments.json AS attachment_data, attachments.linkmode AS attachment_linkmode";
                 if ($download) $zp_query .= ", attachments.content AS attachment_content, attachments.item_key AS attachment_key, attachments.data AS attachment_data, attachments.linkmode AS attachment_linkmode";
                 
-                $zp_query .= " FROM (".$wpdb->prefix."zotpress_zoteroItems";
+                $zp_query .= " FROM ".$wpdb->prefix."zotpress_zoteroItems ";
                 
-                // Filter by collection or tag
-                if ($collection_id || $tag_name)
+                
+                // JOINS: download, collections, tags
+                
+                if ($download)
+                    $zp_query .= " LEFT JOIN (attachments) ON  (".$wpdb->prefix."zotpress_zoteroItems.item_key=attachments.parent) ";
+                
+                if ($collection_id)
                 {
-                    // Set table
-                    if (!$tag_name && $collection_id && $inclusive == "yes")
-                        $zp_query .= ", ".$wpdb->prefix."zotpress_zoteroCollections";
-                    else if ($tag_name && !$collection_id && $inclusive == "yes")
-                        $zp_query .= ", ".$wpdb->prefix."zotpress_zoteroTags";
-                    else if ($tag_name && $collection_id)
-                        if ($inclusive == "yes")
-                            $zp_query .= ", ".$wpdb->prefix."zotpress_zoteroCollections"; // just collections to start
-                        else
-                            $zp_query .= ", ".$wpdb->prefix."zotpress_zoteroCollections, ".$wpdb->prefix."zotpress_zoteroTags"; // both
+                    if (!is_array($collection_id) || (is_array($collection_id) && $inclusive == "yes"))
+                    {
+                        $zp_query .= " LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl ON (".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key) ";
+                    }
+                    else if (is_array($collection_id) && $inclusive != "yes")
+                    {
+                        // create inner joins
+                        for ($i = 0; $i < count($collection_id); $i++)
+                            $zp_query .= " INNER JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl AS zpRelItemColl".$i." ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=zpRelItemColl".$i.".item_key ";
+                        
+                        $zp_query .= " AND ( ";
+                        
+                        // exclusive to specific collections
+                        for ($i = 0; $i < count($collection_id); $i++)
+                        {
+                            if ($i != 0) $zp_query .= " AND ";
+                            $zp_query .= " zpRelItemColl".$i.".collection_key='".$collection_id[$i]."' ";
+                        }
+                        $zp_query .= " ) ";
+                    }
                 }
                 
-                $zp_query .= ") ";
+                if ($tag_name)
+                {
+                    if (!is_array($tag_name) || (is_array($tag_name) && $inclusive == "yes"))
+                    {
+                        $zp_query .= " LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemTags ON (".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemTags.item_key) ";
+                    }
+                    else if (is_array($tag_name) && $inclusive != "yes")
+                    {
+                        // create inner joins
+                        for ($i = 0; $i < count($tag_name); $i++)
+                            $zp_query .= " INNER JOIN ".$wpdb->prefix."zotpress_zoteroRelItemTags AS zpRelItemTags".$i." ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=zpRelItemTags".$i.".item_key ";
+                        
+                        $zp_query .= " AND ( ";
+                        
+                        // exclusive to specific tags
+                        for ($i = 0; $i < count($tag_name); $i++)
+                        {
+                            if ($i != 0) $zp_query .= " AND ";
+                            $zp_query .= " zpRelItemTags".$i.".tag_title='".$tag_name[$i]."' ";
+                        }
+                        $zp_query .= " ) ";
+                    }
+                }
                 
-                //if ($download) $zp_query .= " LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItems AS attachments ON (".$wpdb->prefix."zotpress_zoteroItems.item_key=attachments.parent AND attachments.linkmode IN ( 'imported_file', 'linked_url' ))";
-                if ($download) $zp_query .= " LEFT JOIN (attachments) ON  (".$wpdb->prefix."zotpress_zoteroItems.item_key=attachments.parent) ";
+                // WHERE
                 
                 $zp_query .= " WHERE ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment' AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note' ";
                 
-                if ($collection_id || $tag_name)
+                // Filter by collection(s)
+                if ($collection_id)
                 {
-                    // Collection(s)
-                    if ($collection_id)
+                    // Multiple inclusive collections
+                    if (is_array($collection_id))
                     {
-                        $zp_query .= " AND ";
-                        
-                        if ($tag_name && $collection_id) { $zp_query .= "("; }
-                        
-                        if (is_array($collection_id)) // multiple
+                        if ($inclusive == "yes")
                         {
-                            if ($inclusive == "yes")
+                            $zp_query .= " AND (";
+                            
+                            foreach ($collection_id as $i => $id)
                             {
-                                foreach ($collection_id as $i => $id)
-                                {
-                                    $zp_query .= "(".$wpdb->prefix."zotpress_zoteroCollections.item_key='".$id."' AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroItems.item_key, ".$wpdb->prefix."zotpress_zoteroCollections.listitems))";
-                                    
-                                    if ($i != count($collection_id)-1) $zp_query .= " OR ";
-                                }
-                                $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroCollections.api_user_id='".$api_user_id."'";
-                            }
-                            else // exclusive
-                            {
-                                $zp_collection_items = zp_get_exclusive_items ($wpdb, "collections", $collection_id);
+                                $zp_query .= $wpdb->prefix."zotpress_zoteroRelItemColl.collection_key='".$id."' ";
                                 
-                                // Add to $item_key list
-                                if ($item_key && is_array($item_key)) {
-                                    array_push($item_key, $zp_collection_items);
-                                }
-                                else if ($item_key && !is_array($item_key)) {
-                                    $item_key = array($item_key);
-                                    array_push($item_key, $zp_collection_items);
-                                }
-                                else if (!$item_key) {
-                                    $item_key = explode(",", $zp_collection_items);
-                                }
+                                if ($i != count($collection_id)-1) $zp_query .= " OR ";
                             }
-                        }
-                        else { // single
-                            $zp_query .= "(".$wpdb->prefix."zotpress_zoteroCollections.item_key='".$collection_id."' AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroItems.item_key, ".$wpdb->prefix."zotpress_zoteroCollections.listitems))";
-                            $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroCollections.api_user_id='".$api_user_id."'";
+                            $zp_query .= ") ";
                         }
                     }
-                    
-                    if ($tag_name && $collection_id)
+                    // Single collection
+                    else
                     {
-                        $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id='".$api_user_id."')";
-                        
-                        if ($inclusive == "yes") {
-                            $zp_query .= " UNION SELECT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroItems, ".$wpdb->prefix."zotpress_zoteroTags ";
-                            $zp_query .= " WHERE ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment' AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note' ";
-                        } else {
-                            $zp_query .= " AND ";
-                        }
+                        $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key='".$collection_id."' ";
                     }
-                    
-                    // Tag(s)
-                    if ($tag_name)
+                } // $collection_id
+                
+                // Filter by tag(s)
+                if ($tag_name)
+                {
+                    // Multiple inclusive collections
+                    if (is_array($tag_name))
                     {
-                        $zp_query .= " AND ";
-                        
-                        if ($tag_name && $collection_id) { $zp_query .= "("; }
-                        
-                        if (is_array($tag_name)) // multiple
+                        if ($inclusive == "yes")
                         {
-                            if ($inclusive == "yes")
+                            $zp_query .= " AND (";
+                            
+                            foreach ($tag_name as $i => $id)
                             {
-                                foreach ($tag_name as $i => $tag) {
-                                    $zp_query .= "(LOWER(".$wpdb->prefix."zotpress_zoteroTags.title)='".strtolower($tag)."' AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroItems.item_key, ".$wpdb->prefix."zotpress_zoteroTags.listitems))";
-                                    if ($i != count($tag_name)-1)
-                                        $zp_query .= " OR ";
-                                }
-                                $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroTags.api_user_id='".$api_user_id."'";
-                            }
-                            else // exclusive
-                            {
-                                $zp_tag_items = zp_get_exclusive_items ($wpdb, "tags", $tag_name);
+                                $zp_query .= $wpdb->prefix."zotpress_zoteroRelItemTags.tag_title='".$id."' ";
                                 
-                                // Add to $item_key list
-                                if ($item_key && is_array($item_key)) {
-                                    array_push($item_key, $zp_tag_items);
-                                }
-                                else if ($item_key && !is_array($item_key)) {
-                                    $item_key = array($item_key);
-                                    array_push($item_key, $zp_tag_items);
-                                }
-                                else if (!$item_key) {
-                                    $item_key = explode(",", $zp_tag_items);
-                                }
+                                if ($i != count($tag_name)-1) $zp_query .= " OR ";
                             }
-                        }
-                        else { // single
-                            $zp_query .= "(LOWER(".$wpdb->prefix."zotpress_zoteroTags.title)='".strtolower($tag_name)."' AND FIND_IN_SET(".$wpdb->prefix."zotpress_zoteroItems.item_key, ".$wpdb->prefix."zotpress_zoteroTags.listitems))";
-                            $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroTags.api_user_id='".$api_user_id."'";
+                            $zp_query .= ") ";
                         }
                     }
-                    
-                    if ($tag_name && $collection_id) {
-                        $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id='".$api_user_id."')";
+                    // Single collection
+                    else
+                    {
+                        $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title='".$tag_name."' ";
                     }
-                }
+                } // $tag_name
                 
                 // Filter by account
-                if ($api_user_id && !($tag_name && $collection_id))
+                if ($api_user_id)
                     $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id='".$api_user_id."'";
                 
                 // Filter by author
                 if ($author)
                 {
-                    if (is_array($author)) // multiple authors
+                    $zp_query .= " AND ( ";
+                    
+                    // Multiple authors
+                    if (is_array($author))
                     {
-                        foreach ($author as $zp_author)
+                        foreach ($author as $i => $zp_author)
                         {
                             // Prep author
                             $zp_author = strtolower(trim($zp_author));
+                            if (strpos($zp_author, " ") > 0) $zp_author = preg_split("/\s+(?=\S*+$)/", $zp_author);
                             
-                            if (strpos($zp_author, " ") > 0)
-                                $zp_author = explode(" ", $zp_author);
-                            
-                            if (is_array($zp_author)) // fullname
+                            if (is_array($zp_author)) // full name
                             {
-                                $zp_authors_items = zp_get_fullname_author_items ($wpdb, $zp_author);
+                                if ($inclusive == "yes" && $i != 0) $zp_query .= " OR ";
                                 
-                                // Add to $item_key list
-                                if ($item_key && is_array($item_key)) {
-                                    array_push($item_key, $zp_authors_items);
-                                }
-                                else if ($item_key && !is_array($item_key)) {
-                                    $item_key = array($item_key);
-                                    array_push($item_key, $zp_authors_items);
-                                }
-                                else if (!$item_key) {
-                                    $item_key = explode(",", $zp_authors_items);
-                                }
+                                $zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$zp_author[1]."%'";
                             }
-                            else // lastname only
+                            else // last name only
                             {
-                                $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$zp_author."%'";
+                                if ($inclusive == "yes" && $i != 0) $zp_query .= " OR ";
                                 
-                                if ($inclusive == "yes")
-                                    $zp_query .= " OR ";
+                                $zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$zp_author."%'";
                             }
                         }
                     }
-                    else // single
+                    else // Single author
                     {
                         // Prep author
                         $zp_author = strtolower(trim($zp_author));
-                        
-                        if (strpos($author, " ") > 0)
-                            $author = explode(" ", $author);
+                        if (strpos($author, " ") > 0) $author = preg_split("/\s+(?=\S*+$)/", $author);
                         
                         if (is_array($author)) // fullname
-                        {
-                            $zp_authors_items = zp_get_fullname_author_items ($wpdb, $author);
-                            
-                            // Add to $item_key list
-                            if ($item_key && is_array($item_key)) {
-                                array_push($item_key, $zp_authors_items);
-                            }
-                            else if ($item_key && !is_array($item_key)) {
-                                $item_key = array($item_key);
-                                array_push($item_key, $zp_authors_items);
-                            }
-                            else if (!$item_key) {
-                                $item_key = explode(",", $zp_authors_items);
-                            }
-                        }
+                            $zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$author[1]."%'";
                         else // lastname only
-                        {
-                            $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$author."%'";
-                        }
+                            $zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$author."%'";
                     }
-                }
+                    $zp_query .= " ) ";
+                } // $author
                 
                 // Filter by year: zpdate or year
                 if ($year)
@@ -475,12 +425,10 @@
                 // Filter by item key
                 if ($item_key)
                 {
-                    if (is_array($item_key)) {
+                    if (is_array($item_key))
                         $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.item_key IN('" . implode("','", $item_key) . "')";
-                    }
-                    else { // single
+                    else // single
                         $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.item_key='".$item_key."'";
-                    }
                 }
                 
                 // Sort by and sort direction
@@ -501,12 +449,11 @@
                 if ($limit) $zp_query .= " LIMIT ".$limit;
                 
                 
-                // Prep query and make db call
+                // Prep query -- still necessary?
                 
                 if ($item_key || $tag_name || $collection_id)
                 {
                     $zp_query = str_replace("AND  AND", "AND", $zp_query);
-                    //$zp_query = str_replace("OR  AND", "AND", $zp_query);
                 }
                 else if ($author || $year) {
                     $zp_query = str_replace("OR ORDER BY", "ORDER BY", str_replace("OR AND", "OR", str_replace("  ", " ", $zp_query)));
@@ -576,20 +523,22 @@
                         // Grab tags associated with item
                         if ( $showtags )
                         {
-                            $zp_showtags_query = $wpdb->get_results("SELECT ".$wpdb->prefix."zotpress_zoteroTags.title FROM ".$wpdb->prefix."zotpress_zoteroTags  WHERE FIND_IN_SET('".$zp_citation["item_key"]."', ".$wpdb->prefix."zotpress_zoteroTags.listitems);", ARRAY_A);
+                            $zp_showtags_query = "SELECT DISTINCT ".$wpdb->prefix."zotpress_zoteroTags.title FROM ".$wpdb->prefix."zotpress_zoteroTags LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemTags ON ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title=".$wpdb->prefix."zotpress_zoteroTags.title WHERE ".$wpdb->prefix."zotpress_zoteroRelItemTags.item_key='".$zp_citation["item_key"]."' ORDER BY ".$wpdb->prefix."zotpress_zoteroTags.title ASC;";
+                            $zp_showtags_results = $wpdb->get_results($zp_showtags_query, ARRAY_A);
                             
-                            if ( count($zp_showtags_query) > 0)
+                            if ( count($zp_showtags_results) > 0)
                             {
                                 $citation_tags = "<p class='zp-Zotpress-ShowTags'><span class='title'>Tags:</span> ";
                                 
-                                foreach ($zp_showtags_query as $i => $zp_showtags_tag)
+                                foreach ($zp_showtags_results as $i => $zp_showtags_tag)
                                 {
                                     $citation_tags .= "<span class='tag'>" . $zp_showtags_tag["title"] . "</span>";
-                                    if ( $i != (count($zp_showtags_query)-1) ) $citation_tags .= "<span class='separator'>,</span> ";
+                                    if ( $i != (count($zp_showtags_results)-1) ) $citation_tags .= "<span class='separator'>,</span> ";
                                 }
                                 $citation_tags .= "</p>\n";
                             }
                             unset($zp_showtags_query);
+                            unset($zp_showtags_results);
                         }
                         
                         // ABSTRACT

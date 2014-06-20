@@ -18,7 +18,7 @@
             <div class="zp-Step-Import">
                 
                 <p style="margin: 1em 0 1.8em;">
-                    You can selectively import top-level collections (which includes their items, subcollections, and subcollection items) below:
+                    You can selectively import top-level collections (which includes their items, subcollections, and subcollection items) below. You may need to wait a few moments if you have several top-level collections.
                 </p>
                 
                 <div id="zp-Step-Import-Collection" class="loading">
@@ -34,7 +34,7 @@
                 
             </div>
             
-            <iframe id="zp-Setup-Import" name="zp-Setup-Import" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/admin/admin.import.php?api_user_id=<?php echo $api_user_id; ?>" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+            <iframe id="zp-Setup-Import" name="zp-Setup-Import" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/admin/admin.import.iframe.php?api_user_id=<?php echo $api_user_id; ?>" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
             
             <div id="zp-Zotpress-Setup-Buttons" class="proceed">
                 <input type="button" id="zp-Zotpress-Setup-Options-Complete" class="button-primary" value="Finish" />
