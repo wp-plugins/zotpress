@@ -1,0 +1,12 @@
+
+
+    /* Spans that are automatically wrapped around shortcodes in the editor */
+    .zp-ZotpressShortcode {
+        background-color: #eee;
+    }
+    .zp-ZotpressShortcode:hover {
+        background-color: #ccc;
+    }
+    .zp-ZotpressShortcode .shortcode {
+        display: none;
+    }
