@@ -181,10 +181,7 @@
             
             
             // QUERY DATABASE
-            //var_dump($zp_query . "<br /><br />");
             $zp_results = $wpdb->get_results($zp_query, OBJECT);
-            //var_dump($zp_citation_attr);
-            //$zp_results = get_posts( $zp_citation_attr );
             //var_dump($zp_results);
             
             $zp_intext_citation = "";

@@ -1,6 +1,6 @@
             <h3>Add a Zotero Account</h3>
             
-            <form action="<? echo $_SERVER['PHP_SELF']; ?>" method="post" id="zp-Add" name="zp-Add">
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" id="zp-Add" name="zp-Add">
             
                 <fieldset>
                     <input id="ZOTPRESS_PLUGIN_URL" name="ZOTPRESS_PLUGIN_URL" type="hidden" value="<?php echo ZOTPRESS_PLUGIN_URL; ?>" />

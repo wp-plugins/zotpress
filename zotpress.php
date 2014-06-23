@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bring Zotero and scholarly blogging to your WordPress site.
     Author: Katie Seaborn
-    Version: 5.2
+    Version: 5.2.1
     Author URI: http://katieseaborn.com
     
 */
@@ -43,7 +43,7 @@
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
-    $GLOBALS['Zotpress_update_version'] = "5.2";
+    $GLOBALS['Zotpress_update_version'] = "5.2.1";
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     

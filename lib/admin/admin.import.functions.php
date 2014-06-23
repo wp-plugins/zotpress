@@ -95,7 +95,7 @@
 	{
 		$collection_item_list = array();
 		
-		// First, items
+		// First, get items
 		$items = $wpdb->get_results(
 			"
 			SELECT ".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key
@@ -116,44 +116,28 @@
 				// Delete item's children
 				$wpdb->query(
 					"
-					DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems
+					DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems 
 					WHERE api_user_id='".$api_user_id."' AND parent='".$item->item_key."'
 					"
 				);
 			}
+			// Then delete items
+			$wpdb->query(
+				"
+				DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems 
+				WHERE api_user_id='".$api_user_id."' AND item_key IN ( '".implode("','", $collection_item_list)."' )
+				"
+			);
+			// And their relationships with collections
+			$wpdb->query(
+				"
+				DELETE FROM ".$wpdb->prefix."zotpress_zoteroRelItemColl
+				WHERE api_user_id='".$api_user_id."' AND item_key IN ( '".implode("','", $collection_item_list)."' )
+				"
+			);
 		}
-		
-		// Then delete items
-		$wpdb->query(
-			"
-			DELETE FROM ".$wpdb->prefix."zotpress_zoteroItems 
-			WHERE api_user_id='".$api_user_id."' AND item_key IN ( '".implode("','", $collection_item_list)."' )
-			"
-		);
-		// And their relationships with collections
-		$wpdb->query(
-			"
-			DELETE FROM ".$wpdb->prefix."zotpress_zoteroRelItemColl
-			WHERE api_user_id='".$api_user_id."' AND item_key IN ( '".implode("','", $collection_item_list)."' )
-			"
-		);
 		
 		unset( $items );
-		
-		// Next, subcollections
-		$subcollections = $wpdb->get_results(
-			"
-			SELECT item_key FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$api_user_id."' AND parent='".$collection."'
-			"
-		);
-		
-		if ( count($subcollections) > 0 ) {
-			foreach ( $subcollections as $subcollection ) {
-				zp_selectively_delete_collection( $wpdb, $api_user_id, $subcollection->item_key );
-			}
-		}
-		
-		unset( $subcollections );
 		
 		// Then delete collection 
 		$wpdb->query(
@@ -164,6 +148,26 @@
 				$api_user_id, $collection
 			)
 		);
+		
+		// Next, delete subcollections
+		$subcollections = $wpdb->get_results(
+			"
+			SELECT item_key FROM ".$wpdb->prefix."zotpress_zoteroCollections 
+			WHERE api_user_id='".$api_user_id."' AND parent='".$collection."'
+			"
+		);
+		
+		if ( count($subcollections) > 0 )
+		{
+			foreach ( $subcollections as $subcollection )
+			{
+				$temp = zp_selectively_delete_collection( $wpdb, $api_user_id, $subcollection->item_key );
+				
+				if ( $temp ) $GLOBALS['zp_session'][$api_user_id]['collection_item_list'] = array_merge( $temp, $GLOBALS['zp_session'][$api_user_id]['collection_item_list'] );
+			}
+		}
+		
+		unset( $subcollections );
 		
 		if ( count($collection_item_list) > 0) return $collection_item_list; else return false;
 	}
@@ -229,6 +233,7 @@
 					//	"
 					//);
 					$collections = explode(",", $collections);
+					$GLOBALS['zp_session'][$api_user_id]['collection_item_list'] = array();
 					
 					// Delete selected top level collection, items, subcollections and their items
 					if ( count($collections) > 0 )
@@ -240,6 +245,9 @@
 							if ( $temp ) $collection_item_list = array_merge( $temp, $collection_item_list );
 						}
 					}
+					
+					// Merge item lists from top level collection with subcollection item lists
+					$collection_item_list = array_merge( $collection_item_list, $GLOBALS['zp_session'][$api_user_id]['collection_item_list'] );
 					
 					// Remove items from tags, delete tags if no items
 					// This means that once imported, tags will remain if there's another item key, even if the item itself isn't imported
@@ -374,7 +382,6 @@
 						unset($all_top_level_collections);
 						*/
 					}
-					
 					
 					/*
 					if ( count($all_top_level_collections) > 0 )
@@ -544,10 +551,20 @@
         
         foreach ($entries as $entry)
         {
-            $item_type = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "itemType")->item(0)->nodeValue;
-            
             $item_key = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "key")->item(0)->nodeValue;
+			
+			//// For selective import: Keep track of and skip duplicates
+			//// Not working for some reason
+			////if ( $zp_collection )
+			////{
+			//	if ( array_key_exists( $item_key, $GLOBALS['zp_session'][$api_user_id]['duplicates']['items'] ) )
+			//		continue;
+			//	else
+			//		$GLOBALS['zp_session'][$api_user_id]['duplicates']['items'][$item_key] = true;
+			////}
+			
             $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
+            $item_type = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "itemType")->item(0)->nodeValue;
             
             // Get citation content (json and bib)
             
@@ -611,12 +628,12 @@
                 if (isset($json_content_decoded->linkMode)) $link_mode = $json_content_decoded->linkMode;
             
             // PARENT
-			if ( $zp_collection )
-			{
-				$parent = $zp_collection;
-			}
-			else // Regular
-			{
+			//if ( $zp_collection ) // This was setting the parent of attachments to the collection 
+			//{
+			//	$parent = $zp_collection;
+			//}
+			//else // Regular
+			//{
 				foreach($entry->getElementsByTagName("link") as $entry_link)
 				{
 					if ($entry_link->getAttribute('rel') == "up") {
@@ -630,9 +647,7 @@
 						$citation_content = substr($entry_link->getAttribute('href'), 0, strpos($entry_link->getAttribute('href'), "?"));
 					}
 				}
-			}
-            
-            
+			//}
             
             // Prep for insert into db
             array_push($GLOBALS['zp_session'][$api_user_id]['items']['query_params'],
@@ -650,7 +665,7 @@
                     zp_db_prep($zp_default_style),
                     $numchildren,
                     $parent);
-            //var_dump($parent); exit;
+            
             $GLOBALS['zp_session'][$api_user_id]['items']['query_total_entries']++;
             
         } // foreach entry
@@ -701,25 +716,28 @@
 			
 			// Prepare string: remove extra comma and space OR set to blank if nothing to add
 			if ( strlen($zp_relItemColl) > 0 )
-				$zp_relItemColl = "INSERT INTO ".$wpdb->prefix."zotpress_zoteroRelItemColl 
+			{
+				$zp_relItemColl = "INSERT IGNORE INTO ".$wpdb->prefix."zotpress_zoteroRelItemColl 
 					( api_user_id, item_key, collection_key ) VALUES " . substr( $zp_relItemColl, 0, -2 ) . "; ";
+			}
 			
 			if ( strlen($zp_relItemTags) > 0 )
-				$zp_relItemTags = "INSERT INTO ".$wpdb->prefix."zotpress_zoteroRelItemTags 
+			{
+				$zp_relItemTags = "INSERT IGNORE INTO ".$wpdb->prefix."zotpress_zoteroRelItemTags 
 					( api_user_id, item_key, tag_title ) VALUES " . substr( $zp_relItemTags, 0, -2 ) . "; ";
-			
-			//var_dump($zp_relItemColl);
-			//var_dump($zp_relItemTags); exit;
+			}
 			
 			// Execute queries
 			$wpdb->query( $zp_relItemColl );
 			$wpdb->query( $zp_relItemTags );
-            $wpdb->query( $wpdb->prepare( 
-                "   INSERT INTO ".$wpdb->prefix."zotpress_zoteroItems
-                    ( api_user_id, item_key, retrieved, json, author, zpdate, year, title, itemType, linkMode, citation, style, numchildren, parent )
-                    VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )" . str_repeat(", ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )", $GLOBALS['zp_session'][$api_user_id]['items']['query_total_entries']-1) .";", 
-                $GLOBALS['zp_session'][$api_user_id]['items']['query_params']
-            ) );
+            $wpdb->query(
+				$wpdb->prepare( 
+					"   INSERT IGNORE INTO ".$wpdb->prefix."zotpress_zoteroItems
+						( api_user_id, item_key, retrieved, json, author, zpdate, year, title, itemType, linkMode, citation, style, numchildren, parent )
+						VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )" . str_repeat(", ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s )", $GLOBALS['zp_session'][$api_user_id]['items']['query_total_entries']-1) .";", 
+					$GLOBALS['zp_session'][$api_user_id]['items']['query_params']
+				)
+			);
             
             $wpdb->flush();
         }
