@@ -1333,7 +1333,8 @@
     
     .zp-Documentation .category,
     .zp-Documentation .type {
-        font: 400 1.25em/1.25em "Source Sans Pro", sans-serif;
+        /*font: 400 1.25em/1.25em "Source Sans Pro", sans-serif;*/
+        font: 600 1em/1.25em "Source Sans Pro", sans-serif;
         text-transform: uppercase;
     }
     
@@ -1385,21 +1386,46 @@
     /* START OF MESSAGE CSS */
     
     div.zp-Message {
-        background: transparent url('../images/message.gif') no-repeat top left;
+        background-color: #ffcb15;
         display: block;
         float: right;
+        margin-left: 20px;
         margin-top: -30px;
         overflow: hidden;
-        width: 320px;
-        height: 85px;
+        width: 275px;
+    }
+    div#zp-Zotpress div.zp-Message h3 {
+        font-size: 21px;
+        line-height: 1.4em;
+        padding: 1.2em;
+        padding-bottom: 0;
     }
     div.zp-Message p {
-        color: #fff;
-        /*font-size: 12pt;*/
         font: italic 400 14px/21px "Droid Serif", "Georgia", serif;
-        /*line-height: 16pt;*/
-        margin: 8px 30px 0 60px;
+        margin: 0;
+        padding: 2em;
+    }
+    div.zp-Message p.rate {
+        background-color: #333;
+        color: #fff;
         text-shadow: 0 1px 0 #000;
+    }
+    div.zp-Message p.version {
+        color: #333;
+        font-size: 0.9em;
+        padding-top: 1em;
+    }
+    div.zp-Message p.version a,
+    div.zp-Message p.version a:visited,
+    div.zp-Message p.version a:active {
+        color: #666;
+    }
+    div.zp-Message p.version a:hover {
+        color: #999;
+    }
+    div.zp-Message p.version strong {
+        font: 600 11px/1em "Source Sans Pro","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+        text-transform: uppercase;
     }
     a.zp-FiveStar {
         background: transparent url('../images/sprite.png') no-repeat -160px -1px;
@@ -1407,11 +1433,31 @@
         padding-left: 95px;
     }
     
+    ol.zp-WaysToUseZotpress {
+        list-style: none;
+        margin: 2em;
+    }
     ol.zp-WaysToUseZotpress li {
-        background: transparent url('../images/sprite.png') no-repeat -300px 0px;
+        background: transparent url('../images/sprite.png') no-repeat -300px 2px;
         list-style-position: inside;
         padding-left: 5px;
         margin-bottom: 12px;
+    }
+    ol.zp-WaysToUseZotpress li span.number {
+        float: left;
+        font-size: 10px;
+        margin-left: 1px;
+        margin-top: 3px;
+        margin-right: 14px;
+    }
+    ol.zp-WaysToUseZotpress li strong {
+        font: 600 1em/1em "Source Sans Pro","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+        text-transform: uppercase;
+    }
+    ol.zp-WaysToUseZotpress li p.indent {
+        margin-top: -12px;
+        margin-bottom: 14px;
+        text-indent: 21px;
     }
     
     /* END OF MESSAGE CSS */

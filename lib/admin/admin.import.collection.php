@@ -18,7 +18,7 @@
 		wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
 
     
-    // Access Wordpress db
+    // Access WordPress db
     global $wpdb;
     
     // Ignore user abort

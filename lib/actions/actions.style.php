@@ -5,7 +5,7 @@
     require('../../../../../wp-load.php');
     define('WP_USE_THEMES', false);
 
-    // Access Wordpress db
+    // Access WordPress db
     global $wpdb;
     
     // Include Request Functionality

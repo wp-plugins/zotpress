@@ -6,31 +6,39 @@
             <h3>What is Zotpress?</h3>
             
             <div class="zp-Message">
-                <p>
-                    If you like Zotpress, let the world know with a <a class="zp-FiveStar" title="Rate Zotpress" href="http://wordpress.org/extend/plugins/zotpress/">rating</a> on Wordpress.com!
+                <h3>About Zotpress</h3>
+                <p class="version">
+                    <strong>Version:</strong> You're using Zotpress <?php echo ZOTPRESS_VERSION; ?><br />
+                    <strong>Website:</strong> <a title="Zotpress on WordPress" rel="external" href="http://wordpress.org/plugins/zotpress/">Zotpress on WordPress.org</a><br />
+                    <strong>Support:</strong> <a title="Donations always appreciated! Accepted through PayPal" rel="external" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5HQ8FXAXS9MUQ">Donate through PayPal</a>
+                </p>
+                <p class="rate">
+                    If you like Zotpress, let the world know with a
+                    <a class="zp-FiveStar" title="Rate Zotpress" rel="external" href="http://wordpress.org/plugins/zotpress/">rating</a>
+                    on WordPress.org!
                 </p>
             </div>
             
             <p>
                 <a title="More of my plugins" href="http://katieseaborn.com/plugins/">Zotpress</a> bridges <a title="Zotero" href="https://www.zotero.org/settings/keys">Zotero</a>
-                and Wordpress by allowing you to display items from your Zotero library through shortcodes and widgets.
-                It also extends the basic meta functionality offered by Zotero by allowing you to add thumbnail images to and upload public files of your citations.
+                and WordPress by allowing you to display items from your Zotero library through shortcodes and widgets.
+                It also extends the basic meta functionality offered by Zotero by allowing you to add images to and provide downloadable files associated with your citations.
             </p>
             
             <p>There's a few ways to use Zotpress:</p>
             
             <ol class="zp-WaysToUseZotpress">
                 <li>
-                    <strong>The Zotpress Shortcode</strong><br />
-                    Generate a bibliography wherever you can call shortcodes. <a title="Learn more" href="#zotpress">Learn more &raquo;</a>
+                    <p><strong><span class="number">1</span> The Zotpress Shortcode</strong></p>
+                    <p class="indent">Generate a bibliography wherever you can call shortcodes. <a title="Learn more" href="#zotpress">Learn more &raquo;</a></p>
                 </li>
                 <li>
-                    <strong>The Zotpress In-Text Shortcodes</strong><br />
-                    Create in-text citations and an auto-generated bibliography. <a title="Learn more" href="#intext">Learn more &raquo;</a>
+                    <p><strong><span class="number">2</span>The Zotpress In-Text Shortcodes</strong></p>
+                    <p class="indent">Create in-text citations and an auto-generated bibliography. <a title="Learn more" href="#intext">Learn more &raquo;</a></p>
                 </li>
                 <li>
-                    <strong>The Zotpress Sidebar Widget</strong><br />
-                    Use this widget in a sidebar to generate a bibliography. <a title="Learn more" href="#widget">Learn more &raquo;</a>
+                    <p><strong><span class="number">3</span>The Zotpress Sidebar Widget</strong></p>
+                    <p class="indent">Use this widget in a sidebar to generate a bibliography. <a title="Learn more" href="#widget">Learn more &raquo;</a></p>
                 </li>
             </ol>
             

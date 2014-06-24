@@ -25,7 +25,7 @@
 			$mzr_topLevel=false
 		)
 	{
-		// Access Wordpress db
+		// Access WordPress db
 		global $wpdb;
 		
 		// Include Request Functionality

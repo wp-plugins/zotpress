@@ -11,7 +11,7 @@
     ignore_user_abort(true);
     set_time_limit(60*10); // ten minutes
     
-    // Access Wordpress db
+    // Access WordPress db
     global $wpdb;
     
     // Include Request Functionality

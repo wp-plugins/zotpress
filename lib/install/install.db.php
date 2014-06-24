@@ -8,12 +8,14 @@
         $Zotpress_main_db_version = "5.2";
         $Zotpress_oauth_db_version = "5.0.5";
         $Zotpress_zoteroItems_db_version = "5.2.1";
-        $Zotpress_zoteroCollections_db_version = "5.0.5";
-        $Zotpress_zoteroTags_db_version = "5.0.5";
+        $Zotpress_zoteroCollections_db_version = "5.2.2";
+        $Zotpress_zoteroTags_db_version = "5.2.2";
         $Zotpress_zoteroRelItemColl_db_version = "5.2.1";
         $Zotpress_zoteroRelItemTags_db_version = "5.2.1";
         
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        
+        
         
         // ZOTERO ACCOUNTS TABLE
         
@@ -21,7 +23,9 @@
                 || get_option("Zotpress_main_db_version") != $Zotpress_main_db_version
                 )
         {
-            $structure = "CREATE TABLE ".$wpdb->prefix."zotpress (
+			$table_name = $wpdb->prefix . "zotpress";
+            
+            $structure = "CREATE TABLE $table_name (
                 id INT(9) NOT NULL AUTO_INCREMENT,
                 account_type VARCHAR(10) NOT NULL,
                 api_user_id VARCHAR(10) NOT NULL,
@@ -43,7 +47,9 @@
                 || get_option("Zotpress_oauth_db_version") != $Zotpress_oauth_db_version
                 )
         {
-            $structure = "CREATE TABLE ".$wpdb->prefix."zotpress_oauth (
+			$table_name = $wpdb->prefix . "zotpress_oauth";
+            
+            $structure = "CREATE TABLE $table_name (
                 id INT(9) NOT NULL AUTO_INCREMENT,
                 cache LONGTEXT NOT NULL,
                 UNIQUE KEY id (id)
@@ -129,7 +135,6 @@
                 item_key TEXT,
                 numCollections INT(9),
                 numItems INT(9),
-                listItems TEXT,
                 updated INT(1) DEFAULT 1,
                 UNIQUE KEY id (id)
             );";
@@ -154,7 +159,6 @@
                 title VARCHAR(128) BINARY NOT NULL UNIQUE,
                 retrieved VARCHAR(100),
                 numItems INT(9),
-                listItems TEXT,
                 updated INT(1) DEFAULT 1,
                 PRIMARY KEY (api_user_id, title)
             );";

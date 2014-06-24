@@ -1161,8 +1161,7 @@
 					api_user_id = VALUES(api_user_id),
 					title = VALUES(title),
 					retrieved = VALUES(retrieved),
-					numItems = VALUES(numItems),
-					listItems = VALUES(listItems)
+					numItems = VALUES(numItems)
 				", 
                 $GLOBALS['zp_session'][$api_user_id]['tags']['query_params']
             ) );

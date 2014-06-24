@@ -245,7 +245,28 @@
                 $zp_query = "";
                 
                 if ($download)
-                    $wpdb->get_results("CREATE TEMPORARY TABLE attachments SELECT ".$wpdb->prefix."zotpress_zoteroItems.parent AS parent, ".$wpdb->prefix."zotpress_zoteroItems.citation AS content, ".$wpdb->prefix."zotpress_zoteroItems.item_key AS item_key, ".$wpdb->prefix."zotpress_zoteroItems.json AS data, ".$wpdb->prefix."zotpress_zoteroItems.linkmode AS linkmode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE ".$wpdb->prefix."zotpress_zoteroItems.linkmode IN ( 'imported_file', 'linked_url' ); ");
+                {
+                    $wpdb->get_results(
+                        "
+                        CREATE TEMPORARY TABLE attachments 
+                        SELECT * FROM 
+                        ( 
+                            SELECT 
+                            ".$wpdb->prefix."zotpress_zoteroItems.parent AS parent,
+                            ".$wpdb->prefix."zotpress_zoteroItems.citation AS content,
+                            ".$wpdb->prefix."zotpress_zoteroItems.item_key AS item_key,
+                            ".$wpdb->prefix."zotpress_zoteroItems.json AS data,
+                            ".$wpdb->prefix."zotpress_zoteroItems.linkmode AS linkmode 
+                            FROM ".$wpdb->prefix."zotpress_zoteroItems 
+                            WHERE api_user_id='".$api_user_id."' AND 
+                            ".$wpdb->prefix."zotpress_zoteroItems.linkmode IN ( 'imported_file', 'linked_url' ) 
+                            ORDER BY linkmode ASC 
+                        )
+                        AS attachments_sub 
+                        GROUP BY parent;
+                        "
+                    );
+                }
                 
                 $zp_query .= "SELECT DISTINCT ".$wpdb->prefix."zotpress_zoteroItems.*";
                 
@@ -465,7 +486,7 @@
                 
                 //var_dump( $zp_query . "<br /><br />");
                 $zp_results = $wpdb->get_results($zp_query, ARRAY_A); unset($zp_query);
-                //var_dump( count($zp_results) );
+                //var_dump( $zp_results ); exit;
                 
                 
                 

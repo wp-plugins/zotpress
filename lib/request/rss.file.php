@@ -26,7 +26,7 @@
 	
 	if ($zp_xml === false)
 	{
-		// Access Wordpress db
+		// Access WordPress db
 		global $wpdb;
 		
 		$zp_download_url_query = "SELECT ".$wpdb->prefix."zotpress.public_key, ".$wpdb->prefix."zotpress_zoteroItems.citation
