@@ -188,24 +188,63 @@
             // DOWNLOAD
             if ( $download )
             {
-                //global $wpdb;
+                global $wpdb;
                 //
                 //$zp_download_url = $wpdb->get_row("SELECT item_key, citation, json, linkMode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['userid']."'
                 //        AND parent = '".$zp_citation["item_key"]."' AND linkMode IN ( 'imported_file', 'linked_url' ) ORDER BY linkMode ASC LIMIT 1;", OBJECT);
                 
-                $zp_download_url = json_decode($zp_citation["download"]);
+                //$zp_download_url = json_decode($zp_citation["download"]);
                 
-                if ( !is_null($zp_download_url) )
+                $zp_download = $wpdb->get_results(
+                        "
+                        SELECT * FROM 
+                        ( 
+                            SELECT 
+                            ".$wpdb->prefix."zotpress_zoteroItems.parent AS parent,
+                            ".$wpdb->prefix."zotpress_zoteroItems.citation AS content,
+                            ".$wpdb->prefix."zotpress_zoteroItems.item_key AS item_key,
+                            ".$wpdb->prefix."zotpress_zoteroItems.json AS data,
+                            ".$wpdb->prefix."zotpress_zoteroItems.linkmode AS linkmode 
+                            FROM ".$wpdb->prefix."zotpress_zoteroItems 
+                            WHERE api_user_id='".$zp_citation["userid"]."'
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.parent = '".$zp_citation["item_key"]."' 
+                            AND ".$wpdb->prefix."zotpress_zoteroItems.linkmode IN ( 'imported_file', 'linked_url' ) 
+                            ORDER BY linkmode ASC 
+                        )
+                        AS attachments_sub 
+                        GROUP BY parent;
+                        "
+                        , OBJECT
+                    );
+                
+                if ( count($zp_download) > 0 )
                 {
+                    $zp_download_url = json_decode($zp_download[0]->data);
+                    
                     if ($zp_download_url->linkMode == "imported_file")
                     {
-                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['userid']."&download=".$zp_citation["download_key"]."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
+                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['api_user_id']."&download=".$zp_citation["attachment_key"]."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1); // Thanks to http://ideone.com/vR073
                     }
                     else
                     {
                         $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_url->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
                     }
+                    
+                    unset($zp_download_url);
+                    unset($zp_download);
                 }
+                
+                //if ( !is_null($zp_download_url) )
+                //{
+                //    if ($zp_download_url->linkMode == "imported_file")
+                //    {
+                //        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['userid']."&download=".$zp_citation["download_key"]."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
+                //    }
+                //    else
+                //    {
+                //        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_url->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
+                //    }
+                //}
             }
             
             // CITE LINK

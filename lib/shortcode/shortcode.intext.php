@@ -87,7 +87,6 @@
         if ($items !== false)
         {
             
-            
             // PREPARE ITEM KEYS: Single, with or without curly bracket, or multiple
             
             if (strpos($items, "{") !== false)
@@ -107,10 +106,17 @@
             
             // PREPARE ITEM QUERY
             
-            $zp_query = "SELECT items.item_key, items.author, items.title, items.citation, items.zpdate, items.image, items.json, items.style, attachments.json AS attachment_data, attachments.item_key AS attachment_key 
-                    FROM ".$wpdb->prefix."zotpress_zoteroItems AS items
-                    LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItems AS attachments ON (items.item_key=attachments.parent AND attachments.linkmode IN ( 'imported_file', 'linked_url' ))
-                    WHERE items.api_user_id='".$api_user_id."' AND ";
+            $zp_query = "SELECT items.item_key, items.author, items.title, items.citation, items.zpdate, items.image, items.json, items.style ";
+            
+            $zp_query .= "FROM ".$wpdb->prefix."zotpress_zoteroItems AS items ";
+            
+            $zp_query .= "WHERE items.api_user_id='".$api_user_id."' AND ";
+            
+            // Is left joining attachments necessary?
+            //$zp_query = "SELECT items.item_key, items.author, items.title, items.citation, items.zpdate, items.image, items.json, items.style, attachments.json AS attachment_data, attachments.item_key AS attachment_key 
+            //        FROM ".$wpdb->prefix."zotpress_zoteroItems AS items
+            //        LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItems AS attachments ON (items.item_key=attachments.parent AND attachments.linkmode IN ( 'imported_file', 'linked_url' ))
+            //        WHERE items.api_user_id='".$api_user_id."' AND ";
             
             /*$zp_citation_attr =
                 array(
@@ -181,6 +187,7 @@
             
             
             // QUERY DATABASE
+            //var_dump($zp_query);
             $zp_results = $wpdb->get_results($zp_query, OBJECT);
             //var_dump($zp_results);
             
@@ -299,7 +306,11 @@
                 }
                 
                 // Format with a link
-                $zp_intext_citation .= "<a title='".$item->author.". (".$item->zpdate."). ".$item->title.".' id='".$zp_instance_id."' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item->item_key."'>" . $citation . "</a>";
+                $zp_intext_citation .= "<a title='";
+                if ($item->author) $zp_intext_citation .= htmlspecialchars(strip_tags($item->author), ENT_QUOTES) . " "; else $zp_intext_citation .= "No author ";
+                if ($item->zpdate) $zp_intext_citation .= "(".zp_get_year($item->zpdate)."). ";
+                $zp_intext_citation .= htmlspecialchars(strip_tags($item->title), ENT_QUOTES) . ".' id='".$zp_instance_id."' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item->item_key."'>" . $citation . "</a>";
+                $zp_intext_citation = str_replace( "al..", "al.", $zp_intext_citation);
                 
                 // Determine delineation for multiple citations
                 if ( count($zp_results) > 1 && $id != (count($zp_results)-1) )
