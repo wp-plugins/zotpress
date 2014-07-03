@@ -100,6 +100,12 @@
             // IMAGE
             if ($showimage == "yes" && is_null($zp_citation["image"]) === false && $zp_citation["image"] != "")
             {
+                if ( is_numeric($zp_citation["image"]) )
+                {
+                    $zp_citation["image"] = wp_get_attachment_image_src( $zp_citation["image"], "full" );
+                    $zp_citation["image"] = $zp_citation["image"][0];
+                }
+                
                 $citation_image = "<div id='zp-Citation-".$zp_citation["item_key"]."' class='zp-Entry-Image' rel='".$zp_citation["item_key"]."'>";
                 $citation_image .= "<img src='".$zp_citation["image"]."' alt='image' />";
                 $citation_image .= "</div>\n";
