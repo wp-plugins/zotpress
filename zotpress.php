@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bring Zotero and scholarly blogging to your WordPress site.
     Author: Katie Seaborn
-    Version: 5.2.4
+    Version: 5.2.5
     Author URI: http://katieseaborn.com
     
 */
@@ -39,12 +39,12 @@
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( ZOTPRESS_PLUGIN_FILE ));
     define('ZOTPRESS_PLUGIN_DIR', dirname( __FILE__ ));
     define('ZOTPRESS_EXPERIMENTAL_EDITOR', FALSE); // Whether experimental editor feature is active or not
-    define('ZOTPRESS_VERSION', '5.2.2' );
+    define('ZOTPRESS_VERSION', '5.2.5' );
     
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
-    $GLOBALS['Zotpress_update_version'] = "5.2.2";
+    $GLOBALS['Zotpress_update_version'] = "5.2.5";
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
@@ -118,7 +118,7 @@
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
     
     /**
-    * General scripts and styles
+    * Admin scripts and styles
     */
     function Zotpress_admin_scripts_css($hook)
     {
@@ -269,9 +269,12 @@
             if ( !is_admin() ) wp_enqueue_script('jquery');
             wp_register_script('jquery.livequery.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.livequery.js', array('jquery'));
             wp_enqueue_script('jquery.livequery.js');
+			
+			wp_enqueue_script("jquery-effects-core");
+			wp_enqueue_script("jquery-effects-highlight");
             
-            wp_register_script('zotpress.autoupdate.js', ZOTPRESS_PLUGIN_URL . 'js/zotpress.autoupdate.js', array('jquery'));
-            wp_enqueue_script('zotpress.autoupdate.js');
+            wp_register_script('zotpress.frontend.js', ZOTPRESS_PLUGIN_URL . 'js/zotpress.frontend.js', array('jquery'));
+            wp_enqueue_script('zotpress.frontend.js');
         }
     }
     add_action('wp_footer', 'Zotpress_theme_conditional_scripts_footer');

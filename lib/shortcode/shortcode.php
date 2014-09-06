@@ -47,6 +47,7 @@
             'title' => "no",
             
             'image' => false,
+            'images' => false,
             'showimage' => "no",
             
             'showtags' => "no",
@@ -68,7 +69,11 @@
             'link' => "no",
             'linkedlist' => "no",
             
-            'target' => false
+            'target' => false,
+			
+			'forcenumber' => false,
+			
+			'depth' => false
             
         ), $atts, "zotpress"));
         
@@ -101,7 +106,7 @@
         if ($collection_id) $collection_id = str_replace('"','',html_entity_decode($collection_id));
         else if ($collection) $collection_id = str_replace('"','',html_entity_decode($collection));
         else if ($collections) $collection_id = str_replace('"','',html_entity_decode($collections));
-        else $collection_id = str_replace('"','',html_entity_decode($collection));
+        //else $collection_id = str_replace('"','',html_entity_decode($collection));
         
         if (strpos($collection_id, ",") > 0) $collection_id = explode(",", $collection_id);
         if ($data_type == "collections" && isset($_GET['zpcollection']) ) $collection_id = htmlentities( urldecode( $_GET['zpcollection'] ) );
@@ -149,7 +154,8 @@
         
         // Show image
         if ($showimage) $showimage = str_replace('"','',html_entity_decode($showimage));
-        else if ($image) $showimage = str_replace('"','',html_entity_decode($image));
+        if ($image) $showimage = str_replace('"','',html_entity_decode($image));
+        if ($images) $showimage = str_replace('"','',html_entity_decode($images));
         
         if ($showimage == "yes" || $showimage == "true" || $showimage === true) $showimage = true;
         else $showimage = false;
@@ -191,6 +197,12 @@
         
         if ($target == "yes" || $target == "_blank" || $target == "new" || $target == "true" || $target === true)
         $target = true; else $target = false;
+        
+        if ($forcenumber == "yes" || $forcenumber == "true" || $forcenumber === true)
+        $forcenumber = true; else $forcenumber = false;
+        
+        if ($depth == "all" || $depth == "true" || $depth === true)
+        $depth = true; else $depth = false;
         
         
         
@@ -271,37 +283,71 @@
                 $zp_query .= "SELECT DISTINCT ".$wpdb->prefix."zotpress_zoteroItems.*";
                 
                 if ($download) $zp_query .= ", attachments.content AS attachment_content, attachments.item_key AS attachment_key, attachments.data AS attachment_data, attachments.linkmode AS attachment_linkmode";
+				
+				if ($showimage) $zp_query .= ", ".$wpdb->prefix."zotpress_zoteroItemImages.image AS itemImage";
                 
                 $zp_query .= " FROM ".$wpdb->prefix."zotpress_zoteroItems ";
                 
                 
-                // JOINS: download, collections, tags
+                // JOINS: download, itemimage, collections, tags
                 
                 if ($download)
                     $zp_query .= " LEFT JOIN (attachments) ON  (".$wpdb->prefix."zotpress_zoteroItems.item_key=attachments.parent) ";
                 
+                if ($showimage)
+                    $zp_query .= " LEFT JOIN (".$wpdb->prefix."zotpress_zoteroItemImages) ON  (".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroItemImages.item_key) ";
+                
                 if ($collection_id)
                 {
-                    if (!is_array($collection_id) || (is_array($collection_id) && $inclusive == "yes"))
-                    {
-                        $zp_query .= " LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl ON (".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key) ";
-                    }
-                    else if (is_array($collection_id) && $inclusive != "yes")
-                    {
-                        // create inner joins
-                        for ($i = 0; $i < count($collection_id); $i++)
-                            $zp_query .= " INNER JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl AS zpRelItemColl".$i." ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=zpRelItemColl".$i.".item_key ";
-                        
-                        $zp_query .= " AND ( ";
-                        
-                        // exclusive to specific collections
-                        for ($i = 0; $i < count($collection_id); $i++)
-                        {
-                            if ($i != 0) $zp_query .= " AND ";
-                            $zp_query .= " zpRelItemColl".$i.".collection_key='".$collection_id[$i]."' ";
-                        }
-                        $zp_query .= " ) ";
-                    }
+					if ( is_array($collection_id) )
+					{
+						// inclusive?
+						if ( $inclusive == "yes" )
+						{
+							
+						}
+						else // not inclusive
+						{
+							// create inner joins
+							for ($i = 0; $i < count($collection_id); $i++)
+								$zp_query .= " INNER JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl AS zpRelItemColl".$i." ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=zpRelItemColl".$i.".item_key ";
+							
+							$zp_query .= " AND ( ";
+							
+							// exclusive to specific collections
+							for ($i = 0; $i < count($collection_id); $i++)
+							{
+								if ($i != 0) $zp_query .= " AND ";
+								$zp_query .= " zpRelItemColl".$i.".collection_key='".$collection_id[$i]."' ";
+							}
+							$zp_query .= " ) ";
+						}
+					}
+					else // single collection
+					{
+						$zp_query .= " LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl ON (".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key) ";
+					}
+//                    if (!is_array($collection_id)
+//							|| (is_array($collection_id) && $inclusive == "yes"))
+//                    {
+//                        $zp_query .= " LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl ON (".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key) ";
+//                    }
+//                    else if (is_array($collection_id) && $inclusive != "yes")
+//                    {
+//                        // create inner joins
+//                        for ($i = 0; $i < count($collection_id); $i++)
+//                            $zp_query .= " INNER JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl AS zpRelItemColl".$i." ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=zpRelItemColl".$i.".item_key ";
+//                        
+//                        $zp_query .= " AND ( ";
+//                        
+//                        // exclusive to specific collections
+//                        for ($i = 0; $i < count($collection_id); $i++)
+//                        {
+//                            if ($i != 0) $zp_query .= " AND ";
+//                            $zp_query .= " zpRelItemColl".$i.".collection_key='".$collection_id[$i]."' ";
+//                        }
+//                        $zp_query .= " ) ";
+//                    }
                 }
                 
                 if ($tag_name)
@@ -500,7 +546,12 @@
                 $citation_notes = "";
                 $zp_notes_num = 1;
                 
-                $zp_output = "\n<div class=\"zp-Zotpress\">\n\n";
+                $zp_output = "\n<div class=\"zp-Zotpress";
+				
+				// Force numbering despite style
+				if ( $forcenumber ) $zp_output .= " forcenumber";
+				
+				$zp_output .= "\">\n\n";
                 $zp_output .= "<span class=\"ZOTPRESS_PLUGIN_URL\" style=\"display:none;\">" . ZOTPRESS_PLUGIN_URL . "</span>\n\n";
                 //$zp_output .= "<span class=\"ZOTPRESS_UPDATE_NOTICE\">Checking ...</span>\n\n";
                 
@@ -532,16 +583,16 @@
                         
                         
                         // IMAGE
-                        if ($showimage && !is_null($zp_citation["image"]) && $zp_citation["image"] != "")
+                        if ($showimage && !is_null($zp_citation["itemImage"]) && $zp_citation["itemImage"] != "")
                         {
-                            if ( is_numeric($zp_citation["image"]) )
+                            if ( is_numeric($zp_citation["itemImage"]) )
                             {
-                                $zp_citation["image"] = wp_get_attachment_image_src( $zp_citation["image"], "full" );
-                                $zp_citation["image"] = $zp_citation["image"][0];
+                                $zp_citation["itemImage"] = wp_get_attachment_image_src( $zp_citation["itemImage"], "full" );
+                                $zp_citation["itemImage"] = $zp_citation["itemImage"][0];
                             }
                             
                             $citation_image = "<div id='zp-Citation-".$zp_citation["item_key"]."' class='zp-Entry-Image' rel='".$zp_citation["item_key"]."'>";
-                            $citation_image .= "<img src='".$zp_citation["image"]."' alt='image' />";
+                            $citation_image .= "<img src='".$zp_citation["itemImage"]."' alt='image' />";
                             $citation_image .= "</div>\n";
                             $has_citation_image = " zp-HasImage";
                         }
@@ -660,6 +711,10 @@
                                     $zp_output .= "<h3>".$current_title."</h3>\n";
                             }
                         }
+						
+						// HYPERLINK DOIs
+						if ( isset($zp_this_meta->DOI) )
+							$zp_citation['citation'] = str_replace( "doi:".$zp_this_meta->DOI, "<a href='http://dx.doi.org/".$zp_this_meta->DOI."'>doi:".$zp_this_meta->DOI."</a>", $zp_citation['citation'] );
                         
                         // SHOW CURRENT STYLE AS REL
                         $zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );
@@ -708,8 +763,7 @@
                 }
                 
                 // Limit
-                if ($limit)
-                    $zp_query .= " LIMIT ".$limit;
+                if ($limit) $zp_query .= " LIMIT ".$limit;
                 
                 $zp_results = $wpdb->get_results($zp_query, OBJECT); unset($zp_query);
                 

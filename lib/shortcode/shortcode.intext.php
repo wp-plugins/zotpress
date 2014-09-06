@@ -106,9 +106,12 @@
             
             // PREPARE ITEM QUERY
             
-            $zp_query = "SELECT items.item_key, items.author, items.title, items.citation, items.zpdate, items.image, items.json, items.style ";
+            $zp_query = "SELECT items.*, ".$wpdb->prefix."zotpress_zoteroItemImages.image AS itemImage ";
             
             $zp_query .= "FROM ".$wpdb->prefix."zotpress_zoteroItems AS items ";
+            $zp_query .= "LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItemImages
+								ON items.item_key=".$wpdb->prefix."zotpress_zoteroItemImages.item_key
+								AND items.api_user_id=".$wpdb->prefix."zotpress_zoteroItemImages.api_user_id ";
             
             $zp_query .= "WHERE items.api_user_id='".$api_user_id."' AND ";
             
@@ -331,7 +334,7 @@
                         "date" => zp_get_year($item->zpdate),
                         "download" => $item->attachment_data,
                         "download_key" => $item->attachment_key,
-                        "image" => $item->image,
+                        "image" => $item->itemImage,
                         "json" => $item->json,
                         "citation" => $item->citation,
                         "style" => $item->style

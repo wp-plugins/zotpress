@@ -298,8 +298,14 @@
                     {
                         $zp_citations = $wpdb->get_results(
                             "
-                            SELECT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroItems 
-                            LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key 
+                            SELECT ".$wpdb->prefix."zotpress_zoteroItems.*,
+							".$wpdb->prefix."zotpress_zoteroItemImages.image AS itemImage
+							FROM ".$wpdb->prefix."zotpress_zoteroItems 
+                            LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl
+								ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key 
+							LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItemImages
+								ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroItemImages.item_key
+								AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id=".$wpdb->prefix."zotpress_zoteroItemImages.api_user_id
                             WHERE ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key = '".$zp_top_collection->item_key."' 
                             AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment'
                             AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
@@ -313,8 +319,14 @@
                     {
                         $zp_citations = $wpdb->get_results(
                             "
-                            SELECT ".$wpdb->prefix."zotpress_zoteroItems.* FROM ".$wpdb->prefix."zotpress_zoteroItems 
-                            LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemTags ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemTags.item_key 
+                            SELECT ".$wpdb->prefix."zotpress_zoteroItems.*,
+							".$wpdb->prefix."zotpress_zoteroItemImages.image AS itemImage
+							FROM ".$wpdb->prefix."zotpress_zoteroItems 
+                            LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemTags
+								ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemTags.item_key 
+							LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItemImages
+								ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroItemImages.item_key
+								AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id=".$wpdb->prefix."zotpress_zoteroItemImages.api_user_id
                             WHERE ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title = '".$tag_title->title."' 
                             AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment'
                             AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
@@ -328,8 +340,15 @@
                     {
                         $zp_citations = $wpdb->get_results(
                             "
-                            SELECT ".$wpdb->prefix."zotpress_zoteroItems.*, ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key FROM ".$wpdb->prefix."zotpress_zoteroItems 
-                            LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key 
+                            SELECT ".$wpdb->prefix."zotpress_zoteroItems.*,
+								".$wpdb->prefix."zotpress_zoteroItemImages.image AS itemImage,
+								".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key
+							FROM ".$wpdb->prefix."zotpress_zoteroItems 
+                            LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl
+								ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroRelItemColl.item_key
+							LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItemImages
+								ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroItemImages.item_key
+								AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id=".$wpdb->prefix."zotpress_zoteroItemImages.api_user_id
                             WHERE ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key IS NULL
                             AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment'
                             AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
@@ -357,7 +376,7 @@
                             
                             $zp_thumbnail = false;
                             //if ( has_post_thumbnail( $entry->ID ) ) $zp_thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $entry->ID ) );
-                            if ( !is_null($entry->image) ) $zp_thumbnail = wp_get_attachment_image_src($entry->image);
+                            if ( !is_null($entry->itemImage) ) $zp_thumbnail = wp_get_attachment_image_src($entry->itemImage);
                             
                             if ($entry_zebra === true) echo "<div class='zp-Entry'>\n"; else echo "<div class='zp-Entry odd'>\n";
                             
@@ -367,7 +386,7 @@
                             echo "' rel='".$citation_id."'>\n";
                             
                             // FEATURED IMAGE
-                            $citation_image = "<a title='Set Image' class='upload' rel='".$entry->id."' href='media-upload.php?post_id=".$entry->id."&type=image&TB_iframe=1'>Set Image</a>\n";
+                            $citation_image = "<a title='Set Image' class='upload' rel='".$entry->item_key."' href='media-upload.php?post_id=".$entry->id."&type=image&TB_iframe=1'>Set Image</a>\n";
                             
                             if ( $zp_thumbnail !== false )
                             {

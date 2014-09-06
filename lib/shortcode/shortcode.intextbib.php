@@ -14,7 +14,11 @@
             'sortby' => "default",
             'sort' => false,
             'order' => "ASC",
+            
+            'image' => false,
+            'images' => false,
             'showimage' => "no",
+            
             'showtags' => "no",
             'title' => "no",
             'download' => "no",
@@ -24,7 +28,8 @@
             'abstracts' => false,
             'cite' => false,
             'citeable' => false,
-            'target' => false
+            'target' => false,
+            'forcenumber' => false
         ), $atts));
         
         
@@ -36,7 +41,13 @@
         if ($order) $order = str_replace('"','',html_entity_decode($order));
         else if ($sort) $order = str_replace('"','',html_entity_decode($sort));
         
-        $showimage = str_replace('"','',html_entity_decode($showimage));
+        // Show image
+        if ($showimage) $showimage = str_replace('"','',html_entity_decode($showimage));
+        if ($image) $showimage = str_replace('"','',html_entity_decode($image));
+        if ($images) $showimage = str_replace('"','',html_entity_decode($images));
+        
+        if ($showimage == "yes" || $showimage == "true" || $showimage === true) $showimage = true;
+        else $showimage = false;
         
         // Show tags
         if ($showtags == "yes" || $showtags == "true" || $showtags === true) $showtags = true;
@@ -59,6 +70,9 @@
         if ($target == "new" || $target == "yes" || $target == "_blank" || $target == "true" || $target === true) $target = true;
         else $target = false;
         
+        if ($forcenumber == "yes" || $forcenumber == "true" || $forcenumber === true)
+        $forcenumber = true; else $forcenumber = false;
+        
         
         // SORT BY AND SORT ORDER
         if ($sortby != "default")
@@ -77,7 +91,12 @@
         $citation_notes = "";
         $zp_notes_num = 1;
         
-        $zp_output = "\n<div class=\"zp-Zotpress\">\n\n";
+        $zp_output = "\n<div class=\"zp-Zotpress";
+        
+        // Force numbering despite style
+        if ( $forcenumber ) $zp_output .= " forcenumber";
+        
+        $zp_output .= "\">\n\n";
         $zp_output .= "<span class=\"ZOTPRESS_PLUGIN_URL\" style=\"display:none;\">" . ZOTPRESS_PLUGIN_URL . "</span>\n\n";
         
         //$zp_output .= "<span class=\"ZOTPRESS_UPDATE_NOTICE\">Checking ...</span>\n\n";
@@ -233,18 +252,6 @@
                     unset($zp_download_url);
                     unset($zp_download);
                 }
-                
-                //if ( !is_null($zp_download_url) )
-                //{
-                //    if ($zp_download_url->linkMode == "imported_file")
-                //    {
-                //        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['userid']."&download=".$zp_citation["download_key"]."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
-                //    }
-                //    else
-                //    {
-                //        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_url->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
-                //    }
-                //}
             }
             
             // CITE LINK
@@ -264,6 +271,10 @@
                 }
             }
             
+            // HYPERLINK DOIs
+            if ( isset($zp_this_meta->DOI) )
+                $zp_citation['citation'] = str_replace( "doi:".$zp_this_meta->DOI, "<a href='http://dx.doi.org/".$zp_this_meta->DOI."'>doi:".$zp_this_meta->DOI."</a>", $zp_citation['citation'] );
+                
             // SHOW CURRENT STYLE AS REL
             $zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );
             

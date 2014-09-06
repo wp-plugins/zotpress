@@ -177,12 +177,20 @@
     {
         // Set up error array
         $errors = array("entry_id_blank"=>array(0,"<strong>Entry ID</strong> was left blank or formatted incorrectly."),
-                                "image_id_blank"=>array(0,"<strong>Image ID</strong> was left blank or formatted incorrectly."));
+                                "image_id_blank"=>array(0,"<strong>Image ID</strong> was left blank or formatted incorrectly."),
+                                "api_user_id_blank"=>array(0,"<strong>API User ID</strong> was left blank or formatted incorrectly.")
+                                );
         
         
         // BASIC VARS
+        $api_user_id = false;
+        if (preg_match("/^[0-9]+$/", $_GET['api_user_id']))
+            $api_user_id = htmlentities(trim($_GET['api_user_id']));
+        else
+            $errors['api_user_id_blank'][0] = 1;
+        
         $entry_id = false;
-        if (preg_match("/^[0-9]+$/", $_GET['entry_id']))
+        if (preg_match("/^[a-zA-Z0-9]+$/", $_GET['entry_id']))
             $entry_id = htmlentities(trim($_GET['entry_id']));
         else
             $errors['entry_id_blank'][0] = 1;
@@ -211,19 +219,29 @@
             //$zp_set_entry_image = update_post_meta( $entry_id, '_thumbnail_id', $image_id );
             //$query = "UPDATE ".$wpdb->prefix."zotpress_zoteroItems ";
             //$query .= "SET image='$image' WHERE api_user_id='".$api_user_id."' AND id='".$entry_id."';";
+            //$wpdb->query($query);
             
             // Insert new list item into the list:
-            //$wpdb->query($query);
             $wpdb->query( 
                 $wpdb->prepare( 
                     "
-                    UPDATE ".$wpdb->prefix."zotpress_zoteroItems
-                    SET image=%s
-                    WHERE id=%s
+                    INSERT INTO ".$wpdb->prefix."zotpress_zoteroItemImages (api_user_id, item_key, image) 
+                    VALUES (%s, %s, %s)
+                    ON DUPLICATE KEY UPDATE image=%s
                     ",
-                    $image_id, $entry_id
+                    $api_user_id, $entry_id, $image_id, $image_id
                 )
             );
+            //$wpdb->query( 
+            //    $wpdb->prepare( 
+            //        "
+            //        UPDATE ".$wpdb->prefix."zotpress_zoteroItems
+            //        SET image=%s
+            //        WHERE id=%s
+            //        ",
+            //        $image_id, $entry_id
+            //    )
+            //);
             
             //if ( $zp_set_entry_image !== false )
                 $xml .= "<result success='true' citation_id='".$entry_id."' />\n";

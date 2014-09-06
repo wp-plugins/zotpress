@@ -508,10 +508,12 @@
         border-bottom: none;
     }
     
+    div#zp-Zotpress-Navigation :focus.nav-item,
     div#zp-Zotpress-Navigation :active.nav-item,
     div#zp-Zotpress-Navigation .active.nav-item {
-        border-bottom: 0.25em solid #000;
         background-color: #eaeaea;
+        border-bottom: 0.25em solid #000;
+		box-shadow: none;
     }
     
     div#zp-Zotpress-Navigation .nav-item.nav-tab-active,
@@ -651,9 +653,11 @@
     }
     div#zp-Browse-Collections a.zp-List-Subcollection.selected,
     div#zp-Browse-Collections a.zp-List-Subcollection.down,
-    div#zp-Browse-Collections a.zp-List-Subcollection:active
+    div#zp-Browse-Collections a.zp-List-Subcollection:active,
+    div#zp-Browse-Collections a.zp-List-Subcollection:focus
     {
         background-color: #6d798b;
+		box-shadow: none;
         color: #9aa3af;
     }
     div#zp-Browse-Collections a.zp-List-Subcollection span.name {

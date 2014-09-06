@@ -1,4 +1,5 @@
-jQuery(document).ready(function() {
+jQuery(document).ready(function()
+{
     
     
     /*
@@ -27,7 +28,7 @@ jQuery(document).ready(function() {
     
     /*
      
-        TRIGGER UDPATE STYLE
+        UDPATE STYLE
         
     */
     
@@ -48,11 +49,45 @@ jQuery(document).ready(function() {
                 zp_current_list_item++;
             }
         });
-        
-        //zp_current_list_item = 1; // reset
     }
     
-    jQuery(".zp-Zotpress").each(function()
+    
+    
+    /*
+     
+        FORCE NUMBERING
+        
+    */
+    
+    function zpForceNumber( $this )
+    {
+		// Only force numbering if attribute is set
+		if ( $this.hasClass("forcenumber") )
+		{
+			var zp_current_list_item = 1;
+			
+			jQuery(".zp-Entry", $this).each(function()
+			{
+				var $zpEntry = jQuery(this);
+				
+				if ( jQuery(".csl-left-margin", $zpEntry).length == 0 ) // if numbering not found
+				{
+					jQuery(".csl-entry", $zpEntry).html(zp_current_list_item + ". " + jQuery(".csl-entry", $zpEntry).html());
+					zp_current_list_item++;
+				}
+			});
+		}
+    }
+    
+	
+	
+    /*
+     
+        FORMAT ZOTPRESS
+        
+    */
+	
+	jQuery(".zp-Zotpress").each(function()
     {
         var $this = jQuery(this);
         
@@ -85,20 +120,10 @@ jQuery(document).ready(function() {
                 zp_all_list_items[zp_all_list_items.length] = jQuery(this).attr("rel");
             });
             
-            //var zp_count = 0;
-            //
-            //while (zp_count < zp_all_list_items.length)
-            //{
             var zp_style_items = "";
-                
-            for (var zp_key = 0; zp_key < zp_all_list_items.length; ++zp_key) {
+            
+            for (var zp_key = 0; zp_key < zp_all_list_items.length; ++zp_key)
                 zp_style_items += zp_all_list_items[zp_key] +",";
-            }
-            //for (var zp_key in zp_all_list_items.slice(zp_count, zp_count+20)) {
-            //for (var zp_key = 0+zp_count; zp_key < zp_count+20; zp_key++) {
-            //    zp_style_items += zp_all_list_items[zp_key] +",";
-            //    alert(zp_style_items);
-            //}
             
             zp_style_items = zp_style_items.substring(0, zp_style_items.length - 1); // get rid of last comma
             
@@ -142,18 +167,42 @@ jQuery(document).ready(function() {
                     
                     // Update numbered lists
                     zpCorrectOrderedList( $this );
+					
+					// Or, number the list, if forced
+					zpForceNumber ( $this );
                 }
                 //else // Show errors
                 //{
                 //    alert("error - can't update citation styles"); // DEBUGGING
                 //}
             });
-                
-            //    zp_count += 20;
-            //}
         } // zp_update_style
+		
+		else // If style doesn't change, possibly do other things
+		{
+			// Like numbering the list by force
+			zpForceNumber ( $this );
+		}
     });
-
+    
+    
+    
+    /*
+     
+        HIGHLIGHT ENTRY ON JUMP
+        
+    */
+    
+    jQuery(".zp-ZotpressInText").click( function()
+	{
+		$this = jQuery(this);
+		
+		// Get item key from e.g. #zp-256-S74KCIJR
+		var zpBibItemKey = $this.attr("href").slice( $this.attr("href").lastIndexOf("-")+1, $this.attr("href").length );
+		
+		// Highlight bibliography item with that key
+		jQuery(".zp-Entry[rel='"+zpBibItemKey+"']").effect("highlight", { color: "#C5EFF7" }, 1000);
+	});
 
 
 });

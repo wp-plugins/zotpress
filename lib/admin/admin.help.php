@@ -172,9 +172,9 @@
                 </tr>
                 
                 <tr>
-                    <td rowspan="9" class="category last">Display</td>
+                    <td rowspan="10" class="category last">Display</td>
                     
-                    <td rowspan="9" class="type last">Settings</td>
+                    <td rowspan="10" class="type last">Settings</td>
                     
                     <td class="code">style</td>
                     <td><p>Citation style. <strong>Options: apsa, apa [default], asa, chicago-author-date, chicago-fullnote-bibliography, harvard1, modern-language-association, nlm, nature, vancouver.</strong> Note: Support for more styles is coming; see <a title="Zotero Style Repository" href="http://www.zotero.org/styles">Zotero Style Repository</a> for details.</p></td>
@@ -214,6 +214,11 @@
                     <td class="code">linkedlist</td>
                     <td><p><strong>Requires:</strong> <code>datatype="collections"</code> or <code>datatype="tags"</code> Alternative: <code>link</code> List all tags or all collections and link each to a page that displays their associated citation items. <strong>Options: yes, no [default].</strong></p></td>
                     <td class="example"><p><code>[zotpress datatype="tags" linkedlist="yes"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">forcenumber</td>
+                    <td><p>Numbers bibliography items, even when the citation style, e.g. APA, doesn't normally.<strong>Options: true, false [default].</strong></p></td>
+                    <td class="example"><p><code>[zotpress collection="GMGCJU34" forcenumber="true"]</code></p></td>
                 </tr>
                 <tr class="last">
                     <td class="code last">target</td>

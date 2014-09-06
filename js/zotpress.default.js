@@ -80,7 +80,7 @@ jQuery(document).ready(function() {
 	
 	/*
 		
-		SET FEATURED IMAGE FOR ENTRIES
+		SET IMAGE FOR ENTRIES
 		Thanks to http://www.webmaster-source.com/2013/02/06/using-the-wordpress-3-5-media-uploader-in-your-plugin-or-theme/
 		
 	*/
@@ -110,7 +110,8 @@ jQuery(document).ready(function() {
         zp_uploader.on( 'select', function()
 		{
             attachment = zp_uploader.state().get('selection').first().toJSON();
-			var zp_xml_url = jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/actions/actions.php?image=true&entry_id='+$this.attr('rel')+'&image_id='+attachment.id;
+			var zp_xml_url = jQuery('#ZOTPRESS_PLUGIN_URL').text()
+					+ 'lib/actions/actions.php?image=true&api_user_id='+jQuery("#zp-FilterByAccount").find(":selected").attr("rel")+'&entry_id='+$this.attr('rel')+'&image_id='+attachment.id;
 			
 			// Save as featured image
 			jQuery.get( zp_xml_url, {}, function(xml)

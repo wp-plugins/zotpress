@@ -1,4 +1,10 @@
+<?php
 
+// Restrict to Editors
+if ( current_user_can('edit_others_posts') )
+{
+	
+?>
             <!-- START OF ACCOUNT -->
             <div class="zp-Column-1">
                 <div class="zp-Column-Inner">
@@ -319,3 +325,15 @@
                     
                 </div>
             </div><!-- .zp-Column-1 --><?php } ?>
+			
+			
+<?php
+
+} // !current_user_can('edit_others_posts')
+
+else
+{
+	echo "<p>Sorry, you don't have permission to access this page.</p>";
+}
+
+?>

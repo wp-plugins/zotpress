@@ -12,6 +12,7 @@
         $Zotpress_zoteroTags_db_version = "5.2.2";
         $Zotpress_zoteroRelItemColl_db_version = "5.2.1";
         $Zotpress_zoteroRelItemTags_db_version = "5.2.1";
+        $Zotpress_zoteroItemImages_db_version = "5.2.5";
         
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         
@@ -67,8 +68,7 @@
         
         // ZOTERO ITEMS TABLE
         
-        if (
-                !get_option("Zotpress_zoteroItems_db_version")
+        if ( !get_option("Zotpress_zoteroItems_db_version")
                 || get_option("Zotpress_zoteroItems_db_version") != $Zotpress_zoteroItems_db_version
            )
         {
@@ -115,6 +115,29 @@
             dbDelta( $structure );
             
             update_option( "Zotpress_zoteroItems_db_version", $Zotpress_zoteroItems_db_version );
+        }
+        
+        
+        // ZOTERO ITEM IMAGES TABLE
+        
+        if ( !get_option("Zotpress_zoteroItemImages_db_version")
+                || get_option("Zotpress_zoteroItemImages_db_version") != $Zotpress_zoteroItemImages_db_version
+           )
+        {
+			$table_name = $wpdb->prefix . "zotpress_zoteroItemImages";
+			
+            $structure = "CREATE TABLE $table_name (
+                id INT(9) AUTO_INCREMENT,
+                api_user_id VARCHAR(50),
+                item_key VARCHAR(50),
+                image TEXT,
+                UNIQUE KEY id (id),
+                PRIMARY KEY (api_user_id, item_key)
+            );";
+            
+            dbDelta( $structure );
+            
+            update_option( "Zotpress_zoteroItemImages_db_version", $Zotpress_zoteroItemImages_db_version );
         }
         
         
