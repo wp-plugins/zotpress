@@ -1,0 +1,1568 @@
+
+
+    /* START OF BASIC ZOTPRESS CSS */
+
+    div#zp-Zotpress select {
+        cursor: pointer;
+    }
+    
+    div#zp-Zotpress div.zp-Col-1 {
+        float: left;
+        width: 350px;
+    }
+    div#zp-Zotpress div.zp-Col-2 {
+        float: left;
+    }
+    
+    #adminmenu .current .wp-menu-image img {
+        opacity: 1.0;
+        filter: alpha(opacity = 100);
+    }
+    
+    div#zp-Zotpress del {
+        color: #aaa;
+        text-decoration: none;
+    }
+    
+    div#zp-Setup h3,
+    div#zp-Zotpress h3 {
+        clear: both;
+        font: 400 27px/32px "Oswald", "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+        margin: 0;
+        padding: 9px 15px 4px 0;
+        text-transform: uppercase;
+    }
+    div#zp-Zotpress h3.zp-HeaderGroup {
+        /*margin-bottom: -0.5em;*/
+    }
+    div#zp-Setup h3.pair {
+        border-bottom: 0;
+        padding: 15px 30px 0;
+    }
+    
+    div#zp-Setup h4,
+    div#zp-Zotpress h4 {
+        font: italic 400 17px/21px "Droid Serif", "Georgia", serif;
+        margin: 1.5em 0 1em;
+    }
+    div#zp-Setup h4 {
+        font: italic 400 16px/21px "Droid Serif", "Georgia", serif;
+    }
+    div#zp-Setup h4.pair {
+        border-bottom: 1px solid #eee;
+        margin: 0;
+        padding: 10px 30px 25px;
+    }
+    
+    div#zp-Zotpress h5 {
+        font: 300 11px/30px "Droid Serif", serif;
+        margin-bottom: -15px;
+        text-transform: uppercase;
+    }
+    
+    div#zp-Zotpress hr {
+        border: none;
+        border-top: 1px solid #ddd;
+        clear: both;
+        margin: 3.3em 0 0.7em;
+        height: 1px;
+    }
+    div#zp-Setup hr.clear,
+    div#zp-Zotpress hr.clear {
+        border: none;
+        margin-bottom: 0;
+    }
+    
+    div#zp-Zotpress ul {
+        list-style: none;
+        margin: 20px 0 25px;
+        padding: 0;
+    }
+    div#zp-Zotpress ul li {
+        background: url('../images/sprite.png') no-repeat -40px -60px;
+        padding-left: 15px;
+        margin-left: 5px;
+        margin-bottom: 10px;
+        list-style: none;
+    }
+    
+    div#zp-Zotpress form hr.clear {
+        margin: 0;
+        padding: 0;
+        height: 1px;
+    }
+    
+    div#zp-Zotpress p.example {
+        font-family: monospace;
+        font-size: 1.1em;
+    }
+    
+    /* END OF BASIC ZOTPRESS CSS */
+    
+    
+    
+    /* START OF SETUP CSS */
+    
+    div#zp-Setup {
+        border-bottom: 1px solid #ccc;
+        margin-right: 1.5em;
+        width: auto;
+        min-width: 549px;
+    }
+    div#zp-Setup div#zp-Zotpress-Navigation {
+        z-index: 1;
+        position: relative;
+        margin-bottom: 0;
+    }
+    div.zp-Setup-Step,
+    div#zp-Setup-Step {
+        z-index: 0;
+        position: relative;
+        background-color: #fff;
+        padding: 1em 0 0.65em;
+    }
+    div.zp-Setup-Step.second {
+        border-top: 1px solid #eee;
+    }
+    div.zp-Setup-Step.second:before,
+    div.zp-Setup-Step.second:after {
+        display: table;
+        content: "";
+    }
+    div.zp-Setup-Step.second:after {
+        clear: both;
+    }
+    
+    div#zp-Setup h3 {
+        padding: 15px 30px 25px;
+        border-bottom: 1px solid #eee;
+    }
+    div#zp-Setup-Step hr {
+        clear: both;
+        border: none;
+        padding: 0;
+        margin: 1em 0;
+        height: 1px;
+        background: none;
+        border-top: 1px solid #eee;
+    }
+    div#zp-Setup-Step hr.clear {
+        margin: 0;
+    }
+    
+    div#zp-Setup div.zp-Column-1,
+    div#zp-Setup div.zp-Column-2 {
+        float: left;
+        margin-left: 30px;
+        width: 400px;
+    }
+    
+    div#zp-Setup p.note {
+        color: #666;
+        font-size: 0.9em;
+        font-style: italic;
+        margin: -10px 0 10px 0;
+    }
+    
+    div#zp-Setup div.zp-Zotpress-Options {
+        margin-bottom: 2em;
+    }
+    
+    div#zp-Zotpress-Setup-Buttons {
+        clear: both;
+        border-top: 1px solid #eee;
+    }
+    div#zp-Zotpress-Setup-Buttons input {
+        margin: 1em 2em 0.5em;
+        float: right;
+    }
+
+    div#zp-Setup div.zp-Zotpress-Options div.zp-Success,
+    div#zp-Setup div.zp-Zotpress-Options div.zp-Loading,
+    div#zp-Setup div.zp-Zotpress-Options div.zp-Errors {
+        float: left;
+        height: 32px;
+    }
+    div#zp-Setup div.zp-Zotpress-Options div.zp-Success,
+    div#zp-Setup div.zp-Zotpress-Options div.zp-Errors {
+        margin-top: 14px;
+        margin-bottom: 0;
+        padding-left: 35px;
+        height: 24px;
+    }
+    div#zp-Setup div.zp-Zotpress-Options div.zp-Success {
+        background-position: 0 -82px;
+    }
+    div#zp-Setup div.zp-Zotpress-Options div.zp-Errors {
+        background-position: 0 -146px;
+    }
+    div#zp-Setup div.zp-Zotpress-Options div.zp-Loading {
+        margin-top: 6px;
+    }
+    
+    
+    div.zp-Step-Import,
+    div#zp-Step-Import {
+        padding: 10px 30px;
+    }
+    .second div.zp-Step-Import {
+        padding-top: 0;
+    }
+    div#zp-Zotpress-Setup-Import-Buttons {
+        margin-top: 2em;
+    }
+    input#zp-Zotpress-Setup-Import,
+    .wp-core-ui input.zp-Import-Button.button-secondary {
+        margin: 0 0.5em 1em 0;
+        float: left;
+    }
+    div#zp-Step-Import-Collection {
+        background-color: #f9f9f9;
+        clear: both;
+        margin-top: 1em;
+        width: 36.75em;
+        height: 13.5em;
+    }
+    div#zp-Step-Import-Collection.loading {
+        background: #f9f9f9 url('../images/loading_default.gif') no-repeat center;
+    }
+    div#zp-Step-Import-Collection iframe {
+        width: 100%;
+    }
+    #zp-Zotpress-Setup-Import-Selective {
+        float: left;
+        margin: 1em 0;
+    }
+    
+    
+    iframe.zp-Setup-Sync,
+    iframe#zp-Setup-Import {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        
+        /* LIVE */
+        visibility: hidden;
+        width: 50px;
+        height: 35px;
+        
+        /* DEBUGGING */
+        /*border: 3px solid #eee;*/
+        /*width: 350px;*/
+        /*height: 200px;*/
+    }
+    
+    div.zp-Loading-Container {
+        clear: both;
+        padding-top: 0.75em;
+    }
+    div.zp-Loading-Container:before,
+    div.zp-Loading-Container:after {
+        content: "";
+        display: table;
+    }
+    div.zp-Loading-Container:after {
+        clear: both;
+    }
+    div.zp-Loading-Container.selective {
+        clear: none;
+        padding-top: 0;
+    }
+    div.zp-Loading-Initial.zp-Loading-Import {
+        background: transparent url('../images/loading_import.gif') no-repeat 0 6px;
+        display: none;
+        float: left;
+        margin: 0;
+        width: 70px;
+        height: 20px;
+    }
+    div.zp-Loading-Initial.zp-Loading-Import.selective {
+        margin-top: 1.35em;
+        margin-left: 1em;
+    }
+    div.zp-Import-Messages {
+        color: #999;
+        font: italic 9px/20px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+        display: none;
+        float: left;
+        margin: 0 0 0 1em;
+    }
+    div.zp-Import-Messages.selective {
+        margin-top: 1.95em;
+    }
+    
+    
+    
+    /* START OF SETUP CHECK */
+    
+    #zp-Setup-Check {
+        padding: 1.5em 30px;
+    }
+    #zp-Setup-Check-Message.error {
+        background: #fceae9;
+    }
+    #zp-Setup-Check-Message.updated {
+        background: #eef9e6;
+    }
+    div#zp-Setup-Check-Message.error strong em {
+        color: #E14D43;
+        font-style: normal;
+    }
+    div#zp-Setup-Check-Message.updated strong em {
+        color: #7AD03A;
+        font-style: normal;
+    }
+    
+    
+    
+    /* START OF ADD FORM CSS */
+    
+    form#zp-Add {
+        padding: 0;
+        margin: 0;
+    }
+    *:first-child+html form#zp-Add { /* IE7 hack */
+        /*width: 850px;*/
+    }
+    form#zp-Add fieldset {
+        background: transparent;
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+    form#zp-Add div.field {
+        clear: both;
+        padding: 2.2em 2.4em;
+    }
+    
+    form#zp-Add label,
+    form#zp-Add select,
+    form#zp-Add textarea,
+    form#zp-Add input,
+    form#zp-Add aside {
+        display: block;
+        float: left;
+    }
+    form#zp-Add select,
+    form#zp-Add textarea,
+    form#zp-Add input {
+        margin: -4px 0 0;
+    }
+    form#zp-Add input#public_key {
+        min-width: 18em;
+    }
+    form#zp-Add label {
+        font: italic 400 1.1em/1.25em "Droid Serif", serif;
+        width: 20%;
+    }
+    form#zp-Add label.required {
+        background: url('../images/sprite.png') no-repeat 0 -36px;
+        padding-left: 15px;
+        margin-left: -15px;
+    }
+    form#zp-Add aside {
+        float: right;
+        margin-top: -8px;
+        width: 40%;
+    }
+    form#zp-Add aside p {
+        font-size: 0.85em;
+        margin: 0 0 0 1em;
+    }
+    form#zp-Add .last aside p {
+        padding-bottom: 2em;
+    }
+    
+    form#zp-Add input#upload_image,
+    form#zp-Add input#upload_image_button {
+        display: inline;
+    }/* Remove once converted to WP types w/ post image? */
+
+    #zp-Setup div.proceed {
+        border-top: 1px solid #eee;
+        clear: both;
+        width: 100%;
+    }
+    #zp-Setup div.proceed input#zp-Connect {
+        margin: 1em 2em 0.5em;
+        float: right;
+    }
+    /* Thanks to http://nicolasgallagher.com/micro-clearfix-hack/ */
+	#zp-Setup div.proceed:before,
+	#zp-Setup div.proceed:after {
+		content: "";
+		display: table;
+	}
+	#zp-Setup div.proceed:after {
+		clear: both;
+	}
+    
+    form#zp-Add div.message {
+        position: absolute;
+        bottom: 1.1em;
+        right: 8.5em;
+        width: 100%;
+    }
+    div.zp-Loading {
+        background: transparent url('../images/loading_default.gif') no-repeat center;
+        display: none;
+        float: right;
+        letter-spacing: -1000px;
+        overflow: hidden;
+        text-indent: -5000px;
+        margin: 0 0 0;
+        width: 30px;
+        height: 30px;
+    }
+    div.zp-Errors,
+    div.zp-Success {
+        display: none;
+        float: right;
+        font-weight: bold;
+        margin: 0 0 0;
+        padding-left: 35px;
+    }
+    div.zp-Errors {
+        background: url('../images/sprite.png') no-repeat 0 -139px;
+        color: #990033;
+    }
+    div.zp-Success {
+        background: url('../images/sprite.png') no-repeat 0 -76px;
+        color: #009966;
+    }
+    div.zp-Errors p,
+    div.zp-Success p {
+        margin: 5px 0;
+    }
+    
+    /* END OF SETUP CSS */
+    
+    
+    
+    /* START OF LOADING CSS */
+    
+    div.zp-Loading-Initial {
+        background: transparent url('../images/loading_initial.gif') no-repeat -3px 10px;
+        margin: 0;
+        padding: 0;
+        width: 220px;
+        height: 18px;
+    }
+    div.zp-Loading-Initial h2 {
+        margin-bottom: -12px;
+    }
+    iframe#zp-Loading-Initial {
+        visibility: hidden;
+    }
+    
+    /* END OF LOADING CSS */
+    
+    
+    
+    /* START TABS */
+    
+    div#zp-Zotpress-Navigation {
+        border-bottom: 1px solid #ccc;
+        margin: 10px 0 20px;
+        overflow: visible;
+        /*height: 47px;*/
+        height: 49px;
+    }
+    
+    div#zp-Zotpress-Navigation h1 {
+        font: 600 18px/24px "Source Sans Pro", sans-serif;
+        float: left;
+        margin: 0;
+        padding: 0.45em 5em 1em 0;
+        text-transform: uppercase;
+    }
+    div#zp-Zotpress-Navigation h1 em {
+        color: #c23d35;
+        font-style: normal;
+    }
+    
+    /* Nav Items */
+    
+    div#zp-Zotpress-Navigation .nav-item,
+    div#zp-Zotpress-Navigation :visited.nav-item {
+        color: #000;
+        display: block;
+        float: left;
+        font: 300 15px/24px "Source Sans Pro", sans-serif;
+        padding: 0.75em 1.5em;
+        outline: none;
+        text-transform: uppercase;
+        text-decoration: none;
+    }
+    div#zp-Setup:not(.zp-Step-Selective) div#zp-Zotpress-Navigation .nav-item,
+    div#zp-Setup:not(.zp-Step-Selective) div#zp-Zotpress-Navigation :visited.nav-item {
+        color: #bbb;
+    }
+    
+    div#zp-Zotpress-Navigation :hover.nav-item {
+        border-bottom: 0.25em solid #000;
+    }
+    div#zp-Setup:not(.zp-Step-Selective) div#zp-Zotpress-Navigation :hover.nav-item {
+        border-bottom: none;
+    }
+    
+    div#zp-Zotpress-Navigation :focus.nav-item,
+    div#zp-Zotpress-Navigation :active.nav-item,
+    div#zp-Zotpress-Navigation .active.nav-item {
+        background-color: #eaeaea;
+        border-bottom: 0.25em solid #000;
+		box-shadow: none;
+    }
+    
+    div#zp-Zotpress-Navigation .nav-item.nav-tab-active,
+    div#zp-Setup div#zp-Zotpress-Navigation .nav-item.nav-tab-active,
+    div#zp-Setup div#zp-Zotpress-Navigation .nav-item.nav-tab-active:hover,
+    div#zp-Setup div#zp-Zotpress-Navigation .nav-item.nav-tab-active:active {
+        border-bottom: 0.25em solid #E14D43;
+        background-color: transparent;
+        color: #000;
+    }
+    
+    div#zp-Zotpress-Navigation .nav-item.nav-tab-active strong {
+        font-weight: bold;
+        margin-right: 0.25em;
+    }
+    
+    div#zp-Icon {
+        background: transparent url('../images/sprite.png') no-repeat -4px -310px;
+        float: left;
+        margin-right: 1em;
+        width: 33px;
+        height: 44px;
+    }
+    
+    /* END TABS */
+    
+    
+    
+    /* START BROWSE */
+    
+    div#zp-Options-Wrapper,
+    div#zp-Browse-Wrapper {
+        background-color: #fff;
+        border-bottom: 1px solid #ccc;
+        margin-top: -20px;
+        padding: 1em 0 0;
+    }
+	div#zp-Options-Wrapper:before,
+	div#zp-Options-Wrapper:after {
+		content: "";
+		display: table;
+	}
+	div#zp-Options-Wrapper:after {
+		clear: both;
+	}
+    div#zp-Options-Wrapper h3,
+    div#zp-Browse-Wrapper h3 {
+        padding: 15px 30px 25px;
+    }
+    div#zp-Options-Wrapper h3 {
+        border-bottom: 1px solid #eee;
+    }
+    
+    div#zp-Zotpress div#zp-Options-Wrapper hr {
+        border-color: #eee;
+        margin-bottom: 0;
+    }
+    div#zp-Zotpress div#zp-Options-Wrapper div.zp-Column-1,
+    div#zp-Zotpress div#zp-Options-Wrapper div.zp-Column-2 {
+        border-color: #eee;
+        margin-right: 0;
+        width: 49.5%;
+    }
+    div#zp-Zotpress div#zp-Options-Wrapper div.zp-Column-Inner {
+        padding: 0 25px;
+    }
+    
+    div#zp-Browse {
+        background-color: #F9F9F9;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        width: 100%;
+    }
+    div#zp-Browse-Bar {
+        background-color: #ACBAD5;
+        float: left;
+        padding-bottom: 5000px;
+        margin-bottom: -5000px;
+        width: 25%;
+    }
+    div#zp-Browse label,
+    div#zp-Browse-Accounts label {
+        /*font: normal 600 1em/1.5em "Open Sans", Helvetica, Arial, sans-serif;*/
+        font: normal 600 1em/1.75em "Droid Serif", serif;
+        color: #fff;
+        display: block;
+        padding: 4% 0 0 6%;
+        text-transform: uppercase;
+    }
+    
+    
+    /* Accounts */
+    
+    div#zp-Browse-Accounts {
+        float: right;
+        margin-top: -4.4em;
+        margin-right: 30px;
+        text-align: right;
+        width: 50%;
+    }
+    div#zp-Browse-Accounts label {
+        color: #ccc;
+        display: inline;
+        font: normal 400 1em/1.75em "Droid Serif", serif;
+        margin-right: 5px;
+        padding: 0;
+    }
+    select#zp-FilterByAccount {
+        font-size: 0.9em;
+    }
+    
+    
+    /* Collection Folders */
+    
+    div#zp-Browse-Collections {
+        background-color: #ACBAD5;
+        width: 100%;
+    }
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection,
+    div#zp-Browse-Collections a.zp-List-Subcollection:visited
+    {
+        background-color: #7c8798;
+        border-bottom: 1px solid #687384;
+        color: #fff;
+        display: block;
+        font-size: 9pt;
+        line-height: 1.1;
+        padding: 4% 6% 4.5%;
+        outline: none;
+        text-decoration: none;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection:hover
+    {
+        background-color: #9aa3af;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection.selected,
+    div#zp-Browse-Collections a.zp-List-Subcollection.down,
+    div#zp-Browse-Collections a.zp-List-Subcollection:active,
+    div#zp-Browse-Collections a.zp-List-Subcollection:focus
+    {
+        background-color: #6d798b;
+		box-shadow: none;
+        color: #9aa3af;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection span.name {
+        display: block;
+        font-weight: 600;
+        padding-bottom: 4%;
+    }
+    
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel.selected {
+        background-color: #ACBAD5;
+        color: #fff;
+        font: normal 600 1em/1.75em "Droid Serif", serif;
+        padding: 3% 6%;
+        text-transform: uppercase;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel.down span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel.down:hover span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel:active span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel.selected span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.toplevel.selected:hover span {
+        background: transparent url('../images/sprite.png') no-repeat -250px -558px;
+        padding-left: 24px;
+    }
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection.child span.name,
+    div#zp-Browse-Collections a.zp-List-Subcollection.child:active span.name,
+    div#zp-Browse-Collections a.zp-List-Subcollection.child:hover span.name {
+        background: transparent url('../images/sprite.png') no-repeat 0 -730px;
+        padding-left: 10px;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection.child.down span.name,
+    div#zp-Browse-Collections a.zp-List-Subcollection.child.down:hover span.name {
+        background: transparent url('../images/sprite.png') no-repeat -490px -730px;
+        padding-left: 10px;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection.child span.item_key,
+    div#zp-Browse-Collections a.zp-List-Subcollection.child span.meta {
+        padding-left: 10px;
+    }
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection span.item_key,
+    div#zp-Browse-Collections a.zp-List-Subcollection span.meta {
+        display: block;
+        font-size: 0.75em;
+        text-transform: uppercase;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection span.item_key {
+        padding-bottom: 3px;
+    }
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection.back span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.back:hover span {
+        background: transparent url('../images/sprite.png') no-repeat 0 -812px;
+        padding-left: 15px;
+    }
+    div#zp-Browse-Collections a.zp-List-Subcollection.back:active span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.back.down span,
+    div#zp-Browse-Collections a.zp-List-Subcollection.back.down:hover span {
+        background: transparent url('../images/sprite.png') no-repeat -490px -812px;
+        padding-left: 15px;
+    }
+    
+    div#zp-Browse-Collections a.zp-List-Subcollection.last {
+        border-bottom: none;
+    }
+    
+    div.zp-Collection-Title {
+        background-color: #fff;
+        border-bottom: 1px solid #eee;
+        color: #444;
+        font: normal 400 1em/1.75em "Droid Serif", serif;
+        padding: 0.9% 2%;
+        padding-right: 15px;
+        text-transform: uppercase;
+    }
+    div.zp-Collection-Title .item_key {
+        float: right;
+        color: #ccc;
+    }
+    div.zp-Collection-Title .item_key_inner {
+        float: right;
+    }
+    div.zp-Collection-Title .item_key_inner input,
+    div.zp-Collection-Title .item_key_inner span {
+        color: #444;
+        cursor: pointer;
+        display: block;
+        float: right;
+        text-align: right;
+        width: 6em;
+    }
+    div.zp-Collection-Title .item_key_inner input {
+        background: none;
+        border: none;
+        display: none;
+        font: normal 400 1em/1em "Droid Serif", serif;
+        margin: 0;
+        padding: 0;
+    }
+    div.zp-Collection-Title .item_key_inner input:focus {
+        border: none;
+        box-shadow: none;
+        margin-top: 0.3em;
+    }
+    
+    /* Browse Tags */
+    
+    div#zp-Browse-Tags {
+        background-color: #ACBAD5;
+        border-top: 1px solid #687384;
+        padding: 0.05em 0 5%;
+        width: 100%;
+    }
+	div#zp-Browse-Tags:before,
+	div#zp-Browse-Tags:after {
+		content: "";
+		display: table;
+	}
+	div#zp-Browse-Tags:after {
+		clear: both;
+	}
+    div#zp-Browse-Tags label span {
+        background: transparent url('../images/sprite.png') no-repeat -483px -556px;
+        padding-left: 22px;
+    }
+    select#zp-List-Tags {
+        background: #99abcc;
+        border: none;
+        border: 1px solid #8798b4;
+        box-shadow: 0 1px 2px #8798b4 inset;
+        color: #fff;
+        font-size: 0.9em;
+        margin: 4% 6%;
+        width: 88%;
+    }
+    select#zp-List-Tags.active {
+        background-color: #fff;
+        color: #7988a2;
+    }
+    select#zp-List-Tags:focus {
+        border: 1px solid #8798b4;
+        box-shadow: none;
+    }
+    select#zp-List-Tags:focus {
+        background: #8397b8;
+        border-color: #7185a6;
+        color: #fff;
+    }
+    select#zp-List-Tags option {
+        background: #fff;
+        border-bottom: 1px solid #eee;
+        color: #666;
+        padding: 0.5em 1em;
+    }
+    
+    
+    /* Pagination */
+    
+    div#zp-Zotpress div#zp-Pagination {
+        position: relative;
+        background-color: #fff;
+        /*border-top: 1px solid #eee;*/
+        clear: both;
+        min-height: 3em;
+    }
+    div#zp-Pagination span {
+        display: block;
+        font-size: 12px;
+        font-family: "Droid Serif", serif;
+        padding: 1em;
+        text-align: right;
+        text-shadow: 0 1px 0 #FAFAFA;
+    }
+    
+    /* END BROWSE */
+    
+    
+    
+    /* START CITATION LISTS */
+    
+    div#zp-Zotpress div#zp-List {
+        float: right;
+        border-top: 1px solid #E5E5E5;
+        border-bottom: 1px solid #eee;
+        width: 75%;
+    }
+    
+    div#zp-Zotpress div#zp-List h3 {
+        display: block;
+        color: #bbb;
+        background: #333;
+        font: 400 19px/24px "Oswald","Times New Roman","Bitstream Charter",Times,serif;
+        margin: -3px 0 0;
+        padding: 10px 15px;
+    }
+    div#zp-Zotpress div#zp-List h3 em {
+        color: #fff;
+        font-style: normal;
+    }
+    
+    div#zp-Zotpress div#zp-List p {
+        margin: 1em;
+    }
+    
+    div#zp-Zotpress div#zp-List a,
+    div#zp-Zotpress div#zp-List a:visited
+    {
+        color: #E14D43; /* bae1fe */
+        text-decoration: none;
+    }
+    div#zp-Zotpress div#zp-List h3 a {
+        float: right;
+    }
+    div#zp-Zotpress div#zp-List a:hover {
+        color: #fff;
+    }
+    div#zp-Zotpress div#zp-List a:active {
+        color: #999;
+    }
+    
+    /* END CITATION LISTS */
+    
+    
+    
+    /* START CITATIONS */
+    
+    div#zp-Zotpress div#zp-List div.zp-Entry {
+        background-color: #fff;
+        padding: 15px;
+    }
+	div#zp-Zotpress div#zp-List div.zp-Entry:before,
+	div#zp-Zotpress div#zp-List div.zp-Entry:after {
+		content: "";
+		display: table;
+	}
+	div#zp-Zotpress div#zp-List div.zp-Entry:after {
+		clear: both;
+	}
+    div#zp-Zotpress div#zp-List div.zp-Entry.odd {
+        background-color: transparent;
+    }
+    
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image {
+        position: relative;
+        float: right;
+        margin-left: 15px;
+        overflow: hidden;
+        text-align: center;
+        width: 100px;
+        height: 100px;
+    }
+    
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload,
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload:link,
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload:visited,
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload:active
+    {
+        z-index: 2;
+        top: 0;
+        left: 0;
+        position: absolute;
+        background-color: #F6F6F6;
+        border: 2px dashed #eee;
+        color: #ccc;
+        display: block;
+        font-size: 0.9em;
+        font-weight: bold;
+        line-height: 96px;
+        text-decoration: none;
+        width: 96px;
+        height: 96px;
+    }
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image.hasimage a.upload {
+        background: transparent;
+        border: none;
+        color: #fff;
+        opacity: 0;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+        -moz-opacity: 0;
+        -khtml-opacity: 0;
+        text-shadow: 0px 0px 3px rgba(0, 0, 0, 1.0);
+        width: 100px;
+        height: 100px;
+    }
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.upload:hover {
+        background-color: #a8cf30;
+        border: 2px solid #a8cf30;
+        color: #fff;
+    }
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image.hasimage a.upload:hover {
+        background: transparent;
+        border: none;
+        opacity: 1;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+        filter: alpha(opacity=100);
+        -moz-opacity: 1;
+        -khtml-opacity: 1;
+        width: 100px;
+        height: 100px;
+    }
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image a.delete {
+        position: absolute;
+        z-index: 3;
+        top: 0;
+        right: 0;
+        left: auto;
+        border: none;
+        background-color: #E14D43;
+        color: #fff;
+        display: none;
+        font-size: 14pt;
+        font-weight: bold;
+        line-height: 25px;
+        text-align: center;
+        width: 25px;
+        height: 25px;
+    }
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image.hover.hasimage a.delete {
+        display: block;
+    }
+    
+    div#zp-Zotpress div#zp-List div.zp-Entry-Image img {
+        z-index: 1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+    }
+    
+    div#zp-Zotpress div.zp-Entry div.csl-bib-body {
+        font-size: 0.9em;
+        margin: 0 0 15px;
+    }
+    
+    div#zp-Zotpress div.zp-Entry div.zp-Entry-ID {
+        /*border-top: 1px dashed #EEEEEE;*/
+        color: #999;
+        font-size: 10px;
+        display: block;
+        margin: 0;
+    }
+    div#zp-Zotpress div.zp-Entry div.zp-Entry-ID span.title {
+        /*color: #ccc;*/
+        text-transform: uppercase;
+    }
+    div#zp-Zotpress div.zp-Entry div.zp-Entry-ID div {
+        display: inline-block;
+    }
+    div#zp-Zotpress div.zp-Entry div.zp-Entry-ID-Text span {
+        cursor: pointer;
+    }
+    div#zp-Zotpress div.zp-Entry div.zp-Entry-ID input {
+        border: 0;
+        background: transparent;
+        color: #999;
+        display: none;
+        font-size: 10px;
+        padding: 0;
+        margin: 0;
+    }
+    
+    /* END CITATIONS */
+    
+    
+    
+    /* START IMAGE FORM */
+    
+    div#zp-Zotpress form#zp-Image {
+        -moz-border-radius: 10px;
+        background-color: #fafafa;
+        margin: 0.75em 0 30px 0;
+        width: 780px;
+    }
+    
+    div#zp-Zotpress form#zp-Image fieldset {
+        padding: 10px 20px;
+    }
+    
+    div#zp-Zotpress form#zp-Image div.section {
+        margin: 10px 0;
+    }
+    
+    div#zp-Zotpress form#zp-Image div.zp-Image-Current {
+        float: right;
+        overflow: hidden;
+        margin: 20px;
+        max-width: 310px;
+        max-height: 310px;
+    }
+    
+    div#zp-Zotpress div.zp-Citation {
+        width: 780px;
+    }
+    div#zp-Zotpress div.zp-Citation div.csl-bib-body {
+        margin: 0;
+    }
+    div#zp-Zotpress div.zp-Citation div.zp-Entry {
+        min-height: 0;
+    }
+    
+    div#zp-Zotpress form#zp-Image span.help {
+        color: #999;
+        font: italic 11px/14px 'Georgia', serif;
+    }
+    
+    div#zp-Zotpress form#zp-Image #zp-Submit,
+    div#zp-Zotpress form#zp-Image #zp-Cancel {
+        float: left;
+    }
+    div#zp-Zotpress form#zp-Image #zp-Submit {
+        margin-right: 4px;
+    }
+
+    div#zp-Zotpress form#zp-Image div.zp-Loading {
+        display: none;
+        float: left;
+        margin: 0 0 0 4px;
+    }
+    
+    div#zp-Zotpress form#zp-Image div.zp-Errors,
+    div#zp-Zotpress form#zp-Image div.zp-Success {
+        margin-left: 140px;
+        padding-left: 35px;
+    }
+    div#zp-Zotpress form#zp-Image div.zp-Errors p,
+    div#zp-Zotpress form#zp-Image div.zp-Success p {
+        padding: 6px 0 1px;
+    }
+    
+    /* END IMAGE FORM */
+    
+    
+
+    /* START OF HIDDEN URL CSS */
+    
+    span#ZOTPRESS_PLUGIN_URL {
+        display: none;
+    }
+    
+    /* END OF HIDDEN URL CSS */
+    
+    
+    
+    /* START ACCOUNTS */
+    
+    div#zp-ManageAccounts {
+        clear: both;
+    }
+    div#zp-ManageAccounts h3 {
+        width: 50%;
+    }
+    
+    a.zp-AddAccountButton,
+    a.zp-AddAccountButton:link,
+    a.zp-AddAccountButton:visited,
+    a.zp-AddAccountButton:active,
+    a.zp-AddAccountButton:hover {
+        float: right;
+        margin-top: -2.55em;
+        text-shadow: none;
+    }
+    a.zp-AddAccountButton span {
+        background: transparent url('../images/sprite.png') no-repeat 0 -351px;
+        padding: 0 2px 0 16px;
+    }
+    a.zp-AddAccountButton:hover {
+        background: #ceec8a;
+    }
+    a.zp-AddAccountButton:hover span {
+        background-position: -161px -351px;
+    }
+    a.zp-AddAccountButton:active {
+        background: #777;
+        color: #000;
+    }
+    a.zp-AddAccountButton:active span {
+        background-position: -161px -350px;
+    }
+    
+    #zp-Accounts {
+        margin: 1.55em 0;
+    }
+    
+    #zp-Accounts th {
+        /*font: 300 1.35em/1.35em "Oswald", sans-serif;*/
+        /*text-transform: uppercase;*/
+        font: 300 1.1em/1.1em "Droid Serif", sans-serif;
+    }
+    
+    #zp-Accounts .account_type {
+        width: 3em;
+    }
+    #zp-Accounts .api_user_id {
+        width: 4em;
+    }
+    #zp-Accounts .public_key {
+        /*width: 11.5em;*/
+        width: 13.5em;
+    }
+    #zp-Accounts .status {
+        text-align: center;
+        width: 5em;
+    }
+    #zp-Accounts .status .status_good {
+        color: #008000;
+        font-weight: bold;
+    }
+    #zp-Accounts .status .status_bad {
+        color: #DD3D36;
+        font-weight: bold;
+    }
+    #zp-Accounts .actions {
+        width: 22.5em;
+    }
+
+    #zp-AccountsList .actions a {
+        display: block;
+        float: left;
+        outline: none;
+        margin: 0 1.25em 0 0;
+        height: 25px;
+    }
+    @media only screen and (max-width: 1080px) {
+        #zp-AccountsList .actions a {
+            margin-right: 0.25em;
+            width: 25px;
+            height: 25px;
+            overflow: hidden;
+        }
+        #zp-Accounts .actions {
+            width: 100px;
+        }
+    }
+    #zp-AccountsList .actions a:before {
+        background-image: url('../images/sprite.png');
+        background-repeat: no-repeat;
+        padding: 0.15em 0 0.15em 2em;
+        vertical-align: middle;
+        
+        content: "";
+        width: 25px;
+        height: 25px;
+    }
+    #zp-AccountsList .actions a:hover:before {
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+        filter: alpha(opacity=50);
+        -moz-opacity: 0.5;
+        -khtml-opacity: 0.5;
+        opacity: 0.5;
+    }
+    #zp-AccountsList .actions a.sync span.icon {
+        background-position: -31px -422px;
+    }
+    #zp-AccountsList .actions a.sync.syncing span.icon {
+        background: transparent url('../images/syncing.gif') no-repeat 0 0;
+    }
+    #zp-AccountsList .actions a.sync.error span.icon {
+        background-position: -51px -422px;
+    }
+    #zp-AccountsList .actions a.sync.success span.icon {
+        background-position: -61px -422px;
+    }
+    #zp-AccountsList .actions a.selective:before {
+        background-position: -252px -423px;
+    }
+    #zp-AccountsList .actions a.import:before {
+        background-position: 0 -423px;
+    }
+    #zp-AccountsList .actions a.delete {
+        margin-right: 0;
+    }
+    #zp-AccountsList .actions a.delete:before {
+        background-position: -105px 0;
+    }
+    
+    /* END ACCOUNTS */
+    
+    
+    
+
+    
+    
+    /* START OF MODAL CSS */
+    
+    .zp-Modal #adminmenu,
+    .zp-Modal #footer,
+    .zp-Modal #wphead
+    {
+        display: none;
+    }
+    .zp-Modal #wpbody {
+        margin-left: 25px;
+    }
+    body.wp-admin.zp-Modal {
+        min-width: 400px;
+    }
+    
+    /* END OF MODAL CSS */
+    
+    
+    
+    /* START OF DOCUMENTATION CSS */
+    
+    div#zp-Intext-Example {
+        background-color: #fff;
+        -moz-box-shadow: 0 0 1px #aaa;
+        -webkit-box-shadow: 0 0 1px#aaa;
+        box-shadow: 0 0 1px #aaa;
+        float: right;
+        font: normal 400 12px/18px "Droid Serif","Georgia",serif;
+        margin: 1em 0 0 2em;
+        padding: 2em;
+        width: 24%;
+    }
+    div#zp-Intext-Example .title {
+        font-weight: 600;
+        font-style: italic;
+    }
+    
+    div#zp-Zotpress code {
+        background: #ddd;
+        border-radius: 3px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        font-family: "Monaco", monospace;
+        padding: 2px 3px;
+    }
+    
+    .zp-Documentation {
+        border: none;
+        background-color: #fff;
+        margin: 2em 0;
+        padding: 0;
+    }
+    
+    .zp-Documentation strong {
+        font-weight: bold;
+    }
+    div#zp-Zotpress .zp-Documentation code {
+        background: #eaeaea;
+    }
+    
+    .zp-Documentation tr,
+    .zp-Documentation th,
+    .zp-Documentation td {
+        border: none;
+        font-weight: 300;
+        margin: 0;
+        padding: 8px 16px;
+        text-align: left;
+        vertical-align: top;
+    }
+    .zp-Documentation td {
+        border-bottom: 1px solid #f1f1f1;
+        padding: 12px 16px;
+    }
+    .zp-Documentation .zebra td {
+        background-color: #f9f9f9;
+        border-bottom: 1px solid #eee;
+    }
+    .zp-Documentation p {
+        margin: 0;
+    }
+    
+    .zp-Documentation .main {
+        background-color: #333;
+        border-bottom: none;
+        color: #fff;
+        font: 400 1.5em/1.5em "Oswald", sans-serif;
+        text-transform: uppercase;
+    }
+    
+    .zp-Documentation .category,
+    .zp-Documentation .type {
+        /*font: 400 1.25em/1.25em "Source Sans Pro", sans-serif;*/
+        font: 600 1em/1.25em "Source Sans Pro", sans-serif;
+        text-transform: uppercase;
+    }
+    
+    .zp-Documentation .category,
+    .zp-Documentation .zebra .category {
+        background-color: #666;
+        border-bottom: 1px solid #999;
+        color: #fff;
+    }
+    
+    .zp-Documentation .type {
+        background-color: #ACBAD5;
+        border-bottom: 1px solid #859ac2;
+    }
+    .zp-Documentation .zebra .type {
+        background-color: #99abcc;
+        border-bottom: 1px solid #859ac2;
+    }
+    
+    .zp-Documentation .code {
+        background-color: #ffcb15;
+        border-bottom: 1px solid #f9a93e;
+    }
+    .zp-Documentation .zebra .code {
+        background-color: #ffb915;
+        border-bottom: 1px solid #f2aa00;
+    }
+    .zp-Documentation .example {
+        min-width: 20em;
+        padding-right: 0;
+    }
+    .zp-Documentation .example p {
+        margin-bottom: 0.25em;
+    }
+    
+    .zp-Documentation p.break {
+        margin-top: 1em;
+    }
+    
+    /*.zp-Documentation tr.last td,*/
+    .zp-Documentation td.last {
+        border-bottom: none;
+    }
+    
+    /* END OF DOCUMENTATION CSS */
+    
+    
+    
+    /* START OF MESSAGE CSS */
+    
+    div.zp-Message {
+        background-color: #ffcb15;
+        display: block;
+        float: right;
+        margin-left: 20px;
+        margin-top: -30px;
+        overflow: hidden;
+        width: 275px;
+    }
+    div#zp-Zotpress div.zp-Message h3 {
+        font-size: 21px;
+        line-height: 1.4em;
+        padding: 1.2em;
+        padding-bottom: 0;
+    }
+    div.zp-Message p {
+        font: italic 400 14px/21px "Droid Serif", "Georgia", serif;
+        margin: 0;
+        padding: 2em;
+    }
+    div.zp-Message p.rate {
+        background-color: #333;
+        color: #fff;
+        text-shadow: 0 1px 0 #000;
+    }
+    div.zp-Message p.version {
+        color: #333;
+        font-size: 0.9em;
+        padding-top: 1em;
+    }
+    div.zp-Message p.version a,
+    div.zp-Message p.version a:visited,
+    div.zp-Message p.version a:active {
+        color: #666;
+    }
+    div.zp-Message p.version a:hover {
+        color: #999;
+    }
+    div.zp-Message p.version strong {
+        font: 600 11px/1em "Source Sans Pro","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+        text-transform: uppercase;
+    }
+    a.zp-FiveStar {
+        background: transparent url('../images/sprite.png') no-repeat -160px -1px;
+        color: #ffd900;
+        padding-left: 95px;
+    }
+    
+    ol.zp-WaysToUseZotpress {
+        list-style: none;
+        margin: 2em;
+    }
+    ol.zp-WaysToUseZotpress li {
+        background: transparent url('../images/sprite.png') no-repeat -300px 2px;
+        list-style-position: inside;
+        padding-left: 5px;
+        margin-bottom: 12px;
+    }
+    ol.zp-WaysToUseZotpress li span.number {
+        float: left;
+        font-size: 10px;
+        margin-left: 1px;
+        margin-top: 3px;
+        margin-right: 14px;
+    }
+    ol.zp-WaysToUseZotpress li strong {
+        font: 600 1em/1em "Source Sans Pro","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+        text-transform: uppercase;
+    }
+    ol.zp-WaysToUseZotpress li p.indent {
+        margin-top: -12px;
+        margin-bottom: 14px;
+        text-indent: 21px;
+    }
+    
+    /* END OF MESSAGE CSS */
+    
+    
+    
+    /* START OF OPTIONS PAGE CSS */
+    
+    div.zp-Zotpress-Options {
+        border-left: 0.35em solid #000;
+        margin: 20px 0 30px;
+        padding: 0.6em 1em;
+    }
+    div.zp-Zotpress-Options:before,
+    div.zp-Zotpress-Options:after {
+        content: "";
+        display: table;
+    }
+    div.zp-Zotpress-Options:after {
+        clear: both;
+    }
+    
+    div#zp-Zotpress div.zp-Column-1 {
+        border-right: 1px solid #ddd;
+        float: left;
+        margin-right: 4%;
+        width: 47.5%
+    }
+    div#zp-Zotpress div.zp-Column-2 {
+        float: left;
+        width: 47.5%
+    }
+    
+    div.zp-Zotpress-Options label {
+        font: 300 0.9em/1em "Droid Serif", sans-serif;
+        margin: 0 0 0.5em 0;
+        text-transform: uppercase;
+    }
+    
+    div.zp-Zotpress-Options label,
+    div.zp-Zotpress-Options select {
+        display: block;
+    }
+    div.zp-Zotpress-Options select {
+        margin-bottom: 0.5em;
+    }
+    
+    div.zp-Zotpress-Options input.button-secondary {
+        float: left;
+        margin-top: 10px;
+    }
+    
+    div#zp-Zotpress div.zp-Zotpress-Options div.zp-Loading {
+        display: none;
+        float: left;
+        margin: 0.6em 0 0 0.25em;
+    }
+    div#zp-Zotpress div.zp-Zotpress-Options div.zp-Success,
+    div#zp-Zotpress div.zp-Zotpress-Options div.zp-Errors {
+        margin: 0.6em 0 0;
+        padding: 6px 0 4px 32px;
+        float: left;
+    }
+    
+    div#zp-Zotpress-Options-Style-New-Container {
+        display: none;
+        margin: 1.5em 0 0.5em;
+    }
+    select#zp-Zotpress-Options-Style option#new {
+        border-top: 1px dotted #CCCCCC;
+        font-weight: bold;
+        font-style: italic;
+    }
+    
+    div#zp-Zotpress .zp-Column-1 p.note {
+        /*margin-right: 1em;*/
+    }
+    
+    div#zp-Zotpress-Options-Reset {
+        border-left: 0;
+        padding: 0;
+    }
+    
+    div.zp-CPT-Checkbox {
+        float: left;
+        width: 50%;
+    }
+    div.zp-Zotpress-Options div.zp-CPT-Checkbox label {
+        display: inline;
+        line-height: 2em;
+        vertical-align: 0.05em;
+    }
+    div.zp-Zotpress-Options div.zp-CPT-Checkbox label.dis {
+        color: #ccc;
+    }
+    
+    /* END OF OPTIONS PAGE CSS */
+    
+    
+    .ui-tooltip-tipsy .ui-tooltip-titlebar, .ui-tooltip-tipsy .ui-tooltip-content {
+        font-weight: normal !important;
+        width: 300px !important;
+    }
+    
