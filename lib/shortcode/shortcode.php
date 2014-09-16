@@ -622,7 +622,7 @@
                         // ABSTRACT
                         if ( $abstracts && isset($zp_this_meta->abstractNote) && strlen(trim($zp_this_meta->abstractNote)) > 0 )
                         {
-                            $citation_abstract = "<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " . $zp_this_meta->abstractNote . "</p>\n";
+                            $citation_abstract = "<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " . sprintf($zp_this_meta->abstractNote) . "</p>\n";
                         }
                         
                         

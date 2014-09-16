@@ -201,7 +201,7 @@ jQuery(document).ready(function()
 		var zpBibItemKey = $this.attr("href").slice( $this.attr("href").lastIndexOf("-")+1, $this.attr("href").length );
 		
 		// Highlight bibliography item with that key
-		jQuery(".zp-Entry[rel='"+zpBibItemKey+"']").effect("highlight", { color: "#C5EFF7" }, 1000);
+		jQuery(".zp-Entry[rel='"+zpBibItemKey+"']").effect("highlight", { color: "#C5EFF7", easing: "easeInExpo" }, 1200);
 	});
 
 

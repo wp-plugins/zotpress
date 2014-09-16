@@ -597,15 +597,25 @@
             $numchildren = 0;
             $parent = "";
             $link_mode = "";
-            
+			
+			
             if (count($json_content_decoded->creators) > 0)
                 foreach ($json_content_decoded->creators as $creator)
                     if ($creator->creatorType == "author")
-                        $author .= $creator->lastName . ", ";
+						if (isset($creator->name)) // One-name authors
+							$author .= $creator->name . ", ";
+						else
+							$author .= $creator->lastName . ", ";
                     else
-                        $author_other .= $creator->lastName . ", ";
+						if (isset($creator->name)) // One-name authors
+							$author_other .= $creator->name . ", ";
+						else
+							$author_other .= $creator->lastName . ", ";
             else
-                $author .= $creator->creators["lastName"];
+				if (isset($creator->name)) // One-name authors
+					$author .= $creator->creators["name"];
+				else
+	                $author .= $creator->creators["lastName"];
             
             // Determine if we use author or other author type
             if (trim($author) == "") $author = $author_other;

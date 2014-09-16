@@ -29,7 +29,7 @@
                 SELECT author, json, CONCAT(' (', year, '). ', title, '.') AS label, item_key AS value FROM ".$wpdb->prefix."zotpress_zoteroItems
                 WHERE api_user_id='".$zp_api_user_id."' AND json LIKE %s AND itemType NOT IN ('attachment', 'note') ORDER BY author ASC
             ", 
-            '%' . like_escape($_GET['term']) . '%'
+            '%' . $wpdb->esc_like($_GET['term']) . '%'
     ), OBJECT );
     
     $zpSearch = array();

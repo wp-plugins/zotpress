@@ -414,10 +414,6 @@
             
             <p>It's displayed beneath the citation on the <a title="Browse" href="admin.php?page=Zotpress">Browse</a> page. It's also listed on the dropdown associated with each item you search via the Reference widget (found on post add/edit screens).</p>
             
-            <h4>I don't want collection names to display above my citations. How do I get rid of them?</h4>
-            
-            <p>In your stylesheet, add the following line: <code>h3.zp-Collection-Header { display: none; }</code> By the way, almost every Zotpress element has either an ID or class (or both) that can be selectively styled with CSS.</p>
-            
             <h4>Zotpress won't import my library, or only imports some of my library.</h4>
             
             <p>First, check with your web host or server admin to make sure that one of cURL, fopen with Streams (PHP 5), or fsockopen is enabled. If so, check to see if your server has any restrictions on timeouts (Zotpress sometimes needs more than 30 seconds to process a request to the Zotero servers).</p>
