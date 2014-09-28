@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 5.2.6
+    Version: 5.2.7
     Author URI: http://katieseaborn.com
     
 */
@@ -44,7 +44,7 @@
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
-    $GLOBALS['Zotpress_update_version'] = "5.2.5"; // Only change if updating db
+    $GLOBALS['Zotpress_update_db_by_version'] = "5.2.5"; // Only change if updating db
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
@@ -280,6 +280,7 @@
     add_action('wp_footer', 'Zotpress_theme_conditional_scripts_footer');
     
     
+	
     // 5.2 - Notice of required re-import
     // Thanks to http://wptheming.com/2011/08/admin-notices-in-wordpress/
     
@@ -291,7 +292,7 @@
         // See if any accounts are the old version
         $temp_version_count =
                 $wpdb->get_var( "SELECT COUNT(version) FROM ".$wpdb->prefix."zotpress
-                                            WHERE version != '".$GLOBALS['Zotpress_update_version']."';" );
+                                            WHERE version != '".$GLOBALS['Zotpress_update_db_by_version']."';" );
         
         if ( $temp_version_count > 0
                 && !get_user_meta($current_user->ID, 'zotpress_5_2_ignore_notice')
@@ -313,6 +314,31 @@
             add_user_meta($current_user->ID, 'zotpress_5_2_ignore_notice', 'true', true);
     }
     add_action('admin_init', 'zotpress_5_2_ignore');
+	
+	
+    
+    // 5.2.7 Notice of Zotpress survey
+    
+    function zotpress_survey_notice()
+    {
+        global $current_user;
+		
+		if ( !get_user_meta($current_user->ID, 'zotpress_survey_notice_ignore') )
+		{
+			echo '<div class="updated"><p>';
+			printf(__('Would you like to participate in research on Zotpress? <a title="Zotpress survey" href="http://imdc.ca/survey/776698/" target="_blank">Take the survey!</a> | <a href="%1$s">Hide Notice</a>'), 'admin.php?page=Zotpress&zotpress_survey_notice_ignore=0');
+			echo "</p></div>";
+		}
+    }
+    add_action( 'admin_notices', 'zotpress_survey_notice' );
+    
+    function zotpress_survey_notice_ignore()
+    {
+        global $current_user;
+        if ( isset($_GET['zotpress_survey_notice_ignore']) && $_GET['zotpress_survey_notice_ignore'] == '0' )
+            add_user_meta($current_user->ID, 'zotpress_survey_notice_ignore', 'true', true);
+    }
+    add_action('admin_init', 'zotpress_survey_notice_ignore');
     
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
 

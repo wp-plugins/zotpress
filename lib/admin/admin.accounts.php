@@ -77,7 +77,7 @@ if ( current_user_can('edit_others_posts') )
 								
 								// STATUS
 								$code .= "                          <td class='status'>";
-								if ( $account->version != $GLOBALS['Zotpress_update_version'] )
+								if ( $account->version != $GLOBALS['Zotpress_update_db_by_version'] )
 									$code .= "<span class='status_bad'>&#10007;</span>";
 								else
 									$code .= "<span class='status_good'>&#10004;</span>";

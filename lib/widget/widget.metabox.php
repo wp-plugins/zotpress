@@ -40,7 +40,11 @@
             }
             else
             {
-                $zp_account = $wpdb->get_results($wpdb->prepare( "SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress LIMIT 1;" ) );
+                $zp_account = $wpdb->get_results(
+					"
+					SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress LIMIT 1;
+					"
+				);
             }
             
             if (is_null($zp_account[0]->nickname) === false && $zp_account[0]->nickname != "")
@@ -264,7 +268,11 @@
             }
             else
             {
-                $zp_account = $wpdb->get_results( $wpdb->prepare( "SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress LIMIT 1;" ) );
+                $zp_account = $wpdb->get_results(
+					"
+					SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress LIMIT 1;
+					"
+				);
             }
             
             if (is_null($zp_account[0]->nickname) === false && $zp_account[0]->nickname != "")

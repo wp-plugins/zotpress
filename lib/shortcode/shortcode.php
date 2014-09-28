@@ -301,17 +301,13 @@
                 {
 					if ( is_array($collection_id) )
 					{
+						// create inner joins
+						for ($i = 0; $i < count($collection_id); $i++)
+							$zp_query .= " INNER JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl AS zpRelItemColl".$i." ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=zpRelItemColl".$i.".item_key ";
+						
 						// inclusive?
-						if ( $inclusive == "yes" )
+						if ( $inclusive != "yes" )
 						{
-							
-						}
-						else // not inclusive
-						{
-							// create inner joins
-							for ($i = 0; $i < count($collection_id); $i++)
-								$zp_query .= " INNER JOIN ".$wpdb->prefix."zotpress_zoteroRelItemColl AS zpRelItemColl".$i." ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=zpRelItemColl".$i.".item_key ";
-							
 							$zp_query .= " AND ( ";
 							
 							// exclusive to specific collections
@@ -390,7 +386,7 @@
                             
                             foreach ($collection_id as $i => $id)
                             {
-                                $zp_query .= $wpdb->prefix."zotpress_zoteroRelItemColl.collection_key='".$id."' ";
+                                $zp_query .= "zpRelItemColl0.collection_key='".$id."' "; // for some reason, only need first reference to this table
                                 
                                 if ($i != count($collection_id)-1) $zp_query .= " OR ";
                             }

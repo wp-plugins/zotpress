@@ -356,7 +356,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
 			
 			$wpdb->update( 
 				$wpdb->prefix."zotpress", 
-				array( 'version' => $GLOBALS['Zotpress_update_version'] ), 
+				array( 'version' => $GLOBALS['Zotpress_update_db_by_version'] ), 
 				array( 'api_user_id' => $api_user_id ), 
 				array( '%s' ), 
 				array( '%s' ) 
@@ -383,7 +383,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
 			
 			$wpdb->update( 
 				$wpdb->prefix."zotpress", 
-				array( 'version' => $GLOBALS['Zotpress_update_version'] ), 
+				array( 'version' => $GLOBALS['Zotpress_update_db_by_version'] ), 
 				array( 'api_user_id' => $api_user_id ), 
 				array( '%s' ), 
 				array( '%s' ) 
@@ -410,7 +410,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
 			
 			$wpdb->update( 
 				$wpdb->prefix."zotpress", 
-				array( 'version' => $GLOBALS['Zotpress_update_version'] ), 
+				array( 'version' => $GLOBALS['Zotpress_update_db_by_version'] ), 
 				array( 'api_user_id' => $api_user_id ), 
 				array( '%s' ), 
 				array( '%s' ) 
@@ -456,7 +456,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
 				
 				$wpdb->update( 
 					$wpdb->prefix."zotpress", 
-					array( 'version' => $GLOBALS['Zotpress_update_version'] ), 
+					array( 'version' => $GLOBALS['Zotpress_update_db_by_version'] ), 
 					array( 'api_user_id' => $api_user_id ), 
 					array( '%s' ), 
 					array( '%s' ) 

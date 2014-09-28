@@ -360,6 +360,7 @@
         
         // Delete user meta
         delete_user_meta( $current_user->ID, 'zotpress_5_2_ignore_notice' );
+        delete_user_meta( $current_user->ID, 'zotpress_survey_notice_ignore' );
     }
     
     register_uninstall_hook( ZOTPRESS_PLUGIN_FILE, 'Zotpress_deactivate' );
@@ -371,15 +372,15 @@
 
 
     if ( !get_option( "Zotpress_update_version" )
-            || get_option("Zotpress_update_version") != $GLOBALS['Zotpress_update_version'] )
+            || get_option("Zotpress_update_version") != $GLOBALS['Zotpress_update_db_by_version'] )
     {
         Zotpress_install();
         
         // Add or update version number
         if ( !get_option( "Zotpress_update_version" ) )
-            add_option( "Zotpress_update_version", $GLOBALS['Zotpress_update_version'], "", "no" );
+            add_option( "Zotpress_update_version", $GLOBALS['Zotpress_update_db_by_version'], "", "no" );
         else
-            update_option( "Zotpress_update_version", $GLOBALS['Zotpress_update_version'] );
+            update_option( "Zotpress_update_version", $GLOBALS['Zotpress_update_db_by_version'] );
     }
     
 // UPDATE ------------------------------------------------------------------------------------------

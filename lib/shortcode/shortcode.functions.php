@@ -13,6 +13,23 @@
 		else
 			return $matches[0][0];
     }
+	
+	
+	// GET DATE
+	// Used by: n/a
+	function zp_get_date($date)
+	{
+		$year = zp_get_year($date); // 4 digits
+		
+		preg_match_all( '/(\w)/', $date, $matches );
+		//var_dump($matches);
+		
+		$month = date_parse( $matches[0][0] );
+		
+		//var_dump($date['month']);
+		
+		//var_dump($month);
+	}
     
     
     

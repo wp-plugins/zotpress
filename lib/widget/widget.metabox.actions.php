@@ -275,6 +275,7 @@
                 delete_option( 'Zotpress_zoteroRelItemTags_db_version' );
                 
                 delete_user_meta( $current_user->ID, 'zotpress_5_2_ignore_notice' );
+                delete_user_meta( $current_user->ID, 'zotpress_survey_notice_ignore' );
                 
                 $xml .= "<result success='true' reset='complete' />\n";
             }
