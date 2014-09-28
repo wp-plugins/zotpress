@@ -1,0 +1,170 @@
+.zp-ZotpressShortcode {
+    background-color: #eee;
+}
+
+
+
+
+    .zotpress-widget-ckeditor-php #adminmenuback,
+    .zotpress-widget-ckeditor-php #adminmenuwrap,
+    .zotpress-widget-ckeditor-php #footer,
+    .zotpress-widget-ckeditor-php #wpadminbar
+    {
+        display: none !important;
+    }
+    
+    /* Body */
+    
+    body.zotpress-widget-ckeditor-php {
+        background-color: #EBEBEB;
+    }
+    
+    body.zotpress-widget-ckeditor-php.admin-bar #wpcontent,
+    body.zotpress-widget-ckeditor-php.admin-bar #adminmenu {
+        margin: 0;
+        padding: 0;
+    }
+    
+    #wpbody-content {
+        padding-bottom: 0;
+    }
+    
+    div#zp-Zotpress-CkEditor.citation {
+        background-color: #fafafa;
+        border-radius: 7px;
+        -moz-border-radius: 7px;
+    }
+
+    
+    /* Tabs */
+    
+    div#zp-Zotpress-CkEditor-0 {
+        padding: 6px !important;
+        width: 584px;
+    }
+    .citation div#zp-Zotpress-CkEditor-0 {
+        padding: 0 !important;
+        width: 592px;
+    }
+    
+    div#zp-Zotpress-CkEditor ul.ui-widget-header {
+        border: 1px solid #aaa;
+        border-bottom: none;
+    }
+    
+    div#zp-Zotpress-CkEditor div#zp-ZotpressMetaBox-Tabs ul.ui-widget-header {
+        border: 1px solid #efefef;
+        border-bottom: none;
+        background: #f0f0f0;
+    }
+    
+    div#zp-ZotpressMetaBox-Tabs  {
+        overflow: hidden;
+        margin-bottom: 0;
+        width: 580px;
+    }
+    .citation div#zp-ZotpressMetaBox-Tabs  {
+        width: 588px;
+    }
+    
+    div.zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li {
+        margin-right: 2px;
+    }
+    
+    div.zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li a {
+        color: #888;
+        letter-spacing: 0;
+        
+    }
+    div.zp-ZotpressMetaBox-Tabs ul.ui-tabs-nav li.ui-state-active a {
+        color: #bbb;
+    }
+    
+    div#zp-Zotpress-CkEditor div#zp-ZotpressMetaBox-Tabs .zp-Tab {
+        width: 560px;
+        height: 250px;
+    }
+    
+    /* Frames */
+    
+    div#zp-Zotpress-Frame-Left {
+        border-right: 1px solid #eee;
+        float: left;
+        padding-right: 10px;
+        width: 200px;
+    }
+    
+    div#zp-Zotpress-Frame-Right {
+        float: left;
+        padding-left: 10px;
+        width: 338px;
+    }
+    
+    /* Form */
+    
+    div#zp-ZotpressMetaBox-Tabs div.zp-Loading {
+        position: absolute;
+        top: 50px;
+    }
+    
+    .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+        font-size: 11px;
+    }
+    
+    div#zp-Zotpress-Collection-Account-Select {
+        float: right;
+        margin-top: -32px;
+        margin-right: -17px;
+    }
+    div#zp-ZotpressMetaBox-Tabs div.zp-Tab select#zp-ZotpressMetaBox-Collection-Accounts {
+        margin-bottom: 0;
+        width: 215px;
+        height: 22px;
+    }
+    
+    div#zp-Zotpress-CkEditor label {
+        font: 10px/10px "Arial", sans-serif;
+        color: #666;
+        text-transform: uppercase;
+    }
+    
+    div#zp-ZotpressMetaBox-Tabs .wp-admin select[multiple],
+    div#zp-ZotpressMetaBox-Tabs div.zp-Tab select {
+        width: 200px;
+        height: 228px;
+    }
+    div#zp-ZotpressMetaBox-Tabs div.zp-Tab select#zp-ZotpressMetaBox-Collection-Items {
+        width: 344px;
+    }
+    
+    #zp-ZotpressMetaBox-Pages-Button {
+        display: none !important;
+    }
+    
+    /* Pages */
+    
+    div#zp-ZotpressMetaBox-Pages {
+        margin-left: 317px;
+        padding: 6px;
+    }
+    div#zp-ZotpressMetaBox-Pages p.zp-Note {
+        margin-bottom: 0 !important;
+    }
+    
+    /* Zotpress Shortcode output */
+    
+    div#zp-Zotpress-CKEditor-Output {
+        display: block;
+        padding: 7px;
+        padding-bottom: 0;
+    }
+    div#zp-Zotpress-CKEditor-Output label {
+        font-size: 10px;
+        text-transform: uppercase;
+    }
+    input#zp-Zotpress-Output-Citation {
+        width: 230px;
+    }
+    input#zp-Zotpress-Output-Shortcode {
+        display: none;
+    }
