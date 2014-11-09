@@ -4,7 +4,7 @@
     
     // GET YEAR
     // Used by: In-Text Shortcode, In-Text Bibliography Shortcode
-    function zp_get_year($date, $yesnd)
+    function zp_get_year($date, $yesnd = false)
     {
 		$date_return = false;
 		

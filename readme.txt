@@ -64,6 +64,10 @@ The F.A.Q. can be found on the "Help" page of every Zotpress installation. If yo
 
 == Changelog ==
 
+= 5.2.8.1 =
+
+* Fixed zp_get_year warning messages.
+
 = 5.2.8 =
 
 * Fixed in-text bibliography sorting errors.
