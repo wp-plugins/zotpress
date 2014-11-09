@@ -12,7 +12,7 @@
         $Zotpress_zoteroTags_db_version = "5.2.2";
         $Zotpress_zoteroRelItemColl_db_version = "5.2.1";
         $Zotpress_zoteroRelItemTags_db_version = "5.2.1";
-        $Zotpress_zoteroItemImages_db_version = "5.2.5";
+        $Zotpress_zoteroItemImages_db_version = "5.2.6";
         
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         
@@ -337,6 +337,7 @@
         $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress;");
         $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_oauth;");
         $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroItems;");
+        $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroItemImages;");
         $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroCollections;");
         $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroTags;");
         $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."zotpress_zoteroRelItemColl;");
@@ -357,6 +358,7 @@
         delete_option( 'Zotpress_zoteroTags_db_version' );
         delete_option( 'Zotpress_zoteroRelItemColl_db_version' );
         delete_option( 'Zotpress_zoteroRelItemTags_db_version' );
+		delete_option( 'Zotpress_zoteroItemImages_db_version' );
         
         // Delete user meta
         delete_user_meta( $current_user->ID, 'zotpress_5_2_ignore_notice' );

@@ -18,7 +18,7 @@
                         <input id="api_user_id" name="api_user_id" type="text" tabindex="2" />
 						<aside>
 							<p>
-								For individual accounts, the API User ID is listed on the <strong>Zotero 'Feeds/API' page under the 'Feeds/API Settings' heading</strong>. For group accounts, there are two ways to find the API Group ID. Older Zotero groups will have it listed in the group's Zotero URL: a number 1-6+ digits in length after "groups." The API Group ID of new Zotero groups can be found in the <strong>RSS Feed URL</strong>.
+								For individual accounts, find the API User ID in your <a href="http://www.zotero.org/settings" target="_blank" rel="ext">Zotero Settings</a> at the <strong>Feeds/API tab</strong>. For group accounts, there are two ways to find the API Group ID. Older Zotero groups will have it listed in the group's Zotero URL: a number 1-6+ digits in length after "groups." The API Group ID of new Zotero groups can be found in the <strong>RSS Feed URL</strong>.
 							</p>
 						</aside>
                     </div>
@@ -29,7 +29,7 @@
 						<aside>
 							<p>
 								A private key is required for Zotpress to make requests to Zotero from WordPress.
-								<?php if (isset($oauth_is_not_installed) && $oauth_is_not_installed === false) { ?><strong>You can create a key using OAuth <u>after</u> you've added your account.</strong><?php } else { ?>You can create a private key manually through the <a title="Zotero" rel="nofollow" href="http://www.zotero.org/">Zotero</a> website. Go to <strong><em>Settings > Feeds/API</em></strong> and choose "Create new private key."</strong><?php } ?>
+								<?php if (isset($oauth_is_not_installed) && $oauth_is_not_installed === false) { ?><strong>You can create a key using OAuth <u>after</u> you've added your account.</strong><?php } else { ?>Go to the <a href="http://www.zotero.org/settings" target="_blank" rel="ext">Zotero Settings</a> at the <strong>Feeds/API</strong> tab and choose "Create new private key."</strong><?php } ?>
 								If you've already created a key, you can find it at <em>Settings > Feeds/API</em> on the <a title="Zotero" rel="nofollow" href="http://www.zotero.org/">Zotero</a> website. Make sure that <strong>"Allow read access"</strong> is checked. For groups, make sure the Default Group Permissions or Specific Group Permissions are set to "<strong>Read Only</strong>" or "Read/Write."
 							</p>
 						</aside>

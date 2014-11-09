@@ -134,7 +134,7 @@
                 <div id="zp-Browse-Bar">
                     
                     <div id="zp-Browse-Collections">
-                        <a class="zp-List-Subcollection toplevel <?php if (!$collection_id && !$tag_id) { ?> selected<?php } ?>" title="Top Level" href="<?php echo $_SERVER['PHP_SELF']; ?>?page=Zotpress<?php if ( $account_id ) { echo "&amp;account_id=".$account_id; } ?>"><span>Collections</span></a>
+                        <a class="zp-List-Subcollection toplevel <?php if (!$collection_id && !$tag_id) { ?> selected<?php } ?>" title="Top Level" href="?page=Zotpress<?php if ( $account_id ) { echo "&amp;account_id=".$account_id; } ?>"><span>Collections</span></a>
                         <?php
                         
                         if ( $collection_id ) // parent
@@ -165,7 +165,7 @@
                             if ( $collection_id && $collection_id == $zp_collection->item_key ) echo " selected";
                             if ( $collection_id ) echo " child";
                             if ( !$collection_id && $i == (count($zp_collections)-1) ) echo " last";
-                            echo "' title='".$zp_collection->title."' href='" . $_SERVER['PHP_SELF']."?page=Zotpress&amp;collection_id=".$zp_collection->id;
+                            echo "' title='".$zp_collection->title."' href='?page=Zotpress&amp;collection_id=".$zp_collection->id;
                             if ( $collection_id ) echo "&amp;up=".$collection_id;
                             if ( $account_id ) { echo "&amp;account_id=".$account_id; }
                             echo "'>";
@@ -176,7 +176,7 @@
                         }
                         
                         ?>
-                        <?php if ($collection_id) { ?><a class="zp-List-Subcollection back last" title="Back to previous collection(s)" href="<?php echo $_SERVER['PHP_SELF']; ?>?page=Zotpress<?php if (isset($_GET['up']) && preg_match("/^[0-9]+$/", $_GET['up'])) { echo "&amp;collection_id=".$_GET['up']; } ?><?php if ( $account_id ) { echo "&amp;account_id=".$account_id; } ?>"><span>Back</span></a><?php } ?>
+                        <?php if ($collection_id) { ?><a class="zp-List-Subcollection back last" title="Back to previous collection(s)" href="?page=Zotpress<?php if (isset($_GET['up']) && preg_match("/^[0-9]+$/", $_GET['up'])) { echo "&amp;collection_id=".$_GET['up']; } ?><?php if ( $account_id ) { echo "&amp;account_id=".$account_id; } ?>"><span>Back</span></a><?php } ?>
                     </div>
                     
                     
@@ -296,7 +296,7 @@
                     // By Collection ID
                     if (isset($_GET['collection_id']) && preg_match("/^[a-zA-Z0-9]+$/", $_GET['collection_id']) == 1)
                     {
-                        $zp_citations = $wpdb->get_results(
+                        $zp_citations_query = 
                             "
                             SELECT ".$wpdb->prefix."zotpress_zoteroItems.*,
 							".$wpdb->prefix."zotpress_zoteroItemImages.image AS itemImage
@@ -311,13 +311,13 @@
                             AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
                             AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$api_user_id."'
                             ORDER BY author ASC
-                            "
-                        );
+                            ";
+						$zp_citations = $wpdb->get_results( $zp_citations_query );
                     }
                     // By Tag ID
                     else if (isset($_GET['tag_id']) && preg_match("/^[0-9]+$/", $_GET['tag_id']) == 1)
                     {
-                        $zp_citations = $wpdb->get_results(
+                        $zp_citations_query =
                             "
                             SELECT ".$wpdb->prefix."zotpress_zoteroItems.*,
 							".$wpdb->prefix."zotpress_zoteroItemImages.image AS itemImage
@@ -332,13 +332,13 @@
                             AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
                             AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$api_user_id."'
                             ORDER BY author ASC
-                            "
-                        );
+                            ";
+						$zp_citations = $wpdb->get_results( $zp_citations_query );
                     }
                     // Top-level
                     else
                     {
-                        $zp_citations = $wpdb->get_results(
+                        $zp_citations_query =
                             "
                             SELECT ".$wpdb->prefix."zotpress_zoteroItems.*,
 								".$wpdb->prefix."zotpress_zoteroItemImages.image AS itemImage,
@@ -354,8 +354,8 @@
                             AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
                             AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$api_user_id."'
                             ORDER BY author ASC
-                            "
-                        );
+                            ";
+						$zp_citations = $wpdb->get_results( $zp_citations_query );
                     }
                     
                     

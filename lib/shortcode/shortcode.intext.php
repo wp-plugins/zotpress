@@ -207,11 +207,18 @@
                 // Determine author if "author" doesn't exist
                 if ( trim($item->author) == "" )
                 {
-                    foreach ( $zp_json->creators as $i => $zp_creator )
-                    {
-                        $item->author = $zp_creator->name;
-                        if ( $i != (count($zp_json->creators)-1) ) $item->author .= ", ";
-                    }
+					if ( isset($zp_json->creators) && count($zp_json->creators) > 0 )
+					{
+						foreach ( $zp_json->creators as $i => $zp_creator )
+						{
+							$item->author = $zp_creator->name;
+							if ( $i != (count($zp_json->creators)-1) ) $item->author .= ", ";
+						}
+					}
+					else // assume no author exists; use title instead
+					{
+						$item->author .= "\"" . $item->title . "\"";
+					}
                 }
                 
                 // Shorten author ...
@@ -268,7 +275,7 @@
                         $num = 1;
                 
                 // Fill in author, date and number
-                $citation = str_replace("%num%", $num, str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate), $format)));
+                $citation = str_replace("%num%", $num, str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate, true), $format)));
                 
                 // Deal with pages
                 if ($pages)

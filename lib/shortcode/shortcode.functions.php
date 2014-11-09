@@ -4,14 +4,21 @@
     
     // GET YEAR
     // Used by: In-Text Shortcode, In-Text Bibliography Shortcode
-    function zp_get_year($date)
+    function zp_get_year($date, $yesnd)
     {
+		$date_return = false;
+		
 		preg_match_all( '/(\d{4})/', $date, $matches );
 		
 		if (is_null($matches[0][0]))
-			return "";
+			if ( $yesnd === true )
+				$date_return = "n.d.";
+			else
+				$date_return = "";
 		else
-			return $matches[0][0];
+			$date_return = $matches[0][0];
+		
+		return $date_return;
     }
 	
 	
@@ -34,23 +41,37 @@
     
     
     // SUBVAL SORT
-    // Thanks to http://www.firsttube.com/read/sorting-a-multi-dimensional-array-with-php/
     // Used by: Bibliography Shortcode, In-Text Bibliography Shortcode
-    function subval_sort($a, $subkey, $sort)
+    function subval_sort($item_arr, $sortby, $sort)
     {
-		foreach($a as $k=>$v) {
-			if ($subkey == "date")
-				$b[$k] = zp_get_year(strtolower($v[$subkey]));
-			else
-				$b[$k] = strtolower($v[$subkey]);
+		// Format sort order
+		if ( strtolower($sort) == "desc" ) $sort = SORT_DESC; else $sort = SORT_ASC;
+		
+		// Author or date
+		if ( $sortby == "author" || $sortby == "date" )
+		{
+			foreach ($item_arr as $key => $val)
+			{
+				$author[$key] = $val["author"];
+				$date[$key] = $val["date"];
+			}
 		}
 		
-		strtolower($sort) == "asc" ? asort($b) : arsort ($b);
-		
-		foreach($b as $key=>$val) {
-			$c[$key] = $a[$key];
+		// Title
+		else if ( $sortby == "title" )
+		{
+			foreach ($item_arr as $key => $val)
+			{
+				$title[$key] = $val["title"];
+				$author[$key] = $val["author"];
+			}
 		}
-		return $c;
+		
+		if ( $sortby == "author" ) array_multisort( $author, $sort, $date, $sort, $item_arr );
+		else if ( $sortby == "date" ) array_multisort( $date, $sort, $author, $sort, $item_arr );
+		else if ( $sortby == "title" ) array_multisort( $title, $sort, $author, $sort, $item_arr );
+		
+		return $item_arr;
     }
     
     

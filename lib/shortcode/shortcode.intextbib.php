@@ -13,7 +13,7 @@
             'style' => false,
             'sortby' => "default",
             'sort' => false,
-            'order' => "ASC",
+            'order' => false,
             
             'image' => false,
             'images' => false,
@@ -40,6 +40,7 @@
         
         if ($order) $order = str_replace('"','',html_entity_decode($order));
         else if ($sort) $order = str_replace('"','',html_entity_decode($sort));
+        else $order = "ASC";
         
         // Show image
         if ($showimage) $showimage = str_replace('"','',html_entity_decode($showimage));
