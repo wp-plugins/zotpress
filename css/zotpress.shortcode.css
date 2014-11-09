@@ -1,0 +1,77 @@
+
+
+    /* START OF BASIC SHORTCODE CSS */
+    
+    div.zp-Zotpress {
+        margin: 0 0 1em;
+    }
+    
+    /* Thanks to http://css-tricks.com/snippets/css/prevent-long-urls-from-breaking-out-of-container/ */
+    div.zp-Zotpress a {
+        -ms-word-break: break-all;
+        word-break: break-all;
+        word-break: break-word;
+        -webkit-hyphens: auto;
+       -moz-hyphens: auto;
+        hyphens: auto;
+    }
+    
+    /*.ZOTPRESS_UPDATE_NOTICE {*/
+    /*    background: transparent url('../images/syncing_bw.gif') no-repeat left center;*/
+    /*    color: #999;*/
+    /*    display: block;*/
+    /*    font: italic 9px/9px "Verdana", sans-serif;*/
+    /*    float: right;*/
+    /*    padding: 0.5em;*/
+    /*    padding-left: 2em;*/
+    /*    text-transform: uppercase;*/
+    /*    */
+    /*    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";*/
+    /*    filter: alpha(opacity=50);*/
+    /*    -moz-opacity: 0.5;*/
+    /*    -khtml-opacity: 0.5;*/
+    /*    opacity: 0.5;*/
+    /*}*/
+    
+    div.zp-Zotpress div.zp-Entry.zp-HasImage {
+        clear: both;
+        min-height: 150px;
+    }
+    div.zp-Zotpress div.zp-Entry-Image {
+        float: left;
+    }
+    
+    div.zp-Zotpress div.zp-Entry .csl-left-margin {
+        width: auto !important;
+    }
+
+    div.zp-Zotpress div.zp-Entry.zp-HasImage div.csl-bib-body {
+        margin-left: 170px;
+    }
+    
+    div.zp-Zotpress span.zp-Loading {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        background: #f3f3f3 url('images/loading_list.gif') no-repeat top left;
+        display: block;
+        margin: auto;
+        overflow: hidden;
+        width: 33px;
+        height: 32px;
+    }
+    div.zp-Zotpress span.zp-Loading span {
+        visibility: hidden;
+    }
+    div.zp-Zotpress p.zp-NoCitations {
+        margin: 0;
+    }
+	
+	
+	/* In-Text Citations */
+	
+	.zp-ZotpressShortcode.cite .summary,
+	.zp-ZotpressShortcode.bib .summary {
+		display: none;
+	}
+	
