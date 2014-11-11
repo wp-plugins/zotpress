@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 5.2.8.1
+    Version: 5.2.9
     Author URI: http://katieseaborn.com
     
 */
@@ -39,7 +39,7 @@
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( ZOTPRESS_PLUGIN_FILE ));
     define('ZOTPRESS_PLUGIN_DIR', dirname( __FILE__ ));
     define('ZOTPRESS_EXPERIMENTAL_EDITOR', FALSE); // Whether experimental editor feature is active or not
-    define('ZOTPRESS_VERSION', '5.2.8.1' );
+    define('ZOTPRESS_VERSION', '5.2.9' );
     
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
@@ -127,7 +127,7 @@
         wp_enqueue_script( 'jquery.dotimeout.min.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.dotimeout.min.js', array( 'jquery' ) );
         wp_enqueue_script( 'zotpress.default.js', ZOTPRESS_PLUGIN_URL . 'js/zotpress.default.js', array( 'jquery' ) );
         
-        if ( 'post.php' == $hook )
+        if ( in_array( $hook, array('post.php', 'post-new.php') ) === true )
         {
             wp_enqueue_script( 'jquery.livequery.js', ZOTPRESS_PLUGIN_URL . 'js/jquery.livequery.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-position', 'jquery-ui-tabs', 'jquery-ui-autocomplete' ) );
             wp_enqueue_script( 'zotpress.widget.metabox.js', ZOTPRESS_PLUGIN_URL . 'js/zotpress.widget.metabox.js', array( 'jquery' ) );

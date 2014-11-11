@@ -22,7 +22,8 @@
             
             'userid' => false,
             'api_user_id' => false,
-            'nickname' => false
+            'nickname' => false,
+            'nick' => false
             
         ), $atts));
         
@@ -47,6 +48,7 @@
         
         if ($userid) { $api_user_id = str_replace('"','',html_entity_decode($userid)); }
         if ($nickname) { $nickname = str_replace('"','',html_entity_decode($nickname)); }
+        if ($nick) { $nickname = str_replace('"','',html_entity_decode($nick)); }
         
         
         
@@ -199,6 +201,8 @@
             
             
             // FORMAT IN-TEXT CITATION
+			
+			$prev_num = 1;
             
             foreach ($zp_results as $id => $item)
             {
@@ -273,6 +277,14 @@
                         $num = count($GLOBALS['zp_shortcode_instances'][get_the_ID()])+1;
                     else
                         $num = 1;
+				
+				// We have a few nums in a row
+				//if ( $num-1 == $prev_num )
+				//{
+				//	var_dump("$num comes right after $prev_num");
+				//	
+				//	$prev_num = $num;
+				//}
                 
                 // Fill in author, date and number
                 $citation = str_replace("%num%", $num, str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate, true), $format)));

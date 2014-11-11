@@ -446,15 +446,17 @@
                             
                             if (is_array($zp_author)) // full name
                             {
-                                if ($inclusive == "yes" && $i != 0) $zp_query .= " OR ";
+                                if ($inclusive == "yes" && $i != 0) $zp_query .= " OR "; else if ($inclusive != "yes" && $i != 0) $zp_query .= " AND ";
                                 
-                                $zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$zp_author[1]."%'";
+                                //$zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$zp_author[1]."%'";
+	                            $zp_query .= " FIND_IN_SET( '".$zp_author[1]."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
                             }
                             else // last name only
                             {
-                                if ($inclusive == "yes" && $i != 0) $zp_query .= " OR ";
+                                if ($inclusive == "yes" && $i != 0) $zp_query .= " OR "; else if ($inclusive != "yes" && $i != 0) $zp_query .= " AND ";
                                 
-                                $zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$zp_author."%'";
+                                //$zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$zp_author."%'";
+	                            $zp_query .= " FIND_IN_SET( '".$zp_author."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
                             }
                         }
                     }
@@ -464,10 +466,18 @@
                         $zp_author = strtolower(trim($zp_author));
                         if (strpos($author, " ") > 0) $author = preg_split("/\s+(?=\S*+$)/", $author);
                         
-                        if (is_array($author)) // fullname
-                            $zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$author[1]."%'";
-                        else // lastname only
-                            $zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$author."%'";
+						// Full name in array
+                        if (is_array($author))
+						{
+                            //$zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$author[1]."%'";
+                            $zp_query .= " FIND_IN_SET( '".$author[1]."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
+						}
+						// Last name only
+                        else
+						{
+                            //$zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$author."%'";
+                            $zp_query .= " FIND_IN_SET( '".$author."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
+						}
                     }
                     $zp_query .= " ) ";
                 } // $author
@@ -495,12 +505,14 @@
                 }
                 
                 // Sort by and sort direction
+				// Relies on db column and MySQL sorting
+				// Maybe sort by retrieved here, then do sorting after query execution?
                 if ($sortby)
                 {
                     if ($sortby == "default")
                         $sortby = "retrieved";
                     else if ($sortby == "date")
-                        $sortby = "year";
+                        $sortby = "year"; // zpdate -- MySQL doesn't understand
                     
                     if (($tag_name && $collection_id) || (is_array($year)))
                         $zp_query .= " ORDER BY ".$sortby." " . $order;
@@ -564,6 +576,18 @@
                 {
                     $zp_output .= "<h2>" . $tag_name . " / <a title='Back' class='zp-BackLink' href='javascript:window.history.back();'>Back</a></h2>\n\n";
                 }
+				
+				// SORT
+				
+				if ($sortby)
+				{
+					if ($sortby == "default")
+                        $sortby = "retrieved";
+                    else if ($sortby == "year")
+						$sortby = "date";
+					
+					$zp_results = subval_sort( $zp_results, $sortby, $order );
+				}
                 
                 if ( count($zp_results) > 0 )
                 {
