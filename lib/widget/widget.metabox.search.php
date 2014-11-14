@@ -1,7 +1,22 @@
 <?php
-
+	
     // Include WordPress
-    require('../../../../../wp-load.php');
+	
+	$includewp = realpath("../../../../../wp-load.php");
+	$includewp2 = realpath("../../../../../../wp-load.php");
+	$includewp3 = realpath("../../../../../../../wp-load.php");
+	
+	if ( $includewp === false )
+		if ( $includewp2 === false )
+			if ( $includewp3 === false )
+				trigger_error("Could not find file {$filename}", E_USER_ERROR);
+			else
+				require($includewp3);
+		else
+			require($includewp2);
+	else
+	    require($includewp);
+	
     define('WP_USE_THEMES', false);
     
     // Prevent access to users who are not editors

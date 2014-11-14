@@ -53,7 +53,11 @@
 			foreach ($item_arr as $key => $val)
 			{
 				$author[$key] = $val["author"];
-				$date[$key] = zp_date_format($val["zpdate"]);
+				
+				if ( isset( $val["zpdate"] ) )
+					$date[$key] = zp_date_format($val["zpdate"]);
+				else
+					$date[$key] = zp_date_format($val["date"]);
 			}
 		}
 		
