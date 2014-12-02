@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 5.2.9.1
+    Version: 5.2.10
     Author URI: http://katieseaborn.com
     
 */
@@ -39,7 +39,7 @@
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( ZOTPRESS_PLUGIN_FILE ));
     define('ZOTPRESS_PLUGIN_DIR', dirname( __FILE__ ));
     define('ZOTPRESS_EXPERIMENTAL_EDITOR', FALSE); // Whether experimental editor feature is active or not
-    define('ZOTPRESS_VERSION', '5.2.9.1' );
+    define('ZOTPRESS_VERSION', '5.2.10' );
     
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
@@ -319,26 +319,26 @@
     
     // 5.2.7 Notice of Zotpress survey
     
-    function zotpress_survey_notice()
-    {
-        global $current_user;
-		
-		if ( !get_user_meta($current_user->ID, 'zotpress_survey_notice_ignore') )
-		{
-			echo '<div class="updated"><p>';
-			printf(__('Would you like to participate in research on Zotpress? <a title="Zotpress survey" href="http://imdc.ca/survey/776698/" target="_blank">Take the survey! (Until November 30th.)</a> | <a href="%1$s">Hide Notice</a>'), 'admin.php?page=Zotpress&zotpress_survey_notice_ignore=0');
-			echo "</p></div>";
-		}
-    }
-    add_action( 'admin_notices', 'zotpress_survey_notice' );
-    
-    function zotpress_survey_notice_ignore()
-    {
-        global $current_user;
-        if ( isset($_GET['zotpress_survey_notice_ignore']) && $_GET['zotpress_survey_notice_ignore'] == '0' )
-            add_user_meta($current_user->ID, 'zotpress_survey_notice_ignore', 'true', true);
-    }
-    add_action('admin_init', 'zotpress_survey_notice_ignore');
+//    function zotpress_survey_notice()
+//    {
+//        global $current_user;
+//		
+//		if ( !get_user_meta($current_user->ID, 'zotpress_survey_notice_ignore') )
+//		{
+//			echo '<div class="updated"><p>';
+//			printf(__('Would you like to participate in research on Zotpress? <a title="Zotpress survey" href="http://imdc.ca/survey/776698/" target="_blank">Take the survey! (Until November 30th.)</a> | <a href="%1$s">Hide Notice</a>'), 'admin.php?page=Zotpress&zotpress_survey_notice_ignore=0');
+//			echo "</p></div>";
+//		}
+//    }
+//    add_action( 'admin_notices', 'zotpress_survey_notice' );
+//    
+//    function zotpress_survey_notice_ignore()
+//    {
+//        global $current_user;
+//        if ( isset($_GET['zotpress_survey_notice_ignore']) && $_GET['zotpress_survey_notice_ignore'] == '0' )
+//            add_user_meta($current_user->ID, 'zotpress_survey_notice_ignore', 'true', true);
+//    }
+//    add_action('admin_init', 'zotpress_survey_notice_ignore');
     
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
 

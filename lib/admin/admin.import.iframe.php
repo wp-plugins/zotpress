@@ -158,6 +158,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                 }
                 
                 var zpXMLurl = zp_plugin_url + "lib/actions/actions.import.php?api_user_id=" + api_user_id + "&step=collections&start=" + zp_start + zp_selective;
+				//alert(zpXMLurl);
                 
                 jQuery.get( zpXMLurl, {}, function(xml)
                 {
@@ -214,12 +215,6 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                         alert( "Sorry, but there was a problem importing collections: " + jQuery("errors", xml).text() );
                     }
                     
-//                    // Add subcollections
-//                    if ( jQuery("subcollections", xml) && jQuery("subcollections", xml).text() != "" )
-//                    {
-//						alert(jQuery("subcollections", xml).text());
-//                        zpCollections = zpCollections.concat( (jQuery("subcollections", xml).text()).split(',') );
-//                    }
                 }).error(function(jqXHR, textStatus, errorThrown)
                 {
                     alert("Sorry, but there was a problem importing collections: " + errorThrown);

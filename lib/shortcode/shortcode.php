@@ -444,12 +444,16 @@
                             $zp_author = strtolower(trim($zp_author));
                             if (strpos($zp_author, " ") > 0) $zp_author = preg_split("/\s+(?=\S*+$)/", $zp_author);
                             
-                            if (is_array($zp_author)) // full name
+							// Deal with two last names by case
+							//if ( $zp_author[0] == "van" ) $zp_author[1] = "van " . $zp_author[1];
+							
+                            if (is_array($zp_author)) // full name (or multiple last names)
                             {
                                 if ($inclusive == "yes" && $i != 0) $zp_query .= " OR "; else if ($inclusive != "yes" && $i != 0) $zp_query .= " AND ";
                                 
                                 //$zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$zp_author[1]."%'";
 	                            $zp_query .= " FIND_IN_SET( '".$zp_author[1]."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
+	                            $zp_query .= " OR FIND_IN_SET( '".implode(" ", $zp_author)."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
                             }
                             else // last name only
                             {
@@ -463,14 +467,18 @@
                     else // Single author
                     {
                         // Prep author
-                        $zp_author = strtolower(trim($zp_author));
-                        if (strpos($author, " ") > 0) $author = preg_split("/\s+(?=\S*+$)/", $author);
+                        $author = strtolower(trim($author));
+                        if ( strpos($author, " ") > 0 ) $author = preg_split("/\s+(?=\S*+$)/", $author);
+						
+						// Deal with two last names by case
+						//if ( $author[0] == "van" ) $author[1] = "van " . $author[1];
                         
-						// Full name in array
+						// Full name in array (or multiple last names)
                         if (is_array($author))
 						{
                             //$zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$author[1]."%'";
                             $zp_query .= " FIND_IN_SET( '".$author[1]."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
+                            $zp_query .= " OR FIND_IN_SET( '".implode(" ", $author)."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
 						}
 						// Last name only
                         else

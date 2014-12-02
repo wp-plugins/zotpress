@@ -67,7 +67,7 @@
                             $author .= $creator->name;
             }
             
-            array_push( $zpSearch, array( "label" => $author.$zpResult->label, "value" => $zpResult->value) );
+            array_push( $zpSearch, array( "author" => $author, "label" => $zpResult->label, "value" => $zpResult->value) );
         }
     }
     

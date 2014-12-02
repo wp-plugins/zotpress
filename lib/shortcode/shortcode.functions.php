@@ -71,6 +71,8 @@
 			}
 		}
 		
+		//var_dump($author . "<br /><br />");
+		
 		if ( $sortby == "author" ) array_multisort( $author, $order, $date, $order, $item_arr );
 		else if ( $sortby == "date" ) array_multisort( $date, $order, $author, $order, $item_arr );
 		else if ( $sortby == "title" ) array_multisort( $title, $order, $author, $order, $item_arr );
@@ -176,7 +178,7 @@
 						);
 					else // Not a recognizable month word
 						$date_formatted = array(
-							"year" => $temp[1],
+							"year" => $temp[0], // $temp[1]
 							"month" => false,
 							"day" => false
 						);
@@ -184,24 +186,35 @@
 				// Otherwise, check if name is last
 				else
 				{
-					if ( in_array( $temp[1], $list_month_long ) )
-						$date_formatted = array(
-							"year" => $temp[0],
-							"month" => array_search( $temp[1], $list_month_long ),
-							"day" => false
-						);
-					else if ( in_array( $temp[1], $list_month_short ) )
-						$date_formatted = array(
-							"year" => $temp[0],
-							"month" => array_search( $temp[1], $list_month_short ),
-							"day" => false
-						);
-					else // Not a recognizable month word
+					if ( count($temp) > 1 )
+					{
+						if ( in_array( $temp[1], $list_month_long ) )
+							$date_formatted = array(
+								"year" => $temp[0],
+								"month" => array_search( $temp[1], $list_month_long ),
+								"day" => false
+							);
+						else if ( in_array( $temp[1], $list_month_short ) )
+							$date_formatted = array(
+								"year" => $temp[0],
+								"month" => array_search( $temp[1], $list_month_short ),
+								"day" => false
+							);
+						else // Not a recognizable month word
+							$date_formatted = array(
+								"year" => $temp[0],
+								"month" => false,
+								"day" => false
+							);
+					}
+					else // Only one part in the array
+					{
 						$date_formatted = array(
 							"year" => $temp[0],
 							"month" => false,
 							"day" => false
 						);
+					}
 				}
 			}
 			

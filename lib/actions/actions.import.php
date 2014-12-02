@@ -12,6 +12,7 @@
     
     // Include Import and Sync Functions
     require("../admin/admin.import.functions.php");
+    //require("../admin/admin.import.functions.php");
     
 
     // Set up XML document
@@ -21,7 +22,7 @@
 
     /*
      
-        AUTO-UPDATE
+        STEPS
         
     */
 
