@@ -11,8 +11,8 @@
     require("../request/rss.request.php");
     
     // Include Import and Sync Functions
-    require("../admin/admin.import.functions.php");
-    require("../admin/admin.sync.functions.php");
+    require("../import/import.functions.php");
+    require("../import/sync.functions.php");
     
 
     // Set up XML document

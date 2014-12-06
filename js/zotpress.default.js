@@ -53,6 +53,15 @@ jQuery(document).ready(function() {
 	jQuery('div#zp-Browse-Accounts').delegate("select#zp-FilterByAccount", "change", function()
 	{
 		var id = jQuery(this).val();
+		
+		jQuery(this).addClass("loading");
+		jQuery("#zp-Browse-Account-Options a").addClass("disabled").unbind("click",
+			function (e) {
+				e.preventDefault();
+				return false;
+			}
+		);
+		
 		window.location = "admin.php?page=Zotpress&account_id="+id;
 	});
 	
@@ -164,6 +173,51 @@ jQuery(document).ready(function() {
 				alert ("Sorry, featured image couldn't be set.");
 			}
 		});
+	});
+	
+	
+	
+	// BROWSE PAGE: SET DEFAULT ACCOUNT
+	
+	jQuery(".zp-Browse-Account-Import.button").click(function() { jQuery(this).addClass("loading"); });
+	
+	jQuery(".zp-Browse-Account-Default.button").click(function()
+	{
+		var $this = jQuery(this);
+		
+		// Plunk it together
+		var data = 'submit=true&account=' + $this.attr("rel");
+		
+		// Prep for data validation
+		$this.addClass("loading");
+		
+		// Set up uri
+		var xmlUri = jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/widget/widget.metabox.actions.php?'+data;
+		
+		// AJAX
+		jQuery.get(xmlUri, {}, function(xml)
+		{
+			var $result = jQuery('result', xml).attr('success');
+			
+			$this.removeClass("success loading");
+			
+			if ($result == "true")
+			{
+				$this.addClass("success");
+				
+				jQuery.doTimeout(1000,function() {
+					$this.removeClass("success").addClass("selected disabled");
+				});
+			}
+			else // Show errors
+			{
+				alert("Sorry, but there were errors: " + jQuery('errors', xml).text());
+			}
+		});
+		
+		// Cancel default behaviours
+		return false;
+		
 	});
     
     

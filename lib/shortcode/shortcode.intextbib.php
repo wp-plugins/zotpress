@@ -279,6 +279,9 @@
             // SHOW CURRENT STYLE AS REL
             $zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );
             
+            // Add alphabetical dates
+            $zp_citation['citation'] = str_replace( $zp_citation["date"], $zp_citation["date"].$zp_citation["alphacount"], $zp_citation['citation'] );
+            
             // OUTPUT
             $zp_output .= "<a title='Reference to citation for `".$zp_citation["title"]."`' id='zp-".get_the_ID()."-".$zp_citation["item_key"]."'></a><div class='zp-Entry".$has_citation_image."' rel='".$zp_citation["item_key"]."'>\n";
             $zp_output .= $citation_image . $zp_citation['citation'] . $citation_abstract . $citation_tags . "\n";

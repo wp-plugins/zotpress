@@ -1,7 +1,7 @@
 
         <div id="zp-Zotpress" class="wrap">
             
-            <?php include('admin.display.tabs.php'); ?>
+            <?php include( dirname(__FILE__) . '/admin.menu.php' ); ?>
             
             <h3>What is Zotpress?</h3>
             
@@ -305,19 +305,24 @@
                 </tr>
                 
                 <tr class="last">
-                    <td rowspan="4" class="category last">Display</td>
+                    <td rowspan="5" class="category last">Display</td>
                     
-                    <td rowspan="4" class="type last">Settings</td>
+                    <td rowspan="5" class="type last">Settings</td>
                     
                     <td class="code">format</td>
                     <td>
                         <p>How the in-text citation should be presented. Use these placeholders: %a% for author, %d% for date, %p% for page, %num% for list number.</p>
-                        <p class="break"><strong>Hint:</strong> In WordPress shortcodes, the bracket characters <strong>[</strong> and <strong>]</strong> are special characters. To use in-text brackets, see the example on the right.</p>
+                        <p class="break"><strong>Hint:</strong> In WordPress shortcodes, the bracket characters <strong>[</strong> and <strong>]</strong> are special characters. To use in-text brackets, see the <code>brackets</code> attribute below or the example on the right.</p>
                     </td>
                     <td class="example">
                         <p><code>[zotpressInText item="NCXAA92F" format="%a% (%d%, %p%)"]</code>, which will display as: <span style="padding-left: 0.5em; font-family: monospace;">author (date, pages)</span></p>
-                        <p class="break"><code>[zotpressInText item="NCXAA92F" format="&amp;#91;%num%&amp;#93;"]</code>, which will display as: <span style="padding-left: 0.5em; font-family: monospace;">[1]</span></p>
+                        <p class="break"><code>[zotpressInText item="{NCXAA92F,DTA2KZXU}" format="&amp;#91;%num%&amp;#93;"]</code>, which will display as: <span style="padding-left: 0.5em; font-family: monospace;">[1];[2]</span></p>
                     </td>
+                </tr>
+                <tr>
+                    <td class="code">brackets</td>
+                    <td><p>A special format option for in-text citations. <strong>Options:</strong> true, false [default]</p></td>
+                    <td class="example"><p><code>[zotpressInText item="{NCXAA92F,DTA2KZXU}" format="%num%" brackets="yes"], which will display as: <span style="padding-left: 0.5em; font-family: monospace;">[1, 2]</span></code></p></td>
                 </tr>
                 <tr>
                     <td class="code">etal</td>

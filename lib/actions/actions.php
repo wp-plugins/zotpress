@@ -8,7 +8,7 @@
     // Prevent access to users who are not editors
     if ( !current_user_can('edit_others_posts') && !is_admin() ) wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
     
-    require("../admin/admin.import.functions.php");
+    require("../import/import.functions.php");
     
     // Set up XML document
     $xml = "";

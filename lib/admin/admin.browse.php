@@ -70,62 +70,62 @@
         $tag_id = false;
     
     if ($zp_accounts_total > 0)
-    { ?>
+    {
+		// ACCOUNT DEFAULTS
+		$account_type = $zp_accounts[0]->account_type;
+		$api_user_id = $zp_accounts[0]->api_user_id;
+		$public_key = $zp_accounts[0]->public_key;
+		$nickname = $zp_accounts[0]->nickname;
+	?>
     
     <div id="zp-Zotpress" class="wrap">
         
-        <?php include('admin.display.tabs.php'); ?>
+        <?php include( dirname(__FILE__) . '/admin.menu.php' ); ?>
         
         <div id="zp-Browse-Wrapper">
             
-            <h3><?php if ( $account_name !== false && strlen($account_name) > 0 ) { echo $account_name . "'s "; } else { echo "Your "; } ?>Library</h3>
+            <h3><?php if ( count($zp_accounts) == 1 ): echo "Your Library"; else: ?>
             
-            <div id="zp-Browse-Accounts">
-                <label for="zp-FilterByAccount">Account:</label>
-                <select id="zp-FilterByAccount">
-                    <?php
-                    
-                    // ACCOUNT DEFAULTS
-                    
-                    $account_type = $zp_accounts[0]->account_type;
-                    $api_user_id = $zp_accounts[0]->api_user_id;
-                    $public_key = $zp_accounts[0]->public_key;
-                    $nickname = $zp_accounts[0]->nickname;
-                    
-                    // DISPLAY ACCOUNTS
-                    
-                    foreach ($zp_accounts as $zp_account)
-                    {
-                        // DETERMINE CURRENTLY ACTIVE ACCOUNT
-                        if ($account_id && $account_id == $zp_account->id)
-                        {
-                            $account_type = $zp_account->account_type;
-                            $api_user_id = $zp_account->api_user_id;
-                            $public_key = $zp_account->public_key;
-                            $nickname = $zp_account->nickname;
-                        }
-                        
-                        // DISPLAY ACCOUNTS IN DROPDOWN
-                        
-                        if ($zp_account->nickname)
-                        {
-                            if ($account_id && $account_id == $zp_account->id)
-                                echo "<option selected='selected' rel='".$zp_account->api_user_id."' value='".$zp_account->id."'>".$zp_account->nickname." [".$zp_account->api_user_id."]</option>\n";
-                            else
-                                echo "<option value='".$zp_account->id."' rel='".$zp_account->api_user_id."'>".$zp_account->nickname." [".$zp_account->api_user_id."]</option>\n";
-                        }
-                        else
-                        {
-                            if ($account_id && $account_id == $zp_account->id)
-                                echo "<option selected='selected' value='".$zp_account->id."' rel='".$zp_account->api_user_id."'>".$zp_account->api_user_id."</option>\n";
-                            else
-                                echo "<option value='".$zp_account->id."' rel='".$zp_account->api_user_id."'>".$zp_account->api_user_id."</option>\n";
-                        }
-                    }
-                    
-                    ?>
-                </select>
-            </div>
+				<div id="zp-Browse-Accounts">
+					<label for="zp-FilterByAccount">Account:</label>
+					<select id="zp-FilterByAccount">
+						<?php
+						
+						// DISPLAY ACCOUNTS
+						
+						foreach ($zp_accounts as $zp_account)
+						{
+							// DETERMINE CURRENTLY ACTIVE ACCOUNT
+							if ($account_id && $account_id == $zp_account->id)
+							{
+								$account_type = $zp_account->account_type;
+								$api_user_id = $zp_account->api_user_id;
+								$public_key = $zp_account->public_key;
+								$nickname = $zp_account->nickname;
+							}
+							
+							// DISPLAY ACCOUNTS IN DROPDOWN
+							
+							echo "<option ";
+							if ($account_id && $account_id == $zp_account->id) echo "selected='selected' ";
+							echo "rel='".$zp_account->api_user_id."' value='".$zp_account->id."'>";
+							if ($zp_account->nickname) echo $zp_account->nickname; else echo $zp_account->api_user_id;
+							echo "'s Library</option>\n";
+						}
+						
+						?>
+					</select>
+				</div>
+			
+			<?php endif; ?></h3>
+			
+			<div id="zp-Browse-Account-Options">
+				
+				<?php $is_default = false; if ( get_option("Zotpress_DefaultAccount") && get_option("Zotpress_DefaultAccount") == $api_user_id ) { $is_default = true; } ?>
+				<a href="admin.php?page=Zotpress&selective=true&api_user_id=<?php echo $api_user_id; ?>" class="zp-Browse-Account-Import button button-secondary">Selectively Import</a>
+				<a href="javascript:void(0);" rel="<?php echo $api_user_id; ?>" class="zp-Browse-Account-Default button button-secondary<?php if ( $is_default ) { echo " selected disabled"; } ?>"><?php if ( $is_default ) { echo "Default"; } else { echo "Set as Default"; } ?></a>
+				
+			</div>
             
             <span id="ZOTPRESS_PLUGIN_URL"><?php echo ZOTPRESS_PLUGIN_URL; ?></span>
             

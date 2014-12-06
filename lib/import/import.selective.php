@@ -8,7 +8,7 @@
 
     <div id="zp-Setup" class="zp-Step-Selective">
 		
-		<?php include("admin.display.tabs.php"); ?>
+		<?php include( dirname(__FILE__) . '/../admin/admin.menu.php' ); ?>
         
         <div class="zp-Setup-Step">
             
@@ -22,10 +22,13 @@
                 </p>
                 
                 <div id="zp-Step-Import-Collection" class="loading">
-                    <iframe id="zp-Step-Import-Collection-Frame" name="zp-Step-Import-Collection-Frame" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/admin/admin.import.collection.php?api_user_id=<?php echo $api_user_id; ?>" scrolling="no" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+                    <iframe id="zp-Step-Import-Collection-Frame" name="zp-Step-Import-Collection-Frame"
+							src="<?php echo ZOTPRESS_PLUGIN_URL . 'lib/import/import.collection.php?api_user_id=' . $api_user_id; ?>"
+							scrolling="no" frameborder="0" marginwidth="0" marginheight="0">
+					</iframe>
                 </div><!-- #zp-Step-Import-Collection -->
                 
-                <input id="zp-Zotpress-Setup-Import-Selective" type="button" disabled="disabled" class="button-secondary" value="Import Selected" />
+                <input id="zp-Zotpress-Setup-Import-Selective" type="button" disabled="disabled" class="button button-primary" value="Import Selected" />
                 
                 <div class="zp-Loading-Container selective">
                     <div class="zp-Loading-Initial zp-Loading-Import selective"></div>
@@ -34,10 +37,14 @@
                 
             </div>
             
-            <iframe id="zp-Setup-Import" name="zp-Setup-Import" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/admin/admin.import.iframe.php?api_user_id=<?php echo $api_user_id; ?>" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+            <iframe id="zp-Setup-Import" name="zp-Setup-Import"
+				src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/import/import.iframe.php?api_user_id=<?php echo $api_user_id; ?>"
+				scrolling="yes" frameborder="0" marginwidth="0" marginheight="0">
+			</iframe>
             
             <div id="zp-Zotpress-Setup-Buttons" class="proceed">
-                <input type="button" id="zp-Zotpress-Setup-Options-Complete" class="button-primary" value="Finish" />
+				<a title="Go to Browse" id="zp-Import-Browse-Button" class="button button-secondary" href="admin.php?page=Zotpress">Browse Library</a>
+				<a title="Go to Accounts" id="zp-Import-Accounts-Button" class="button button-secondary" href="admin.php?page=Zotpress&accounts=true">Go to Accounts</a>
             </div>
             
         </div>

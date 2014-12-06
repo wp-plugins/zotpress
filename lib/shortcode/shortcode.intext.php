@@ -16,6 +16,7 @@
             
             'pages' => false,
             'format' => "(%a%, %d%, %p%)",
+			'brackets' => false,
             'etal' => false, // default (false), yes, no
             'separator' => false, // default (comma), semicolon
             'and' => false, // default (no), and, comma-and
@@ -36,6 +37,7 @@
         
         $pages = str_replace('"','',html_entity_decode($pages));
         $format = str_replace('"','',html_entity_decode($format));
+        $brackets = str_replace('"','',html_entity_decode($brackets));
         
         $etal = str_replace('"','',html_entity_decode($etal));
         if ($etal == "default") { $etal = false; }
@@ -117,12 +119,6 @@
             
             $zp_query .= "WHERE items.api_user_id='".$api_user_id."' AND ";
             
-            // Is left joining attachments necessary?
-            //$zp_query = "SELECT items.item_key, items.author, items.title, items.citation, items.zpdate, items.image, items.json, items.style, attachments.json AS attachment_data, attachments.item_key AS attachment_key 
-            //        FROM ".$wpdb->prefix."zotpress_zoteroItems AS items
-            //        LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItems AS attachments ON (items.item_key=attachments.parent AND attachments.linkmode IN ( 'imported_file', 'linked_url' ))
-            //        WHERE items.api_user_id='".$api_user_id."' AND ";
-            
             /*$zp_citation_attr =
                 array(
                     'posts_per_page' => -1,
@@ -187,7 +183,7 @@
             }
             
             //$zp_citation_attr['meta_query'] = $zp_citation_meta_query;
-            $zp_query .= " ORDER BY items.author ASC;";
+            $zp_query .= " ORDER BY items.author ASC, items.zpdate ASC;";
             
             
             
@@ -196,8 +192,9 @@
             $zp_results = $wpdb->get_results($zp_query, OBJECT);
             //var_dump($zp_results);
             
-            $zp_intext_citation = "";
-            
+            $zp_intext_citation = ""; // Output for display
+			$zp_intext_citation_arr = array(); // Array for sorting
+			
             
             
             // FORMAT IN-TEXT CITATION
@@ -277,14 +274,6 @@
                         $num = count($GLOBALS['zp_shortcode_instances'][get_the_ID()])+1;
                     else
                         $num = 1;
-				
-				// We have a few nums in a row
-				//if ( $num-1 == $prev_num )
-				//{
-				//	var_dump("$num comes right after $prev_num");
-				//	
-				//	$prev_num = $num;
-				//}
                 
                 // Fill in author, date and number
                 $citation = str_replace("%num%", $num, str_replace("%a%", $item->author, str_replace("%d%", zp_get_year($item->zpdate, true), $format)));
@@ -302,12 +291,15 @@
                         {
                             $citation = str_replace("%p%", $items[1], $citation);
                         }
-                        else // Multiple citations
+                        else 
                         {
-                            if (isset($items[$id][1]))
-                                $citation =  str_replace("%p%", $items[$id][1], $citation);
-                            else
+							// Multiple citations -- shouldn't have page numbers
+                            //if (isset($items[$id][1])) {
+                            //    $citation =  str_replace("%p%", $items[$id][1], $citation);
+                            //}
+                            //else {
                                 $citation = str_replace("%p%", "", str_replace(" %p%", "", str_replace(", %p%", "", $citation)));
+                            //}
                         }
                     }
                     else // No pages
@@ -327,20 +319,18 @@
                         $citation = str_replace("&#93;", "", str_replace("&#91;", "", str_replace(")", "", str_replace("(", " ", $citation))));
                 }
                 
-                // Format with a link
-                $zp_intext_citation .= "<a title='";
-                if ($item->author) $zp_intext_citation .= htmlspecialchars(strip_tags($item->author), ENT_QUOTES) . " "; else $zp_intext_citation .= "No author ";
-                if ($item->zpdate) $zp_intext_citation .= "(".zp_get_year($item->zpdate)."). ";
-                $zp_intext_citation .= htmlspecialchars(strip_tags($item->title), ENT_QUOTES) . ".' id='".$zp_instance_id."' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item->item_key."'>" . $citation . "</a>";
-                $zp_intext_citation = str_replace( "al..", "al.", $zp_intext_citation);
-                
-                // Determine delineation for multiple citations
-                if ( count($zp_results) > 1 && $id != (count($zp_results)-1) )
-                    if ( $separator && $separator == "comma" )
-                        $zp_intext_citation .= ",";
-                    else
-                        $zp_intext_citation .= ";";
-                
+				// SET SORT ARRAY
+				$zp_intext_citation_arr[$api_user_id.",".$item->item_key] = array(
+                        "instance_id" => $zp_instance_id,
+                        "api_user_id" => $api_user_id,
+                        "item_key" => $item->item_key,
+                        "author" => $item->author,
+                        "title" => $item->title,
+                        "zpdate" => zp_get_year($item->zpdate),
+                        "citation" => $citation,
+						"alphacount" => ""
+                    );
+				
                 // SET BIBLIOGRAPHY CITATIONS: Per item
                 $GLOBALS['zp_shortcode_instances'][get_the_ID()][$api_user_id.",".$item->item_key] = array(
                         "instance_id" => $zp_instance_id,
@@ -356,17 +346,99 @@
                         "image" => $item->itemImage,
                         "json" => $item->json,
                         "citation" => $item->citation,
-                        "style" => $item->style
+                        "style" => $item->style,
+						"alphacount" => ""
                     );
             }
+			
+			// First, sort in-text items
+			//$zp_intext_citation_arr = subval_sort($zp_intext_citation_arr, "author", "asc");
+			$zp_intext_citation_output_arr = array();
+			
+			$zp_alphacount = "";
+			$zp_alphacount_author = "";
+			
+			// Then build output array
+			
+			foreach ( $zp_intext_citation_arr as $id => $item_arr )
+				$zp_intext_citation_output_arr[count($zp_intext_citation_output_arr)] = $item_arr;
             
-            //return "<a title='Anchor to citation for `".$item->title."`' id='".$zp_instance_id."' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item->item_key."'>" . str_replace(")(", "; ", str_replace("][", ", ", $zp_intext_citation)) . "</a>";
-            //return str_replace(")(", "; ", str_replace("][", ", ", $zp_intext_citation));
+			
+			foreach ( $zp_intext_citation_output_arr as $i => $item )
+			{
+				$zp_alphacount_this = "";
+				
+				if ( isset($zp_intext_citation_output_arr[$i+1]["author"])
+						&& $item["author"] == $zp_intext_citation_output_arr[$i+1]["author"]
+						&& $item["zpdate"] == $zp_intext_citation_output_arr[$i+1]["zpdate"] )
+				{
+					if ( $zp_alphacount == "" )
+						$zp_alphacount_this = "a";
+					else
+						if ( $zp_alphacount_author != $item["author"] )
+							$zp_alphacount_this = "a";
+						else
+							$zp_alphacount_this = ++$zp_alphacount;
+					
+					$zp_alphacount_author = $item["author"];
+					
+					// Update the counts on this and the next one
+					$item["alphacount"] = $zp_alphacount_this;
+					$GLOBALS['zp_shortcode_instances'][get_the_ID()][$item["api_user_id"].",".$item["item_key"]]["alphacount"] = $zp_alphacount_this;
+					$GLOBALS['zp_shortcode_instances'][get_the_ID()][$zp_intext_citation_output_arr[$i+1]["api_user_id"].",".$zp_intext_citation_output_arr[$i+1]["item_key"]]["alphacount"] = ++$zp_alphacount_this;
+					
+					$zp_alphacount = $zp_alphacount_this;
+				}
+				
+				$item["alphacount"] = $GLOBALS['zp_shortcode_instances'][get_the_ID()][$zp_intext_citation_output_arr[$i]["api_user_id"].",".$zp_intext_citation_output_arr[$i]["item_key"]]["alphacount"];
+				
+				$zp_intext_citation .= "<a title='";
+				
+				if ($item["author"])
+				{
+					// Remove author if same in a row
+					if ( isset($zp_intext_citation_output_arr[$i-1]["author"])
+							&& $item["author"] == $zp_intext_citation_output_arr[$i-1]["author"] )
+						$item["citation"] = str_replace( $item["author"] . ", ", "", $item["citation"] );
+					
+					$zp_intext_citation .= htmlspecialchars(strip_tags($item["author"]), ENT_QUOTES) . " ";
+				}
+				else { $item["author"] = $item["title"]; $zp_intext_citation .= "No author "; }
+				
+				if ($item["zpdate"])
+				{
+					$zp_intext_citation .= "(".$item["zpdate"].$item["alphacount"]."). ";
+					$item["citation"] = str_replace( $item["zpdate"], $item["zpdate"].$item["alphacount"], $item["citation"]);
+				}
+				
+				$zp_intext_citation .= htmlspecialchars(strip_tags($item["title"]), ENT_QUOTES) . ".' id='".$item["instance_id"]."' class='zp-ZotpressInText' href='#zp-".get_the_ID()."-".$item["item_key"]."'>" . $item["citation"] . "</a>";
+				$zp_intext_citation = str_replace( "al..", "al.", $zp_intext_citation);
+				
+				// Determine delineation for multiple citations
+				if ( count($zp_intext_citation_arr) > 1 && $i != (count($zp_intext_citation_arr)-1) )
+					if ( $separator && $separator == "comma" )
+						$zp_intext_citation .= ",";
+					else
+						if ( isset($zp_intext_citation_output_arr[$i+1]["author"])
+								&& $item["author"] == $zp_intext_citation_output_arr[$i+1]["author"] )
+							$zp_intext_citation .= ",";
+						else
+							if ( $brackets )
+								$zp_intext_citation .= ", ";
+							else
+								$zp_intext_citation .= ";";
+			}
+			
+			// Add brackets, if necessary
+			if ( $brackets ) $zp_intext_citation = "&#91;" . $zp_intext_citation . "&#93;";
+			
             return $zp_intext_citation;
             
             unset($zp_query);
             unset($zp_results);
             unset($zp_intext_citation);
+            unset($zp_intext_citation_arr);
+            unset($zp_intext_citation_output_arr);
             
             $wpdb->flush();
         }

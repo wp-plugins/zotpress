@@ -239,14 +239,14 @@ jQuery(document).ready( function()
     //        jQuery('<iframe/>', {
     //            id: 'zp-Sync-' + jQuery('span.api_user_id', $this.parent().parent()).text(),
     //            'class': 'zp-Setup-Sync', // IE ISSUE - needs quotations around class
-    //            //src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span#ZOTPRESS_PASSCODE").text() + '&step=items',
-    //            src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&step=items',
+    //            //src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/import/sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span#ZOTPRESS_PASSCODE").text() + '&step=items',
+    //            src: jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/import/sync.php?api_user_id=' + $this.attr("rel") + '&step=items',
     //            scrolling: 'yes'
     //        }).appendTo('#zp-ManageAccounts');
     //    }
     //    else
     //    {
-    //        jQuery("iframe#zp-Sync-" + jQuery("span", $this).text()).attr("src", jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/admin/admin.sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span", $this).text() + '&step=items');
+    //        jQuery("iframe#zp-Sync-" + jQuery("span", $this).text()).attr("src", jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/import/sync.php?api_user_id=' + $this.attr("rel") + '&key=' + jQuery("span", $this).text() + '&step=items');
     //    }
     //    
     //    $this.parent().find('.zp-Sync-Messages').text("Syncing items 1-50 ...");
@@ -298,6 +298,50 @@ jQuery(document).ready( function()
     });
     
     
+	
+	
+	// SET DEFAULT ACCOUNT
+	
+	jQuery(".zp-Accounts-Default").click(function()
+	{
+		var $this = jQuery(this);
+		
+		// Plunk it together
+		var data = 'submit=true&account=' + $this.attr("rel");
+		
+		// Prep for data validation
+		$this.addClass("loading");
+		
+		// Set up uri
+		var xmlUri = jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/widget/widget.metabox.actions.php?'+data;
+		
+		// AJAX
+		jQuery.get(xmlUri, {}, function(xml)
+		{
+			var $result = jQuery('result', xml).attr('success');
+			
+			$this.removeClass("success loading");
+			
+			if ($result == "true")
+			{
+				$this.addClass("success");
+				jQuery(".zp-Accounts-Default").parent().removeClass("selected");
+				
+				jQuery.doTimeout(1000,function() {
+					$this.removeClass("success");
+					$this.parent().addClass("selected");
+				});
+			}
+			else // Show errors
+			{
+				alert(jQuery('errors', xml).text());
+			}
+		});
+		
+		// Cancel default behaviours
+		return false;
+		
+	});
 
 
 });

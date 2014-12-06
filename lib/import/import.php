@@ -8,7 +8,7 @@
 
     <div id="zp-Setup" class="zp-Step-Selective">
 		
-		<?php include("admin.display.tabs.php"); ?>
+		<?php include( dirname(__FILE__) . '/../admin/admin.menu.php' ); ?>
         
         <div id="zp-Setup-Step" class="import">
             
@@ -41,10 +41,11 @@
                 
             </div>
             
-            <iframe id="zp-Setup-Import" name="zp-Setup-Import" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/admin/admin.import.iframe.php?api_user_id=<?php echo $api_user_id; ?>" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+            <iframe id="zp-Setup-Import" name="zp-Setup-Import" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/import/import.iframe.php?api_user_id=<?php echo $api_user_id; ?>" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
             
             <div id="zp-Zotpress-Setup-Buttons" class="proceed" style="display: none;">
-                <input type="button" id="zp-Zotpress-Setup-Options-Complete" class="button-primary" value="Finish" />
+				<a title="Go to Browse" id="zp-Import-Browse-Button" class="button button-primary" href="admin.php?page=Zotpress">Browse Library</a>
+				<a title="Go to Accounts" id="zp-Import-Accounts-Button" class="button button-secondary" href="admin.php?page=Zotpress&accounts=true">Return to Accounts</a>
             </div>
             
         </div>

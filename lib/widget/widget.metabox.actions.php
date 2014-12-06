@@ -9,7 +9,7 @@
     if ( !current_user_can('edit_others_posts') && !is_admin() ) wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
 
     // Include import functions
-    require_once("../admin/admin.import.functions.php");
+    require_once("../import/import.functions.php");
     
     // Set up XML document
     $xml = "";

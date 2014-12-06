@@ -37,7 +37,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
     require("../request/rss.request.php");
     
     // Include Import Functions
-    require("admin.import.functions.php");
+    require("import.functions.php");
     
     
 ?><!DOCTYPE html 
@@ -75,187 +75,178 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
              *
              */
             
-            function zp_get_items (zp_plugin_url, api_user_id, zp_start, zp_selective)
+            function zp_get_items_ajax (zp_plugin_url, api_user_id, zp_start, zp_selective)
             {
                 var zp_type = "regular";
-				var zp_selective_collection = "";
                 
-                if ( typeof(zp_selective) === "undefined" ) {
-                    zp_selective = "";
-                }
-                else {
-					zp_selective_collection = zp_selective;
-                    zp_selective = "&selective="+zp_selective;
+                if ( typeof(zp_selective) === "undefined" || zp_selective == "false" || zp_selective == "" )
+                    zp_selective = "false";
+                else
                     zp_type = "selective";
-                }
 				
-                var zpXMLurl = zp_plugin_url + "lib/actions/actions.import.php?api_user_id=" + api_user_id + "&step=items&start=" + zp_start + zp_selective;
-				//alert(zpXMLurl);
-                
-                jQuery.get( zpXMLurl, {}, function(xml)
-                {
-                    var $result = jQuery("result", xml);
-                    
-                    if ($result.attr("success") == "true") // Move on to the next 50
-                    {
-                        jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Importing items " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
+				jQuery.ajax({
+					type: "GET",
+					url: "<?php echo admin_url( 'admin-ajax.php' ); ?>",
+					data: { "action": "zotpress_import_ajax", "api_user_id": api_user_id, "step": "items", "start": zp_start, "selective": zp_selective },
+					dataType: "xml",
+					success: function( xml )
+					{
+						var $result = jQuery("result", xml);
 						
-                        if ( zp_selective_collection != "" )
+						if ($result.attr("success") == "true") // Move on to the next 50
 						{
-							zp_get_items (zp_plugin_url, api_user_id, $result.attr("next"), zp_selective_collection);
+							jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Importing items " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
+							
+							if ( zp_selective != "false" )
+							{
+								zp_get_items_ajax (zp_plugin_url, api_user_id, $result.attr("next"), zp_selective);
+							}
+							else // regular
+							{
+								zp_get_items_ajax (zp_plugin_url, api_user_id, $result.attr("next"));
+							}
 						}
-						else // regular
+						else if ($result.attr("success") == "next")
 						{
-							zp_get_items (zp_plugin_url, api_user_id, $result.attr("next"));
+							<?php if (isset($_GET["singlestep"])) { ?>
+							jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Import of items complete!");
+							jQuery("input[type=button]", window.parent.document).removeAttr('disabled');
+							jQuery("#zp-Zotpress-Setup-Buttons", window.parent.document).removeAttr("style");
+							jQuery(".zp-Loading-Initial", window.parent.document).hide();
+							<?php } else { ?>
+							
+							jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Importing collections 1-50 ...");
+							
+							if ( zp_type == "selective" )
+							{
+								zp_get_collections_ajax (zp_plugin_url, api_user_id, '0', zp_selective);
+							}
+							else // regular
+							{
+								jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src', jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src').replace("step=items", "step=collections"));
+							}
+							<?php } ?>
 						}
-                    }
-                    else if ($result.attr("success") == "next")
-                    {
-                        <?php if (isset($_GET["singlestep"])) { ?>
-                        jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Import of items complete!");
-                        jQuery("input[type=button]", window.parent.document).removeAttr('disabled');
-                        jQuery("#zp-Zotpress-Setup-Buttons", window.parent.document).removeAttr("style");
-                        jQuery(".zp-Loading-Initial", window.parent.document).hide();
-                        <?php } else { ?>
-						
-                        jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Importing collections 1-50 ...");
-                        
-						if ( zp_type == "selective" )
-                        {
-                            zp_get_collections (zp_plugin_url, api_user_id, '0', zp_selective_collection);
-                        }
-                        else // regular
-                        {
-                            jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src', jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src').replace("step=items", "step=collections"));
-                        }
-                        <?php } ?>
-                    }
-                    else // Show errors
-                    {
-                        alert( "Sorry, but there was a problem importing items: " + jQuery("errors", xml).text() );
-                    }
-                }).error(function(jqXHR, textStatus, errorThrown)
-                {
-                    alert("Sorry, but there was a problem importing items: " + errorThrown);
-                });
+						else // Show errors
+						{
+							alert( "Sorry, but there was a problem importing items: " + jQuery("errors", xml).text() );
+						}
+					},
+					error: function(jqXHR, textStatus, errorThrown)
+					{
+						alert("Sorry, but there was a problem importing items: " + errorThrown);
+					}
+				});
             }
             
 			
 			
 			
-            function zp_get_collections (zp_plugin_url, api_user_id, zp_start, zp_selective)
+            function zp_get_collections_ajax (zp_plugin_url, api_user_id, zp_start, zp_selective)
             {
                 var zp_type = "regular";
-				var zp_selective_collection = "";
                 
-                if ( typeof(zp_selective) === "undefined" ) {
-                    zp_selective = "";
-                }
-                else {
-					zp_selective_collection = zp_selective;
-                    zp_selective = "&selective="+zp_selective;
+                if ( typeof(zp_selective) === "undefined" || zp_selective == "false" || zp_selective == "" )
+                    zp_selective = "false";
+                else
                     zp_type = "selective";
-                }
-                
-                var zpXMLurl = zp_plugin_url + "lib/actions/actions.import.php?api_user_id=" + api_user_id + "&step=collections&start=" + zp_start + zp_selective;
-				//alert(zpXMLurl);
-                
-                jQuery.get( zpXMLurl, {}, function(xml)
-                {
-                    var $result = jQuery("result", xml);
-                    
-                    if ($result.attr("success") == "true") // Move on to the next 50
-                    {
-                        jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Importing collections " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
+				
+				jQuery.ajax({
+					type: "GET",
+					url: "<?php echo admin_url( 'admin-ajax.php' ); ?>",
+					data: { "action": "zotpress_import_ajax", "api_user_id": api_user_id, "step": "collections", "start": zp_start, "selective": zp_selective },
+					dataType: "xml",
+					success: function( xml )
+					{
+						var $result = jQuery("result", xml);
 						
-                        if ( zp_selective_collection != "" )
+						if ($result.attr("success") == "true") // Move on to the next 50
 						{
-							// Add subcollections (if any) to collection list
-							if ( jQuery("subcollections", xml) && jQuery("subcollections", xml).text() != "" )
+							jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Importing collections " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
+							
+							if ( zp_selective != "false" )
 							{
-								zpCollections = zpCollections.concat( (jQuery("subcollections", xml).text()).split(',') );
+								// Add subcollections (if any) to collection list
+								if ( jQuery("subcollections", xml) && jQuery("subcollections", xml).text() != "" )
+								{
+									zpCollections = zpCollections.concat( (jQuery("subcollections", xml).text()).split(',') );
+								}
+								// Move on to the next 50
+								zp_get_collections_ajax (zp_plugin_url, api_user_id, $result.attr("next"), zp_selective);
 							}
-							// Move on to the next 50
-							zp_get_collections (zp_plugin_url, api_user_id, $result.attr("next"), zp_selective_collection);
-						}
-						else // regular
-						{
-							zp_get_collections (zp_plugin_url, api_user_id, $result.attr("next"));
-						}
-                    }
-                    else if ($result.attr("success") == "next")
-                    {
-                        <?php if (isset($_GET["singlestep"])) { ?>
-                        jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Import of collections complete!");
-                        jQuery("input[type=button]", window.parent.document).removeAttr('disabled');
-                        jQuery("#zp-Zotpress-Setup-Buttons", window.parent.document).removeAttr("style");
-                        jQuery(".zp-Loading-Initial", window.parent.document).hide();
-                        <?php } else { ?>
-						
-                        jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Importing tags 1-50 ...");
-						
-                        if ( zp_type == "selective" )
-						{
-							// Add subcollections (if any) to collection list
-							if ( jQuery("subcollections", xml) && jQuery("subcollections", xml).text() != "" )
+							else // regular
 							{
-								zpCollections = zpCollections.concat( (jQuery("subcollections", xml).text()).split(',') );
+								zp_get_collections_ajax (zp_plugin_url, api_user_id, $result.attr("next"));
 							}
-							// Move on to tags
-                            zp_get_tags (zp_plugin_url, api_user_id, '0', zp_selective_collection);
-                        }
-						else // regular
+						}
+						else if ($result.attr("success") == "next")
 						{
-                            jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src', jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src').replace("step=collections", "step=tags"));
-                        }
-						<?php } ?>
-                    }
-                    else // Show errors
-                    {
-                        alert( "Sorry, but there was a problem importing collections: " + jQuery("errors", xml).text() );
-                    }
-                    
-                }).error(function(jqXHR, textStatus, errorThrown)
-                {
-                    alert("Sorry, but there was a problem importing collections: " + errorThrown);
-                });
+							<?php if (isset($_GET["singlestep"])) { ?>
+							jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Import of collections complete!");
+							jQuery("input[type=button]", window.parent.document).removeAttr('disabled');
+							jQuery("#zp-Zotpress-Setup-Buttons", window.parent.document).removeAttr("style");
+							jQuery(".zp-Loading-Initial", window.parent.document).hide();
+							<?php } else { ?>
+							
+							jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Importing tags 1-50 ...");
+							
+							if ( zp_type == "selective" )
+							{
+								// Add subcollections (if any) to collection list
+								if ( jQuery("subcollections", xml) && jQuery("subcollections", xml).text() != "" )
+								{
+									zpCollections = zpCollections.concat( (jQuery("subcollections", xml).text()).split(',') );
+								}
+								// Move on to tags
+								zp_get_tags_ajax (zp_plugin_url, api_user_id, '0', zp_selective);
+							}
+							else // regular
+							{
+								jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src', jQuery("iframe#zp-Setup-Import", window.parent.document).attr('src').replace("step=collections", "step=tags"));
+							}
+							<?php } ?>
+						}
+						else // Show errors
+						{
+							alert( "Sorry, but there was a problem importing collections: " + jQuery("errors", xml).text() );
+						}
+					},
+					error: function(jqXHR, textStatus, errorThrown)
+					{
+						alert("Sorry, but there was a problem importing collections: " + errorThrown);
+					}
+				});
             }
             
 			
 			
 			
-            function zp_get_tags (zp_plugin_url, api_user_id, zp_start, zp_selective)
+            function zp_get_tags_ajax (zp_plugin_url, api_user_id, zp_start, zp_selective)
             {
                 var zp_type = "regular";
-				var zp_selective_collection = "";
                 
-                if ( typeof(zp_selective) === "undefined" ) {
-                    zp_selective = "";
-                }
-                else {
-					zp_selective_collection = zp_selective;
-                    zp_selective = "&selective="+zp_selective;
+                if ( typeof(zp_selective) === "undefined" || zp_selective == "false" || zp_selective == "" )
+                    zp_selective = "false";
+                else
                     zp_type = "selective";
-                }
                 
-                var zpXMLurl = zp_plugin_url + "lib/actions/actions.import.php?api_user_id=" + api_user_id + "&step=tags&start=" + zp_start + zp_selective;
-                
-                jQuery.ajax({
-                    url: zpXMLurl,
-                    datatype: "xml",
-                    retrycount: 0,
-                    success: function (xml)
-                    {
+				jQuery.ajax({
+					type: "GET",
+					url: "<?php echo admin_url( 'admin-ajax.php' ); ?>",
+					data: { "action": "zotpress_import_ajax", "api_user_id": api_user_id, "step": "tags", "start": zp_start, "selective": zp_selective },
+					dataType: "xml",
+					success: function( xml )
+					{
                         var $result = jQuery("result", xml);
                         
                         if ($result.attr("success") == "true") // Move on to the next 50
                         {
                             jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Importing tags " + $result.attr("next") + "-" + (parseInt($result.attr("next"))+50) + "...");
 							
-                            if ( zp_selective_collection != "" )
-								zp_get_tags (zp_plugin_url, api_user_id, $result.attr("next"), zp_selective_collection);
+                            if ( zp_selective != "false" )
+								zp_get_tags_ajax (zp_plugin_url, api_user_id, $result.attr("next"), zp_selective);
 							else // regular
-								zp_get_tags (zp_plugin_url, api_user_id, $result.attr("next"));
+								zp_get_tags_ajax (zp_plugin_url, api_user_id, $result.attr("next"));
                         }
                         else if ($result.attr("success") == "next")
                         {
@@ -268,13 +259,8 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
 							
                             if ( zp_type == "selective" )
                             {
-                                //var zp_collection = zp_selective.substr( zp_selective.indexOf('=')+1, zp_selective.length );
-								//alert("Remove from list: " + zp_selective_collection);
-                                //jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Checking import status ...");
-                                
                                 // Remove collection from list
-                                zpCollections.splice( jQuery.inArray(zp_selective_collection, zpCollections), 1 );
-								//alert(zpCollections);
+                                zpCollections.splice( jQuery.inArray(zp_selective, zpCollections), 1 );
                                 
                                 // If no more (sub)collections, then finish
                                 if ( zpCollections == "" )
@@ -287,7 +273,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                                 else // Keep going ...
                                 {
 	                                jQuery('.'+zp_type+'.zp-Import-Messages', window.parent.document).text("Preparing to import items 1-50 from the next collection ...");
-                                    zp_get_items (zp_plugin_url, api_user_id, '0', zpCollections[0]);
+                                    zp_get_items_ajax (zp_plugin_url, api_user_id, '0', zpCollections[0]);
                                 }
                             }
                             else // regular
@@ -343,7 +329,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
             
             ?>
             
-            zp_get_items( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', 0);
+            zp_get_items_ajax( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', 0);
             
             <?php
 			
@@ -370,7 +356,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
             
             ?>
             
-            zp_get_collections( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', 0);
+            zp_get_collections_ajax( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', 0);
             
             <?php
 			
@@ -397,7 +383,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
             
             ?>
             
-            zp_get_tags( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', 0);
+            zp_get_tags_ajax( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', 0);
             
             <?php
 			
@@ -445,7 +431,7 @@ if ( isset($_GET['go']) && $_GET['go'] == "true" )
                     var zpCollections = '<?php echo $_GET['collections']; ?>';
                     zpCollections = zpCollections.split(',');
                     
-					zp_get_items( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', '0', zpCollections[0] );
+					zp_get_items_ajax( <?php echo "'" . ZOTPRESS_PLUGIN_URL . "', '" . $api_user_id; ?>', '0', zpCollections[0] );
 					
 				<?php
 				

@@ -14,7 +14,7 @@
         $Zotpress_zoteroRelItemTags_db_version = "5.2.1";
         $Zotpress_zoteroItemImages_db_version = "5.2.6";
         
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         
         
         

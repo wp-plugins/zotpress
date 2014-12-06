@@ -13,7 +13,7 @@ if ( current_user_can('edit_others_posts') )
 	
 		<div id="zp-Zotpress" class="wrap">
 			
-			<?php include('admin.display.tabs.php'); ?>
+			<?php include( dirname(__FILE__) . '/admin.menu.php' ); ?>
 			
 			
 			<!-- ZOTPRESS MANAGE ACCOUNTS -->
@@ -27,11 +27,12 @@ if ( current_user_can('edit_others_posts') )
 					
 					<thead>
 						<tr>
+							<th class="default first manage-column" scope="col">Default</th>
 							<th class="account_type first manage-column" scope="col">Type</th>
 							<th class="api_user_id manage-column" scope="col">User ID</th>
 							<th class="public_key manage-column" scope="col">Private Key</th>
 							<th class="nickname manage-column" scope="col">Nickname</th>
-							<th class="status manage-column" scope="col">Status</th>
+							<!--<th class="status manage-column" scope="col">Status</th>-->
 							<th class="actions last manage-column" scope="col">Actions</th>
 						</tr>
 					</thead>
@@ -40,7 +41,6 @@ if ( current_user_can('edit_others_posts') )
 						<?php
 							
 							global $wpdb;
-							//global $Zotpress_update_version;
 							
 							$accounts = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress");
 							$zebra = " alternate";
@@ -51,8 +51,13 @@ if ( current_user_can('edit_others_posts') )
 								
 								$code = "<tr id='zp-Account-" . $account->api_user_id . "' class='zp-Account".$zebra."' rel='" . $account->api_user_id . "'>\n";
 								
+								// DEFAULT
+								$code .= "                          <td class='default";
+								if ( get_option("Zotpress_DefaultAccount") && get_option("Zotpress_DefaultAccount") == $account->api_user_id ) $code .= " selected";
+								$code .= " first'><a href='javascript:void(0);' rel='". $account->api_user_id ."' class='default zp-Accounts-Default' title='Set as Default'>Set as Default</a></td>\n";
+								
 								// ACCOUNT TYPE
-								$code .= "                          <td class='account_type first'>" . substr($account->account_type, 0, -1) . "</td>\n";
+								$code .= "                          <td class='account_type'>" . substr($account->account_type, 0, -1) . "</td>\n";
 								
 								// API USER ID
 								$code .= "                          <td class='api_user_id'>" . $account->api_user_id . "</td>\n";
@@ -76,12 +81,12 @@ if ( current_user_can('edit_others_posts') )
 								$code .= "</td>\n";
 								
 								// STATUS
-								$code .= "                          <td class='status'>";
-								if ( $account->version != $GLOBALS['Zotpress_update_db_by_version'] )
-									$code .= "<span class='status_bad'>&#10007;</span>";
-								else
-									$code .= "<span class='status_good'>&#10004;</span>";
-								$code .= "</td>\n";
+								//$code .= "                          <td class='status'>";
+								//if ( $account->version != $GLOBALS['Zotpress_update_db_by_version'] )
+								//	$code .= "<span class='status_bad'>&#10007;</span>";
+								//else
+								//	$code .= "<span class='status_good'>&#10004;</span>";
+								//$code .= "</td>\n";
 								
 								// ACTIONS
 								$code .= "                          <td class='actions last'>\n";

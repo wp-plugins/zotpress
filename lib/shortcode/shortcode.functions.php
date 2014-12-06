@@ -71,11 +71,9 @@
 			}
 		}
 		
-		//var_dump($author . "<br /><br />");
-		
-		if ( $sortby == "author" ) array_multisort( $author, $order, $date, $order, $item_arr );
-		else if ( $sortby == "date" ) array_multisort( $date, $order, $author, $order, $item_arr );
-		else if ( $sortby == "title" ) array_multisort( $title, $order, $author, $order, $item_arr );
+		if ( $sortby == "author" && isset($author) && is_array($author) ) array_multisort( $author, $order, $date, $order, $item_arr );
+		else if ( $sortby == "date" && isset($date) && is_array($date) ) array_multisort( $date, $order, $author, $order, $item_arr );
+		else if ( $sortby == "title" && isset($title) && is_array($title) ) array_multisort( $title, $order, $author, $order, $item_arr );
 		
 		return $item_arr;
     }

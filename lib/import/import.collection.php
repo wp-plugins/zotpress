@@ -29,7 +29,7 @@
     require("../request/rss.request.php");
     
     // Include Import Functions
-    require("admin.import.functions.php");
+    require("import.functions.php");
     
 	$GLOBALS['zp_session'][$api_user_id]['collections']['query_params'] = array();
 	$GLOBALS['zp_session'][$api_user_id]['collections']['query_total_entries'] = 0;

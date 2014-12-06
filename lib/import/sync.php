@@ -18,8 +18,8 @@
     require("../request/rss.request.php");
     
     // Include Import and Sync Functions
-    require("admin.import.functions.php");
-    require("admin.sync.functions.php");
+    require("import.functions.php");
+    require("sync.functions.php");
     
     
     

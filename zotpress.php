@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 5.2.10
+    Version: 5.3
     Author URI: http://katieseaborn.com
     
 */
@@ -52,7 +52,7 @@
 
 // INSTALL -----------------------------------------------------------------------------------------
 
-    include("lib/install/install.db.php");
+    include( dirname(__FILE__) . '/lib/admin/admin.install.php' );
 
 // INSTALL -----------------------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@
 
 // ADMIN -------------------------------------------------------------------------------------------
     
-    include("lib/admin/admin.php");
+    include( dirname(__FILE__) . '/lib/admin/admin.php' );
 
 // END ADMIN --------------------------------------------------------------------------------------
 
@@ -68,9 +68,9 @@
 
 // SHORTCODE -------------------------------------------------------------------------------------
 
-    include("lib/shortcode/shortcode.php");
-    include("lib/shortcode/shortcode.intext.php");
-    include("lib/shortcode/shortcode.intextbib.php");
+    include( dirname(__FILE__) . '/lib/shortcode/shortcode.php' );
+    include( dirname(__FILE__) . '/lib/shortcode/shortcode.intext.php' );
+    include( dirname(__FILE__) . '/lib/shortcode/shortcode.intextbib.php' );
     
 // SHORTCODE -------------------------------------------------------------------------------------
 
@@ -78,7 +78,7 @@
 
 // SIDEBAR WIDGET -------------------------------------------------------------------------------
     
-    include("lib/widget/widget.sidebar.php");
+    include( dirname(__FILE__) . '/lib/widget/widget.sidebar.php' );
 
 // SIDEBAR WIDGET -------------------------------------------------------------------------------
 
@@ -108,7 +108,7 @@
     
     function Zotpress_show_meta_box()
     {
-        require("lib/widget/widget.metabox.php");
+        require( dirname(__FILE__) . '/lib/widget/widget.metabox.php');
     }
     
 // META BOX WIDGET ---------------------------------------------------------------------------------
@@ -154,14 +154,31 @@
     */
     function Zotpress_admin_menu()
     {
-        add_menu_page("Zotpress", "Zotpress", "edit_posts", "Zotpress", "Zotpress_options", ZOTPRESS_PLUGIN_URL."images/icon.png");
+        add_menu_page( "Zotpress", "Zotpress", "edit_posts", "Zotpress", "Zotpress_options", ZOTPRESS_PLUGIN_URL."images/icon.png" );
+		add_submenu_page( "Zotpress", "Browse", "Browse", "edit_posts", "Zotpress" );
+		add_submenu_page( "Zotpress", "Accounts", "Accounts", "edit_posts", "admin.php?page=Zotpress&accounts=true" );
+		add_submenu_page( "Zotpress", "Options", "Options", "edit_posts", "admin.php?page=Zotpress&options=true" );
+		add_submenu_page( "Zotpress", "Help", "Help", "edit_posts", "admin.php?page=Zotpress&help=true" );
     }
     add_action( 'admin_menu', 'Zotpress_admin_menu' );
+	
+	function Zotpress_admin_menu_submenu($parent_file)
+	{
+		global $submenu_file;
+		
+		if ( isset($_GET['accounts']) || isset($_GET['selective'])  || isset($_GET['import']) ) $submenu_file = 'admin.php?page=Zotpress&accounts=true';
+		if ( isset($_GET['options']) ) $submenu_file = 'admin.php?page=Zotpress&options=true';
+		if ( isset($_GET['help']) ) $submenu_file = 'admin.php?page=Zotpress&help=true';
+		
+		return $parent_file;
+	}
+	add_filter('parent_file', 'Zotpress_admin_menu_submenu');
     
     
     /**
     * Add shortcode styles to user's theme
-    * Note this always displays: there's no way to conditionally display, because shortcodes are checked after css is included
+    * Note that this always displays: There's no way to conditionally include it,
+    * because the existence of shortcodes is checked after CSS is included.
     */
     function Zotpress_theme_includes()
     {
@@ -182,9 +199,9 @@
     
     
     /**
-    * Testing: Alternative button registration
+    * TinyMCE word-processor-like features
     */
-    function zotpress_buttonhooks()
+    function zotpress_tinymce_buttonhooks()
     {
         // Determine default editor features status
         $zp_default_editor = "editor_enable";
@@ -200,7 +217,7 @@
             add_filter("mce_buttons", "zotpress_register_tinymce_buttons");
         }
     }
-   if ( ZOTPRESS_EXPERIMENTAL_EDITOR ) add_action('init', 'zotpress_buttonhooks');
+   if ( ZOTPRESS_EXPERIMENTAL_EDITOR ) add_action('init', 'zotpress_tinymce_buttonhooks');
     
     // Load the TinyMCE plugin : editor_plugin.js (wp2.5)
     function zotpress_register_tinymce_javascript($plugin_array)
@@ -248,7 +265,6 @@
     
     // Enqueue jQuery in theme if it isn't already enqueued
     // Thanks to WordPress user "eceleste"
-    //if (!isset( $GLOBALS['wp_scripts']->registered[ "jquery" ] )) wp_enqueue_script("jquery");
     function Zotpress_enqueue_scripts()
     {
         if (!isset( $GLOBALS['wp_scripts']->registered[ "jquery" ] )) wp_enqueue_script("jquery");
@@ -341,6 +357,17 @@
 //    add_action('admin_init', 'zotpress_survey_notice_ignore');
     
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
+
+
+
+
+
+
+// IMPORT -----------------------------------------------------------------------------------------
+
+    include( dirname(__FILE__) . '/lib/import/import.actions.php' );
+
+// IMPORT -----------------------------------------------------------------------------------------
 
 
 ?>
