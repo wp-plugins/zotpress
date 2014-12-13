@@ -62,6 +62,13 @@ jQuery(document).ready(function()
                 // prevent value inserted on focus
                 return false;
             },
+			create: function () {
+				jQuery(this).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+					return jQuery( "<li>" )
+						.append( "<a><strong>" + item.author + "</strong> " + item.label + "</a>" )
+						.appendTo( ul );
+				}
+			},
             open: function () {
 				var widget = jQuery(this).data('ui-autocomplete'),
 						menu = widget.menu,
@@ -105,11 +112,7 @@ jQuery(document).ready(function()
                 }
                 return false;
             }
-        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-			return jQuery( "<li>" )
-				.append( "<a><strong>" + item.author + "</strong> " + item.label + "</a>" )
-				.appendTo( ul );
-		};
+        });
     
     
     // ITEM
@@ -371,6 +374,13 @@ jQuery(document).ready(function()
                 // prevent value inserted on focus
                 return false;
             },
+			create: function () {
+				jQuery(this).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+					return jQuery( "<li>" )
+						.append( "<a><strong>" + item.author + "</strong> " + item.label + "</a>" )
+						.appendTo( ul );
+				}
+			},
             open: function () {
 				var widget = jQuery(this).data('ui-autocomplete'),
 						menu   = widget.menu,
@@ -415,11 +425,7 @@ jQuery(document).ready(function()
                 //alert(JSON.stringify(zpInText));
                 return false;
             }
-        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-			return jQuery( "<li>" )
-				.append( "<a><strong>" + item.author + "</strong> " + item.label + "</a>" )
-				.appendTo( ul );
-		};
+        });
     
     
     //// ACCOUNTS
