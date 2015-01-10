@@ -41,7 +41,7 @@
                 
             </div>
             
-            <iframe id="zp-Setup-Import" name="zp-Setup-Import" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/import/import.iframe.php?api_user_id=<?php echo $api_user_id; ?>" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+            <iframe id="zp-Setup-Import" name="zp-Setup-Import" src="<?php echo wp_nonce_url( ZOTPRESS_PLUGIN_URL . 'lib/import/import.iframe.php?api_user_id=' . $api_user_id, 'zp_importing_' . intval($api_user_id) . '_' . date('Y-j-G'), 'zp_nonce' ); ?>" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
             
             <div id="zp-Zotpress-Setup-Buttons" class="proceed" style="display: none;">
 				<a title="Go to Browse" id="zp-Import-Browse-Button" class="button button-primary" href="admin.php?page=Zotpress">Browse Library</a>

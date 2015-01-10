@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 5.3.1
+    Version: 5.3.2
     Author URI: http://katieseaborn.com
     
 */
@@ -33,18 +33,16 @@
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
-    //add_option( 'ZOTPRESS_PASSCODE', substr(number_format(time() * rand(),0,'',''),0,10) ); /* Thanks to http://elementdesignllc.com/2011/06/generate-random-10-digit-number-in-php/ */
-    
     define('ZOTPRESS_PLUGIN_FILE',  __FILE__ );
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( ZOTPRESS_PLUGIN_FILE ));
     define('ZOTPRESS_PLUGIN_DIR', dirname( __FILE__ ));
     define('ZOTPRESS_EXPERIMENTAL_EDITOR', FALSE); // Whether experimental editor feature is active or not
-    define('ZOTPRESS_VERSION', '5.3.1' );
+    define('ZOTPRESS_VERSION', '5.3.2' );
     
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
-    $GLOBALS['Zotpress_update_db_by_version'] = "5.2.6"; // Only change if updating db
+    $GLOBALS['Zotpress_update_db_by_version'] = "5.2.6"; // Only change this if the db needs updating
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     
@@ -331,41 +329,21 @@
     }
     add_action('admin_init', 'zotpress_5_2_ignore');
 	
-	
-    
-    // 5.2.7 Notice of Zotpress survey
-    
-//    function zotpress_survey_notice()
-//    {
-//        global $current_user;
-//		
-//		if ( !get_user_meta($current_user->ID, 'zotpress_survey_notice_ignore') )
-//		{
-//			echo '<div class="updated"><p>';
-//			printf(__('Would you like to participate in research on Zotpress? <a title="Zotpress survey" href="http://imdc.ca/survey/776698/" target="_blank">Take the survey! (Until November 30th.)</a> | <a href="%1$s">Hide Notice</a>'), 'admin.php?page=Zotpress&zotpress_survey_notice_ignore=0');
-//			echo "</p></div>";
-//		}
-//    }
-//    add_action( 'admin_notices', 'zotpress_survey_notice' );
-//    
-//    function zotpress_survey_notice_ignore()
-//    {
-//        global $current_user;
-//        if ( isset($_GET['zotpress_survey_notice_ignore']) && $_GET['zotpress_survey_notice_ignore'] == '0' )
-//            add_user_meta($current_user->ID, 'zotpress_survey_notice_ignore', 'true', true);
-//    }
-//    add_action('admin_init', 'zotpress_survey_notice_ignore');
-    
 // REGISTER ACTIONS ---------------------------------------------------------------------------------
-
-
-
-
 
 
 // IMPORT -----------------------------------------------------------------------------------------
 
     include( dirname(__FILE__) . '/lib/import/import.actions.php' );
+	
+	function zp_nonce_message ($translation)
+	{
+		if ( $translation == 'Are you sure you want to do this?' )
+			return 'Access denied: You cannot access this Zotpress page.';
+		else
+			return $translation;
+	}
+	add_filter('gettext', 'zp_nonce_message');
 
 // IMPORT -----------------------------------------------------------------------------------------
 

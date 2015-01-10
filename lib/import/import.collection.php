@@ -1,36 +1,38 @@
 <?php
 
+// Include WordPress
+require('../../../../../wp-load.php');
+define('WP_USE_THEMES', false);
 
-    // Include WordPress
-    require('../../../../../wp-load.php');
-    define('WP_USE_THEMES', false);
+// Prevent access to users who are not editors
+if ( !current_user_can('edit_others_posts') && !is_admin() )
+	wp_die( __('Only editors can access this page.'), __('Zotpress: Access Denied'), array( 'response' => '403' ) );
 
-    // Prevent access to users who are not editors
-    if ( !current_user_can('edit_others_posts') && !is_admin() ) wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
+// Check api user id
+$api_user_id = false;
+if ($_GET['api_user_id'] != "")
+	if (preg_match("/^[0-9]+$/", $_GET['api_user_id']) == 1) $api_user_id = htmlentities($_GET['api_user_id']);
+	else wp_die( __('Only editors can access this page.'), __('Zotpress: Access Denied'), array( 'response' => '403' ) );
+else
+	wp_die( __('Only editors can access this page.'), __('Zotpress: Access Denied'), array( 'response' => '403' ) );
+
+// Check nonce
+if ( check_admin_referer( 'zp_importing_' . intval($api_user_id) . '_' . date('Y-j-G'), 'zp_nonce' ) )
+{
+	// Access WordPress db
+	global $wpdb;
 	
+	// Ignore user abort
+	ignore_user_abort(true);
+	set_time_limit(60); // 1 minute (vs. 60*10)
 	
-	// Check if user id
-	$api_user_id = false;
-	if ($_GET['api_user_id'] != "")
-		if (preg_match("/^[0-9]+$/", $_GET['api_user_id']) == 1) $api_user_id = htmlentities($_GET['api_user_id']);
-		else wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
-	else
-		wp_die( __('Only editors can access this page through the admin panel.'), __('Zotpress: Access Denied') );
-
-    
-    // Access WordPress db
-    global $wpdb;
-    
-    // Ignore user abort
-    ignore_user_abort(true);
-    set_time_limit(60); // 1 minute (vs. 60*10)
-    
-    // Include Request Functionality
-    require("../request/rss.request.php");
-    
-    // Include Import Functions
-    require("import.functions.php");
-    
+	// Include Request Functionality
+	require("../request/rss.request.php");
+	
+	// Include Import Functions
+	require("import.functions.php");
+	
+	$GLOBALS['zp_session'][$api_user_id]['collections']['last_set'] = 0;
 	$GLOBALS['zp_session'][$api_user_id]['collections']['query_params'] = array();
 	$GLOBALS['zp_session'][$api_user_id]['collections']['query_total_entries'] = 0;
 	
@@ -39,12 +41,12 @@
 	while ( $zp_current_set <= $GLOBALS['zp_session'][$api_user_id]['collections']['last_set'] )
 	{
 		$zp_continue = zp_get_collections ($wpdb, $api_user_id, $zp_current_set, true);
-		//zp_save_collections ($wpdb, $api_user_id, true, true); // might be confusing to users because doesn't import items or subcollections
+		//zp_save_collections ($wpdb, $api_user_id, true, true); // saving now might be confusing to users because it doesn't import items or subcollections
 		$zp_current_set += 50;
 	}
 	
 	$output = "<!DOCTYPE HTML>\n<html>\n<head>";
-    $output .= '<script type="text/javascript" src="'. ZOTPRESS_PLUGIN_URL .'js/jquery-1.5.2.min.js"></script>';
+	$output .= '<script type="text/javascript" src="'. ZOTPRESS_PLUGIN_URL .'js/jquery-1.5.2.min.js"></script>';
 	$output .= '<script>
 	
 	jQuery(document).ready(function() {
@@ -123,5 +125,7 @@
 	// Unset
 	$GLOBALS['zp_session'][$api_user_id]['collections']['query_params'] = array();
 	$GLOBALS['zp_session'][$api_user_id]['collections']['query_total_entries'] = 0;
+	
+} // nonce
 
 ?>

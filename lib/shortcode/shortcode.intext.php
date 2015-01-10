@@ -318,6 +318,10 @@
                     else
                         $citation = str_replace("&#93;", "", str_replace("&#91;", "", str_replace(")", "", str_replace("(", " ", $citation))));
                 }
+				
+				// Deal with download
+				$item_download = false; if (isset($item->attachment_data)) $item_download = $item->attachment_data;
+				$item_download_key = false; if (isset($item->attachment_key)) $item_download_key = $item->attachment_key;
                 
 				// SET SORT ARRAY
 				$zp_intext_citation_arr[$api_user_id.",".$item->item_key] = array(
@@ -341,8 +345,8 @@
                         "author" => $item->author,
                         "title" => $item->title,
                         "date" => zp_get_year($item->zpdate),
-                        "download" => $item->attachment_data,
-                        "download_key" => $item->attachment_key,
+                        "download" => $item_download,
+                        "download_key" => $item_download_key,
                         "image" => $item->itemImage,
                         "json" => $item->json,
                         "citation" => $item->citation,

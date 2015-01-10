@@ -18,8 +18,16 @@
     
     function zp_extract_year ($date)
     {
-		preg_match_all( '/(\d{4})/', $date, $matches );
-		return $matches[0][0];
+		if ( strlen($date) > 0 ):
+			preg_match_all( '/(\d{4})/', $date, $matches );
+			if ( isset($matches[0][0]) ):
+				return $matches[0][0];
+			else:
+				return "";
+			endif;
+		else:
+			return "";
+		endif;
     }
     
     
@@ -599,23 +607,35 @@
             $link_mode = "";
 			
 			
-            if (count($json_content_decoded->creators) > 0)
-                foreach ($json_content_decoded->creators as $creator)
-                    if ($creator->creatorType == "author")
-						if (isset($creator->name)) // One-name authors
-							$author .= $creator->name . ", ";
+            if ( isset($json_content_decoded->creators) )
+			{
+				if ( count($json_content_decoded->creators) > 0 )
+				{
+					foreach ($json_content_decoded->creators as $creator)
+						if ($creator->creatorType == "author")
+							if (isset($creator->name)) // One-name authors
+								$author .= $creator->name . ", ";
+							else
+								$author .= $creator->lastName . ", ";
 						else
-							$author .= $creator->lastName . ", ";
-                    else
-						if (isset($creator->name)) // One-name authors
-							$author_other .= $creator->name . ", ";
-						else
-							$author_other .= $creator->lastName . ", ";
-            else
-				if (isset($creator->name)) // One-name authors
-					$author .= $creator->creators["name"];
-				else
-	                $author .= $creator->creators["lastName"];
+							if (isset($creator->name)) // One-name authors
+								$author_other .= $creator->name . ", ";
+							else
+								$author_other .= $creator->lastName . ", ";
+				}
+				else // no creator
+				{
+					$author = "";
+					//if (isset($creator->name)) // One-name authors
+					//	$author .= $creator->creators["name"];
+					//else
+					//	$author .= $creator->creators["lastName"];
+				}
+			}
+			else // no creator
+			{
+				$author = "";
+			}
             
             // Determine if we use author or other author type
             if (trim($author) == "") $author = $author_other;
@@ -623,14 +643,14 @@
             // Remove last comma
             $author = preg_replace('~(.*)' . preg_quote(', ', '~') . '~', '$1' . '', $author, 1);
             
-            $date = $json_content_decoded->date;
+            $date = ""; if ( isset($json_content_decoded->date) ) $date = $json_content_decoded->date;
             $year = zp_extract_year($date);
             
             if (trim($year) == "") $year = "0000";
             
-            $title = $json_content_decoded->title;
+            $title = ""; if ( isset($json_content_decoded->title) ) $title = $json_content_decoded->title;
             
-            $numchildren = intval($entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numChildren")->item(0)->nodeValue);
+            $numchildren = 0; if ( isset($entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numChildren")->item(0)->nodeValue) ) $numchildren = intval($entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numChildren")->item(0)->nodeValue);
             
             // DOWNLOAD: Find URL
             // for attachments, look at zapi:subcontent zapi:type="json" - linkMode - either imported_file or linked_url
@@ -925,7 +945,10 @@
         
         
         // LAST SET
-        if ($GLOBALS['zp_session'][$api_user_id]['collections']['last_set'] == $zp_start)
+        if (
+			isset($GLOBALS['zp_session'][$api_user_id]['collections']['last_set'])
+			&& $GLOBALS['zp_session'][$api_user_id]['collections']['last_set'] == $zp_start
+			)
         {
             return array( "continue" => false, "collections" => rtrim( $zp_collection_keys, "," ) );
         }

@@ -143,7 +143,10 @@
                 </p>
                 
                 <div id="zp-Step-Import-Collection" class="loading">
-                    <iframe id="zp-Step-Import-Collection-Frame" name="zp-Step-Import-Collection-Frame" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/import/import.collection.php?api_user_id=<?php echo $api_user_id; ?>" scrolling="no" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+                    <iframe id="zp-Step-Import-Collection-Frame" name="zp-Step-Import-Collection-Frame"
+						src="<?php echo wp_nonce_url( ZOTPRESS_PLUGIN_URL . 'lib/import/import.collection.php?api_user_id=' . $api_user_id, 'zp_importing_' . intval($api_user_id) . '_' . date('Y-j-G'), 'zp_nonce' ); ?>"
+						scrolling="no" frameborder="0" marginwidth="0" marginheight="0">
+					</iframe>
                 </div><!-- #zp-Step-Import-Collection -->
                 
                 <input id="zp-Zotpress-Setup-Import-Selective" type="button" disabled="disabled" class="button-secondary" value="Import Selected" />
@@ -155,7 +158,10 @@
                 
             </div>
             
-            <iframe id="zp-Setup-Import" name="zp-Setup-Import" src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/import/import.iframe.php?api_user_id=<?php echo $api_user_id; ?>" scrolling="yes" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+            <iframe id="zp-Setup-Import" name="zp-Setup-Import"
+				src="<?php echo wp_nonce_url( ZOTPRESS_PLUGIN_URL . 'lib/import/import.iframe.php?api_user_id=' . $api_user_id, 'zp_importing_' . intval($api_user_id) . '_' . date('Y-j-G'), 'zp_nonce' ); ?>"
+				scrolling="yes" frameborder="0" marginwidth="0" marginheight="0">
+			</iframe>
             
             <div id="zp-Zotpress-Setup-Buttons" class="proceed" style="display: none;">
                 <input type="button" id="zp-Zotpress-Setup-Options-Complete" class="button-primary" value="Finish" />

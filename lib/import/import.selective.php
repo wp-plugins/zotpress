@@ -23,7 +23,7 @@
                 
                 <div id="zp-Step-Import-Collection" class="loading">
                     <iframe id="zp-Step-Import-Collection-Frame" name="zp-Step-Import-Collection-Frame"
-							src="<?php echo ZOTPRESS_PLUGIN_URL . 'lib/import/import.collection.php?api_user_id=' . $api_user_id; ?>"
+							src="<?php echo wp_nonce_url( ZOTPRESS_PLUGIN_URL . 'lib/import/import.collection.php?api_user_id=' . $api_user_id, 'zp_importing_' . intval($api_user_id) . '_' . date('Y-j-G'), 'zp_nonce' ); ?>"
 							scrolling="no" frameborder="0" marginwidth="0" marginheight="0">
 					</iframe>
                 </div><!-- #zp-Step-Import-Collection -->
@@ -38,7 +38,7 @@
             </div>
             
             <iframe id="zp-Setup-Import" name="zp-Setup-Import"
-				src="<?php echo ZOTPRESS_PLUGIN_URL; ?>lib/import/import.iframe.php?api_user_id=<?php echo $api_user_id; ?>"
+				src="<?php echo wp_nonce_url( ZOTPRESS_PLUGIN_URL . 'lib/import/import.iframe.php?api_user_id=' . $api_user_id, 'zp_importing_' . intval($api_user_id) . '_' . date('Y-j-G'), 'zp_nonce' ); ?>"
 				scrolling="yes" frameborder="0" marginwidth="0" marginheight="0">
 			</iframe>
             
