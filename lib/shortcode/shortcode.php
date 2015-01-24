@@ -217,7 +217,7 @@
         {
             $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'", OBJECT);
 			
-			if ( is_null($zp_account) ): echo "<p>Sorry, but the selected Zotpress nickname can't be found.</p>"; exit; endif;
+			if ( is_null($zp_account) ): echo "<p>Sorry, but the selected Zotpress nickname can't be found.</p>"; return false; endif;
 			
             $api_user_id = $zp_account->api_user_id;
         }
@@ -225,7 +225,7 @@
         {
             $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'", OBJECT);
 			
-			if ( is_null($zp_account) ): echo "<p>Sorry, but the selected Zotpress account can't be found.</p>"; exit; endif;
+			if ( is_null($zp_account) ): echo "<p>Sorry, but the selected Zotpress account can't be found.</p>"; return false; endif;
 			
             $api_user_id = $zp_account->api_user_id;
         }
@@ -625,7 +625,7 @@
                                 $zp_citation["itemImage"] = $zp_citation["itemImage"][0];
                             }
                             
-                            $citation_image = "<div id='zp-Citation-".$zp_citation["item_key"]."' class='zp-Entry-Image' rel='".$zp_citation["item_key"]."'>";
+                            $citation_image = "<div id='zp-Citation-".$zp_citation["item_key"]."' class='zp-Entry-Image'>";
                             $citation_image .= "<img src='".$zp_citation["itemImage"]."' alt='image' />";
                             $citation_image .= "</div>\n";
                             $has_citation_image = " zp-HasImage";
@@ -713,7 +713,7 @@
                                 
                                 if ($zp_download_url->linkMode == "imported_file")
                                 {
-                                    $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['api_user_id']."&download=".$zp_citation["attachment_key"]."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1); // Thanks to http://ideone.com/vR073
+                                    $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['api_user_id']."&amp;download=".$zp_citation["attachment_key"]."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1); // Thanks to http://ideone.com/vR073
                                 }
                                 else
                                 {
@@ -756,7 +756,7 @@
                         
                         // OUTPUT
                         
-                        $zp_output .= "<div class='zp-Entry".$has_citation_image."' rel='".$zp_citation["item_key"]."'>\n";
+                        $zp_output .= "<div class='zp-ID-".$api_user_id."-".$zp_citation["item_key"]." zp-Entry".$has_citation_image."'>\n";
                         $zp_output .= $citation_image . $zp_citation['citation'] . $citation_abstract . $citation_tags . "\n";
                         $zp_output .= "</div><!--Entry-->\n\n";
                     }

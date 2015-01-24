@@ -16,23 +16,6 @@
         hyphens: auto;
     }
     
-    /*.ZOTPRESS_UPDATE_NOTICE {*/
-    /*    background: transparent url('../images/syncing_bw.gif') no-repeat left center;*/
-    /*    color: #999;*/
-    /*    display: block;*/
-    /*    font: italic 9px/9px "Verdana", sans-serif;*/
-    /*    float: right;*/
-    /*    padding: 0.5em;*/
-    /*    padding-left: 2em;*/
-    /*    text-transform: uppercase;*/
-    /*    */
-    /*    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";*/
-    /*    filter: alpha(opacity=50);*/
-    /*    -moz-opacity: 0.5;*/
-    /*    -khtml-opacity: 0.5;*/
-    /*    opacity: 0.5;*/
-    /*}*/
-    
     div.zp-Zotpress div.zp-Entry.zp-HasImage {
         clear: both;
         min-height: 150px;
@@ -73,5 +56,12 @@
 	.zp-ZotpressShortcode.cite .summary,
 	.zp-ZotpressShortcode.bib .summary {
 		display: none;
+	}
+	
+	
+	/* Nested subcollections */
+	
+	.zp-NestedCollection {
+		list-style: none;
 	}
 	

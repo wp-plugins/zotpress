@@ -95,10 +95,16 @@ jQuery(document).ready(function()
         zpCorrectOrderedList( $this );
         
         var zp_check = "";
+		
+		// First, check if style has been set
         if (jQuery(".zp-Zotpress-Style", $this).length > 0)
+		{
             zp_check = jQuery(".zp-Zotpress-Style", $this).text();
-        else
+		}
+        else // Otherwise, look at the first item's style according to Zotero
+		{
             zp_check = jQuery(".csl-bib-body:first", $this).attr("rel");
+		}
         
         var zp_update_style = false;
         jQuery(".csl-bib-body", $this).each(function() {
@@ -116,8 +122,11 @@ jQuery(document).ready(function()
                 var zpNoteReference = ""; if (jQuery(this).find(".zp-Notes-Reference").length > 0) { zpNoteReference = jQuery(this).find(".zp-Notes-Reference").text(); }
                 var zpAbstractReference = ""; if (jQuery(this).find(".zp-Abstract").length > 0) { zpAbstractReference = jQuery(this).find(".zp-Abstract").html(); }
                 
-                zp_current_list_items[jQuery(this).attr("rel")] = [ zpDownloadURL, zpCiteRIS, zpNoteReference, zpAbstractReference ];
-                zp_all_list_items[zp_all_list_items.length] = jQuery(this).attr("rel");
+				// Get item id
+				var zpItemID = jQuery(this).attr('class').split(' ')[0].split('zp-ID-')[1].split('-')[1];
+				
+                zp_current_list_items[zpItemID] = [ zpDownloadURL, zpCiteRIS, zpNoteReference, zpAbstractReference ];
+                zp_all_list_items[zp_all_list_items.length] = zpItemID;
             });
             
             var zp_style_items = "";
@@ -126,6 +135,8 @@ jQuery(document).ready(function()
                 zp_style_items += zp_all_list_items[zp_key] +",";
             
             zp_style_items = zp_style_items.substring(0, zp_style_items.length - 1); // get rid of last comma
+			
+			var thisAPIUserID = jQuery(".zp-Zotpress-Userid:first", $this).text();
             
             // Build URI
             var zp_style_xmlUri = jQuery('.ZOTPRESS_PLUGIN_URL:first').text() + 'lib/actions/actions.style.php?update=true';
@@ -144,7 +155,7 @@ jQuery(document).ready(function()
                     jQuery('item', xml).each(function()
                     {
                         // Replace with new style
-                        jQuery(".zp-Entry[rel=" + jQuery(this).attr("key") + "]", $this).html( jQuery(this).text() );
+                        jQuery(".zp-ID-" + thisAPIUserID + "-" + jQuery(this).attr("key"), $this).html( jQuery(this).text() );
                         
                         // Re-add URLs, if exist
                         var temp = "";
@@ -156,12 +167,12 @@ jQuery(document).ready(function()
                         if (zp_current_list_items[jQuery(this).attr("key")][1].length > 0)
                             temp += " <a title=\"Cite in RIS Format\" href=\"" + zp_current_list_items[jQuery(this).attr("key")][1] + "\">(Cite)</a>";
                         
-                        jQuery(".zp-Entry[rel=" + jQuery(this).attr("key") + "] div:last", $this).append( temp );
+                        jQuery(".zp-ID-" + thisAPIUserID + "-" + jQuery(this).attr("key") + " div:last", $this).append( temp );
                         
                         if (zp_current_list_items[jQuery(this).attr("key")][3].length > 0)
                         {
                             temp = "<p class='zp-Abstract'>" + zp_current_list_items[jQuery(this).attr("key")][3] + "</p>\n";
-                            jQuery(".zp-Entry[rel=" + jQuery(this).attr("key") + "]", $this).append( temp );
+                            jQuery(".zp-ID-" + thisAPIUserID + "-" + jQuery(this).attr("key"), $this).append( temp );
                         }
                     });
                     
@@ -201,7 +212,7 @@ jQuery(document).ready(function()
 		var zpBibItemKey = $this.attr("href").slice( $this.attr("href").lastIndexOf("-")+1, $this.attr("href").length );
 		
 		// Highlight bibliography item with that key
-		jQuery(".zp-Entry[rel='"+zpBibItemKey+"']").effect("highlight", { color: "#C5EFF7", easing: "easeInExpo" }, 1200);
+		jQuery(".zp-ID-" + thisAPIUserID + "-" +zpBibItemKey).effect("highlight", { color: "#C5EFF7", easing: "easeInExpo" }, 1200);
 	});
 
 

@@ -6,14 +6,14 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 5.3.2
+    Version: 5.3.3
     Author URI: http://katieseaborn.com
     
 */
 
 /*
  
-    Copyright 2014 Katie Seaborn
+    Copyright 2015 Katie Seaborn
     
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -37,12 +37,12 @@
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( ZOTPRESS_PLUGIN_FILE ));
     define('ZOTPRESS_PLUGIN_DIR', dirname( __FILE__ ));
     define('ZOTPRESS_EXPERIMENTAL_EDITOR', FALSE); // Whether experimental editor feature is active or not
-    define('ZOTPRESS_VERSION', '5.3.2' );
+    define('ZOTPRESS_VERSION', '5.3.3' );
     
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
     
-    $GLOBALS['Zotpress_update_db_by_version'] = "5.2.6"; // Only change this if the db needs updating
+    $GLOBALS['Zotpress_update_db_by_version'] = "5.2.6"; // Only change this if the db needs updating - 5.2.6
 
 // GLOBAL VARS ----------------------------------------------------------------------------------
     

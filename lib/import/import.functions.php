@@ -513,7 +513,6 @@
 		if ( is_null($zp_account[0]->public_key) === false && trim($zp_account[0]->public_key) != "" )
 			$zp_import_url .= "key=".$zp_account[0]->public_key."&";
 		$zp_import_url .= "format=atom&content=json,bib&style=".$zp_default_style."&limit=50&start=".$zp_start;
-		//var_dump($zp_import_url);
         
 		
 		// Make the request
@@ -521,6 +520,16 @@
 		
         // Stop in our tracks if there's a request error
         if ($zp_import_contents->request_error) return $zp_import_contents->request_error;
+		
+		// Report any errors returned from Zotero
+		if ( trim(strtolower($zp_xml)) == "forbidden" )
+		{
+			return "Zotero is telling Zotpress that access is forbidden. Are you sure that the Zotero API key you're using for this account is correct?";
+		}
+		else if ( trim(strtolower($zp_xml)) == "invalid style" )
+		{
+			return "Zotero is telling Zotpress that the style you're using is invalid. Are you sure that the name of the default style you've selected is correct?";
+		}
         
         
         // Make it DOM-traversable 
@@ -839,6 +848,12 @@
 		
         // Grab contents
 		$zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
+		
+		// Report any errors returned from Zotero
+		if ( trim(strtolower($zp_xml)) == "forbidden" )
+		{
+			return "Zotero is telling Zotpress that access is forbidden. Are you sure that the Zotero API key you're using for this account is correct?";
+		}
         
         // Make it DOM-traversable 
         $doc_citations = new DOMDocument();
@@ -1084,6 +1099,12 @@
         
         // Import content
 		$zp_xml = $zp_import_contents->get_request_contents( $zp_import_url, false );
+		
+		// Report any errors returned from Zotero
+		if ( trim(strtolower($zp_xml)) == "forbidden" )
+		{
+			return "Zotero is telling Zotpress that access is forbidden. Are you sure that the Zotero API key you're using for this account is correct?";
+		}
         
         // Make it DOM-traversable 
         $doc_citations = new DOMDocument();

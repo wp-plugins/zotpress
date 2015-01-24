@@ -269,7 +269,7 @@
 		
 		$zp_results = $wpdb->get_results($zp_query, OBJECT);
 		
-		$zp_output = "<ul>\n";
+		$zp_output = "<li class='zp-NestedCollection'><ul>\n";
 		
 		foreach ($zp_results as $zp_collection)
 		{
@@ -288,7 +288,7 @@
 			$zp_output .= zp_get_subcollections($wpdb, $api_user_id, $zp_collection->item_key, $sortby, $order, $link);
 		}
 		
-		$zp_output .= "</ul>\n";
+		$zp_output .= "</ul></li>\n";
 		
 		return $zp_output;
     }

@@ -19,10 +19,21 @@
         
         
         // ZOTERO ACCOUNTS TABLE
+		
+		/**
+		 * For each table, the basic check is:
+		 *
+		 * If the table version option doesn't exist, OR
+		 * If the table version is not the same as the update version (variables defined above)
+		 *
+		 * Then add/update the table and add/update the option
+		 */
         
-        if (!get_option("Zotpress_main_db_version")
+        if
+			(
+				!get_option("Zotpress_main_db_version")
                 || get_option("Zotpress_main_db_version") != $Zotpress_main_db_version
-                )
+            )
         {
 			$table_name = $wpdb->prefix . "zotpress";
             
@@ -67,28 +78,36 @@
         
         
         // ZOTERO ITEMS TABLE
-        
         if ( !get_option("Zotpress_zoteroItems_db_version")
                 || get_option("Zotpress_zoteroItems_db_version") != $Zotpress_zoteroItems_db_version
            )
         {
 			$table_name = $wpdb->prefix . "zotpress_zoteroItems";
             
-            $wpdb->query(
-                "
-                ALTER TABLE $table_name DROP PRIMARY KEY;
-                "
-            );
-            
-            // Remove any duplicates before updating structure
-            // Thanks to http://www.semicolon.co.za/mysql_tutorials/finding-and-removing-duplicates-in-mysql-database-ii.html
-            $wpdb->query(
-                "
-                DELETE u1 FROM $table_name u1, $table_name u2 
-                WHERE u1.id < u2.id 
-                AND (u1.item_key = u2.item_key AND u1.api_user_id = u2.api_user_id);
-                "
-            );
+			// Check if table exists first, then, alter it
+			$table_exists = $wpdb->query( "SELECT COUNT(table_name) AS count 
+					FROM INFORMATION_SCHEMA.TABLES 
+				    WHERE table_schema = '".$wpdb->dbname."' 
+					AND table_name = '$table_name'");
+			
+			if ( $table_exists == 1 )
+			{
+				$wpdb->query(
+					"
+					ALTER TABLE $table_name DROP PRIMARY KEY;
+					"
+				);
+				
+				// Remove any duplicates before updating structure
+				// Thanks to http://www.semicolon.co.za/mysql_tutorials/finding-and-removing-duplicates-in-mysql-database-ii.html
+				$wpdb->query(
+					"
+					DELETE u1 FROM $table_name u1, $table_name u2 
+					WHERE u1.id < u2.id 
+					AND (u1.item_key = u2.item_key AND u1.api_user_id = u2.api_user_id);
+					"
+				);
+			}
 			
             $structure = "CREATE TABLE $table_name (
                 id INT(9) AUTO_INCREMENT,
@@ -200,19 +219,28 @@
         {
             $table_name = $wpdb->prefix . "zotpress_zoteroRelItemColl";
             
-            $wpdb->query(
-                "
-                ALTER TABLE $table_name DROP PRIMARY KEY;
-                "
-            );
-            
-            $wpdb->query(
-                "
-                DELETE u1 FROM $table_name u1, $table_name u2 
-                WHERE u1.id < u2.id 
-                AND (u1.item_key = u2.item_key AND u1.collection_key = u2.collection_key AND u1.api_user_id = u2.api_user_id);
-                "
-            );
+			// Check if table exists first, then, alter it
+			$table_exists = $wpdb->query( "SELECT COUNT(table_name) AS count 
+					FROM INFORMATION_SCHEMA.TABLES 
+				    WHERE table_schema = '".$wpdb->dbname."' 
+					AND table_name = '$table_name'");
+			
+			if ( $table_exists == 1 )
+			{
+				$wpdb->query(
+					"
+					ALTER TABLE $table_name DROP PRIMARY KEY;
+					"
+				);
+				
+				$wpdb->query(
+					"
+					DELETE u1 FROM $table_name u1, $table_name u2 
+					WHERE u1.id < u2.id 
+					AND (u1.item_key = u2.item_key AND u1.collection_key = u2.collection_key AND u1.api_user_id = u2.api_user_id);
+					"
+				);
+			}
             
             $structure = "CREATE TABLE $table_name (
                 id INT(9) AUTO_INCREMENT,
@@ -238,19 +266,28 @@
         {
             $table_name = $wpdb->prefix . "zotpress_zoteroRelItemTags";
             
-            $wpdb->query(
-                "
-                ALTER TABLE $table_name DROP PRIMARY KEY;
-                "
-            );
-            
-            $wpdb->query(
-                "
-                DELETE u1 FROM $table_name u1, $table_name u2 
-                WHERE u1.id < u2.id 
-                AND (u1.item_key = u2.item_key AND u1.tag_title = u2.tag_title AND u1.api_user_id = u2.api_user_id);
-                "
-            );
+			// Check if table exists first, then, alter it
+			$table_exists = $wpdb->query( "SELECT COUNT(table_name) AS count 
+					FROM INFORMATION_SCHEMA.TABLES 
+				    WHERE table_schema = '".$wpdb->dbname."' 
+					AND table_name = '$table_name'");
+			
+			if ( $table_exists == 1 )
+			{
+				$wpdb->query(
+					"
+					ALTER TABLE $table_name DROP PRIMARY KEY;
+					"
+				);
+				
+				$wpdb->query(
+					"
+					DELETE u1 FROM $table_name u1, $table_name u2 
+					WHERE u1.id < u2.id 
+					AND (u1.item_key = u2.item_key AND u1.tag_title = u2.tag_title AND u1.api_user_id = u2.api_user_id);
+					"
+				);
+			}
             
             $structure = "CREATE TABLE $table_name (
                 id INT(9) AUTO_INCREMENT,
@@ -373,8 +410,19 @@
 // UPDATE ------------------------------------------------------------------------------------------
 
 
-    if ( !get_option( "Zotpress_update_version" )
-            || get_option("Zotpress_update_version") != $GLOBALS['Zotpress_update_db_by_version'] )
+	/**
+	 *
+	 * If update check option doesn't exist, OR
+	 * If it exists but it's not the same version as the database update version
+	 *
+	 * Then, run the install, which installs or updates the databases
+	 *
+	**/
+    if
+		(
+			!get_option( "Zotpress_update_version" )
+			|| get_option("Zotpress_update_version") != $GLOBALS['Zotpress_update_db_by_version']
+		)
     {
         Zotpress_install();
         

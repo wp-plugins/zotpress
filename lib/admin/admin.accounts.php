@@ -80,14 +80,6 @@ if ( current_user_can('edit_others_posts') )
 									$code .= $account->nickname;
 								$code .= "</td>\n";
 								
-								// STATUS
-								//$code .= "                          <td class='status'>";
-								//if ( $account->version != $GLOBALS['Zotpress_update_db_by_version'] )
-								//	$code .= "<span class='status_bad'>&#10007;</span>";
-								//else
-								//	$code .= "<span class='status_good'>&#10004;</span>";
-								//$code .= "</td>\n";
-								
 								// ACTIONS
 								$code .= "                          <td class='actions last'>\n";
 								//$code .= "                              <a title='Sync' class='sync' rel='".$account->api_user_id."' href='javascript:void(0);'><span class='icon'></span>Sync</a>\n";
