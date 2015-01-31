@@ -269,14 +269,17 @@
 		
 		$zp_results = $wpdb->get_results($zp_query, OBJECT);
 		
-		$zp_output = "<li class='zp-NestedCollection'><ul>\n";
+		$zp_output = "";
+		
+		//$zp_output = "<li class='zp-NestedCollection'><ul>\n";
+		$zp_output .= "<ul class='zp-NestedCollection'>\n";
 		
 		foreach ($zp_results as $zp_collection)
 		{
-			$zp_output .= "<li rel=\"" . $zp_collection->item_key . "\">";
+			$zp_output .= "<li>";
 			if ($link == "yes")
 			{
-				$zp_output .= "<a class='zp-CollectionLink' title='" . $zp_collection->title . "' rel='" . $zp_collection->item_key . "' href='" . $_SERVER["REQUEST_URI"];
+				$zp_output .= "<a class='zp-CollectionLink' title='" . $zp_collection->title . "' href='" . $_SERVER["REQUEST_URI"];
 				if ( strpos($_SERVER["REQUEST_URI"], "?") === false ) { $zp_output .= "?"; } else { $zp_output .= "&"; }
 				$zp_output .= "zpcollection=" . $zp_collection->item_key . "'>";
 			}
@@ -288,7 +291,8 @@
 			$zp_output .= zp_get_subcollections($wpdb, $api_user_id, $zp_collection->item_key, $sortby, $order, $link);
 		}
 		
-		$zp_output .= "</ul></li>\n";
+		//$zp_output .= "</ul></li>\n";
+		$zp_output .= "</ul>\n";
 		
 		return $zp_output;
     }

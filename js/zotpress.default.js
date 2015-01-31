@@ -62,7 +62,7 @@ jQuery(document).ready(function() {
 			}
 		);
 		
-		window.location = "admin.php?page=Zotpress&account_id="+id;
+		window.location = "admin.php?page=Zotpress&api_user_id="+id;
 	});
 	
 	
@@ -70,7 +70,7 @@ jQuery(document).ready(function() {
 	
 	jQuery('div#zp-Browse-Bar').delegate("select#zp-List-Tags", "change", function()
 	{
-		if ( jQuery(this).val() != "No tag selected" ) window.location = "admin.php?page=Zotpress&account_id="+jQuery('select#zp-FilterByAccount option:selected').val()+"&tag_id="+jQuery("option:selected", this).attr("rel");
+		if ( jQuery(this).val() != "No tag selected" ) window.location = "admin.php?page=Zotpress&api_user_id="+jQuery('select#zp-FilterByAccount option:selected').val()+"&tag_id="+jQuery("option:selected", this).attr("rel");
 	});
 	
 	
@@ -120,7 +120,7 @@ jQuery(document).ready(function() {
 		{
             attachment = zp_uploader.state().get('selection').first().toJSON();
 			var zp_xml_url = jQuery('#ZOTPRESS_PLUGIN_URL').text()
-					+ 'lib/actions/actions.php?image=true&api_user_id='+jQuery("#zp-FilterByAccount").find(":selected").attr("rel")+'&entry_id='+$this.attr('rel')+'&image_id='+attachment.id;
+					+ 'lib/actions/actions.php?image=true&api_user_id='+jQuery(".zp-Browse-Account-Default").attr("rel")+'&entry_id='+$this.attr('rel')+'&image_id='+attachment.id;
 			
 			// Save as featured image
 			jQuery.get( zp_xml_url, {}, function(xml)
@@ -156,7 +156,7 @@ jQuery(document).ready(function() {
         e.preventDefault();
 		$this = jQuery(this);
 		
-		var zp_xml_url = jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/actions/actions.php?remove=image&entry_id='+$this.attr('rel');
+		var zp_xml_url = jQuery('#ZOTPRESS_PLUGIN_URL').text() + 'lib/actions/actions.php?remove=image&image_id='+$this.parent().attr('rel');
 		
 		// Save as featured image
 		jQuery.get( zp_xml_url, {}, function(xml)

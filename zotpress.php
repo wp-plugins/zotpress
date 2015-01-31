@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 5.3.3
+    Version: 5.4
     Author URI: http://katieseaborn.com
     
 */
@@ -37,7 +37,7 @@
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( ZOTPRESS_PLUGIN_FILE ));
     define('ZOTPRESS_PLUGIN_DIR', dirname( __FILE__ ));
     define('ZOTPRESS_EXPERIMENTAL_EDITOR', FALSE); // Whether experimental editor feature is active or not
-    define('ZOTPRESS_VERSION', '5.3.3' );
+    define('ZOTPRESS_VERSION', '5.4' );
     
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
@@ -69,6 +69,7 @@
     include( dirname(__FILE__) . '/lib/shortcode/shortcode.php' );
     include( dirname(__FILE__) . '/lib/shortcode/shortcode.intext.php' );
     include( dirname(__FILE__) . '/lib/shortcode/shortcode.intextbib.php' );
+    include( dirname(__FILE__) . '/lib/shortcode/shortcode.lib.php' );
     
 // SHORTCODE -------------------------------------------------------------------------------------
 
@@ -273,6 +274,7 @@
     add_shortcode( 'zotpress', 'Zotpress_func' );
     add_shortcode( 'zotpressInText', 'Zotpress_zotpressInText' );
     add_shortcode( 'zotpressInTextBib', 'Zotpress_zotpressInTextBib' );
+    add_shortcode( 'zotpressLib', 'Zotpress_zotpressLib' );
     add_action( 'widgets_init', 'ZotpressSidebarWidgetInit' );
     
     // Conditionally serve shortcode scripts

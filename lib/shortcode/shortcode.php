@@ -565,7 +565,7 @@
                 */
                 
                 $current_title =  "";
-                $citation_notes = "";
+                $citation_notes = array();
                 $zp_notes_num = 1;
                 
                 $zp_output = "\n<div class=\"zp-Zotpress";
@@ -668,17 +668,32 @@
                             
                             if (count($zp_notes) > 0)
                             {
-                                $citation_notes .= "<li>\n<ul class='zp-Citation-Item-Notes'>\n";
-                                
-                                foreach ($zp_notes as $note) {
-                                    $note_json = json_decode($note->json);
-                                    $citation_notes .= "<li class='zp-Citation-note'>" . $note_json->note . "\n</li>\n";
-                                }
-                                
-                                $citation_notes .= "\n</ul>\n</li>\n\n";
+                                $temp_notes = "<li id=\"zp-Note-".$zp_citation["item_key"]."\">\n";
+								
+								// Only create a list if there's more than one note for this item
+								if ( count($zp_notes) == 1 )
+								{
+                                    $note_json = json_decode($zp_notes[0]->json);
+                                    $temp_notes .= $note_json->note . "\n";
+								}
+								else if ( count($zp_notes) > 1 )
+								{
+									$temp_notes .= "<ul class='zp-Citation-Item-Notes'>\n";
+									
+									foreach ($zp_notes as $note)
+									{
+										$note_json = json_decode($note->json);
+										$temp_notes .= "<li class='zp-Citation-note'>" . $note_json->note . "\n</li>\n";
+									}
+									$temp_notes .= "\n</ul>";
+								}
+								
+                                $temp_notes .= "\n</li>\n\n";
+								
+								$citation_notes[count($citation_notes)] = $temp_notes;
                                 
                                 // Add note reference
-                                $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"zp-Notes-Reference\">".$zp_notes_num."</sup> </div>" . '$2', $zp_citation['citation'], 1);
+                                $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"zp-Notes-Reference\"><a href=\"#zp-Note-".$zp_citation["item_key"]."\">".$zp_notes_num."</a></sup> </div>" . '$2', $zp_citation['citation'], 1);
                                 $zp_notes_num++;
                             }
                             unset($zp_notes);
@@ -761,9 +776,16 @@
                         $zp_output .= "</div><!--Entry-->\n\n";
                     }
                     
-                    // DISPLAY NOTES, if exist
-                    if (strlen($citation_notes) > 0)
-                        $zp_output .= "<div class='zp-Citation-Notes'>\n<h4>Notes</h4>\n<ol>\n" . $citation_notes . "</ol>\n</div><!-- .zp-Citation-Notes -->\n\n";
+                    // DISPLAY NOTES, if any exist
+                    if ( count($citation_notes) > 0 )
+					{
+						$zp_output .= "<div class='zp-Citation-Notes'>\n<h4>Notes</h4>\n<ol>\n";
+						
+						foreach ( $citation_notes as $citation_note )
+	                        $zp_output .= $citation_note;
+						
+						$zp_output .= "</ol>\n</div><!-- .zp-Citation-Notes -->\n\n";
+					}
                 }
                 
                 // No items to display
@@ -813,16 +835,19 @@
                     $zp_output .= "<li rel=\"" . $zp_collection->item_key . "\">";
                     if ($link == "yes")
                     {
-                        $zp_output .= "<a class='zp-CollectionLink' title='" . $zp_collection->title . "' rel='" . $zp_collection->item_key . "' href='" . $_SERVER["REQUEST_URI"];
+                        $zp_output .= "<a class='zp-CollectionLink' title='" . $zp_collection->title . "' href='" . $_SERVER["REQUEST_URI"];
                         if ( strpos($_SERVER["REQUEST_URI"], "?") === false ) { $zp_output .= "?"; } else { $zp_output .= "&"; }
                         $zp_output .= "zpcollection=" . $zp_collection->item_key . "'>";
                     }
                     $zp_output .= $zp_collection->title;
                     if ($link == "yes") { $zp_output .= "</a>"; }
-                    $zp_output .= "</li>\n";
+					
+					// Place nested collections here
                     
                     if ($zp_collection->numCollections > 0)
                         $zp_output .= zp_get_subcollections($wpdb, $api_user_id, $zp_collection->item_key, $sortby, $order, $link);
+					
+                    $zp_output .= "</li>\n";
                 }
                 
                 $zp_output .= "</ul>\n";

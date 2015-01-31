@@ -276,15 +276,15 @@
     else if ( isset($_GET['remove']) && $_GET['remove'] == "image" )
     {
         // Set up error array
-        $errors = array("entry_id_blank"=>array(0,"<strong>Entry ID</strong> was left blank or formatted incorrectly."));
+        $errors = array("image_id_blank"=>array(0,"<strong>Image ID</strong> was left blank or formatted incorrectly."));
         
         
         // BASIC VARS
-        $entry_id = false;
-        if (preg_match("/^[0-9]+$/", $_GET['entry_id']))
-            $entry_id = htmlentities(trim($_GET['entry_id']));
+        $image_id = false;
+        if (preg_match("/^[A-Z0-9]+$/", $_GET['image_id']))
+            $image_id = htmlentities(trim($_GET['image_id']));
         else
-            $errors['entry_id_blank'][0] = 1;
+            $errors['image_id_blank'][0] = 1;
         
         
         // CHECK ERRORS
@@ -306,16 +306,15 @@
             $wpdb->query( 
                 $wpdb->prepare( 
                     "
-                    UPDATE ".$wpdb->prefix."zotpress_zoteroItems
-                    SET image=NULL
-                    WHERE id=%s
+                    DELETE FROM ".$wpdb->prefix."zotpress_zoteroItemImages
+                    WHERE item_key=%s
                     ",
-                    $entry_id
+                    $image_id
                 )
             );
             
             //if ( $zp_set_entry_image !== false )
-                $xml .= "<result success='true' citation_id='".$entry_id."' />\n";
+                $xml .= "<result success='true' image_id='".$image_id."' />\n";
             //else
                 //$xml .= "<result success='false' />\n";
         }

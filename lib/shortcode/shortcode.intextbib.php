@@ -89,7 +89,7 @@
         $current_title =  "";
         $citation_abstract = "";
         $citation_tags = "";
-        $citation_notes = "";
+        $citation_notes = array();
         $zp_notes_num = 1;
         
         $zp_output = "\n<div class=\"zp-Zotpress";
@@ -177,17 +177,32 @@
                     
                     if (count($zp_notes) > 0)
                     {
-                        $citation_notes = "<li>\n<ul class='zp-Citation-Item-Notes'>\n";
+                        $temp_notes = "<li id=\"zp-Note-".$zp_citation["item_key"]."\">\n";
                         
-                        foreach ($zp_notes as $note) {
-                            $note_json = json_decode($note->json);
-                            $citation_notes .= "<li class='zp-Citation-Note'>" . $note_json->note . "\n</li>\n";
+                        // Only create a list if there's more than one note for this item
+                        if ( count($zp_notes) == 1 )
+                        {
+                            $note_json = json_decode($zp_notes[0]->json);
+                            $temp_notes .= $note_json->note . "\n";
+                        }
+                        else if ( count($zp_notes) > 1 )
+                        {
+                            $temp_notes .= "<ul class='zp-Citation-Item-Notes'>\n";
+                            
+                            foreach ($zp_notes as $note)
+                            {
+                                $note_json = json_decode($note->json);
+                                $temp_notes .= "<li class='zp-Citation-note'>" . $note_json->note . "\n</li>\n";
+                            }
+                            $temp_notes .= "\n</ul>";
                         }
                         
-                        $citation_notes .= "\n</ul>\n</li>\n\n";
+                        $temp_notes .= "\n</li>\n\n";
+                        
+                        $citation_notes[count($citation_notes)] = $temp_notes;
                         
                         // Add note reference
-                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"zp-Notes-Reference\">".$zp_notes_num."</sup> </div>" . '$2', $zp_citation['citation'], 1);
+                        $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"zp-Notes-Reference\"><a href=\"#zp-Note-".$zp_citation["item_key"]."\">".$zp_notes_num."</a></sup> </div>" . '$2', $zp_citation['citation'], 1);
                         $zp_notes_num++;
                     }
                     unset($zp_notes);
@@ -292,8 +307,15 @@
         }
         
         // DISPLAY NOTES, if exist
-        if (strlen($citation_notes) > 0)
-            $zp_output .= "<div class='zp-Citation-Notes'>\n<h4>Notes</h4>\n<ol>\n" . $citation_notes . "</ol>\n</div><!-- .zp-Citation-Notes -->\n\n";
+        if ( count($citation_notes) > 0 )
+        {
+            $zp_output .= "<div class='zp-Citation-Notes'>\n<h4>Notes</h4>\n<ol>\n";
+            
+            foreach ( $citation_notes as $citation_note )
+                $zp_output .= $citation_note;
+            
+            $zp_output .= "</ol>\n</div><!-- .zp-Citation-Notes -->\n\n";
+        }
         
         $zp_output .= "</div><!--.zp-Zotpress-->\n\n";
         

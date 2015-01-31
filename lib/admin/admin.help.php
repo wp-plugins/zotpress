@@ -40,6 +40,10 @@
                     <p><strong><span class="number">3</span>The Zotpress Sidebar Widget</strong></p>
                     <p class="indent">Use this widget in a sidebar to generate a bibliography. <a title="Learn more" href="#widget">Learn more &raquo;</a></p>
                 </li>
+                <li>
+                    <p><strong><span class="number">4</span>The Zotpress Library Shortcode</strong></p>
+                    <p class="indent">Use this shortcode to display your Zotero library on the front-end of your website so that visitors can browse it. <a title="Learn more" href="#lib">Learn more &raquo;</a></p>
+                </li>
             </ol>
             
             <p>
@@ -351,6 +355,23 @@
             <h3>Displaying Citations Using the Zotpress Sidebar Widget</h3>
             
             <p>You can drag-n-drop a Zotpress sidebar widget on your <a title="Widgets" href="widgets.php">Widgets</a> page. Fill out the form, save, and you're done.</p>
+            
+            
+            
+            <hr />
+            
+            <a name="lib"></a>
+            <h3>Displaying Your Library Using the Zotpress Library Shortcode</h3>
+            
+            <p>
+                To display your library on the front-end of your website so that visitors can browse it, use this shortcode:
+            </p>
+            
+            <code>
+                [zotpressLib userid="00000"]
+            </code>
+            
+            <p>Alternatively, you can use the "nickname" attribute instead of the "userid" attribute.
             
             
             

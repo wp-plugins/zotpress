@@ -23,6 +23,42 @@ jQuery(document).ready(function()
     //        alert("error - not time to update yet");
     //    }
     //});
+	
+	
+	
+    /*
+        
+        BROWSE LIB SHORTCODE
+        
+    */
+	
+	if ( jQuery("#zp-Browse").length > 0 )
+	{
+		// NAVIGATE BY COLLECTION
+		
+		jQuery('div#zp-Browse-Bar').delegate("select#zp-Browse-Collections-Select", "change", function()
+		{
+			var zpHref = window.location.href.split("?");
+			
+			if ( jQuery(this).val() != "blank" )
+			{
+				if ( jQuery(this).val() != "toplevel" ) window.location = zpHref[0] + "?collection_id="+jQuery("option:selected", this).val();
+				else window.location = zpHref[0];
+			}
+		});
+		
+		
+		// NAVIGATE BY TAG
+		
+		jQuery('div#zp-Browse-Bar').delegate("select#zp-List-Tags", "change", function()
+		{
+			var zpHref = window.location.href.split("?");
+			
+			if ( jQuery(this).val() != "No tag selected" ) window.location = zpHref[0] + "?tag_id="+jQuery("option:selected", this).attr("rel");
+			else window.location = zpHref[0];
+		});
+	}
+	
     
     
     
