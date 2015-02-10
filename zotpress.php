@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 5.4.1
+    Version: 5.4.2
     Author URI: http://katieseaborn.com
     
 */
@@ -37,7 +37,7 @@
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( ZOTPRESS_PLUGIN_FILE ));
     define('ZOTPRESS_PLUGIN_DIR', dirname( __FILE__ ));
     define('ZOTPRESS_EXPERIMENTAL_EDITOR', FALSE); // Whether experimental editor feature is active or not
-    define('ZOTPRESS_VERSION', '5.4.1' );
+    define('ZOTPRESS_VERSION', '5.4.2' );
     
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
@@ -348,7 +348,12 @@
 	add_filter('gettext', 'zp_nonce_message');
 	
 	// Make sure that nonces live at least 12 hours
-	add_filter( 'nonce_life', function () { return 12 * HOUR_IN_SECONDS; } );
+	//add_filter( 'nonce_life', function () { return 12 * HOUR_IN_SECONDS; } ); // Breaking on some servers
+	
+	function zp_nonce_life() {
+		return 12 * HOUR_IN_SECONDS;
+	}
+	add_filter( 'nonce_life', 'zp_nonce_life' );
 
 // IMPORT -----------------------------------------------------------------------------------------
 
