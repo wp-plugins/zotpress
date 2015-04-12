@@ -118,5 +118,62 @@
 		margin: 0 0 1em 1em;
 	}
 	
+	#zp-Zotpress-SearchBox input[type="radio"] {
+		cursor: pointer;
+		margin: 0.5em;
+		vertical-align: middle;
+	}
+	#zp-Zotpress-SearchBox label {
+		cursor: pointer;
+	}
+	
+	.zpSearchLoading {
+		visibility: hidden;
+		display: block;
+		margin: 1em auto;
+	}
+	.zpSearchLoading.show {
+		visibility: visible;
+	}
+	
+	.zpSearchResultsItem .item_key {
+		display: block;
+		font-weight: bold;
+		margin-bottom: 2em;
+	}
+	
+	.zpSearchResultsItem.hidden {
+		display: none;
+	}
+	
+	#zpSearchResultsPaging:before,
+	#zpSearchResultsPaging:after {
+		content: "";
+		display: table;
+	}
+	#zpSearchResultsPaging:after {
+		clear: both;
+	}
+	#zpSearchResultsPaging span.title {
+		display: block;
+		float: left;
+		font-weight: bold;
+		margin: 2px; margin-left: 0;
+		padding: 0.5em 1em 0.5em 0;
+		text-transform: uppercase;
+	}
+	#zpSearchResultsPaging a {
+		border: none;
+		display: block;
+		float: left;
+		margin: 2px;
+		padding: 0.5em 1em;
+		text-decoration: none;
+	}
+	#zpSearchResultsPaging a.selected {
+		border: 2px solid #000;
+		margin: 0;
+	}
+	
 	/* END OF BROWSE LIB */
 	

@@ -291,7 +291,7 @@
                 
                 // HYPERLINK DOIs
                 if ( isset($zp_this_meta->DOI) )
-                    $zp_citation['citation'] = str_replace( "doi:".$zp_this_meta->DOI, "<a href='http://dx.doi.org/".$zp_this_meta->DOI."'>doi:".$zp_this_meta->DOI."</a>", $zp_citation['citation'] );
+                    $zp_citation['citation'] = str_replace( 'http://doi.org/'.$zp_this_meta->DOI, "<a href='http://doi.org/".$zp_this_meta->DOI."'>http://doi.org/".$zp_this_meta->DOI."</a>", $zp_citation['citation'] );
                     
                 // SHOW CURRENT STYLE AS REL
                 $zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );

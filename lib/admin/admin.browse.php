@@ -28,8 +28,29 @@
 			if ( get_option("Zotpress_DefaultAccount") )
 			{
 				$zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".get_option("Zotpress_DefaultAccount")."'", OBJECT);
-				$api_user_id = $zp_account->api_user_id;
-				$account_name = $zp_account->nickname;
+				
+				if ( count($zp_account) > 0 )
+				{
+					$api_user_id = $zp_account->api_user_id;
+					$account_name = $zp_account->nickname;
+				}
+				else
+				{
+					$zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1");
+					
+					if (count($zp_account) > 0)
+					{
+						$account_name = $zp_account->nickname;
+						$account_type = $zp_account->account_type;
+						$api_user_id = $zp_account->api_user_id;
+						$public_key = $zp_account->public_key;
+						$nickname = $zp_account->nickname;
+					}
+					else
+					{
+						$api_user_id = false;
+					}
+				}
 			}
 			else
 			{
@@ -66,6 +87,7 @@
 		
 		$zpLib = new zotpressBrowse;
 		$zpLib->setAccount($api_user_id);
+		$zpLib->setType("dropdown");
 	?>
     
     <div id="zp-Zotpress" class="wrap">

@@ -10,7 +10,7 @@
     
     function zp_db_prep ($input)
     {
-        $input = str_replace("%", "%%", $input);
+        $input =  str_replace("%", "%%", $input);
         return ($input);
     }
     
@@ -745,12 +745,12 @@
 				
 				if ( isset($i_json->collections) && count($i_json->collections) > 0 )
 					foreach ( $i_json->collections as $i_collection )
-						$zp_relItemColl .= "('" . $GLOBALS['zp_session'][$api_user_id]['items']['query_params'][$i-3] . "', '" . $i_json->itemKey . "', '" . htmlentities($i_collection) . "'), ";
+						$zp_relItemColl .= "('" . $GLOBALS['zp_session'][$api_user_id]['items']['query_params'][$i-3] . "', '" . $i_json->itemKey . "', '" . htmlentities($i_collection, ENT_QUOTES ) . "'), ";
 				
 				if ( isset($i_json->tags) && count($i_json->tags) > 0 )
 					foreach ( $i_json->tags as $i_tag )
 						if ( trim($i_tag->tag) != "" )
-							$zp_relItemTags .= "('" . $GLOBALS['zp_session'][$api_user_id]['items']['query_params'][$i-3] . "', '" . $i_json->itemKey . "', '" . htmlentities($i_tag->tag) . "'), ";
+							$zp_relItemTags .= "('" . $GLOBALS['zp_session'][$api_user_id]['items']['query_params'][$i-3] . "', '" . $i_json->itemKey . "', '" . htmlentities($i_tag->tag, ENT_QUOTES ) . "'), ";
 			}
 			
 			// Prepare string: remove extra comma and space OR set to blank if nothing to add
@@ -767,8 +767,8 @@
 			}
 			
 			// Execute queries
-			$wpdb->query( $zp_relItemColl );
-			$wpdb->query( $zp_relItemTags );
+			if ( strlen($zp_relItemColl) > 0 ) $wpdb->query( $zp_relItemColl );
+			if ( strlen($zp_relItemTags) > 0 ) $wpdb->query( $zp_relItemTags );
             $wpdb->query(
 				$wpdb->prepare( 
 					"   INSERT IGNORE INTO ".$wpdb->prefix."zotpress_zoteroItems

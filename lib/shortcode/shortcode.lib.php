@@ -12,6 +12,12 @@
             'userid' => false,
             'nickname' => false,
             'nick' => false,
+			
+			'type' => false, // dropdown, searchbar
+			'searchby' => false, // searchbar only - all [default], collections, items, tags
+			'minlength' => 3, // searchbar only - 3 [default]
+			'maxresults' => 100,
+			'maxperpage' => 10
             
         ), $atts, "zotpress"));
         
@@ -25,6 +31,31 @@
         
         if ($nickname) $nickname = str_replace('"','',html_entity_decode($nickname));
         if ($nick) $nickname = str_replace('"','',html_entity_decode($nick));
+		
+		
+		// Type of display
+		if ( $type ) $type = str_replace('"','',html_entity_decode($type));
+		else $type = "dropdown";
+		
+		// Enqueue autocomplete UI scripts if type is "searchbar"
+		if ( $type == "searchbar" )
+		{
+			wp_enqueue_script( 'jquery-ui-autocomplete' );
+            wp_enqueue_script( 'zotpress.lib.searchbar.js', ZOTPRESS_PLUGIN_URL . 'js/zotpress.lib.searchbar.js', array( 'jquery' ) );
+		}
+		
+		
+		// Filters
+		if ( $searchby ) $searchby = str_replace('"','',html_entity_decode($searchby));
+		
+		// Min length
+		if ( $minlength ) $minlength = str_replace('"','',html_entity_decode($minlength));
+		
+		// Max results
+		if ( $maxresults ) $maxresults = str_replace('"','',html_entity_decode($maxresults));
+		
+		// Max per page
+		if ( $maxperpage ) $maxperpage = str_replace('"','',html_entity_decode($maxperpage));
 		
 		
 		// Get API User ID
@@ -67,6 +98,11 @@
 		$zpLib = new zotpressBrowse;
 		
 		$zpLib->setAccount($api_user_id);
+		$zpLib->setType($type);
+		if ( $searchby ) $zpLib->setFilters($searchby);
+		$zpLib->setMinLength($minlength);
+		$zpLib->setMaxResults($maxresults);
+		$zpLib->setMaxPerPage($maxperpage);
 		
 		$zpLib->getLib();
 	}

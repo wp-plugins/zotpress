@@ -6,7 +6,7 @@
     Plugin URI: http://katieseaborn.com/plugins
     Description: Bringing Zotero and scholarly blogging to your WordPress website.
     Author: Katie Seaborn
-    Version: 5.4.2
+    Version: 5.5
     Author URI: http://katieseaborn.com
     
 */
@@ -37,7 +37,7 @@
     define('ZOTPRESS_PLUGIN_URL', plugin_dir_url( ZOTPRESS_PLUGIN_FILE ));
     define('ZOTPRESS_PLUGIN_DIR', dirname( __FILE__ ));
     define('ZOTPRESS_EXPERIMENTAL_EDITOR', FALSE); // Whether experimental editor feature is active or not
-    define('ZOTPRESS_VERSION', '5.4.2' );
+    define('ZOTPRESS_VERSION', '5.5' );
     
     $GLOBALS['zp_is_shortcode_displayed'] = false;
     $GLOBALS['zp_shortcode_instances'] = array();
@@ -338,20 +338,21 @@
 
     include( dirname(__FILE__) . '/lib/import/import.actions.php' );
 	
-	function zp_nonce_message ($translation)
-	{
-		if ( $translation == 'Are you sure you want to do this?' )
-			return 'Access denied: You cannot access this Zotpress page.';
-		else
-			return $translation;
-	}
-	add_filter('gettext', 'zp_nonce_message');
+	// NOTE: This overwrites the error everywhere. How to limit to Zotpress?
+	//function zp_nonce_message ($translation)
+	//{
+	//	if ( $translation == 'Are you sure you want to do this?' )
+	//		return 'Access denied: You cannot access this Zotpress page.';
+	//	else
+	//		return $translation;
+	//}
+	//add_filter('gettext', 'zp_nonce_message');
 	
 	// Make sure that nonces live at least 12 hours
 	//add_filter( 'nonce_life', function () { return 12 * HOUR_IN_SECONDS; } ); // Breaking on some servers
 	
 	function zp_nonce_life() {
-		return 12 * HOUR_IN_SECONDS;
+		return 24 * HOUR_IN_SECONDS;
 	}
 	add_filter( 'nonce_life', 'zp_nonce_life' );
 

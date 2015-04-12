@@ -349,14 +349,6 @@
             <p>The <code>[zotpressInTextBib]</code> shortcode takes the same attributes as the <code>[zotpress]</code> shortcode, minus the "userid," "nickname," and "limit" attributes.</p>
             
             
-            <hr />
-            
-            <a name="widget"></a>
-            <h3>Displaying Citations Using the Zotpress Sidebar Widget</h3>
-            
-            <p>You can drag-n-drop a Zotpress sidebar widget on your <a title="Widgets" href="widgets.php">Widgets</a> page. Fill out the form, save, and you're done.</p>
-            
-            
             
             <hr />
             
@@ -371,7 +363,79 @@
                 [zotpressLib userid="00000"]
             </code>
             
-            <p>Alternatively, you can use the "nickname" attribute instead of the "userid" attribute.
+            
+            <h4 style="clear:both;">Library Shortcode Attributes</h4>
+            
+            <table class="zp-Documentation" border="0" cellpadding="0" cellspacing="0">
+                
+                <tr class="main">
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Attribute</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                
+                <tr>
+                    <td rowspan="6" class="category">Filtering</td>
+                    
+                    <td rowspan="2" class="type">Account</td>
+                    
+                    <td class="code">userid</td>
+                    <td><p>Display a list of citations from a particular user or group. <strong>REQUIRED if you have multiple accounts and are not using the "nickname" parameter.</strong> If neither is entered, it will default to the first user account listed.</p></td>
+                    <td class="example"><p><code>[zotpressLib userid="00000"]</code></p></td>
+                </tr>
+                <tr>
+                    <td class="code">nickname</td>
+                    <td><p>Display a list of citations by a particular Zotero account nickname. <strong>Hint:</strong> You can give your Zotero account a nickname on the <a title="Accounts" href="admin.php?page=Zotpress&amp;accounts=true">Accounts page</a>.</p></td>
+                    <td class="example"><p><code>[zotpressLib nickname="Katie"]</code></p></td>
+                </tr>
+                <tr class="zebra">
+                    <td rowspan="4" class="type">Data</td>
+                    
+                    <td class="code">searchby</td>
+                    <td><p><strong>Search bar only.</strong> Set what content types can be used in the search. <strong>Options:</strong> items [default], collections, tags</p></td>
+                    <td class="example"><p><code>[zotpressLib userid="00000" type="searchbar" searchby="tags"]</code></p><p>Or multiple:<p><code>[zotpressLib userid="00000" type="searchbar" searchby="items,tags"]</code></p></td>
+                </tr>
+                <tr class="zebra">
+                    <td class="code">minlength</td>
+                    <td><p><strong>Search bar only.</strong> Minimum length of query before autcomplete starts searching. <strong>Options:</strong> 3 [default] or any number (although 3+ is best)</p></td>
+                    <td class="example"><p><code>[zotpressLib userid="00000" type="searchbar" minlength="4"]</code></p></td>
+                </tr>
+                <tr class="zebra">
+                    <td class="code">maxresults</td>
+                    <td><p><strong>Search bar only.</strong> Maximum number of results to request from database per query. <strong>Options:</strong> 100 [default] or any number (although lower is better)</p></td>
+                    <td class="example"><p><code>[zotpressLib userid="00000" type="searchbar" maxresults="20"]</code></p></td>
+                </tr>
+                <tr class="zebra">
+                    <td class="code">maxperpage</td>
+                    <td><p><strong>Search bar only.</strong> Maximum number of result items per pagination page. <strong>Options:</strong> 10 [default] or any number (although lower is better)</p></td>
+                    <td class="example"><p><code>[zotpressLib userid="00000" type="searchbar" maxperpage="5"]</code></p></td>
+                </tr>
+                
+                <tr class="last">
+                    <td rowspan="1" class="category last">Display</td>
+                    
+                    <td rowspan="1" class="type last">Settings</td>
+                    
+                    <td class="code last">type</td>
+                    <td>
+                        <p>Type of library navigation used. <strong>Options:</strong> dropdown [default], searchbar</p>
+                    </td>
+                    <td class="example">
+                        <p><code>[zotpressLib userid="00000" type="searchbar"]</code></p>
+                    </td>
+                </tr>
+                
+            </table>
+            
+            
+            <hr />
+            
+            <a name="widget"></a>
+            <h3>Displaying Citations Using the Zotpress Sidebar Widget</h3>
+            
+            <p>You can drag-n-drop a Zotpress sidebar widget on your <a title="Widgets" href="widgets.php">Widgets</a> page. Fill out the form, save, and you're done.</p>
             
             
             

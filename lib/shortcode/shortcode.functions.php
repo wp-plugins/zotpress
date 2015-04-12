@@ -54,10 +54,9 @@
 			{
 				$author[$key] = $val["author"];
 				
-				if ( isset( $val["zpdate"] ) )
-					$date[$key] = zp_date_format($val["zpdate"]);
-				else
-					$date[$key] = zp_date_format($val["date"]);
+				$zpdate = ""; if ( isset( $val["zpdate"] ) ) $zpdate = $val["zpdate"]; else $zpdate = $val["date"];
+				
+				$date[$key] = zp_date_format($zpdate);
 			}
 		}
 		
@@ -71,8 +70,9 @@
 			}
 		}
 		
+		// NOTE: array_multisort seems to be ignoring second sort for date->author
 		if ( $sortby == "author" && isset($author) && is_array($author) ) array_multisort( $author, $order, $date, $order, $item_arr );
-		else if ( $sortby == "date" && isset($date) && is_array($date) ) array_multisort( $date, $order, $author, $order, $item_arr );
+		else if ( $sortby == "date" && isset($date) && is_array($date) ) array_multisort( $date, $order, $author, SORT_ASC, $item_arr );
 		else if ( $sortby == "title" && isset($title) && is_array($title) ) array_multisort( $title, $order, $author, $order, $item_arr );
 		
 		return $item_arr;
@@ -87,6 +87,7 @@
 	 *  - the dash equivalents of the above
 	 *  - mmmm dd, yyyy
 	 *  - yyyy mmmm, yyyy mmm (and the reverse)
+	 *  - mm-mm yyyy
 	 *
 	 * Used by:    subval_sort
 	 *
@@ -101,9 +102,19 @@
 		$list_month_short = array ( "01" => "Jan", "02" => "Feb", "03" => "Mar", "04" => "Apr", "05" => "May", "06" => "Jun", "07" => "Jul", "08" => "Aug", "09" => "Sept", "10" => "Oct", "11" => "Nov", "12" => "Dec" );
 		
 		
+		// Check if it's a mm-mm dash
+		if ( preg_match("/^[a-zA-Z]+[-][a-zA-Z]+[ ][0-9]+$/", $date ) == 1)
+		{
+			$temp1 = preg_split( "/-|\//", $date );
+			$temp2 = preg_split( "[\s]", $temp1[1] );
+			
+			$date = $temp1[0]." ".$temp2[1];
+		}
+		
 		// If it's already formatted with a dash or forward slash
 		if ( strpos( $date, "-" ) !== false || strpos( $date, "/" ) !== false )
 		{
+			// Break it up
 			$temp = preg_split( "/-|\//", $date );
 			
 			// If year is last, switch it with first
@@ -285,10 +296,12 @@
 			}
 			$zp_output .= $zp_collection->title;
 			if ($link == "yes") { $zp_output .= "</a>"; }
-			$zp_output .= "</li>\n";
 			
+			// Thanks to @mlwk for 2+ level nexted collections fix
 			if ($zp_collection->numCollections > 0)
-			$zp_output .= zp_get_subcollections($wpdb, $api_user_id, $zp_collection->item_key, $sortby, $order, $link);
+				$zp_output .= zp_get_subcollections($wpdb, $api_user_id, $zp_collection->item_key, $sortby, $order, $link);
+			
+			$zp_output .= "</li>\n";
 		}
 		
 		//$zp_output .= "</ul></li>\n";
