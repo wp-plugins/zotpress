@@ -231,7 +231,7 @@ class zotpressBrowse
                             
                             echo "<option class='zp-List-Tag' rel='".$zp_tag->id."'";
                             if ( $tag_id == $zp_tag->id ) echo " selected='selected'";
-                            echo ">".$zp_tag->title." (".$zp_tag->numItems.")";
+                            echo ">".str_replace("__and__", "&amp;", $zp_tag->title)." (".$zp_tag->numItems.")";
                             echo "</option>\n";
                         }
 						
@@ -326,7 +326,7 @@ class zotpressBrowse
 					else if ( $tag_id ) // Top Level
 					{
 						$tag_title = $wpdb->get_row("SELECT title FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$this->api_user_id."' AND id='".$tag_id."'", OBJECT);
-						echo "<div class='zp-Collection-Title'>Viewing items with the \"<strong>".$tag_title->title."</strong>\" tag</div>\n";
+						echo "<div class='zp-Collection-Title'>Viewing items with the \"<strong>".str_replace("__and__", "&amp;", $tag_title->title)."</strong>\" tag</div>\n";
 					}
 					else
 					{
@@ -423,7 +423,7 @@ class zotpressBrowse
 								LEFT JOIN ".$wpdb->prefix."zotpress_zoteroItemImages
 									ON ".$wpdb->prefix."zotpress_zoteroItems.item_key=".$wpdb->prefix."zotpress_zoteroItemImages.item_key
 									AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id=".$wpdb->prefix."zotpress_zoteroItemImages.api_user_id
-								WHERE ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title = '".$tag_title->title."' 
+								WHERE ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title = '".str_replace("__and__", "&amp;", $tag_title->title)."' 
 								AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment'
 								AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
 								AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$this->api_user_id."'

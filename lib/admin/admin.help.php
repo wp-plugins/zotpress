@@ -115,8 +115,8 @@
                     <td rowspan="2" class="type">Data</td>
                     
                     <td class="code">authors</td>
-                    <td><p>Alternative: <code>author</code>. Display a list of citations from a particular author or authors. <strong>Note:</strong> "Carl Sagan","C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are not the same as "Sagan".</p></td>
-                    <td class="example"><p><code>[zotpress author="Carl Sagan"]</code></p><p><code>[zotpress authors="Carl Sagan,Stephen Hawking"]</code></p></td>
+                    <td><p>Alternative: <code>author</code>. Display a list of citations from a particular author or authors. For authors with the same last name, use this format: (last, first). <strong>Note:</strong> "Carl Sagan","C. Sagan", "C Sagan", "Carl E. Sagan", "Carl E Sagan" and "Carl Edward Sagan" are <strong>not</strong> the same as "Sagan".</p></td>
+                    <td class="example"><p><code>[zotpress author="Carl Sagan"]</code></p><p><code>[zotpress authors="Carl Sagan,Stephen Hawking"]</code></p><p><code>[zotpress authors="(Sagan, Carl),(Hawking, Stephen)"]</code></p></td>
                 </tr>
                 <tr class="zebra">
                     <td class="code">years</td>

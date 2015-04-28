@@ -750,7 +750,7 @@
 				if ( isset($i_json->tags) && count($i_json->tags) > 0 )
 					foreach ( $i_json->tags as $i_tag )
 						if ( trim($i_tag->tag) != "" )
-							$zp_relItemTags .= "('" . $GLOBALS['zp_session'][$api_user_id]['items']['query_params'][$i-3] . "', '" . $i_json->itemKey . "', '" . htmlentities($i_tag->tag, ENT_QUOTES ) . "'), ";
+							$zp_relItemTags .= "('" . $GLOBALS['zp_session'][$api_user_id]['items']['query_params'][$i-3] . "', '" . $i_json->itemKey . "', '" . htmlentities(str_replace("&", "__and__", $i_tag->tag), ENT_QUOTES ) . "'), ";
 			}
 			
 			// Prepare string: remove extra comma and space OR set to blank if nothing to add
@@ -1141,7 +1141,7 @@
         
         foreach ($entries as $entry)
         {
-            $title = $entry->getElementsByTagName("title")->item(0)->nodeValue;
+            $title = str_replace("&", "__and__", $entry->getElementsByTagName("title")->item(0)->nodeValue);
             $retrieved = $entry->getElementsByTagName("updated")->item(0)->nodeValue;
             $numItems = $entry->getElementsByTagNameNS("http://zotero.org/ns/api", "numItems")->item(0)->nodeValue;
             

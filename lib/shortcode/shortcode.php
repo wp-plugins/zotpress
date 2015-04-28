@@ -91,7 +91,6 @@
         // Filter by author
         $author = str_replace('"','',html_entity_decode($author));
         if ($authors) $author = str_replace('"','',html_entity_decode($authors));
-        if (strpos($author, ",") > 0) $author = explode(",", $author);
         
         // Filter by year
         $year = str_replace('"','',html_entity_decode($year));
@@ -370,7 +369,7 @@
                         for ($i = 0; $i < count($tag_name); $i++)
                         {
                             if ($i != 0) $zp_query .= " AND ";
-                            $zp_query .= " zpRelItemTags".$i.".tag_title='".$tag_name[$i]."' ";
+                            $zp_query .= " zpRelItemTags".$i.".tag_title='".str_replace("&", "__and__", $tag_name[$i])."' ";
                         }
                         $zp_query .= " ) ";
                     }
@@ -418,7 +417,7 @@
                             
                             foreach ($tag_name as $i => $id)
                             {
-                                $zp_query .= $wpdb->prefix."zotpress_zoteroRelItemTags.tag_title='".$id."' ";
+                                $zp_query .= $wpdb->prefix."zotpress_zoteroRelItemTags.tag_title='".str_replace("&", "__and__", $id)."' ";
                                 
                                 if ($i != count($tag_name)-1) $zp_query .= " OR ";
                             }
@@ -428,7 +427,7 @@
                     // Single collection
                     else
                     {
-                        $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title='".$tag_name."' ";
+                        $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title='".str_replace("&", "__and__", $tag_name)."' ";
                     }
                 } // $tag_name
                 
@@ -437,27 +436,57 @@
                     $zp_query .= " AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id='".$api_user_id."'";
                 
                 // Filter by author
+				// Expects e.g. Name OR Name1,Name2 OR (NameLast,NameFirst)
+				// OR (Name1Last,Name1First),(Name1Last,Name1First)
                 if ($author)
                 {
                     $zp_query .= " AND ( ";
+					
+					$is_multiple_authors = false;
+					
+					// Deal with first and last name AND/OR multiple authors
+					if ( strpos($author, "(") > -1 )
+					{
+						$author = str_replace("), (", "),(", $author);
+						
+						// If multiple authors and first name exists:
+						if ( strpos($author, "),(") > -1)
+						{
+							$author = explode("),(", $author);
+							
+							foreach ( $author as $id => $fullname )
+							{
+								$author[$id] = explode(", ", str_replace("(", "", str_replace(")", "", $fullname)));
+							}
+							$is_multiple_authors = true;
+						}
+						else
+						{
+							// Just a single author
+							$author = array( explode(", ", str_replace("(", "", str_replace(")", "", $author))) );
+						}
+					}
+					else if ( strpos($author, ",") > -1 )
+					{
+						// Multiple last names
+						$author = explode(",", $author);
+						$is_multiple_authors = true;
+					}
                     
-                    // Multiple authors
-                    if (is_array($author))
+                    // Deal with multiple authors
+                    if ($is_multiple_authors)
                     {
                         foreach ($author as $i => $zp_author)
                         {
                             // Prep author
+							if ( is_array($zp_author) ) $zp_author = $zp_author[0];
                             $zp_author = strtolower(trim($zp_author));
                             if (strpos($zp_author, " ") > 0) $zp_author = preg_split("/\s+(?=\S*+$)/", $zp_author);
                             
-							// Deal with two last names by case
-							//if ( $zp_author[0] == "van" ) $zp_author[1] = "van " . $zp_author[1];
-							
                             if (is_array($zp_author)) // full name (or multiple last names)
                             {
                                 if ($inclusive == "yes" && $i != 0) $zp_query .= " OR "; else if ($inclusive != "yes" && $i != 0) $zp_query .= " AND ";
                                 
-                                //$zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$zp_author[1]."%'";
 	                            $zp_query .= " FIND_IN_SET( '".$zp_author[1]."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
 	                            $zp_query .= " OR FIND_IN_SET( '".implode(" ", $zp_author)."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
                             }
@@ -465,7 +494,6 @@
                             {
                                 if ($inclusive == "yes" && $i != 0) $zp_query .= " OR "; else if ($inclusive != "yes" && $i != 0) $zp_query .= " AND ";
                                 
-                                //$zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$zp_author."%'";
 	                            $zp_query .= " FIND_IN_SET( '".$zp_author."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
                             }
                         }
@@ -473,24 +501,20 @@
                     else // Single author
                     {
                         // Prep author
-                        $author = strtolower(trim($author));
-                        if ( strpos($author, " ") > 0 ) $author = preg_split("/\s+(?=\S*+$)/", $author);
+						if ( is_array($author) && is_array($author[0]) ) $zp_author = $author[0][0]; else $zp_author = $author;
+                        $zp_author = strtolower(trim($zp_author));
+                        if ( strpos($zp_author, " ") > 0 ) $zp_author = preg_split("/\s+(?=\S*+$)/", $zp_author);
 						
-						// Deal with two last names by case
-						//if ( $author[0] == "van" ) $author[1] = "van " . $author[1];
-                        
 						// Full name in array (or multiple last names)
-                        if (is_array($author))
+                        if (is_array($zp_author))
 						{
-                            //$zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$author[1]."%'";
-                            $zp_query .= " FIND_IN_SET( '".$author[1]."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
-                            $zp_query .= " OR FIND_IN_SET( '".implode(" ", $author)."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
+                            $zp_query .= " FIND_IN_SET( '".$zp_author[1]."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
+                            $zp_query .= " OR FIND_IN_SET( '".implode(" ", $zp_author)."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
 						}
 						// Last name only
                         else
 						{
-                            //$zp_query .= " ".$wpdb->prefix."zotpress_zoteroItems.author LIKE '%".$author."%'";
-                            $zp_query .= " FIND_IN_SET( '".$author."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
+                            $zp_query .= " FIND_IN_SET( '".$zp_author."', REPLACE(".$wpdb->prefix."zotpress_zoteroItems.author, ', ', ',') )";
 						}
                     }
                     $zp_query .= " ) ";
@@ -615,165 +639,194 @@
                         $zp_output .= "<span class=\"zp-Zotpress-Userid\" style=\"display:none;\">".$zp_citation['api_user_id']."</span>\n\n";
                         //$zp_output .= "<span class=\"ZOTPRESS_AUTOUPDATE_KEY\" style=\"display:none;\">" . $_SESSION['zp_session'][$zp_citation['api_user_id']]['key'] . "</span>\n\n";
                         
-                        
-                        // IMAGE
-                        if ($showimage && !is_null($zp_citation["itemImage"]) && $zp_citation["itemImage"] != "")
-                        {
-                            if ( is_numeric($zp_citation["itemImage"]) )
-                            {
-                                $zp_citation["itemImage"] = wp_get_attachment_image_src( $zp_citation["itemImage"], "full" );
-                                $zp_citation["itemImage"] = $zp_citation["itemImage"][0];
-                            }
-                            
-                            $citation_image = "<div id='zp-Citation-".$zp_citation["item_key"]."' class='zp-Entry-Image'>";
-                            $citation_image .= "<img src='".$zp_citation["itemImage"]."' alt='image' />";
-                            $citation_image .= "</div>\n";
-                            $has_citation_image = " zp-HasImage";
-                        }
-                        
-                        // TAGS
-                        // Grab tags associated with item
-                        if ( $showtags )
-                        {
-                            $zp_showtags_query = "SELECT DISTINCT ".$wpdb->prefix."zotpress_zoteroTags.title FROM ".$wpdb->prefix."zotpress_zoteroTags LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemTags ON ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title=".$wpdb->prefix."zotpress_zoteroTags.title WHERE ".$wpdb->prefix."zotpress_zoteroRelItemTags.item_key='".$zp_citation["item_key"]."' ORDER BY ".$wpdb->prefix."zotpress_zoteroTags.title ASC;";
-                            $zp_showtags_results = $wpdb->get_results($zp_showtags_query, ARRAY_A);
-                            
-                            if ( count($zp_showtags_results) > 0)
-                            {
-                                $citation_tags = "<p class='zp-Zotpress-ShowTags'><span class='title'>Tags:</span> ";
-                                
-                                foreach ($zp_showtags_results as $i => $zp_showtags_tag)
-                                {
-                                    $citation_tags .= "<span class='tag'>" . $zp_showtags_tag["title"] . "</span>";
-                                    if ( $i != (count($zp_showtags_results)-1) ) $citation_tags .= "<span class='separator'>,</span> ";
-                                }
-                                $citation_tags .= "</p>\n";
-                            }
-                            unset($zp_showtags_query);
-                            unset($zp_showtags_results);
-                        }
-                        
-                        // ABSTRACT
-                        if ( $abstracts && isset($zp_this_meta->abstractNote) && strlen(trim($zp_this_meta->abstractNote)) > 0 )
-                        {
-                            $citation_abstract = "<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " . sprintf($zp_this_meta->abstractNote) . "</p>\n";
-                        }
-                        
-                        
-                        // NOTES
-                        if ($notes)
-                        {
-                            $zp_notes = $wpdb->get_results("SELECT json FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['api_user_id']."'
-                                    AND parent = '".$zp_citation["item_key"]."' AND itemType = 'note';", OBJECT);
-                            
-                            if (count($zp_notes) > 0)
-                            {
-                                $temp_notes = "<li id=\"zp-Note-".$zp_citation["item_key"]."\">\n";
-								
-								// Only create a list if there's more than one note for this item
-								if ( count($zp_notes) == 1 )
-								{
-                                    $note_json = json_decode($zp_notes[0]->json);
-                                    $temp_notes .= $note_json->note . "\n";
-								}
-								else if ( count($zp_notes) > 1 )
-								{
-									$temp_notes .= "<ul class='zp-Citation-Item-Notes'>\n";
-									
-									foreach ($zp_notes as $note)
-									{
-										$note_json = json_decode($note->json);
-										$temp_notes .= "<li class='zp-Citation-note'>" . $note_json->note . "\n</li>\n";
-									}
-									$temp_notes .= "\n</ul>";
-								}
-								
-                                $temp_notes .= "\n</li>\n\n";
-								
-								$citation_notes[count($citation_notes)] = $temp_notes;
-                                
-                                // Add note reference
-                                $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"zp-Notes-Reference\"><a href=\"#zp-Note-".$zp_citation["item_key"]."\">".$zp_notes_num."</a></sup> </div>" . '$2', $zp_citation['citation'], 1);
-                                $zp_notes_num++;
-                            }
-                            unset($zp_notes);
-                            
-                        } // end notes
-                        
-                        
-                        // Hyperlink URL: Has to go before Download
-                        if (isset($zp_this_meta->url) && strlen($zp_this_meta->url) > 0)
-                        {
-                            $zp_url_replacement = "<a title=\"". htmlspecialchars($zp_this_meta->title) ."\" rel=\"external\" ";
-                            if ( $target ) $zp_url_replacement .= "target=\"_blank\" ";
-                            $zp_url_replacement .= "href=\"".urldecode(urlencode($zp_this_meta->url))."\">".urldecode(urlencode($zp_this_meta->url))."</a>";
-                            
-                            // Replace ampersands
-                            $zp_citation['citation'] = str_replace(htmlspecialchars($zp_this_meta->url), $zp_this_meta->url, $zp_citation['citation']);
-                            
-                            // Then replace with linked URL
-                            $zp_citation['citation'] = str_replace($zp_this_meta->url, $zp_url_replacement, $zp_citation['citation']);
-                        }
-                        
-                        
-                        // DOWNLOAD
-                        if ($download)
-                        {
-                            //$zp_download_url = $wpdb->get_row("SELECT item_key, citation, json, linkMode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['api_user_id']."'
-                            //        AND parent = '".$zp_citation["item_key"]."' AND linkMode IN ( 'imported_file', 'linked_url' ) ORDER BY linkMode ASC LIMIT 1;", OBJECT);
-                            
-                            if ( !is_null($zp_citation['attachment_data']) )
-                            {
-                                $zp_download_url = json_decode($zp_citation['attachment_data']);
-                                
-                                if ($zp_download_url->linkMode == "imported_file")
-                                {
-                                    $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['api_user_id']."&amp;download=".$zp_citation["attachment_key"]."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1); // Thanks to http://ideone.com/vR073
-                                }
-                                else
-                                {
-                                    $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_url->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
-                                }
-                            }
-                            unset($zp_download_url);
-                        }
-                        
-                        
-                        // CITE LINK
-                        if ($cite == "yes" || $cite == "true" || $cite === true)
-                        {
-                            $cite_url = "https://api.zotero.org/".$zp_account->account_type."/".$zp_account->api_user_id."/items/".$zp_citation["item_key"]."?format=ris";
-                            $zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>(Cite)</a> </div>" . '$2', $zp_citation['citation'], 1);
-                        }
-                        
-                        
-                        // TITLE
-                        if ($title)
-                        {
-                            if ($current_title == "" || (strlen($current_title) > 0 && $current_title != $zp_citation["year"]))
-                            {
-                                $current_title = $zp_citation["year"];
-                                
-                                if ($zp_citation["year"] == "0000")
-                                    $zp_output .= "<h3>n.d.</h3>\n";
-                                else // regular year
-                                    $zp_output .= "<h3>".$current_title."</h3>\n";
-                            }
-                        }
 						
-						// HYPERLINK DOIs
-						if ( isset($zp_this_meta->DOI) )
-							$zp_citation['citation'] = str_replace( 'http://doi.org/'.$zp_this_meta->DOI, "<a href='http://doi.org/".$zp_this_meta->DOI."'>http://doi.org/".$zp_this_meta->DOI."</a>", $zp_citation['citation'] );
-                        
-                        // SHOW CURRENT STYLE AS REL
-                        $zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );
-                        
-                        
-                        // OUTPUT
-                        
-                        $zp_output .= "<div class='zp-ID-".$api_user_id."-".$zp_citation["item_key"]." zp-Entry".$has_citation_image."'>\n";
-                        $zp_output .= $citation_image . $zp_citation['citation'] . $citation_abstract . $citation_tags . "\n";
-                        $zp_output .= "</div><!--Entry-->\n\n";
+						// If applicable, filter out authors with the wrong first name
+						$dont_skip_based_on_author = true;
+						$exclusive_author_count = 0;
+						
+						if ( is_array($author) && is_array($author[0]) )
+						{
+							$dont_skip_based_on_author = false;
+							
+							foreach ( $author as $author_to_filter )
+							{
+								foreach ( $zp_this_meta->creators as $creator )
+								{
+									if ( $creator->lastName == $author_to_filter[0]
+											&& $creator->firstName == $author_to_filter[1] )
+									{
+										$dont_skip_based_on_author = true;
+										
+										// Count authors if exclusive
+										$exclusive_author_count++;
+									}
+								}
+							}
+							if ( $inclusive != "yes" && $exclusive_author_count != count($author) )
+								$dont_skip_based_on_author = false;
+						}
+						
+						if ( $dont_skip_based_on_author )
+						{
+							// IMAGE
+							if ($showimage && !is_null($zp_citation["itemImage"]) && $zp_citation["itemImage"] != "")
+							{
+								if ( is_numeric($zp_citation["itemImage"]) )
+								{
+									$zp_citation["itemImage"] = wp_get_attachment_image_src( $zp_citation["itemImage"], "full" );
+									$zp_citation["itemImage"] = $zp_citation["itemImage"][0];
+								}
+								
+								$citation_image = "<div id='zp-Citation-".$zp_citation["item_key"]."' class='zp-Entry-Image'>";
+								$citation_image .= "<img src='".$zp_citation["itemImage"]."' alt='image' />";
+								$citation_image .= "</div>\n";
+								$has_citation_image = " zp-HasImage";
+							}
+							
+							// TAGS
+							// Grab tags associated with item
+							if ( $showtags )
+							{
+								$zp_showtags_query = "SELECT DISTINCT ".$wpdb->prefix."zotpress_zoteroTags.title FROM ".$wpdb->prefix."zotpress_zoteroTags LEFT JOIN ".$wpdb->prefix."zotpress_zoteroRelItemTags ON ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title=".$wpdb->prefix."zotpress_zoteroTags.title WHERE ".$wpdb->prefix."zotpress_zoteroRelItemTags.item_key='".$zp_citation["item_key"]."' ORDER BY ".$wpdb->prefix."zotpress_zoteroTags.title ASC;";
+								$zp_showtags_results = $wpdb->get_results($zp_showtags_query, ARRAY_A);
+								
+								if ( count($zp_showtags_results) > 0)
+								{
+									$citation_tags = "<p class='zp-Zotpress-ShowTags'><span class='title'>Tags:</span> ";
+									
+									foreach ($zp_showtags_results as $i => $zp_showtags_tag)
+									{
+										$citation_tags .= "<span class='tag'>" . $zp_showtags_tag["title"] . "</span>";
+										if ( $i != (count($zp_showtags_results)-1) ) $citation_tags .= "<span class='separator'>,</span> ";
+									}
+									$citation_tags .= "</p>\n";
+								}
+								unset($zp_showtags_query);
+								unset($zp_showtags_results);
+							}
+							
+							// ABSTRACT
+							if ( $abstracts && isset($zp_this_meta->abstractNote) && strlen(trim($zp_this_meta->abstractNote)) > 0 )
+							{
+								$citation_abstract = "<p class='zp-Abstract'><span class='zp-Abstract-Title'>Abstract:</span> " . sprintf($zp_this_meta->abstractNote) . "</p>\n";
+							}
+							
+							
+							// NOTES
+							if ($notes)
+							{
+								$zp_notes = $wpdb->get_results("SELECT json FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['api_user_id']."'
+										AND parent = '".$zp_citation["item_key"]."' AND itemType = 'note';", OBJECT);
+								
+								if (count($zp_notes) > 0)
+								{
+									$temp_notes = "<li id=\"zp-Note-".$zp_citation["item_key"]."\">\n";
+									
+									// Only create a list if there's more than one note for this item
+									if ( count($zp_notes) == 1 )
+									{
+										$note_json = json_decode($zp_notes[0]->json);
+										$temp_notes .= $note_json->note . "\n";
+									}
+									else if ( count($zp_notes) > 1 )
+									{
+										$temp_notes .= "<ul class='zp-Citation-Item-Notes'>\n";
+										
+										foreach ($zp_notes as $note)
+										{
+											$note_json = json_decode($note->json);
+											$temp_notes .= "<li class='zp-Citation-note'>" . $note_json->note . "\n</li>\n";
+										}
+										$temp_notes .= "\n</ul>";
+									}
+									
+									$temp_notes .= "\n</li>\n\n";
+									
+									$citation_notes[count($citation_notes)] = $temp_notes;
+									
+									// Add note reference
+									$zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <sup class=\"zp-Notes-Reference\"><a href=\"#zp-Note-".$zp_citation["item_key"]."\">".$zp_notes_num."</a></sup> </div>" . '$2', $zp_citation['citation'], 1);
+									$zp_notes_num++;
+								}
+								unset($zp_notes);
+								
+							} // end notes
+							
+							
+							// Hyperlink URL: Has to go before Download
+							if (isset($zp_this_meta->url) && strlen($zp_this_meta->url) > 0)
+							{
+								$zp_url_replacement = "<a title=\"". htmlspecialchars($zp_this_meta->title) ."\" rel=\"external\" ";
+								if ( $target ) $zp_url_replacement .= "target=\"_blank\" ";
+								$zp_url_replacement .= "href=\"".urldecode(urlencode($zp_this_meta->url))."\">".urldecode(urlencode($zp_this_meta->url))."</a>";
+								
+								// Replace ampersands
+								$zp_citation['citation'] = str_replace(htmlspecialchars($zp_this_meta->url), $zp_this_meta->url, $zp_citation['citation']);
+								
+								// Then replace with linked URL
+								$zp_citation['citation'] = str_replace($zp_this_meta->url, $zp_url_replacement, $zp_citation['citation']);
+							}
+							
+							
+							// DOWNLOAD
+							if ($download)
+							{
+								//$zp_download_url = $wpdb->get_row("SELECT item_key, citation, json, linkMode FROM ".$wpdb->prefix."zotpress_zoteroItems WHERE api_user_id='".$zp_citation['api_user_id']."'
+								//        AND parent = '".$zp_citation["item_key"]."' AND linkMode IN ( 'imported_file', 'linked_url' ) ORDER BY linkMode ASC LIMIT 1;", OBJECT);
+								
+								if ( !is_null($zp_citation['attachment_data']) )
+								{
+									$zp_download_url = json_decode($zp_citation['attachment_data']);
+									
+									if ($zp_download_url->linkMode == "imported_file")
+									{
+										$zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['api_user_id']."&amp;download=".$zp_citation["attachment_key"]."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1); // Thanks to http://ideone.com/vR073
+									}
+									else
+									{
+										$zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_url->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
+									}
+								}
+								unset($zp_download_url);
+							}
+							
+							
+							// CITE LINK
+							if ($cite == "yes" || $cite == "true" || $cite === true)
+							{
+								$cite_url = "https://api.zotero.org/".$zp_account->account_type."/".$zp_account->api_user_id."/items/".$zp_citation["item_key"]."?format=ris";
+								$zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>(Cite)</a> </div>" . '$2', $zp_citation['citation'], 1);
+							}
+							
+							
+							// TITLE
+							if ($title)
+							{
+								if ($current_title == "" || (strlen($current_title) > 0 && $current_title != $zp_citation["year"]))
+								{
+									$current_title = $zp_citation["year"];
+									
+									if ($zp_citation["year"] == "0000")
+										$zp_output .= "<h3>n.d.</h3>\n";
+									else // regular year
+										$zp_output .= "<h3>".$current_title."</h3>\n";
+								}
+							}
+							
+							// HYPERLINK DOIs
+							if ( isset($zp_this_meta->DOI) )
+								$zp_citation['citation'] = str_replace( 'http://doi.org/'.$zp_this_meta->DOI, "<a href='http://doi.org/".$zp_this_meta->DOI."'>http://doi.org/".$zp_this_meta->DOI."</a>", $zp_citation['citation'] );
+							
+							// SHOW CURRENT STYLE AS REL
+							$zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );
+							
+							
+							// OUTPUT
+							
+							$zp_output .= "<div class='zp-ID-".$api_user_id."-".$zp_citation["item_key"]." zp-Entry".$has_citation_image."'>\n";
+							$zp_output .= $citation_image . $zp_citation['citation'] . $citation_abstract . $citation_tags . "\n";
+							$zp_output .= "</div><!--Entry-->\n\n";
+						}
                     }
                     
                     // DISPLAY NOTES, if any exist
