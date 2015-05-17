@@ -767,7 +767,6 @@
 								$zp_citation['citation'] = str_replace($zp_this_meta->url, $zp_url_replacement, $zp_citation['citation']);
 							}
 							
-							
 							// DOWNLOAD
 							if ($download)
 							{
@@ -780,11 +779,11 @@
 									
 									if ($zp_download_url->linkMode == "imported_file")
 									{
-										$zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['api_user_id']."&amp;download=".$zp_citation["attachment_key"]."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1); // Thanks to http://ideone.com/vR073
+										$zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$zp_citation['api_user_id']."&amp;download=".$zp_citation["attachment_key"]."'>Download</a> </div>" . '$2', $zp_citation['citation'], 1); // Thanks to http://ideone.com/vR073
 									}
 									else
 									{
-										$zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_url->url."'>(Download)</a> </div>" . '$2', $zp_citation['citation'], 1);
+										$zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download_url->url."'>Download</a> </div>" . '$2', $zp_citation['citation'], 1);
 									}
 								}
 								unset($zp_download_url);
@@ -795,7 +794,7 @@
 							if ($cite == "yes" || $cite == "true" || $cite === true)
 							{
 								$cite_url = "https://api.zotero.org/".$zp_account->account_type."/".$zp_account->api_user_id."/items/".$zp_citation["item_key"]."?format=ris";
-								$zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>(Cite)</a> </div>" . '$2', $zp_citation['citation'], 1);
+								$zp_citation['citation'] = preg_replace('~(.*)' . preg_quote('</div>', '~') . '(.*?)~', '$1' . " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>Cite</a> </div>" . '$2', $zp_citation['citation'], 1);
 							}
 							
 							
@@ -815,7 +814,11 @@
 							
 							// HYPERLINK DOIs
 							if ( isset($zp_this_meta->DOI) )
-								$zp_citation['citation'] = str_replace( 'http://doi.org/'.$zp_this_meta->DOI, "<a href='http://doi.org/".$zp_this_meta->DOI."'>http://doi.org/".$zp_this_meta->DOI."</a>", $zp_citation['citation'] );
+							{
+								$zp_url_target = ""; if ( $target ) $zp_url_target = "target=\"_blank\" ";
+								
+								$zp_citation['citation'] = str_replace( 'http://doi.org/'.$zp_this_meta->DOI, "<a ".$zp_url_target."href='http://doi.org/".$zp_this_meta->DOI."'>http://doi.org/".$zp_this_meta->DOI."</a>", $zp_citation['citation'] );
+							}
 							
 							// SHOW CURRENT STYLE AS REL
 							$zp_citation['citation'] = str_replace( "class=\"csl-bib-body\"", "rel=\"".$zp_citation['style']."\" class=\"csl-bib-body\"", $zp_citation['citation'] );

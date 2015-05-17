@@ -7,8 +7,8 @@ Tags: zotero, zotpress, citation manager, citations, citation, cite, citing, bib
 Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.5
-Tested up to: 4.2.1
-Stable tag: 5.5.1
+Tested up to: 4.2.2
+Stable tag: 5.5.2
 License: Apache2.0
 
 Zotpress displays your Zotero citations on WordPress.
@@ -64,10 +64,17 @@ The F.A.Q. can be found on the "Help" page of every Zotpress installation. If yo
 
 == Changelog ==
 
+= 5.5.2 =
+
+* Added support for "cite" to Library shortcode.
+* Fixed "target" attribute for DOI links.
+* Updated styles for download and cite links.
+* Default style option label clarified for importing.
+
 = 5.5.1 =
 
 * Fixed ampersand error for tags (must re-import).
-* Fixed author filter error with same last name. New format: (last,first)
+* Fixed author filter error with same last name. New format: (last, first)
 
 = 5.5 =
 

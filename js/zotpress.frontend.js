@@ -199,9 +199,9 @@ jQuery(document).ready(function()
                         if (zp_current_list_items[jQuery(this).attr("key")][2].length > 0)
                             temp += " <sup class=\"zp-Notes-Reference\">" + zp_current_list_items[jQuery(this).attr("key")][2] + "</sup>";
                         if (zp_current_list_items[jQuery(this).attr("key")][0].length > 0)
-                            temp += " <a title=\"Download URL\" href=\"" + zp_current_list_items[jQuery(this).attr("key")][0] + "\">(Download)</a>";
+                            temp += " <a title=\"Download URL\" href=\"" + zp_current_list_items[jQuery(this).attr("key")][0] + "\">Download</a>";
                         if (zp_current_list_items[jQuery(this).attr("key")][1].length > 0)
-                            temp += " <a title=\"Cite in RIS Format\" href=\"" + zp_current_list_items[jQuery(this).attr("key")][1] + "\">(Cite)</a>";
+                            temp += " <a title=\"Cite in RIS Format\" href=\"" + zp_current_list_items[jQuery(this).attr("key")][1] + "\">Cite</a>";
                         
                         jQuery(".zp-ID-" + thisAPIUserID + "-" + jQuery(this).attr("key") + " div:last", $this).append( temp );
                         

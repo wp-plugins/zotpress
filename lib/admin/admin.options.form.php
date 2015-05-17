@@ -101,7 +101,7 @@ if ( current_user_can('edit_others_posts') )
                 <div class="zp-Column-Inner">
                     
                     <!-- START OF STYLE -->
-                    <h4>Set Default Citation Style</h4>
+                    <h4>Set Default Citation Style for Importing</h4>
                     
                     <p class="note">Note: Styles must be listed <a title="Zotero Styles" href="http://www.zotero.org/styles">here</a>. Use the name found in the style's URL, e.g. modern-language-association.</p>
                     

@@ -13,26 +13,27 @@ class zotpressBrowse
 	 * @return     string         	the HTML-formatted subcollections
 	 */
 	
-	private $api_user_id = "";
+	private $account = "";
 	private $type = false;
 	private $filters = false;
 	private $minlength = false;
 	private $maxresults = false;
 	private $maxperpage = false;
+	private $citeable = false;
 	
 	public function __construct()
 	{
 		// Called automatically when an instance is instantiated
 	}
 	
-	public function setAccount($api_user_id)
+	public function setAccount($account)
 	{
-		$this->api_user_id = $api_user_id;
+		$this->account = $account;
 	}
 	
 	public function getAccount()
 	{
-		return $this->api_user_id;
+		return $this->account;
 	}
 	
 	public function setType($type)
@@ -85,6 +86,16 @@ class zotpressBrowse
 		return $this->maxperpage;
 	}
 	
+	public function setCiteable($citeable)
+	{
+		$this->citeable = $citeable;
+	}
+	
+	public function getCiteable()
+	{
+		return $this->citeable;
+	}
+	
 	
 	
 	public function getLib()
@@ -97,7 +108,13 @@ class zotpressBrowse
 		global $api_user_id;
 		
 		if ( isset($_GET['account_id']) && preg_match("/^[0-9]+$/", $_GET['account_id']) )
+		{
 			$api_user_id = $wpdb->get_var("SELECT nickname FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['account_id']."'", OBJECT);
+		}
+		else
+		{
+			$api_user_id = $this->getAccount()->api_user_id;
+		}
 		
 		
 		// Collection ID
@@ -146,11 +163,11 @@ class zotpressBrowse
                         if ( $collection_id ) // parent
                         {
                             //$zp_collection = get_term( $collection_id, 'zp_collections', 'OBJECT' );
-                            if ( is_admin( ) ) $zp_top_collection = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$this->api_user_id."' AND id='".$collection_id."'", OBJECT);
-                            if ( ! is_admin( ) ) $zp_top_collection = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$this->api_user_id."' AND item_key='".$collection_id."'", OBJECT);
+                            if ( is_admin( ) ) $zp_top_collection = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$this->getAccount()->api_user_id."' AND id='".$collection_id."'", OBJECT);
+                            if ( ! is_admin( ) ) $zp_top_collection = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$this->getAccount()->api_user_id."' AND item_key='".$collection_id."'", OBJECT);
                         }
                         
-                        $zp_collections_query = "SELECT * FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$this->api_user_id."' ";
+                        $zp_collections_query = "SELECT * FROM ".$wpdb->prefix."zotpress_zoteroCollections WHERE api_user_id='".$this->getAccount()->api_user_id."' ";
                         if ( $collection_id ) $zp_collections_query .= "AND parent='".$zp_top_collection->item_key."' "; else $zp_collections_query .= "AND parent='' ";
                         $zp_collections_query .= "ORDER BY title ASC";
                         //$zp_collections = get_terms( 'zp_collections', array( 'parent' => $collection_id, 'hide_empty' => false ) );
@@ -223,7 +240,7 @@ class zotpressBrowse
 						if ( !$tag_id ) echo '<option id="zp-List-Tags-Select" name="zp-List-Tags-Select">No tag selected</option>';
                         
                         //$zp_tags = get_terms( 'zp_tags', array( 'hide_empty' => false ) );
-                        $zp_tags = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$this->api_user_id."' ORDER BY title ASC", OBJECT);
+                        $zp_tags = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$this->getAccount()->api_user_id."' ORDER BY title ASC", OBJECT);
                         
                         foreach ( $zp_tags as $zp_tag )
                         {
@@ -325,7 +342,7 @@ class zotpressBrowse
 					}
 					else if ( $tag_id ) // Top Level
 					{
-						$tag_title = $wpdb->get_row("SELECT title FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$this->api_user_id."' AND id='".$tag_id."'", OBJECT);
+						$tag_title = $wpdb->get_row("SELECT title FROM ".$wpdb->prefix."zotpress_zoteroTags WHERE api_user_id='".$this->getAccount()->api_user_id."' AND id='".$tag_id."'", OBJECT);
 						echo "<div class='zp-Collection-Title'>Viewing items with the \"<strong>".str_replace("__and__", "&amp;", $tag_title->title)."</strong>\" tag</div>\n";
 					}
 					else
@@ -405,7 +422,7 @@ class zotpressBrowse
 								WHERE ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key = '".$zp_top_collection->item_key."' 
 								AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment'
 								AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
-								AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$this->api_user_id."'
+								AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$this->getAccount()->api_user_id."'
 								ORDER BY author ASC
 								";
 							$zp_citations = $wpdb->get_results( $zp_citations_query );
@@ -426,7 +443,7 @@ class zotpressBrowse
 								WHERE ".$wpdb->prefix."zotpress_zoteroRelItemTags.tag_title = '".str_replace("__and__", "&amp;", $tag_title->title)."' 
 								AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment'
 								AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
-								AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$this->api_user_id."'
+								AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$this->getAccount()->api_user_id."'
 								ORDER BY author ASC
 								";
 							$zp_citations = $wpdb->get_results( $zp_citations_query );
@@ -448,7 +465,7 @@ class zotpressBrowse
 								WHERE ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key IS NULL
 								AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'attachment'
 								AND ".$wpdb->prefix."zotpress_zoteroItems.itemType != 'note'
-								AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$this->api_user_id."'
+								AND ".$wpdb->prefix."zotpress_zoteroItems.api_user_id = '".$this->getAccount()->api_user_id."'
 								ORDER BY author ASC
 								";
 							$zp_citations = $wpdb->get_results( $zp_citations_query );
@@ -462,7 +479,7 @@ class zotpressBrowse
 						if (count($zp_citations) == 0)
 						{
 							echo "<p>There are no citations to display.";
-							if ( is_admin() ) echo " If you think you're receiving this message in error, you may need to <a title=\"Import your Zotero items\" href=\"admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=".$this->api_user_id."\" style=\"color: #f00000; text-shadow: none;\">import your Zotero library</a>.";
+							if ( is_admin() ) echo " If you think you're receiving this message in error, you may need to <a title=\"Import your Zotero items\" href=\"admin.php?page=Zotpress&setup=true&setupstep=three&api_user_id=".$this->getAccount()->api_user_id."\" style=\"color: #f00000; text-shadow: none;\">import your Zotero library</a>.";
 							echo "</p>";
 						}
 						else // display
@@ -478,6 +495,12 @@ class zotpressBrowse
 								
 								if ($entry_zebra === true) echo "<div class='zp-Entry'>\n"; else echo "<div class='zp-Entry odd'>\n";
 								
+								// CITEABLE
+								if ( $this->getCiteable() !== false &&  $this->getCiteable() != "no" )
+								{
+									$cite_url = "https://api.zotero.org/".$this->getAccount()->account_type."/".$this->getAccount()->api_user_id."/items/".$citation_id."?format=ris";
+									$citation_content = preg_replace('~(.*)' . preg_quote(htmlentities('</div>', ENT_QUOTES, "UTF-8", true ), '~') . '(.*?)~', '$1' . " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>Cite</a> </div>" . '$2', $citation_content, 1);
+								}
 								
 								// START OF DISPLAY IMAGE
 								

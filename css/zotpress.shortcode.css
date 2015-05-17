@@ -50,6 +50,20 @@
         margin: 0;
     }
 	
+	a.zp-CiteRIS,
+	a.zp-DownloadURL {
+		font-size: 0.9em;
+		text-transform: uppercase;
+	}
+	a.zp-CiteRIS:before,
+	a.zp-DownloadURL:before {
+		content: "(";
+	}
+	a.zp-CiteRIS:after,
+	a.zp-DownloadURL:after {
+		content: ")";
+	}
+	
 	
 	/* In-Text Citations */
 	

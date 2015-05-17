@@ -413,18 +413,23 @@
                     <td class="example"><p><code>[zotpressLib userid="00000" type="searchbar" maxperpage="5"]</code></p></td>
                 </tr>
                 
-                <tr class="last">
-                    <td rowspan="1" class="category last">Display</td>
+                <tr>
+                    <td rowspan="2" class="category last">Display</td>
                     
-                    <td rowspan="1" class="type last">Settings</td>
+                    <td rowspan="2" class="type last">Settings</td>
                     
-                    <td class="code last">type</td>
+                    <td class="code">type</td>
                     <td>
                         <p>Type of library navigation used. <strong>Options:</strong> dropdown [default], searchbar</p>
                     </td>
                     <td class="example">
                         <p><code>[zotpressLib userid="00000" type="searchbar"]</code></p>
                     </td>
+                </tr>
+                <tr class="last">
+                    <td class="code last">cite</td>
+                    <td><p>Alternative: <code>citeable</code> Make the displayed citations citable by generating RIS links. <strong>Options: yes, no [default].</strong></p></td>
+                    <td class="example"><p><code>[zotpressLib cite="yes"]</code></p></td>
                 </tr>
                 
             </table>

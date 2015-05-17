@@ -17,7 +17,10 @@
 			'searchby' => false, // searchbar only - all [default], collections, items, tags
 			'minlength' => 3, // searchbar only - 3 [default]
 			'maxresults' => 100,
-			'maxperpage' => 10
+			'maxperpage' => 10,
+			
+			'cite' => false,
+			'citeable' => false
             
         ), $atts, "zotpress"));
         
@@ -56,6 +59,10 @@
 		
 		// Max per page
 		if ( $maxperpage ) $maxperpage = str_replace('"','',html_entity_decode($maxperpage));
+		
+		// Max per page
+		if ( $cite ) $cite = str_replace('"','',html_entity_decode($cite));
+		if ( $citeable ) $cite = str_replace('"','',html_entity_decode($citeable));
 		
 		
 		// Get API User ID
@@ -97,12 +104,13 @@
 		
 		$zpLib = new zotpressBrowse;
 		
-		$zpLib->setAccount($api_user_id);
+		$zpLib->setAccount($zp_account);
 		$zpLib->setType($type);
 		if ( $searchby ) $zpLib->setFilters($searchby);
 		$zpLib->setMinLength($minlength);
 		$zpLib->setMaxResults($maxresults);
 		$zpLib->setMaxPerPage($maxperpage);
+		$zpLib->setCiteable($cite);
 		
 		$zpLib->getLib();
 	}
