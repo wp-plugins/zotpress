@@ -86,7 +86,7 @@
 		// Use Browse class
 		
 		$zpLib = new zotpressBrowse;
-		$zpLib->setAccount($api_user_id);
+		$zpLib->setAccount($zp_account);
 		$zpLib->setType("dropdown");
 	?>
     

@@ -414,9 +414,9 @@
                 </tr>
                 
                 <tr>
-                    <td rowspan="2" class="category last">Display</td>
+                    <td rowspan="3" class="category last">Display</td>
                     
-                    <td rowspan="2" class="type last">Settings</td>
+                    <td rowspan="3" class="type last">Settings</td>
                     
                     <td class="code">type</td>
                     <td>
@@ -426,10 +426,15 @@
                         <p><code>[zotpressLib userid="00000" type="searchbar"]</code></p>
                     </td>
                 </tr>
+                <tr>
+                    <td class="code">download</td>
+                    <td><p>Alternative: <code>downloadable</code> Whether or not to display the citation's download URL, if one exists. <strong>Enable this option only if you are legally able to provide your files for download.</strong> Options: yes, no [default].</p></td>
+                    <td class="example"><p><code>[zotpressLib userid="00000" download="yes"]</code></p></td>
+                </tr>
                 <tr class="last">
                     <td class="code last">cite</td>
                     <td><p>Alternative: <code>citeable</code> Make the displayed citations citable by generating RIS links. <strong>Options: yes, no [default].</strong></p></td>
-                    <td class="example"><p><code>[zotpressLib cite="yes"]</code></p></td>
+                    <td class="example"><p><code>[zotpressLib userid="00000" cite="yes"]</code></p></td>
                 </tr>
                 
             </table>

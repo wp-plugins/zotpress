@@ -8,7 +8,7 @@ Author URI: http://katieseaborn.com/
 Author: Katie Seaborn
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 5.5.2
+Stable tag: 5.5.3
 License: Apache2.0
 
 Zotpress displays your Zotero citations on WordPress.
@@ -64,9 +64,14 @@ The F.A.Q. can be found on the "Help" page of every Zotpress installation. If yo
 
 == Changelog ==
 
+= 5.5.3 =
+
+* Browse page bug fixed.
+* Added "download" attribute to Library shortcode (dropdown-only).
+
 = 5.5.2 =
 
-* Added support for "cite" to Library shortcode.
+* Added support for "cite" to Library shortcode (dropdown-only).
 * Fixed "target" attribute for DOI links.
 * Updated styles for download and cite links.
 * Default style option label clarified for importing.

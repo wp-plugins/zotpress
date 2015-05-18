@@ -20,6 +20,7 @@ class zotpressBrowse
 	private $maxresults = false;
 	private $maxperpage = false;
 	private $citeable = false;
+	private $downloadable = false;
 	
 	public function __construct()
 	{
@@ -94,6 +95,16 @@ class zotpressBrowse
 	public function getCiteable()
 	{
 		return $this->citeable;
+	}
+	
+	public function setDownloadable($download)
+	{
+		$this->downloadable = $download;
+	}
+	
+	public function getDownloadable()
+	{
+		return $this->downloadable;
 	}
 	
 	
@@ -307,7 +318,7 @@ class zotpressBrowse
 						?>
 						
 						<input type="hidden" id="ZOTPRESS_PLUGIN_URL" name="ZOTPRESS_PLUGIN_URL" value="<?php echo ZOTPRESS_PLUGIN_URL; ?>" />
-						<input type="hidden" id="ZOTPRESS_USER" name="ZOTPRESS_USER" value="<?php echo $this->getAccount(); ?>" />
+						<input type="hidden" id="ZOTPRESS_USER" name="ZOTPRESS_USER" value="<?php echo $this->getAccount()->api_user_id; ?>" />
 					</div>
 					
                     <?php endif; // Type ?>
@@ -472,6 +483,44 @@ class zotpressBrowse
 						}
 						
 						
+						if ( $this->getDownloadable() !== false &&  $this->getDownloadable() != "no" )
+						{
+							if (count($zp_citations) > 0)
+							{
+								$zp_downloads_count = "";
+								
+								foreach ($zp_citations as $entry)
+								{
+									if ( $entry->numchildren > 0 ) // Might have downloads
+									{
+										if ( strlen($zp_downloads_count) >0 ) $zp_downloads_count .= ", ";
+										$zp_downloads_count .= "'".$entry->item_key."'";
+									}
+								}
+								
+								// If there's items with children, create query
+								if ( strlen($zp_downloads_count) > 0 )
+								{
+									$zp_downloads_query =
+										"
+										SELECT 
+										".$wpdb->prefix."zotpress_zoteroItems.parent AS parent,
+										".$wpdb->prefix."zotpress_zoteroItems.citation AS content,
+										".$wpdb->prefix."zotpress_zoteroItems.item_key AS item_key,
+										".$wpdb->prefix."zotpress_zoteroItems.json AS data,
+										".$wpdb->prefix."zotpress_zoteroItems.linkmode AS linkmode 
+										FROM ".$wpdb->prefix."zotpress_zoteroItems 
+										WHERE api_user_id='".$api_user_id."' AND
+										".$wpdb->prefix."zotpress_zoteroItems.parent IN (".$zp_downloads_count.") AND
+										".$wpdb->prefix."zotpress_zoteroItems.linkmode IN ( 'imported_file', 'linked_url' ) 
+										ORDER BY linkmode ASC
+										";
+									$zp_downloads = $wpdb->get_results( $zp_downloads_query );
+								}
+							}
+						}
+						
+						
 						// DISPLAY EACH ENTRY
 						
 						$entry_zebra = true;
@@ -495,12 +544,36 @@ class zotpressBrowse
 								
 								if ($entry_zebra === true) echo "<div class='zp-Entry'>\n"; else echo "<div class='zp-Entry odd'>\n";
 								
+								
 								// CITEABLE
 								if ( $this->getCiteable() !== false &&  $this->getCiteable() != "no" )
 								{
 									$cite_url = "https://api.zotero.org/".$this->getAccount()->account_type."/".$this->getAccount()->api_user_id."/items/".$citation_id."?format=ris";
-									$citation_content = preg_replace('~(.*)' . preg_quote(htmlentities('</div>', ENT_QUOTES, "UTF-8", true ), '~') . '(.*?)~', '$1' . " <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>Cite</a> </div>" . '$2', $citation_content, 1);
+									$citation_content = preg_replace('~(.*)' . preg_quote(htmlentities('</div>', ENT_QUOTES, "UTF-8", true ), '~') . '(.*?)~', '$1' . htmlentities(" <a title='Cite in RIS Format' class='zp-CiteRIS' href='".$cite_url."'>Cite</a> </div>", ENT_QUOTES, "UTF-8", true ) . '$2', $citation_content, 1);
 								}
+								
+								// DOWNLOADABLE
+								if ( $this->getDownloadable() !== false &&  $this->getDownloadable() != "no" && isset($zp_downloads) && count($zp_downloads) > 0 )
+								{
+									foreach( $zp_downloads as $id => $zp_download )
+									{
+										if ( $zp_download->parent == $entry->item_key )
+										{
+											if ($zp_download->linkmode == "imported_file")
+											{
+												$zp_download_url = " <a title='Download URL' class='zp-DownloadURL' href='".ZOTPRESS_PLUGIN_URL."lib/request/rss.file.php?api_user_id=".$entry->api_user_id."&amp;download=".$zp_download->item_key."'>";
+											}
+											else // URL
+											{
+												$zp_download->data = json_decode($zp_download->data);
+												$zp_download_url = " <a title='Download URL' class='zp-DownloadURL' href='".$zp_download->data->url."'>";
+											}
+											
+											$citation_content = preg_replace('~(.*)' . preg_quote(htmlentities('</div>', ENT_QUOTES, "UTF-8", true ), '~') . '(.*?)~', '$1' . $zp_download_url . "Download</a></div>" . '$2', $citation_content, 1);
+										}
+									}
+								}
+								
 								
 								// START OF DISPLAY IMAGE
 								

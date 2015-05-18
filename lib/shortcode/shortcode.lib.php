@@ -20,7 +20,9 @@
 			'maxperpage' => 10,
 			
 			'cite' => false,
-			'citeable' => false
+			'citeable' => false,
+			'download' => false,
+			'downloadable' => false
             
         ), $atts, "zotpress"));
         
@@ -60,9 +62,13 @@
 		// Max per page
 		if ( $maxperpage ) $maxperpage = str_replace('"','',html_entity_decode($maxperpage));
 		
-		// Max per page
+		// Citeable
 		if ( $cite ) $cite = str_replace('"','',html_entity_decode($cite));
 		if ( $citeable ) $cite = str_replace('"','',html_entity_decode($citeable));
+		
+		// Downloadable
+		if ( $download ) $download = str_replace('"','',html_entity_decode($download));
+		if ( $downloadable ) $download = str_replace('"','',html_entity_decode($downloadable));
 		
 		
 		// Get API User ID
@@ -111,6 +117,7 @@
 		$zpLib->setMaxResults($maxresults);
 		$zpLib->setMaxPerPage($maxperpage);
 		$zpLib->setCiteable($cite);
+		$zpLib->setDownloadable($download);
 		
 		$zpLib->getLib();
 	}
