@@ -137,11 +137,22 @@
 			}
 			else // Year is first
 			{
-				$date_formatted = array(
-					"year" => $temp[0],
-					"month" => $temp[1],
-					"day" => $temp[2]
-				);
+				if ( isset($temp[2]) ) // day is set
+				{
+					$date_formatted = array(
+						"year" => $temp[0],
+						"month" => $temp[1],
+						"day" => $temp[2]
+					);
+				}
+				else
+				{
+					$date_formatted = array(
+						"year" => $temp[0],
+						"month" => $temp[1],
+						"day" => false
+					);
+				}
 			}
 		}
 		

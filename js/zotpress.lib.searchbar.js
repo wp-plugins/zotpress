@@ -110,6 +110,14 @@ jQuery(document).ready(function()
 						
 						temp += value.item_key;
 					}
+					
+					// URL hyperlinking
+					if ( value.url.length > 0 )
+					{
+						var tempUrl = value.url.replace("&", "&amp;");
+						temp = temp.replace( tempUrl, "<a href='"+tempUrl+"'>"+tempUrl+"</a>" );
+					}
+					
 					jQuery("#zpSearchResultsContainer").append(temp+"</div>\n");
 				});
 				

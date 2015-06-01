@@ -159,8 +159,7 @@
                         else
                             $author .= $creator->name;
             }
-            
-            array_push( $zpSearch, array( "author" => $author, "item" => $zpResult->item, "item_key" => $zpResult->item_key) );
+            array_push( $zpSearch, array( "author" => $author, "item" => $zpResult->item, "item_key" => $zpResult->item_key, "url" => $zpResultJSON->url) );
         }
     }
     

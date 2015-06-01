@@ -140,6 +140,9 @@
 	#zp-Zotpress-SearchBox label {
 		cursor: pointer;
 	}
+	#zp-Zotpress-SearchBox .zp-SearchBy {
+		margin-left: 0.5em;
+	}
 	
 	.zpSearchLoading {
 		visibility: hidden;

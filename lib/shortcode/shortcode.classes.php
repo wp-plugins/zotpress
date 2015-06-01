@@ -276,15 +276,17 @@ class zotpressBrowse
 						
 						<?php if ( $this->getFilters() ):
 						
+						echo "<span class=\"zp-SearchBy\">Search by:</span>";
+						
 						// Turn filter string into array
 						$filters = explode( ",", $this->getFilters() );
 						
 						foreach ( $filters as $id => $filter )
 						{
 							// Account for singular words
-							if ( $filter == "item" ) $filter = "items";
-							if ( $filter == "collection" ) $filter = "collections";
-							if ( $filter == "tag" ) $filter = "tags";
+							if ( $filter == "items" ) $filter = "item";
+							if ( $filter == "collections" ) $filter = "collection";
+							if ( $filter == "tags" ) $filter = "tag";
 							
 							echo '<input type="radio" name="zpSearchFilters" id="'.$filter.'" value="'.$filter.'"';
 							if ( $id == 0 || count($filters) == 1 ) echo ' checked="checked"';
