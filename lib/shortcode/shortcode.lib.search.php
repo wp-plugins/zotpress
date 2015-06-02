@@ -48,7 +48,7 @@
 	
 	
 	// Determine filter, if any
-	$filter = "items"; if ( isset($_GET['filter']) && preg_match("/^[a-z]+$/", $_GET['filter']) == 1 ) $filter = $_GET['filter'];
+	$filter = "item"; if ( isset($_GET['filter']) && preg_match("/^[a-z]+$/", $_GET['filter']) == 1 ) $filter = $_GET['filter'];
 	
 	// Determine max results, if set
 	$limit = "100"; if ( isset($_GET['maxresults']) && preg_match("/^[0-9]+$/", $_GET['maxresults']) == 1 ) $limit = $_GET['maxresults'];
@@ -56,7 +56,7 @@
 
 	if ( $filter )
 	{
-		if ( $filter == "items" )
+		if ( $filter == "item" )
 		{
 			$tempquery =
 			"
@@ -77,7 +77,7 @@
 				$wpdb->prepare( $tempquery, '%' . $wpdb->esc_like($_GET['term']) . '%'
 			), OBJECT );
 		}
-		elseif ( $filter == "collections" )
+		elseif ( $filter == "collection" )
 		{
 			//					CONCAT( ".$wpdb->prefix."zotpress_zoteroCollections.title, ' (', ".$wpdb->prefix."zotpress_zoteroRelItemColl.collection_key, ')' ) AS item_key 
 			$tempquery =
@@ -107,7 +107,7 @@
 				$wpdb->prepare( $tempquery, '%' . $wpdb->esc_like($_GET['term']) . '%'
 			), OBJECT );
 		}
-		elseif ( $filter == "tags" )
+		elseif ( $filter == "tag" )
 		{
 			$tempquery =
 			"
@@ -160,6 +160,7 @@
                             $author .= $creator->name;
             }
             array_push( $zpSearch, array( "author" => $author, "item" => $zpResult->item, "item_key" => $zpResult->item_key, "url" => $zpResultJSON->url) );
+            //array_push( $zpSearch, array( "author" => $author, "item" => $zpResult->item, "item_key" => $zpResult->item_key) );
         }
     }
     
