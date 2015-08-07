@@ -225,7 +225,8 @@
                 // Shorten author ...
                 if ($etal)
                 {
-                    if ($etal == "yes") $item->author = substr($item->author, 0, strpos($item->author, ",")) . " <em>et al.</em>";
+                    // if ($etal == "yes") $item->author = substr($item->author, 0, strpos($item->author, ",")) . " <em>et al foo.</em>";
+                    if ($etal == "yes" && count(explode(",", $item->author)) > 2) $item->author = substr($item->author, 0, strpos($item->author, ",")) . " <em>et al.</em>";
                 }
                 else // default
                 {
@@ -356,8 +357,8 @@
             }
 			
 			// First, sort in-text items
-			//$zp_intext_citation_arr = subval_sort($zp_intext_citation_arr, "author", "asc");
-			$zp_intext_citation_output_arr = array();
+			$zp_intext_citation_arr = subval_sort($zp_intext_citation_arr, "date", "asc");
+			// $zp_intext_citation_output_arr = array();
 			
 			$zp_alphacount = "";
 			$zp_alphacount_author = "";
@@ -398,12 +399,25 @@
 				
 				$zp_intext_citation .= "<a title='";
 				
+                if ($item["citation"]){
+                    if (count($zp_intext_citation_arr)>1){
+                        if ($i == 0){
+                            $item["citation"]=trim(str_replace(")","", $item["citation"]));
+                            $item["citation"]="(".$item["citation"];
+                        } elseif ($i == count($zp_intext_citation_arr)-1){
+                            $item["citation"]=str_replace("(","", $item["citation"]);
+                            $item["citation"]=$item["citation"].")";
+                        }
+                    }
+                }
+                
 				if ($item["author"])
 				{
 					// Remove author if same in a row
-					if ( isset($zp_intext_citation_output_arr[$i-1]["author"])
-							&& $item["author"] == $zp_intext_citation_output_arr[$i-1]["author"] )
-						$item["citation"] = str_replace( $item["author"] . ", ", "", $item["citation"] );
+					if ( isset($zp_intext_citation_output_arr[$i-1]["author"]) && $item["author"] == $zp_intext_citation_output_arr[$i-1]["author"] )
+						{
+                            $item["citation"] = str_replace( $item["author"] . ", ", "", $item["citation"] );
+                        }
 					
 					$zp_intext_citation .= htmlspecialchars(strip_tags($item["author"]), ENT_QUOTES) . " ";
 				}
@@ -430,7 +444,7 @@
 							if ( $brackets )
 								$zp_intext_citation .= ", ";
 							else
-								$zp_intext_citation .= ";";
+								$zp_intext_citation .= "; ";
 			}
 			
 			// Add brackets, if necessary
