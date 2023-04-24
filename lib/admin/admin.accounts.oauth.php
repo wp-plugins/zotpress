@@ -1,14 +1,14 @@
- <?php
- 
+<?php
+
 /** Code provided by and adapted from: http://www.zotero.org/support/dev/server_api/v2/oauth
 	* Note that this example uses the php OAuth extension http://php.net/manual/en/book.oauth.php
     * but there are various php libraries that provide similar functionality.
     * OAuth acts over multiple pages, so we save variables we need to remember in $state in a temp file
-    * 
+    *
     * The OAuth handshake has 3 steps:
     * 1: Make a request to the provider to get a temporary token
     * 2: Redirect user to provider with a reference to the temporary token. The provider will ask them to authorize it
-    * 3: When the user is sent back by the provider and the temporary token is authorized, exchange it for a permanent 
+    * 3: When the user is sent back by the provider and the temporary token is authorized, exchange it for a permanent
     *    token then save the permanent token for use in all future requests on behalf of this user.
     *
     * So an OAuth consumer needs to deal with 3 states which this example covers:
@@ -20,7 +20,7 @@
     * State 2: We have an access token stored for this user from a past handshake, so we use that to make data requests
     *         to the provider.
    **/
-  
+
     // check incoming values
     $regex = "((https?|ftp)\:\/\/)?"; // SCHEME
     $regex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?"; // User and Pass
@@ -29,31 +29,32 @@
     $regex .= "(\/([a-z0-9+\$_-]\.?)+)*\/?"; // Path
     $regex .= "(\?[a-z+&\$_.-][a-z0-9;:@&%=+\/\$_.-]*)?"; // GET Query
     $regex .= "(#[a-z_.-][a-z0-9+\$_.-]*)?"; // Anchor
-    
+
     if (preg_match("/^$regex$/", $_GET['return_uri']) === false
         || preg_match("/^[a-zA-Z]{1,25}$/", $_GET['oauth_user']) === false
         || preg_match("/^[a-zA-Z0-9]{1,50}$/", $_GET['oauth_token']) === false)
     {
         exit();
     }
-  
+
     //initialize some variables to start with.
     //clientkey, clientSecret, and callbackurl should correspond to http://www.zotero.org/oauth/apps
-    $clientKey = 'f8daeb1c6ec190ef3db1'; 
+    $clientKey = 'f8daeb1c6ec190ef3db1';
     $clientSecret = 'a52d8706611b7b612e83';
     $callbackUrl = $_GET['return_uri'] . '/wp-content/plugins/zotpress/lib/admin/admin.accounts.oauth.php?oauth_user='.$_GET['oauth_user'].'&return_uri='.$_GET['return_uri'];
-    
+
     //the endpoints are specific to the OAuth provider, in this case Zotero
     $request_token_endpoint = 'https://www.zotero.org/oauth/request';
     $access_token_endpoint = 'https://www.zotero.org/oauth/access';
     $zotero_authorize_endpoint = 'https://www.zotero.org/oauth/authorize';
-  
+
     //require("../../../wp-includes/wp-db.php");
-    require("../../../../../wp-load.php");
+    // require("../../../../../wp-load.php");
+    require(dirname(__FILE__) . '/../../../../../wp-load.php');
     $wp_did_header = false;
     wp();
     global $wpdb;
-    
+
     //Functions to save state to temp file between requests, DB should replace this functionality
     function read_state(){
 		global $wpdb;
@@ -106,12 +107,11 @@
         }
         return $state['access_token_info'];
     }
-  
-  
+
+
     //Initialize our environment
     //check if there is a transaction in progress
     //for testing purpose, start with a fresh state to perform a new handshake
-    //if(empty($_GET['reset']) && file_exists('/tmp/oauthteststate')){
     if(empty($_GET['reset'])){
         $state = read_state();
     }
@@ -129,12 +129,12 @@
     if(!class_exists('OAuth')){
         die("Class OAuth does not exist. Make sure PHP OAuth extension is installed and enabled.");
     }
-  
-  
+
+
   //set up a new OAuth object initialized with client credentials and methods accepted by the provider
   $oauth = new OAuth($clientKey, $clientSecret, OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_FORM);
   //$oauth->enableDebug(); //get feedback if something goes wrong. Should not be used in production
-  
+
   //Handle different parts of the OAuth handshake depending on what state we're in
   switch($state['oauthState'])
   {
@@ -150,26 +150,26 @@
             die;
         }
         save_request_token($request_token_info, $state);
-        
+
         // Send the user off to the provider to authorize your request token (could also be a link the user follows)
         $redirectUrl = "{$zotero_authorize_endpoint}?oauth_token={$request_token_info['oauth_token']}";
         wp_redirect($redirectUrl, 301);
-        
+
         $redirect = '
                 <script type="text/javascript" src="'.$_GET['return_uri'].'/wp-content/plugins/zotpress/js/jquery-1.5.2.min.js"></script>
                 <script type="text/javascript">
-                
+
                 jQuery(document).ready(function()
                 {
                     jQuery("body").addClass("zp-Modal");
                 });
-                
+
             </script>';
         echo "<p>Redirecting to Zotero to authenticate.</p>";
         echo $redirect;
-        
+
         break;
-    
+
     case 1:
         // State 1 - Handle callback from Zotero and get and store an access token
         // Make sure the token we got sent back matches the one we have
@@ -190,32 +190,35 @@
         }
         // Continue on to authorized state outside switch
         break;
-    
+
     case 2:
         //get previously stored access token if we didn't just get it from a handshack
         $access_token_info = get_access_token($state);
         break;
     }
-  
-    if (isset( $access_token_info ))
+
+    if ( isset( $access_token_info ) )
     {
         // ADD PRIVATE KEY TO THE USER'S ACCOUNT IN ZOTPRESS
         global $wpdb;
+	    $api_user_id = $_GET['oauth_user'];
         $query = "UPDATE ".$wpdb->prefix."zotpress ";
-        $query .= "SET public_key='".$access_token_info['oauth_token_secret']."' WHERE api_user_id='".$_GET['oauth_user']."';";
+	    $query .= $wpdb->prepare("SET public_key='".$access_token_info['oauth_token_secret']."' WHERE api_user_id=%d", $api_user_id);
         $wpdb->query($query);
-        
+
+	    eb_zotpress_refresh_account($api_user_id);
+
         // EMPTY THE CACHE
         $oa_cache = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_oauth");
         $query = "UPDATE ".$wpdb->prefix."zotpress_oauth ";
         $query .= "SET cache='empty' WHERE id='".$oa_cache[0]->id."';";
         $wpdb->query($query);
-        
+
         // CLOSE AND REFRESH PAGE
         $finish = '
             <script type="text/javascript" src="'.$_GET['return_uri'].'/wp-content/plugins/zotpress/js/jquery-1.5.2.min.js"></script>
             <script type="text/javascript">
-            
+
             jQuery(document).ready(function()
             {
                 //tb_remove(); // Not working because no wp headers called, let`s do it manually:
@@ -223,10 +226,10 @@
                 jQuery("#TB_window", parent.document.body).fadeOut("fast");
                 window.parent.location.reload();
             });
-            
+
           </script>';
         echo $finish;
     }
 
-    
-  ?>
+
+?>
