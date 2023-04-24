@@ -200,10 +200,12 @@ class zotpressLib
 		if ( isset($_GET['page'])
 				&& $_GET['page'] == "Zotpress" // REVIEW: only include GET if admin?
 				&& isset($_GET['account_id'])
-				&& preg_match("/^\\d+\$/", $_GET['account_id']) )
-			$api_user_id = $wpdb->get_var("SELECT nickname FROM ".$wpdb->prefix."zotpress WHERE id='".$_GET['account_id']."'", OBJECT);
-		else
+				&& preg_match("/^\\d+\$/", $_GET['account_id']) ) {
+			$api_user_id = eb_zotpress_get_account( $_GET['account_id'] );
+			$api_user_id = $api_user_id->nickname;
+		} else {
 			$api_user_id = $this->getAccount()->api_user_id;
+		}
 
 
 		// Collection ID
@@ -413,7 +415,7 @@ class zotpressLib
 	                $content .= '<input type="hidden" class="ZOTPRESS_AC_MINLENGTH" name="ZOTPRESS_AC_MINLENGTH" value="'.$minlength.'" />';
 
 	                // Max Results per Request
-	                $maxresults = 50; if ( $this->getMaxResults() ) $maxresults = (int) $this->getMaxResults();
+	                $maxresults = 20; if ( $this->getMaxResults() ) $maxresults = (int) $this->getMaxResults();
 	                $content .= '<input type="hidden" class="ZOTPRESS_AC_MAXRESULTS" name="ZOTPRESS_AC_MAXRESULTS" value="'.$maxresults.'" />';
 
 	                // Max Per Page

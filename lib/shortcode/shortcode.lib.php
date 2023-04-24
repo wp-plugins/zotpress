@@ -15,7 +15,7 @@ function Zotpress_zotpressLib( $atts )
 		'type' => false, // dropdown, searchbar
 		'searchby' => false, // searchbar only - all [default], collections, items, tags
 		'minlength' => 3, // searchbar only - 3 [default]
-		'maxresults' => 50,
+		'maxresults' => 20,
 		'maxperpage' => 10,
 		'maxtags' => 100, // dropdown only
 
@@ -133,22 +133,22 @@ function Zotpress_zotpressLib( $atts )
 	global $wpdb;
 
     if ($nickname !== false) {
-        $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'", OBJECT);
+        $zp_account = eb_zotpress_get_account(false, $nickname);
         if ( is_null($zp_account) ): echo "<p>Sorry, but the selected Zotpress nickname can't be found.</p>"; return false; endif;
         $api_user_id = $zp_account->api_user_id;
     } elseif ($api_user_id !== false) {
-        $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'", OBJECT);
+        $zp_account = eb_zotpress_get_account($api_user_id);
         if ( is_null($zp_account) ): echo $api_user_id."<p>Sorry, but the selected Zotpress account can't be found.</p>"; return false; endif;
         $api_user_id = $zp_account->api_user_id;
     } elseif ($api_user_id === false && $nickname === false) {
         if (get_option("Zotpress_DefaultAccount") !== false)
         {
             $api_user_id = get_option("Zotpress_DefaultAccount");
-            $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id ='".$api_user_id."'", OBJECT);
+            $zp_account = eb_zotpress_get_account($api_user_id);
         }
         else // When all else fails ...
         {
-            $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1", OBJECT);
+            $zp_account = eb_zotpress_get_account();
             $api_user_id = $zp_account->api_user_id;
         }
     }

@@ -12,7 +12,7 @@
 		if ( isset($_GET['api_user_id'])
                 && preg_match("/^\\d+\$/", $_GET['api_user_id']) )
         {
-            $zp_account_temp = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$_GET['api_user_id']."'", OBJECT);
+            $zp_account_temp = eb_zotpress_get_account($_GET['api_user_id']);
 
             if ( (array)$zp_account_temp !== [] )
             {
@@ -22,7 +22,7 @@
         }
         elseif ( get_option("Zotpress_DefaultAccount") )
         {
-            $zp_account_temp = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".get_option("Zotpress_DefaultAccount")."'", OBJECT);
+            $zp_account_temp = eb_zotpress_get_account(get_option("Zotpress_DefaultAccount"));
 
             if ( (array)$zp_account_temp !== [] )
     		{
@@ -31,7 +31,7 @@
     		}
     		else
     		{
-    			$zp_account_temp = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1");
+    			$zp_account_temp = eb_zotpress_get_account();
 
     			if ( (array)$zp_account_temp !== [] )
     			{
@@ -43,7 +43,7 @@
 
         else
         {
-			$zp_account_temp = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1");
+			$zp_account_temp = eb_zotpress_get_account();
 
            if ( ( is_array($zp_account_temp)
                         || is_object($zp_account_temp)

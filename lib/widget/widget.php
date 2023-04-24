@@ -42,17 +42,17 @@ function Zotpress_widget_metabox_AJAX_search()
 
 	// Determine account based on passed account
     if ($_GET['api_user_id'] && is_numeric($_GET['api_user_id'])) {
-        $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$_GET['api_user_id']."'", OBJECT);
+        $zp_account = eb_zotpress_get_account( $_GET['api_user_id'] );
         $zp_api_user_id = $zp_account->api_user_id;
         $zp_nickname = $zp_account->nickname;
     } elseif (get_option("Zotpress_DefaultAccount")) {
         $zp_api_user_id = get_option("Zotpress_DefaultAccount");
-        $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$zp_api_user_id."'", OBJECT);
+        $zp_account = eb_zotpress_get_account( $zp_api_user_id );
         $zp_nickname = $zp_account->nickname;
     } else
   		{
-  			$zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1", OBJECT);
-  			$zp_api_user_id = $zp_account->api_user_id;
+            $zp_account = eb_zotpress_get_account();
+            $zp_api_user_id = $zp_account->api_user_id;
               $zp_nickname = $zp_account->nickname;
   		}
 
@@ -128,7 +128,6 @@ function Zotpress_widget_metabox_AJAX_search()
 
 	unset($zp_api_user_id);
 	unset($zp_account);
-	$wpdb->flush();
 
 	exit();
 }

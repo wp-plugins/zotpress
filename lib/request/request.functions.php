@@ -51,18 +51,14 @@
     {
         function zp_get_account ($wpdb, $api_user_id_incoming=false)
         {
+            $zp_account = array();
             if ($api_user_id_incoming !== false)
     		{
-                $zp_account = $wpdb->get_results(
-                    $wpdb->prepare(
-                        "SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='%s'",
-                        $api_user_id_incoming
-                    )
-                );
+			    $zp_account[] = eb_zotpress_get_account($api_user_id_incoming = false);
     		}
             else
     		{
-                $zp_account = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress ORDER BY id DESC LIMIT 1");
+			    $zp_account[] = eb_zotpress_get_account();
     		}
 
             return $zp_account;
@@ -75,7 +71,10 @@
     {
         function zp_clear_cache_for_user ($wpdb, $api_user_id)
         {
-            $wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress_cache WHERE api_user_id='".$api_user_id."'");
+	        $wpdb->query($wpdb->prepare("DELETE FROM ".$wpdb->prefix."zotpress_cache WHERE api_user_id=%d", $api_user_id));
+
+	        $cache_ver = get_option('zotpress_cache_ver_user_'.$api_user_id, 1) +1;
+	        update_option('zotpress_cache_ver_user_'.$api_user_id, $cache_ver);
         }
     }
 

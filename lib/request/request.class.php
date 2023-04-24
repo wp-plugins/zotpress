@@ -157,14 +157,8 @@ if ( ! class_exists('ZotpressRequest') )
             if ( $this->update === false )
             {
                 // First, check db to see if cached version exists
-                $zp_query =
-                        "
-                        SELECT DISTINCT ".$wpdb->prefix."zotpress_cache.*
-                        FROM ".$wpdb->prefix."zotpress_cache
-                        WHERE ".$wpdb->prefix."zotpress_cache.request_id = '".md5( $url )."'
-                        AND ".$wpdb->prefix."zotpress_cache.api_user_id = '".$this->api_user_id."'
-                        ";
-                $zp_results = $wpdb->get_results( $zp_query, OBJECT ); unset($zp_query);
+	            $zp_results = eb_zotpress_get_cache(md5( $url ), $this->api_user_id);
+
 
                 // Cache exists
                 if ( count($zp_results) > 0 )
@@ -183,7 +177,6 @@ if ( ! class_exists('ZotpressRequest') )
                     $headers = $regular['headers'];
                 }
 
-                $wpdb->flush();
             }
 
             else // Normal or RIS
@@ -202,14 +195,8 @@ if ( ! class_exists('ZotpressRequest') )
         function getRegular( $wpdb, $url )
         {
             // First, check db to see if cached version exists
-            $zp_query =
-                    "
-                    SELECT DISTINCT ".$wpdb->prefix."zotpress_cache.*
-                    FROM ".$wpdb->prefix."zotpress_cache
-                    WHERE ".$wpdb->prefix."zotpress_cache.request_id = '".md5( $url )."'
-                    AND ".$wpdb->prefix."zotpress_cache.api_user_id = '".$this->api_user_id."'
-                    ";
-            $zp_results = $wpdb->get_results($zp_query, OBJECT); unset($zp_query);
+            $zp_results = eb_zotpress_get_cache(md5( $url ), $this->api_user_id);
+
 
             // Then, if no cached version, proceed and save one.
             // Or, if cached version exists, check to see if it's out of date,
@@ -232,12 +219,16 @@ if ( ! class_exists('ZotpressRequest') )
 
                 if ( is_wp_error($response) )
                     $this->request_error = $response->get_error_message();
-                else
-                    $headers = json_encode( wp_remote_retrieve_headers( $response )->getAll() );
+                else {
+                    $headers = wp_remote_retrieve_headers($response);
+                    $headers = $headers->getAll();
+                    $headers = json_encode($headers);
+                }
             }
 
-            if ( ! $this->request_error )
-            {
+            if($this->request_error) {
+                return array( "data" => array(), "headers" => array() );
+            } else {
                 // Proceed if no cached version or to check server for newer
                 if ( count($zp_results) == 0
                         || ( isset($response["response"]["code"])
@@ -388,6 +379,8 @@ if ( ! class_exists('ZotpressRequest') )
                                     date('m/d/Y h:i:s a')
                                 )
                             ) );
+
+                            eb_zotpress_refresh_cache(md5( $url ), $this->api_user_id);
                         }
 
                         else // assume 'ris'
@@ -416,8 +409,6 @@ if ( ! class_exists('ZotpressRequest') )
                     $headers = $zp_results[0]->headers;
                 }
             }
-
-            $wpdb->flush();
 
             return array( "data" => $json, "tags" => $tags, "headers" => $headers );
         }

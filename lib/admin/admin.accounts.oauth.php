@@ -201,9 +201,12 @@
     {
         // ADD PRIVATE KEY TO THE USER'S ACCOUNT IN ZOTPRESS
         global $wpdb;
+	    $api_user_id = $_GET['oauth_user'];
         $query = "UPDATE ".$wpdb->prefix."zotpress ";
-        $query .= "SET public_key='".$access_token_info['oauth_token_secret']."' WHERE api_user_id='".$_GET['oauth_user']."';";
+	    $query .= $wpdb->prepare("SET public_key='".$access_token_info['oauth_token_secret']."' WHERE api_user_id=%d", $api_user_id);
         $wpdb->query($query);
+
+	    eb_zotpress_refresh_account($api_user_id);
 
         // EMPTY THE CACHE
         $oa_cache = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."zotpress_oauth");

@@ -113,12 +113,14 @@ function Zotpress_process_accounts_AJAX()
         // ADD ACCOUNT
         if ($errorCheck == false)
         {
+	            $data = array($account_type, $api_user_id, $public_key);
+	            if($nickname) {
+		            $data[] = $nickname;
+	            }
 				$query = "INSERT INTO ".$wpdb->prefix."zotpress (account_type, api_user_id, public_key";
 				if ($nickname) $query .= ", nickname";
 				$query .= ") ";
-				$query .= "VALUES ('$account_type', '$api_user_id', '$public_key'";
-				if ($nickname) $query .= ", '$nickname'";
-				$query .= ")";
+				$query .= "VALUES (".eb_zotpress_escape_array($data).")";
 
 				// Insert new list item into the list:
 				$wpdb->query($query);
@@ -154,8 +156,9 @@ function Zotpress_process_accounts_AJAX()
 				$api_user_id = $_GET['api_user_id'];
 
 				// Delete account and items
-				$wpdb->query("DELETE FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'");
+				$wpdb->query($wpdb->prepare("DELETE FROM ".$wpdb->prefix."zotpress WHERE api_user_id=%d", $api_user_id));
 				zp_clear_cache_for_user ($wpdb, $api_user_id);
+				eb_zotpress_refresh_account($api_user_id);
 
 				// Check if default account
 				if ( get_option("Zotpress_DefaultAccount") && get_option("Zotpress_DefaultAccount") == $api_user_id )
@@ -167,7 +170,6 @@ function Zotpress_process_accounts_AJAX()
 				$xml .= "<result success='true' total_accounts='".$total_accounts."' />\n";
 				$xml .= "<account id='".$api_user_id."' type='delete' />\n";
 
-				$wpdb->flush();
 				unset($api_user_id);
 			}
 			else // die
@@ -195,7 +197,6 @@ function Zotpress_process_accounts_AJAX()
 				$xml .= "<result success='true' cache_cleared='true' />\n";
 				$xml .= "<account id='".$api_user_id."' type='cache' />\n";
 
-				$wpdb->flush();
 				unset($api_user_id);
 			}
 			else // die
@@ -544,7 +545,6 @@ function Zotpress_process_accounts_AJAX()
 	echo "</accounts>";
 
 
-	$wpdb->flush();
 
 	exit();
 }

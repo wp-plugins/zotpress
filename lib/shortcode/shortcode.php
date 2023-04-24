@@ -297,13 +297,13 @@ function Zotpress_func( $atts )
     $zp_account = false;
 
     if ($nickname !== false) {
-        $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'", OBJECT);
+        $zp_account = eb_zotpress_get_account( false, $nickname );
         if ( is_null($zp_account) ):
                   return "<p>Sorry, but the selected Zotpress nickname can't be found.</p>";
               endif;
         $api_user_id = $zp_account->api_user_id;
     } elseif ($api_user_id !== false) {
-        $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'", OBJECT);
+        $zp_account = eb_zotpress_get_account( $api_user_id );
         if ( is_null($zp_account) ):
                   return "<p>Sorry, but the selected Zotpress account can't be found.</p>";
               endif;
@@ -312,11 +312,11 @@ function Zotpress_func( $atts )
         if (get_option("Zotpress_DefaultAccount") !== false)
         {
             $api_user_id = get_option("Zotpress_DefaultAccount");
-            $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id ='".$api_user_id."'", OBJECT);
+            $zp_account = eb_zotpress_get_account( $api_user_id );
         }
         else // When all else fails ...
         {
-            $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1", OBJECT);
+            $zp_account = eb_zotpress_get_account();
             $api_user_id = $zp_account->api_user_id;
         }
     }
@@ -348,7 +348,7 @@ function Zotpress_func( $atts )
 
     // Set up Library vars
     $is_dropdown = false;
-    $maxresults = 50;
+    $maxresults = 20;
     $maxperpage = 10;
     $maxtags = 100;
 

@@ -16,30 +16,19 @@
 
 			if ($zp_default_account !== false)
 			{
-				$zp_account = $wpdb->get_results(
-					$wpdb->prepare(
-						"
-						SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress
-						WHERE api_user_id = %s
-						",
-						$zp_default_account
-					)
-				);
+				$zp_account = eb_zotpress_get_account($zp_default_account);
 			}
 			else
 			{
-				$zp_account = $wpdb->get_results(
-					"
-					SELECT api_user_id, nickname FROM ".$wpdb->prefix."zotpress LIMIT 1;
-					"
-				);
+				$zp_account = eb_zotpress_get_account();
 			}
 
-			if (!is_null($zp_account[0]->nickname) && $zp_account[0]->nickname != "")
-				$zp_default_account = $zp_account[0]->nickname . " (" . $zp_account[0]->api_user_id . ")";
+			if (is_null($zp_account->nickname) === false && $zp_account->nickname != "") {
+				$zp_default_account = $zp_account->nickname . " (" . $zp_account->api_user_id . ")";
+			}
 		?>
 		<!-- START OF ACCOUNT -->
-		<div id="zp-ZotpressMetaBox-Account" rel="<?php echo $zp_account[0]->api_user_id; ?>">
+		<div id="zp-ZotpressMetaBox-Account" rel="<?php echo $zp_account->api_user_id; ?>">
 
 			<div class="components-base-control">
 		        <label class="components-base-control__label" for="zp-ZotpressMetaBox-Acccount-Select">
@@ -175,29 +164,7 @@
 
 	                <hr>
 
-	                <div class="zp-ZotpressMetaBox-Field">
-	                    <?php _e('Images','zotpress'); ?>?
-	                    <div class="zp-ZotpressMetaBox-Field-Radio">
-	                        <label for="zp-ZotpressMetaBox-Biblio-Options-Image-Yes"><?php _e('Yes','zotpress'); ?></label>
-	                        <input type="radio" id="zp-ZotpressMetaBox-Biblio-Options-Image-Yes" name="images" value="yes">
 
-	                        <label for="zp-ZotpressMetaBox-Biblio-Options-Image-No"><?php _e('No','zotpress'); ?></label>
-	                        <input type="radio" id="zp-ZotpressMetaBox-Biblio-Options-Image-No" name="images" value="no" checked="checked">
-	                    </div>
-	                </div>
-
-	                <hr>
-
-	                <div class="zp-ZotpressMetaBox-Field">
-	                    <?php _e('Title by Year','zotpress'); ?>?
-	                    <div class="zp-ZotpressMetaBox-Field-Radio">
-	                        <label for="zp-ZotpressMetaBox-Biblio-Options-Title-Yes"><?php _e('Yes','zotpress'); ?></label>
-	                        <input type="radio" id="zp-ZotpressMetaBox-Biblio-Options-Title-Yes" name="title" value="yes">
-
-	                        <label for="zp-ZotpressMetaBox-Biblio-Options-Title-No"><?php _e('No','zotpress'); ?></label>
-	                        <input type="radio" id="zp-ZotpressMetaBox-Biblio-Options-Title-No" name="title" value="no" checked="checked">
-	                    </div>
-	                </div>
 
 	                <hr>
 

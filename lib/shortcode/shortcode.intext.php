@@ -74,22 +74,22 @@ function Zotpress_zotpressInText ($atts)
     $zp_account = false;
 
     if ($nickname !== false) {
-        $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE nickname='".$nickname."'", OBJECT);
+        $zp_account = eb_zotpress_get_account(false, $nickname);
         if ( $zp_account !== null )
             $api_user_id = $zp_account->api_user_id;
     } elseif ($api_user_id !== false) {
-        $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id='".$api_user_id."'", OBJECT);
+        $zp_account = eb_zotpress_get_account($api_user_id);
         if ( $zp_account !== null )
             $api_user_id = $zp_account->api_user_id;
     } elseif ($api_user_id === false && $nickname === false) {
         if ( get_option("Zotpress_DefaultAccount") !== false )
         {
             $api_user_id = get_option("Zotpress_DefaultAccount");
-            $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress WHERE api_user_id ='".$api_user_id."'", OBJECT);
+            $zp_account  = eb_zotpress_get_account($api_user_id);
         }
         else // When all else fails ...
         {
-            $zp_account = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."zotpress LIMIT 1", OBJECT);
+            $zp_account = eb_zotpress_get_account();
             $api_user_id = $zp_account->api_user_id;
         }
     }
